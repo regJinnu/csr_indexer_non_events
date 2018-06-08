@@ -133,6 +133,8 @@ public class FeedExclusionSteps {
   public void searchServicePrepareFindFeedExclusionListUsingPropertiesUsingPropertiesData() {
     searchserviceData.setPage(searchserviceProperties.get("page"));
     searchserviceData.setSize(searchserviceProperties.get("size"));
+    searchserviceData.setMongoURL(searchserviceProperties.get("mongoURL"));
+    searchserviceData.setMongoDB(searchserviceProperties.get("mongoDB"));
   }
 
   @When("^\\[search-service] send find feed exclusion list$")
@@ -147,11 +149,11 @@ public class FeedExclusionSteps {
     ResponseApi<GdnRestListResponse<FeedExclusionEntityResponse>> response =
         searchserviceData.getFindFeedRequest();
     MongoClientURI uri =
-        new MongoClientURI("mongodb://search:search@mongodb-01.uata.lokal:27017/x_search");
+        new MongoClientURI(searchserviceData.getMongoURL());
     MongoClient mongoClient = new MongoClient(uri);
     MongoClientOptions.Builder optionsBuilder = MongoClientOptions.builder();
     optionsBuilder.connectTimeout(30000);
-    MongoDatabase db = mongoClient.getDatabase("x_search");
+    MongoDatabase db = mongoClient.getDatabase(searchserviceData.getMongoDB());
     MongoCollection<Document> collection = db.getCollection("feed_exclusion_list");
     long totalCount = collection.count();
     System.out.println("----------------------------Total documents------------" + totalCount);

@@ -57,6 +57,12 @@ public class SearchServiceData {
   private String merchant;
   private String keywordForsearchingWithDateStamp;
   private String AutoSynonymnId;
+  private String mongoURL;
+  private String mongoDB;
+  private String synonyms;
+  private String stopwordgroup;
+  private String sync;
+  private String autoStopwordID;
   private ResponseApi<GdnBaseRestResponse> SearchServiceResponse;
   private ResponseApi<GdnRestSingleResponse<ConfigResponse>> FindByRequest;
   private ResponseApi<GdnRestListResponse<ConfigResponse>> FindByListRequest;
@@ -70,7 +76,9 @@ public class SearchServiceData {
   private ResponseApi<GdnRestSingleResponse<KeywordResponse>> FindKeywordRequest;
   private ResponseApi<GdnRestSingleResponse<ValidateIdAndGetNameResponse>> ValidateIdAndGetName;
   private ResponseApi<GdnRestSingleResponse<SynonymsResponse>> FindSynonym;
-
+  private ResponseApi<GdnRestListResponse<SynonymsResponse>> FindSynonymnByWord;
+  private ResponseApi<GdnRestListResponse<StopWordResponse>> FindStopword;
+  private ResponseApi<GdnRestSingleResponse<StopWordResponse>> FindStopWordByID;
 
 }
 

@@ -9,6 +9,7 @@ import com.gdn.qa.module.api.practice.api.services.SearchServiceController;
 import com.gdn.qa.module.api.practice.data.SearchServiceData;
 import com.gdn.qa.module.api.practice.properties.SearchServiceProperties;
 import com.gdn.x.search.rest.web.model.SearchTermCategoryClickThroughResponse;
+import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -98,6 +99,7 @@ public class ClickThroughDataSteps {
         .get("testingapi")
         .getDetectedCategory(), equalTo("AN-1000001"));
   }
+
 }
 
 

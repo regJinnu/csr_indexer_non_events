@@ -64,6 +64,8 @@ public class KeywordSteps {
   public void searchServicePrepareRequestToGetListOfKeywords() {
     searchserviceData.setPage(searchserviceProperties.get("page"));
     searchserviceData.setSize(searchserviceProperties.get("size"));
+    searchserviceData.setMongoURL(searchserviceProperties.get("mongoURL"));
+    searchserviceData.setMongoDB(searchserviceProperties.get("mongoDB"));
   }
 
   @When("^\\[search-service] send listing keyword request$")
@@ -80,11 +82,11 @@ public class KeywordSteps {
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
     MongoClientURI uri =
-        new MongoClientURI("mongodb://search:search@mongodb-01.uata.lokal:27017/x_search");
+        new MongoClientURI(searchserviceData.getMongoURL());
     MongoClient mongoClient = new MongoClient(uri);
     MongoClientOptions.Builder optionsBuilder = MongoClientOptions.builder();
     optionsBuilder.connectTimeout(30000);
-    MongoDatabase db = mongoClient.getDatabase("x_search");
+    MongoDatabase db = mongoClient.getDatabase(searchserviceData.getMongoDB());
     MongoCollection<Document> collection = db.getCollection("keyword_list");
     long totalCount = collection.count();
     System.out.println(

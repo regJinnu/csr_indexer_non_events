@@ -13,7 +13,6 @@ import com.gdn.x.search.rest.web.model.*;
 import io.restassured.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import java.io.File;
 import java.util.HashMap;
 
@@ -628,6 +627,16 @@ public class SearchServiceController extends ServiceApi {
     });
   }
 
+  public ResponseApi<GdnRestSingleResponse<KeywordResponse>> FindSynonymRequestByWrongID() {
+    Response response = service("searchservice").log()
+        .all()
+        .queryParam("id", searchserviceData.getWrongid())
+        .get("/synonyms/find-by-id");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<KeywordResponse>>() {
+    });
+  }
+
 
   public ResponseApi<GdnRestSingleResponse<KeywordResponse>> FindKeywordRequestByWrongID() {
     Response response = service("searchservice").log()
@@ -782,18 +791,14 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnBaseRestResponse> getCategoryList() {
-    Response response = service("searchservice").log()
-        .all()
-        .post("/fetch-category-list");
+    Response response = service("searchservice").log().all().post("/fetch-category-list");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
   public ResponseApi<GdnBaseRestResponse> getMerchantList() {
-    Response response = service("searchservice").log()
-        .all()
-        .post("/fetch-merchant-list");
+    Response response = service("searchservice").log().all().post("/fetch-merchant-list");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -802,8 +807,8 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnBaseRestResponse> getProductList() {
     Response response = service("searchservice").log()
         .all()
-        .queryParam("category",searchserviceData.getCategoryId())
-        .queryParam("merchant",searchserviceData.getMerchant())
+        .queryParam("category", searchserviceData.getCategoryId())
+        .queryParam("merchant", searchserviceData.getMerchant())
         .post("/product-data-report");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
@@ -811,35 +816,260 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnBaseRestResponse> uploadKeyword() {
-    Response response = service("searchservice").removeHeader("content-type").log()
+    Response response = service("searchservice").removeHeader("content-type")
+        .log()
         .all()
-        .queryParam("email",searchserviceData.getEmail())
-        .header("content-type","multipart/data")
-        .log().all()
-        .queryParam("email",searchserviceData.getEmail())
-        .multiPart(new File(searchserviceData.getPath())).post("/keyword/upload");
+        .queryParam("email", searchserviceData.getEmail())
+        .header("content-type", "multipart/data")
+        .log()
+        .all()
+        .queryParam("email", searchserviceData.getEmail())
+        .multiPart(new File(searchserviceData.getPath()))
+        .post("/keyword/upload");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
   public ResponseApi<GdnBaseRestResponse> generateSynonyms() {
-    Response response = service("searchservice").log()
-        .all()
-        .get("/synonyms/create-synonyms");
+    Response response = service("searchservice").log().all().get("/synonyms/create-synonyms");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
-  public ResponseApi<GdnRestSingleResponse<SynonymsResponse>> findByKey(){
+  public ResponseApi<GdnRestSingleResponse<SynonymsResponse>> findByKey() {
     Response response = service("searchservice").log()
         .all()
-        .queryParam("key",searchserviceData.getSearchTerm())
+        .queryParam("key", searchserviceData.getSearchTerm())
         .get("/synonyms/find-by-key");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<SynonymsResponse>>() {
     });
   }
 
+  public ResponseApi<GdnRestSingleResponse<SynonymsResponse>> findByWrongKey() {
+    Response response = service("searchservice").log()
+        .all()
+        .queryParam("key", searchserviceData.getWrongname())
+        .get("/synonyms/find-by-key");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<SynonymsResponse>>() {
+    });
+  }
+
+  public ResponseApi<GdnRestListResponse<SynonymsResponse>> FindSynonymRequestByWord() {
+    Response response = service("searchservice").log()
+        .all()
+        .queryParam("word", searchserviceData.getSearchTerm())
+        .queryParam("page", searchserviceData.getPage())
+        .queryParam("size", searchserviceData.getSize())
+        .queryParam("status", searchserviceData.getPagenumberForIMlist())
+        .get("/synonyms/find");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<SynonymsResponse>>() {
+    });
+  }
+
+  public ResponseApi<GdnRestListResponse<SynonymsResponse>> FindSynonymRequestByWrongWord() {
+    Response response = service("searchservice").log()
+        .all()
+        .queryParam("word", searchserviceData.getWrongword())
+        .queryParam("page", searchserviceData.getPage())
+        .queryParam("size", searchserviceData.getSize())
+        .queryParam("status", searchserviceData.getPagenumberForIMlist())
+        .get("/synonyms/find");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<SynonymsResponse>>() {
+    });
+  }
+
+  public ResponseApi<GdnRestListResponse<SynonymsResponse>> listSynonyms() {
+    Response response = service("searchservice").log()
+        .all()
+        .queryParam("page", searchserviceData.getPage())
+        .queryParam("size", searchserviceData.getSize())
+        .queryParam("status", searchserviceData.getPagenumberForIMlist())
+        .get("/synonyms/list");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<SynonymsResponse>>() {
+    });
+  }
+
+  public ResponseApi<GdnBaseRestResponse> BodyOfDeleteSynonym() {
+    String BodyTemplate = "{\n" + "  \"id\": \"{{id}}\",\n" + "  \"key\": \"{{key}}\",\n"
+        + "  \"synonyms\": \"{{synonyms}}\"\n" + "}";
+    HashMap<String, String> data = new HashMap<>();
+    data.put("id", searchserviceData.getAutoSynonymnId());
+    data.put("key", searchserviceData.getSearchTerm());
+    data.put("synonyms", searchserviceData.getSynonyms());
+    String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
+    System.out.println(
+        "___________________________BODYREQUEST___________________________" + bodyRequest);
+    Response response =
+        service("searchservice").log().all().body(bodyRequest).post("/synonyms/delete");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+
+  public ResponseApi<GdnBaseRestResponse> deleteSynonymFromSolr() {
+    Response response = service("searchservice").log()
+        .all()
+        .queryParam("key", searchserviceData.getSearchTerm())
+        .delete("/integration/delete");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+
+  public ResponseApi<GdnBaseRestResponse> updateSynonymFromSolr() {
+    Response response = service("searchservice").log()
+        .all()
+        .queryParam("updateAll", searchserviceData.getWrongword())
+        .post("/integration/update");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+
+  public ResponseApi<GdnBaseRestResponse> BodyOfSaveStopword() {
+    String BodyTemplate =
+        "{\n" + "  \"stopWord\": \"{{stopWord}}\",\n" + "  \"groupName\": \"{{groupName}}\",\n" + "  \"sync\": \"{{sync}}\"\n" + "}";
+    HashMap<String, String> data = new HashMap<>();
+    data.put("stopWord", searchserviceData.getSearchTerm());
+    data.put("groupName", searchserviceData.getStopwordgroup());
+    data.put("sync", searchserviceData.getSync());
+    String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
+    System.out.println(
+        "___________________________BODYREQUEST___________________________" + bodyRequest);
+    Response response =
+        service("searchservice").log().all().body(bodyRequest).post("/stopword/save");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+
+  public ResponseApi<GdnRestListResponse<StopWordResponse>> findStopwordByword(){
+    Response response = service("searchservice").log()
+        .all()
+        .queryParam("word", searchserviceData.getSearchTerm())
+        .queryParam("page",searchserviceData.getPage())
+        .queryParam("size",searchserviceData.getSize())
+        .get("/stopword/find");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<StopWordResponse>>() {
+    });
+  }
+
+  public ResponseApi<GdnRestListResponse<StopWordResponse>> findStopwordByWrongword(){
+    Response response = service("searchservice").log()
+        .all()
+        .queryParam("word", searchserviceData.getWrongword())
+        .queryParam("page",searchserviceData.getPage())
+        .queryParam("size",searchserviceData.getSize())
+        .get("/stopword/find");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<StopWordResponse>>() {
+    });
+  }
+
+  public ResponseApi<GdnRestSingleResponse<StopWordResponse>> findStopwordByID(){
+    Response response = service("searchservice").log()
+        .all()
+        .queryParam("id", searchserviceData.getAutoStopwordID())
+        .get("/stopword/find-by-id");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<StopWordResponse>>() {
+    });
+  }
+
+  public ResponseApi<GdnRestSingleResponse<StopWordResponse>> findStopwordByWrongID(){
+    Response response = service("searchservice").log()
+        .all()
+        .queryParam("id", searchserviceData.getWrongid())
+        .get("/stopword/find-by-id");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<StopWordResponse>>() {
+    });
+  }
+
+  public ResponseApi<GdnRestListResponse<StopWordResponse>> listStopword(){
+    Response response = service("searchservice").log()
+        .all()
+        .queryParam("page",searchserviceData.getPage())
+        .queryParam("size",searchserviceData.getSize())
+        .get("/stopword/list");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<StopWordResponse>>() {
+    });
+  }
+
+  public ResponseApi<GdnBaseRestResponse> BodyOfUpdateStopword() {
+    String BodyTemplate =
+        "{\n" + "  \"id\": \"{{id}}\",\n" + "  \"stopWord\": \"{{stopWord}}\"\n" + "}";
+    HashMap<String, String> data = new HashMap<>();
+    data.put("stopWord", searchserviceData.getUpdateFeedValue());
+    data.put("id",searchserviceData.getAutoStopwordID());
+    String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
+    System.out.println(
+        "___________________________BODYREQUEST___________________________" + bodyRequest);
+    Response response =
+        service("searchservice").log().all().body(bodyRequest).post("/stopword/update");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+
+  public ResponseApi<GdnBaseRestResponse> BodyOfUpdateStopwordByWrongID() {
+    String BodyTemplate =
+        "{\n" + "  \"id\": \"{{id}}\",\n" + "  \"stopWord\": \"{{stopWord}}\"\n" + "}";
+    HashMap<String, String> data = new HashMap<>();
+    data.put("stopWord", searchserviceData.getUpdateFeedValue());
+    data.put("id",searchserviceData.getWrongid());
+    String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
+    System.out.println(
+        "___________________________BODYREQUEST___________________________" + bodyRequest);
+    Response response =
+        service("searchservice").log().all().body(bodyRequest).post("/stopword/update");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+
+  public ResponseApi<GdnBaseRestResponse> BodyOfDeleteStopword() {
+    String BodyTemplate =
+        "{\n" + "  \"id\": \"{{id}}\",\n" + "  \"stopWord\": \"{{stopWord}}\"\n" + "}";
+    HashMap<String, String> data = new HashMap<>();
+    data.put("stopWord", searchserviceData.getUpdateFeedValue());
+    data.put("id",searchserviceData.getAutoStopwordID());
+    String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
+    System.out.println(
+        "___________________________BODYREQUEST___________________________" + bodyRequest);
+    Response response =
+        service("searchservice").log().all().body(bodyRequest).post("/stopword/delete");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+
+  public ResponseApi<GdnBaseRestResponse> deleteStopwordIntegration() {
+    Response response = service("searchservice").log()
+        .all()
+        .queryParam("key", searchserviceData.getSearchTerm())
+        .delete("/integration/stopword/delete");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+
+  public ResponseApi<GdnBaseRestResponse> updateStopwordFromSolr() {
+    Response response = service("searchservice").log()
+        .all()
+        .queryParam("updateAll", searchserviceData.getWrongword())
+        .post("/integration/stopword/update");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
 }
