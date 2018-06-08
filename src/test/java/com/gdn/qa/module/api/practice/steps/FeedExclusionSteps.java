@@ -1,0 +1,248 @@
+package com.gdn.qa.module.api.practice.steps;
+
+import com.gdn.common.web.wrapper.response.GdnBaseRestResponse;
+import com.gdn.common.web.wrapper.response.GdnRestListResponse;
+import com.gdn.common.web.wrapper.response.GdnRestSingleResponse;
+import com.gdn.qa.automation.core.restassured.ResponseApi;
+import com.gdn.qa.module.api.practice.CucumberStepsDefinition;
+import com.gdn.qa.module.api.practice.api.services.SearchServiceController;
+import com.gdn.qa.module.api.practice.data.SearchServiceData;
+import com.gdn.qa.module.api.practice.properties.SearchServiceProperties;
+import com.gdn.x.search.rest.web.model.FeedExclusionEntityResponse;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
+import com.mongodb.MongoClientURI;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import org.bson.Document;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
+
+@CucumberStepsDefinition
+public class FeedExclusionSteps {
+  @Autowired
+  SearchServiceController searchServiceController;
+
+  @Autowired
+  SearchServiceProperties searchserviceProperties;
+
+  @Autowired
+  SearchServiceData searchserviceData;
+
+
+  @Given("^\\[search-service] prepare save feed exclusion using properties using properties data$")
+  public void searchServicePrepareSaveFeedExclusionUsingPropertiesUsingPropertiesData() {
+    searchserviceData.setFeedKey(searchserviceProperties.get("feedKey"));
+    searchserviceData.setFeedType(searchserviceProperties.get("feedType"));
+    searchserviceData.setFeedValue(searchserviceProperties.get("feedValue"));
+    //searchserviceData.setPositiveFilter(searchserviceProperties.get("positiveFilter"));
+  }
+
+  @When("^\\[search-service] send save feed exclusion request$")
+  public void searchServiceSendSaveFeedExclusionRequest() {
+    ResponseApi<GdnBaseRestResponse> response =
+        searchServiceController.BodyOfFeedExclusionSaveRequest();
+    searchserviceData.setSearchServiceResponse(response);
+  }
+
+  @Then("^\\[search-service] save feed exclusion request response success should be '(.*)'$")
+  public void searchServiceSaveFeedExclusionRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
+    ResponseApi<GdnBaseRestResponse> response = searchserviceData.getSearchServiceResponse();
+    boolean result = response.getResponseBody().isSuccess();
+    assertThat("is Success is wrong", result, equalTo(isSuccess));
+  }
+
+
+  @Given("^\\[search-service] prepare find feed exclusion using properties using properties data$")
+  public void searchServicePrepareFindFeedExclusionUsingPropertiesUsingPropertiesData() {
+    searchserviceData.setFeedValue(searchserviceProperties.get("feedValue"));
+    searchserviceData.setPage(searchserviceProperties.get("page"));
+    searchserviceData.setSize(searchserviceProperties.get("size"));
+  }
+
+  @When("^\\[search-service] send find feed exclusion request$")
+  public void searchServiceSendFindFeedExclusionRequest() {
+    ResponseApi<GdnRestListResponse<FeedExclusionEntityResponse>> response =
+        searchServiceController.findFeedByWord();
+    searchserviceData.setFindFeedRequest(response);
+  }
+
+  @Then("^\\[search-service] find feed exclusion request response success should be '(.*)'$")
+  public void searchServiceFindFeedExclusionRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
+    ResponseApi<GdnRestListResponse<FeedExclusionEntityResponse>> response =
+        searchserviceData.getFindFeedRequest();
+    boolean result = response.getResponseBody().isSuccess();
+
+    String autoFeedId = response.getResponseBody().getContent().get(0).getId();
+    System.out.println(autoFeedId);
+    searchserviceData.setAutoFeedId(autoFeedId);
+    assertThat("is Success is wrong", result, equalTo(isSuccess));
+  }
+
+  @Given("^\\[search-service] prepare find feed exclusion By ID using properties using properties data$")
+  public void searchServicePrepareFindFeedExclusionByIDUsingPropertiesUsingPropertiesData() {
+    searchserviceData.setAutoFeedId(searchserviceData.getAutoFeedId());
+  }
+
+  @When("^\\[search-service] send find feed exclusion by ID request$")
+  public void searchServiceSendFindFeedExclusionByIDRequest() {
+    ResponseApi<GdnRestSingleResponse<FeedExclusionEntityResponse>> response =
+        searchServiceController.findFeedByID();
+    searchserviceData.setFindFeedByIdRequest(response);
+  }
+
+  @Then("^\\[search-service] find feed exclusion request by ID response success should be true$")
+  public void searchServiceFindFeedExclusionRequestByIDResponseSuccessShouldBeTrue() {
+    ResponseApi<GdnRestSingleResponse<FeedExclusionEntityResponse>> response =
+        searchserviceData.getFindFeedByIdRequest();
+    assertThat(response.getResponseBody().getValue().getValue(), equalTo("bag"));
+    assertThat(response.getResponseBody().getValue().getFeedType(), equalToIgnoringCase("google"));
+    assertThat(response.getResponseBody().getValue().getKey(), equalTo("nameSearch"));
+  }
+
+  @Given("^\\[search-service] prepare update feed exclusion using properties using properties data$")
+  public void searchServicePrepareUpdateFeedExclusionUsingPropertiesUsingPropertiesData() {
+    searchserviceData.setAutoFeedId(searchserviceData.getAutoFeedId());
+    searchserviceData.setFeedKey(searchserviceProperties.get("feedKey"));
+    searchserviceData.setUpdateFeedValue(searchserviceProperties.get("updatedFeedValue"));
+    searchserviceData.setFeedType(searchserviceProperties.get("feedType"));
+    //.setPositiveFilter(searchserviceProperties.get("positiveFilter"));
+  }
+
+  @When("^\\[search-service] send update feed exclusion by ID request$")
+  public void searchServiceSendUpdateFeedExclusionByIDRequest() {
+    ResponseApi<GdnBaseRestResponse> response =
+        searchServiceController.BodyOfFeedExclusionUpdateRequest();
+    searchserviceData.setSearchServiceResponse(response);
+  }
+
+  @Then("^\\[search-service] update feed exclusion request response success should be '(.*)'$")
+  public void searchServiceUpdateFeedExclusionRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
+    ResponseApi<GdnBaseRestResponse> response = searchserviceData.getSearchServiceResponse();
+    boolean result = response.getResponseBody().isSuccess();
+    assertThat("is Success is wrong", result, equalTo(isSuccess));
+  }
+
+  @Given("^\\[search-service] prepare find feed exclusion list using properties using properties data$")
+  public void searchServicePrepareFindFeedExclusionListUsingPropertiesUsingPropertiesData() {
+    searchserviceData.setPage(searchserviceProperties.get("page"));
+    searchserviceData.setSize(searchserviceProperties.get("size"));
+  }
+
+  @When("^\\[search-service] send find feed exclusion list$")
+  public void searchServiceSendFindFeedExclusionList() {
+    ResponseApi<GdnRestListResponse<FeedExclusionEntityResponse>> response =
+        searchServiceController.ListAllFeedExclusions();
+    searchserviceData.setFindFeedRequest(response);
+  }
+
+  @Then("^\\[search-service] find feed exclusion list request response success should be true$")
+  public void searchServiceFindFeedExclusionListRequestResponseSuccessShouldBeTrue() {
+    ResponseApi<GdnRestListResponse<FeedExclusionEntityResponse>> response =
+        searchserviceData.getFindFeedRequest();
+    MongoClientURI uri =
+        new MongoClientURI("mongodb://search:search@mongodb-01.uata.lokal:27017/x_search");
+    MongoClient mongoClient = new MongoClient(uri);
+    MongoClientOptions.Builder optionsBuilder = MongoClientOptions.builder();
+    optionsBuilder.connectTimeout(30000);
+    MongoDatabase db = mongoClient.getDatabase("x_search");
+    MongoCollection<Document> collection = db.getCollection("feed_exclusion_list");
+    long totalCount = collection.count();
+    System.out.println("----------------------------Total documents------------" + totalCount);
+    assertThat(response.getResponseBody().getPageMetaData().getTotalRecords(), equalTo(totalCount));
+  }
+
+
+  @Given("^\\[search-service] prepare delete feed exclusion using properties using properties data$")
+  public void searchServicePrepareDeleteFeedExclusionUsingPropertiesUsingPropertiesData() {
+    searchserviceData.setAutoFeedId(searchserviceData.getAutoFeedId());
+    searchserviceData.setFeedKey(searchserviceProperties.get("feedKey"));
+    searchserviceData.setUpdateFeedValue(searchserviceProperties.get("updatedFeedValue"));
+    searchserviceData.setFeedType(searchserviceProperties.get("feedType"));
+    // searchserviceData.setPositiveFilter(searchserviceProperties.get("positiveFilter"));
+  }
+
+  @When("^\\[search-service] send delete feed exclusion by ID request$")
+  public void searchServiceSendDeleteFeedExclusionByIDRequest() {
+    ResponseApi<GdnBaseRestResponse> response =
+        searchServiceController.BodyOfFeedExclusionDeleteRequest();
+    searchserviceData.setSearchServiceResponse(response);
+  }
+
+  @Then("^\\[search-service] delete feed exclusion request response success should be '(.*)'$")
+  public void searchServiceDeleteFeedExclusionRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
+    ResponseApi<GdnBaseRestResponse> response = searchserviceData.getSearchServiceResponse();
+    boolean result = response.getResponseBody().isSuccess();
+    assertThat("is Success is wrong", result, equalTo(isSuccess));
+  }
+
+  @Given("^\\[search-service] prepare find feed exclusion which is not present in the db$")
+  public void searchServicePrepareFindFeedExclusionWhichIsNotPresentInTheDb() {
+    searchserviceData.setWrongword(searchserviceProperties.get("wrongword"));
+    searchserviceData.setPage(searchserviceProperties.get("page"));
+    searchserviceData.setSize(searchserviceProperties.get("size"));
+  }
+
+  @When("^\\[search-service] send find feed exclusion request for feed which is absent in db$")
+  public void searchServiceSendFindFeedExclusionRequestForFeedWhichIsAbsentInDb() {
+    ResponseApi<GdnRestListResponse<FeedExclusionEntityResponse>> response =
+        searchServiceController.findFeedByWrongWord();
+    searchserviceData.setFindFeedRequest(response);
+  }
+
+  @Then("^\\[search-service] check find feed exclusion request response when feed is not present$")
+  public void searchServiceCheckFindFeedExclusionRequestResponseWhenFeedIsNotPresent() {
+    ResponseApi<GdnRestListResponse<FeedExclusionEntityResponse>> response =
+        searchserviceData.getFindFeedRequest();
+    assertThat(response.getResponseBody().getErrorCode(), equalTo(null));
+  }
+
+  @Given("^\\[search-service] prepare find feed exclusion By wrong ID request$")
+  public void searchServicePrepareFindFeedExclusionByWrongIDRequest() {
+    searchserviceData.setWrongid(searchserviceProperties.get("wrongid"));
+  }
+
+  @When("^\\[search-service] send find feed exclusion by wrong ID request$")
+  public void searchServiceSendFindFeedExclusionByWrongIDRequest() {
+    ResponseApi<GdnRestSingleResponse<FeedExclusionEntityResponse>> response =
+        searchServiceController.findFeedByWrongID();
+    searchserviceData.setFindFeedByIdRequest(response);
+  }
+
+  @Then("^\\[search-service] find feed exclusion request by wrong ID response$")
+  public void searchServiceFindFeedExclusionRequestByWrongIDResponse() {
+    ResponseApi<GdnRestSingleResponse<FeedExclusionEntityResponse>> response =
+        searchserviceData.getFindFeedByIdRequest();
+    assertThat(response.getResponseBody().getErrorCode(), equalTo("500"));
+    assertThat(response.getResponseBody().getErrorMessage(), equalTo("DATA_NOT_FOUND"));
+  }
+
+  @Given("^\\[search-service] prepare update feed exclusion by providing wrong ID$")
+  public void searchServicePrepareUpdateFeedExclusionByProvidingWrongID() {
+    searchserviceData.setWrongid(searchserviceProperties.get("wrongid"));
+    searchserviceData.setFeedKey(searchserviceProperties.get("feedKey"));
+    searchserviceData.setFeedValue(searchserviceProperties.get("feedValue"));
+    searchserviceData.setFeedType(searchserviceProperties.get("feedType"));
+  }
+
+  @When("^\\[search-service] send update feed exclusion by wrong ID request$")
+  public void searchServiceSendUpdateFeedExclusionByWrongIDRequest() {
+    ResponseApi<GdnBaseRestResponse> response =
+        searchServiceController.BodyOfFeedExclusionUpdateRequestWithWrongID();
+    searchserviceData.setSearchServiceResponse(response);
+  }
+
+  @Then("^\\[search-service] update feed exclusion request response by providing wrong ID$")
+  public void searchServiceUpdateFeedExclusionRequestResponseByProvidingWrongID() {
+    ResponseApi<GdnBaseRestResponse> response = searchserviceData.getSearchServiceResponse();
+    assertThat(response.getResponseBody().getErrorMessage(), equalTo("Can not find data :"));
+    assertThat(response.getResponseBody().getErrorCode(), equalTo("500"));
+  }
+}
+
