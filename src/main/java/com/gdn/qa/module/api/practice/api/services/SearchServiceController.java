@@ -449,8 +449,6 @@ public class SearchServiceController extends ServiceApi {
     data.put("feedType", searchServiceData.getFeedType());
     //   data.put("positiveType",searchserviceData.getPositiveFilter());
     String bodyRequest = templateAPI.createFromString(Bodytemplate, data);
-    System.out.println(
-        "___________________________BODYREQUEST___________________________" + bodyRequest);
     Response response = service("searchservice").log()
         .all()
         .body(bodyRequest)
@@ -469,8 +467,6 @@ public class SearchServiceController extends ServiceApi {
     data.put("value", searchServiceData.getFeedValue());
     data.put("feedType", searchServiceData.getFeedType());
     String bodyRequest = templateAPI.createFromString(Bodytemplate, data);
-    System.out.println(
-        "___________________________BODYREQUEST___________________________" + bodyRequest);
     Response response = service("searchservice").log()
         .all()
         .body(bodyRequest)
@@ -988,8 +984,6 @@ public class SearchServiceController extends ServiceApi {
     data.put("stopWord", searchServiceData.getUpdateFeedValue());
     data.put("id",searchServiceData.getAutoStopwordID());
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
-    System.out.println(
-        "___________________________BODYREQUEST___________________________" + bodyRequest);
     Response response =
         service("searchservice").log().all().body(bodyRequest).post("/stopword/update");
     response.getBody().prettyPrint();
@@ -1004,8 +998,6 @@ public class SearchServiceController extends ServiceApi {
     data.put("stopWord", searchServiceData.getUpdateFeedValue());
     data.put("id",searchServiceData.getWrongid());
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
-    System.out.println(
-        "___________________________BODYREQUEST___________________________" + bodyRequest);
     Response response =
         service("searchservice").log().all().body(bodyRequest).post("/stopword/update");
     response.getBody().prettyPrint();
@@ -1020,8 +1012,6 @@ public class SearchServiceController extends ServiceApi {
     data.put("stopWord", searchServiceData.getUpdateFeedValue());
     data.put("id",searchServiceData.getAutoStopwordID());
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
-    System.out.println(
-        "___________________________BODYREQUEST___________________________" + bodyRequest);
     Response response =
         service("searchservice").log().all().body(bodyRequest).post("/stopword/delete");
     response.getBody().prettyPrint();
@@ -1179,7 +1169,6 @@ public class SearchServiceController extends ServiceApi {
 
   public ResponseApi<GdnRestSingleResponse> bodyOfRequestOfValidateID(String incorrectID,String correctID) {
     String Bodytemplate="[\""+correctID+"\",\""+incorrectID+"\"]";
-    System.out.println("-------------------------------Body-----------------------------"+Bodytemplate);
    Response response=service("searchservice").body(Bodytemplate).post("/keywordBoost/validate");
    response.getBody().prettyPrint();
    return jsonApi.fromJson(response,new TypeReference<GdnRestSingleResponse>(){
@@ -1323,7 +1312,6 @@ public class SearchServiceController extends ServiceApi {
   }
   public ResponseApi<GdnRestSingleResponse<ProductResponse>> bodyOfRequestToQueryWithProductID(String correctID) {
     String Bodytemplate="{\n" + "  \"value\": [\n" + "    \""+correctID+"\"\n" + "  ]\n" + "}";
-    System.out.println("-------------------------------Body-----------------------------"+Bodytemplate);
     Response response=service("searchservice").body(Bodytemplate).post("/product");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,new TypeReference<GdnRestSingleResponse<ProductResponse>>(){

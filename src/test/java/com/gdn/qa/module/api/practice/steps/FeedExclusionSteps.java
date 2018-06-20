@@ -79,7 +79,6 @@ public class FeedExclusionSteps {
     boolean result = response.getResponseBody().isSuccess();
 
     String autoFeedId = response.getResponseBody().getContent().get(0).getId();
-    System.out.println(autoFeedId);
     searchServiceData.setAutoFeedId(autoFeedId);
     assertThat("is Success is wrong", result, equalTo(isSuccess));
   }
@@ -154,7 +153,6 @@ public class FeedExclusionSteps {
     MongoDatabase db = mongoClient.getDatabase(searchServiceData.getMongoDB());
     MongoCollection<Document> collection = db.getCollection("feed_exclusion_list");
     long totalCount = collection.count();
-    System.out.println("----------------------------Total documents------------" + totalCount);
     assertThat(response.getResponseBody().getPageMetaData().getTotalRecords(), equalTo(totalCount));
   }
 

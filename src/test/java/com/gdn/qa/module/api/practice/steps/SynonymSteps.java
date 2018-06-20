@@ -160,8 +160,6 @@ public class SynonymSteps {
     MongoDatabase db = mongoClient.getDatabase(searchServiceData.getMongoDB());
     MongoCollection<Document> collection = db.getCollection("synonyms_list");
     long totalCount = collection.count();
-    System.out.println(
-        collection.count() + "__________________NUMBER FROM DB_______________________________");
     assertThat(totalCount, equalTo(response.getResponseBody().getPageMetaData().getTotalRecords()));
   }
 

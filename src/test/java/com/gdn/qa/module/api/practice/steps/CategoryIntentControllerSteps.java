@@ -127,7 +127,6 @@ public class CategoryIntentControllerSteps {
     MongoDatabase db = mongoClient.getDatabase(searchServiceData.getMongoDB());
     MongoCollection<Document> collection = db.getCollection("category_intent");
     long totalCount = collection.count();
-    System.out.println("----------------------------Total documents------------" + totalCount);
     assertThat(response.getResponseBody().getPageMetaData().getTotalRecords(), equalTo(totalCount));
 
   }

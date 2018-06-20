@@ -92,8 +92,6 @@ public class KeywordSteps {
     BasicDBObject whereQuery = new BasicDBObject();
     whereQuery.put("STORE_ID", "10001");
     long totalCount = collection.count(whereQuery);
-    System.out.println(
-        collection.count() + "__________________NUMBER FROM DB_______________________________");
     assertThat(totalCount, equalTo(response.getResponseBody().getPageMetaData().getTotalRecords()));
 
   }
@@ -124,9 +122,6 @@ public class KeywordSteps {
     searchServiceData.setAutoKeywordId(autoKeywordId);
     Date autoUpdatedDate = response.getResponseBody().getValue().getUpdatedDate();
     searchServiceData.setAutoUpdatedDate(autoUpdatedDate);
-    System.out.println(
-        "------------------------------------------------------ID----------------------------------"
-            + autoKeywordId);
 
   }
 
@@ -157,8 +152,6 @@ public class KeywordSteps {
 
   @Given("^\\[search-service] prepare request to get keyword find by date$")
   public void searchServicePrepareRequestToGetKeywordFindByDate() {
-    System.out.println("--------------------DATE--------------------------------"
-        + searchServiceData.getAutoUpdatedDate());
     searchServiceData.setAutoUpdatedDate(searchServiceData.getAutoUpdatedDate());
     searchServiceData.setCategoryProductName(searchServiceProperties.get("categoryProductName"));
     searchServiceData.setPage(searchServiceProperties.get("page"));

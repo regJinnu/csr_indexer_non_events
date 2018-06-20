@@ -168,9 +168,7 @@ public class ConfigSteps {
     ResponseApi<GdnRestSingleResponse<ConfigResponse>> response =
         searchServiceData.getFindByRequest();
     boolean result = response.getResponseBody().isSuccess();
-    System.out.println("__________________________SuccessCode_____________________" + result);
     assertThat("is Success is wrong", result, equalTo(isSuccess));
-    System.out.println("-----------------Value--------------" + response.getResponseBody());
 
 
   }
@@ -196,8 +194,6 @@ public class ConfigSteps {
   public void searchServiceGetConfigListByRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
     ResponseApi<GdnRestListResponse<ConfigResponse>> response =
         searchServiceData.getFindByListRequest();
-    System.out.println(
-        "----------------------------Response----------------------------" + response);
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
     MongoClientURI uri =
@@ -210,9 +206,7 @@ public class ConfigSteps {
     BasicDBObject whereQuery = new BasicDBObject();
     whereQuery.put("STORE_ID", "10001");
     long totalCount = collection.count(whereQuery);
-    System.out.println("----------------------------Total documents------------" + totalCount);
     assertThat(response.getResponseBody().getPageMetaData().getTotalRecords(), equalTo(totalCount));
-    System.out.println("__________________________SuccessCode_____________________" + result);
   }
 
 

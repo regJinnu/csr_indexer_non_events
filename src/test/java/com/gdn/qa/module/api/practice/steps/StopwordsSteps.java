@@ -129,8 +129,6 @@ public class StopwordsSteps {
         MongoDatabase db = mongoClient.getDatabase(searchServiceData.getMongoDB());
         MongoCollection<Document> collection = db.getCollection("stopword_list");
         long totalCount = collection.count();
-        System.out.println(
-            collection.count() + "__________________NUMBER FROM DB_______________________________");
         assertThat(totalCount, equalTo(response.getResponseBody().getPageMetaData().getTotalRecords()));
   }
 
