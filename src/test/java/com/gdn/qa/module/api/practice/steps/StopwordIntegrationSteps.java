@@ -17,30 +17,30 @@ import static org.hamcrest.Matchers.equalTo;
 @CucumberStepsDefinition
 public class StopwordIntegrationSteps {
   @Autowired
-  SearchServiceController searchServiceController;
+  private SearchServiceController searchServiceController;
 
   @Autowired
-  SearchServiceProperties searchserviceProperties;
+ private SearchServiceProperties searchServiceProperties;
 
   @Autowired
-  SearchServiceData searchserviceData;
+  private SearchServiceData searchServiceData;
 
   @Given("^\\[search-service] prepare delete stopword integration using properties using properties data$")
   public void searchServicePrepareDeleteStopwordIntegrationUsingPropertiesUsingPropertiesData()
   {
-    searchserviceData.setSearchTerm(searchserviceProperties.get("searchTerm"));
+    searchServiceData.setSearchTerm(searchServiceProperties.get("searchTerm"));
   }
 
   @When("^\\[search-service] send delete stopword integration request$")
   public void searchServiceSendDeleteStopwordIntegrationRequest()  {
     ResponseApi<GdnBaseRestResponse> response = searchServiceController.deleteStopwordIntegration();
-    searchserviceData.setSearchServiceResponse(response);
+    searchServiceData.setSearchServiceResponse(response);
   }
 
   @Then("^\\[search-service] delete stopword integration request response success should be '(.*)'$")
   public void searchServiceDeleteStopwordIntegrationRequestResponseSuccessShouldBeTrue(Boolean isSuccess)
   {
-    ResponseApi<GdnBaseRestResponse> response = searchserviceData.getSearchServiceResponse();
+    ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
   }
@@ -55,12 +55,12 @@ public class StopwordIntegrationSteps {
   public void searchServiceSendUpdateStopwordIntegrationRequest() {
     ResponseApi<GdnBaseRestResponse> response =
         searchServiceController.updateStopwordFromSolr();
-    searchserviceData.setSearchServiceResponse(response);
+    searchServiceData.setSearchServiceResponse(response);
   }
 
   @Then("^\\[search-service] update stopword integration request response success should be '(.*)'$")
   public void searchServiceUpdateStopwordIntegrationRequestResponseSuccessShouldBeTrue(Boolean isSuccess)
-  { ResponseApi<GdnBaseRestResponse> response = searchserviceData.getSearchServiceResponse();
+  { ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
   }

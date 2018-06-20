@@ -63,22 +63,38 @@ public class SearchServiceData {
   private String stopwordgroup;
   private String sync;
   private String autoStopwordID;
-  private ResponseApi<GdnBaseRestResponse> SearchServiceResponse;
-  private ResponseApi<GdnRestSingleResponse<ConfigResponse>> FindByRequest;
-  private ResponseApi<GdnRestListResponse<ConfigResponse>> FindByListRequest;
-  private ResponseApi<GdnRestSingleResponse<CategoryIntentResponse>> FindByCategoryIdResponse;
-  private ResponseApi<GdnRestListResponse<CategoryIntentResponse>> FindCategoryIntentList;
+  private String setConfig;
+  private String fieldName;
+  private String autoBoostedKeywordID;
+  private String productID;
+  private String pathForBoostedKeyword;
+  private String validate;
+  private String wrongFile;
+  private String queryType;
+  private String className;
+  private String mongoValue;
+  private String key;
+  private ResponseApi<GdnRestSingleResponse> validateID;
+  private ResponseApi<GdnBaseRestResponse> searchServiceResponse;
+  private ResponseApi<GdnRestSingleResponse<ConfigResponse>> findByRequest;
+  private ResponseApi<GdnRestListResponse<ConfigResponse>> findByListRequest;
+  private ResponseApi<GdnRestSingleResponse<CategoryIntentResponse>> findByCategoryIdResponse;
+  private ResponseApi<GdnRestListResponse<CategoryIntentResponse>> findCategoryIntentList;
   private ResponseApi<GdnRestSingleResponse<SearchTermCategoryClickThroughResponse>>
       categoryClickThroughResponse;
-  private ResponseApi<GdnRestListResponse<FeedExclusionEntityResponse>> FindFeedRequest;
-  private ResponseApi<GdnRestSingleResponse<FeedExclusionEntityResponse>> FindFeedByIdRequest;
+  private ResponseApi<GdnRestListResponse<FeedExclusionEntityResponse>> findFeedRequest;
+  private ResponseApi<GdnRestSingleResponse<FeedExclusionEntityResponse>> findFeedByIdRequest;
   private ResponseApi<GdnRestListResponse<KeywordResponse>> listOfKeywordsRequest;
-  private ResponseApi<GdnRestSingleResponse<KeywordResponse>> FindKeywordRequest;
-  private ResponseApi<GdnRestSingleResponse<ValidateIdAndGetNameResponse>> ValidateIdAndGetName;
-  private ResponseApi<GdnRestSingleResponse<SynonymsResponse>> FindSynonym;
-  private ResponseApi<GdnRestListResponse<SynonymsResponse>> FindSynonymnByWord;
-  private ResponseApi<GdnRestListResponse<StopWordResponse>> FindStopword;
-  private ResponseApi<GdnRestSingleResponse<StopWordResponse>> FindStopWordByID;
+  private ResponseApi<GdnRestSingleResponse<KeywordResponse>> findKeywordRequest;
+  private ResponseApi<GdnRestSingleResponse<ValidateIdAndGetNameResponse>> validateIdAndGetName;
+  private ResponseApi<GdnRestSingleResponse<SynonymsResponse>> findSynonym;
+  private ResponseApi<GdnRestListResponse<SynonymsResponse>> findSynonymnByWord;
+  private ResponseApi<GdnRestListResponse<StopWordResponse>> findStopword;
+  private ResponseApi<GdnRestSingleResponse<StopWordResponse>> findStopWordByID;
+  private ResponseApi<GdnRestSingleResponse<SetConfigResponse>> setConfigResponse;
+  private ResponseApi<GdnRestListResponse<KeywordBoostProductResponse>> findBoostedKeyword;
+  private ResponseApi<GdnRestSingleResponse<KeywordBoostProductResponse>> findBoostedKeywordByID;
+  private ResponseApi<GdnRestSingleResponse<ProductResponse>> findDataByProductID;
 
 }
 

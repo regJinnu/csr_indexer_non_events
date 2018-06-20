@@ -28,13 +28,13 @@ import static org.hamcrest.Matchers.equalToIgnoringCase;
 @CucumberStepsDefinition
 public class SynonymSteps {
   @Autowired
-  SearchServiceController searchServiceController;
+  private SearchServiceController searchServiceController;
 
   @Autowired
-  SearchServiceProperties searchserviceProperties;
+ private SearchServiceProperties searchServiceProperties;
 
   @Autowired
-  SearchServiceData searchserviceData;
+ private SearchServiceData searchServiceData;
 
   @Given("^\\[search-service] prepare create synonym using properties using properties data$")
   public void searchServicePrepareCreateSynonymUsingPropertiesUsingPropertiesData() {
@@ -43,12 +43,12 @@ public class SynonymSteps {
   @When("^\\[search-service] send create synonym request$")
   public void searchServiceSendCreateSynonymRequest() {
     ResponseApi<GdnBaseRestResponse> response = searchServiceController.generateSynonyms();
-    searchserviceData.setSearchServiceResponse(response);
+    searchServiceData.setSearchServiceResponse(response);
   }
 
   @Then("^\\[search-service] create synonym request response success should be '(.*)'$")
   public void searchServiceCreateSynonymRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
-    ResponseApi<GdnBaseRestResponse> response = searchserviceData.getSearchServiceResponse();
+    ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
     assertThat(response.getResponseBody().getErrorMessage(),
@@ -57,25 +57,23 @@ public class SynonymSteps {
 
   @Given("^\\[search-service] prepare find synonym by key using properties using properties data$")
   public void searchServicePrepareFindSynonymByKeyUsingPropertiesUsingPropertiesData() {
-    searchserviceData.setSearchTerm(searchserviceProperties.get("searchTerm"));
+    searchServiceData.setSearchTerm(searchServiceProperties.get("searchTerm"));
   }
 
   @When("^\\[search-service] send find synonym by key request$")
   public void searchServiceSendFindSynonymByKeyRequest() {
     ResponseApi<GdnRestSingleResponse<SynonymsResponse>> response =
         searchServiceController.findByKey();
-    searchserviceData.setFindSynonym(response);
+    searchServiceData.setFindSynonym(response);
   }
 
   @Then("^\\[search-service] find synonym by key request response success should be '(.*)'$")
   public void searchServiceFindSynonymByKeyRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
     ResponseApi<GdnRestSingleResponse<SynonymsResponse>> response =
-        searchserviceData.getFindSynonym();
+        searchServiceData.getFindSynonym();
     boolean result = response.getResponseBody().isSuccess();
     String autoSynonymnId = response.getResponseBody().getValue().getId();
-    searchserviceData.setAutoSynonymnId(autoSynonymnId);
-    System.out.println(
-        "-------------------------------ID-------------------------------" + autoSynonymnId);
+    searchServiceData.setAutoSynonymnId(autoSynonymnId);
     assertThat("is Success is wrong", result, equalTo(isSuccess));
     assertThat(response.getResponseBody().getValue().getKey(), equalToIgnoringCase("testingapi"));
     assertThat(response.getResponseBody().getValue().getSynonyms(),
@@ -86,22 +84,20 @@ public class SynonymSteps {
 
   @Given("^\\[search-service] prepare find synonym by ID using properties using properties data$")
   public void searchServicePrepareFindSynonymByIDUsingPropertiesUsingPropertiesData() {
-    System.out.println(
-        "--------------ID----------------------" + searchserviceData.getAutoSynonymnId());
-    searchserviceData.setAutoSynonymnId(searchserviceData.getAutoSynonymnId());
+    searchServiceData.setAutoSynonymnId(searchServiceData.getAutoSynonymnId());
   }
 
   @When("^\\[search-service] send find synonym by ID request$")
   public void searchServiceSendFindSynonymByIDRequest() {
     ResponseApi<GdnRestSingleResponse<KeywordResponse>> response =
-        searchServiceController.FindSynonymRequestByID();
-    searchserviceData.setFindKeywordRequest(response);
+        searchServiceController.findSynonymRequestByID();
+    searchServiceData.setFindKeywordRequest(response);
   }
 
   @Then("^\\[search-service] find synonym by ID request response success should be '(.*)'$")
   public void searchServiceFindSynonymByIDRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
     ResponseApi<GdnRestSingleResponse<KeywordResponse>> response =
-        searchserviceData.getFindKeywordRequest();
+        searchServiceData.getFindKeywordRequest();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
     //assertThat(response.getResponseBody().getValue().get);
@@ -109,24 +105,24 @@ public class SynonymSteps {
 
   @Given("^\\[search-service] prepare find synonym using properties using properties data$")
   public void searchServicePrepareFindSynonymUsingPropertiesUsingPropertiesData() {
-    searchserviceData.setSearchTerm(searchserviceProperties.get("searchTerm"));
-    searchserviceData.setPage(searchserviceProperties.get("page"));
-    searchserviceData.setSize(searchserviceProperties.get("size"));
-    searchserviceData.setPagenumberForIMlist(searchserviceProperties.get("pagenumberForIMlist"));
+    searchServiceData.setSearchTerm(searchServiceProperties.get("searchTerm"));
+    searchServiceData.setPage(searchServiceProperties.get("page"));
+    searchServiceData.setSize(searchServiceProperties.get("size"));
+    searchServiceData.setPagenumberForIMlist(searchServiceProperties.get("pagenumberForIMlist"));
 
   }
 
   @When("^\\[search-service] send find synonym  request$")
   public void searchServiceSendFindSynonymRequest() {
     ResponseApi<GdnRestListResponse<SynonymsResponse>> response =
-        searchServiceController.FindSynonymRequestByWord();
-    searchserviceData.setFindSynonymnByWord(response);
+        searchServiceController.findSynonymRequestByWord();
+    searchServiceData.setFindSynonymnByWord(response);
   }
 
   @Then("^\\[search-service] find synonym request response success should be '(.*)'$")
   public void searchServiceFindSynonymRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
     ResponseApi<GdnRestListResponse<SynonymsResponse>> response =
-        searchserviceData.getFindSynonymnByWord();
+        searchServiceData.getFindSynonymnByWord();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
     assertThat(response.getResponseBody().getContent().get(0).getKey(),
@@ -137,31 +133,31 @@ public class SynonymSteps {
 
   @Given("^\\[search-service] prepare list synonym using properties using properties data$")
   public void searchServicePrepareListSynonymUsingPropertiesUsingPropertiesData() {
-    searchserviceData.setPage(searchserviceProperties.get("page"));
-    searchserviceData.setSize(searchserviceProperties.get("size"));
-    searchserviceData.setPagenumberForIMlist(searchserviceProperties.get("pagenumberForIMlist"));
-    searchserviceData.setMongoURL(searchserviceProperties.get("mongoURL"));
-    searchserviceData.setMongoDB(searchserviceProperties.get("mongoDB"));
+    searchServiceData.setPage(searchServiceProperties.get("page"));
+    searchServiceData.setSize(searchServiceProperties.get("size"));
+    searchServiceData.setPagenumberForIMlist(searchServiceProperties.get("pagenumberForIMlist"));
+    searchServiceData.setMongoURL(searchServiceProperties.get("mongoURL"));
+    searchServiceData.setMongoDB(searchServiceProperties.get("mongoDB"));
   }
 
   @When("^\\[search-service] send list synonym  request$")
   public void searchServiceSendListSynonymRequest() {
     ResponseApi<GdnRestListResponse<SynonymsResponse>> response =
         searchServiceController.listSynonyms();
-    searchserviceData.setFindSynonymnByWord(response);
+    searchServiceData.setFindSynonymnByWord(response);
   }
 
   @Then("^\\[search-service] find synonym list request response success should be '(.*)'$")
   public void searchServiceFindSynonymListRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
     ResponseApi<GdnRestListResponse<SynonymsResponse>> response =
-        searchserviceData.getFindSynonymnByWord();
+        searchServiceData.getFindSynonymnByWord();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
-    MongoClientURI uri = new MongoClientURI(searchserviceData.getMongoURL());
+    MongoClientURI uri = new MongoClientURI(searchServiceData.getMongoURL());
     MongoClient mongoClient = new MongoClient(uri);
     MongoClientOptions.Builder optionsBuilder = MongoClientOptions.builder();
     optionsBuilder.connectTimeout(30000);
-    MongoDatabase db = mongoClient.getDatabase(searchserviceData.getMongoDB());
+    MongoDatabase db = mongoClient.getDatabase(searchServiceData.getMongoDB());
     MongoCollection<Document> collection = db.getCollection("synonyms_list");
     long totalCount = collection.count();
     System.out.println(
@@ -171,20 +167,20 @@ public class SynonymSteps {
 
   @Given("^\\[search-service] prepare delete synonym request using properties using properties data$")
   public void searchServicePrepareDeleteSynonymRequestUsingPropertiesUsingPropertiesData() {
-    searchserviceData.setAutoSynonymnId(searchserviceData.getAutoSynonymnId());
-    searchserviceData.setSearchTerm(searchserviceProperties.get("searchTerm"));
-    searchserviceData.setSynonyms(searchserviceProperties.get("synonyms"));
+    searchServiceData.setAutoSynonymnId(searchServiceData.getAutoSynonymnId());
+    searchServiceData.setSearchTerm(searchServiceProperties.get("searchTerm"));
+    searchServiceData.setSynonyms(searchServiceProperties.get("synonyms"));
   }
 
   @When("^\\[search-service] send delete synonym  request$")
   public void searchServiceSendDeleteSynonymRequest() {
-    ResponseApi<GdnBaseRestResponse> response = searchServiceController.BodyOfDeleteSynonym();
-    searchserviceData.setSearchServiceResponse(response);
+    ResponseApi<GdnBaseRestResponse> response = searchServiceController.bodyOfDeleteSynonym();
+    searchServiceData.setSearchServiceResponse(response);
   }
 
   @Then("^\\[search-service] find synonym delete request response success should be '(.*)'$")
   public void searchServiceFindSynonymDeleteRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
-    ResponseApi<GdnBaseRestResponse> response = searchserviceData.getSearchServiceResponse();
+    ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
   }
@@ -192,21 +188,21 @@ public class SynonymSteps {
   @Given("^\\[search-service] prepare find synonym by wrong key using properties using properties data$")
   public void searchServicePrepareFindSynonymByWrongKeyUsingPropertiesUsingPropertiesData()
       {
-        searchserviceData.setWrongname(searchserviceProperties.get("wrongname"));
+        searchServiceData.setWrongname(searchServiceProperties.get("wrongname"));
   }
 
   @When("^\\[search-service] send find synonym by wrong  key request$")
   public void searchServiceSendFindSynonymByWrongKeyRequest() {
     ResponseApi<GdnRestSingleResponse<SynonymsResponse>> response =
         searchServiceController.findByWrongKey();
-    searchserviceData.setFindSynonym(response);
+    searchServiceData.setFindSynonym(response);
   }
 
   @Then("^\\[search-service] find synonym by wrong key request response success should be false$")
   public void searchServiceFindSynonymByWrongKeyRequestResponseSuccessShouldBeFalse()
   {
     ResponseApi<GdnRestSingleResponse<SynonymsResponse>> response =
-        searchserviceData.getFindSynonym();
+        searchServiceData.getFindSynonym();
    assertThat(response.getResponseBody().getErrorMessage(),equalToIgnoringCase("DATA_NOT_FOUND"));
    assertThat(response.getResponseBody().getErrorCode(),equalToIgnoringCase("empty data"));
   }
@@ -215,21 +211,21 @@ public class SynonymSteps {
   @Given("^\\[search-service] prepare find synonym by wrong ID using properties using properties data$")
   public void searchServicePrepareFindSynonymByWrongIDUsingPropertiesUsingPropertiesData()
        {
-         searchserviceData.setWrongid(searchserviceProperties.get("wrongid"));
+         searchServiceData.setWrongid(searchServiceProperties.get("wrongid"));
   }
 
   @When("^\\[search-service] send find synonym by wrong ID request$")
   public void searchServiceSendFindSynonymByWrongIDRequest() {
     ResponseApi<GdnRestSingleResponse<KeywordResponse>> response =
-        searchServiceController.FindSynonymRequestByWrongID();
-    searchserviceData.setFindKeywordRequest(response);
+        searchServiceController.findSynonymRequestByWrongID();
+    searchServiceData.setFindKeywordRequest(response);
   }
 
   @Then("^\\[search-service] find synonym by wrong ID request response success should be '(.*)'$")
   public void searchServiceFindSynonymByWrongIDRequestResponseSuccessShouldBeFalse(Boolean isSuccess)
      {
        ResponseApi<GdnRestSingleResponse<KeywordResponse>> response =
-           searchserviceData.getFindKeywordRequest();
+           searchServiceData.getFindKeywordRequest();
        boolean result = response.getResponseBody().isSuccess();
        assertThat("is Success is wrong", result, equalTo(isSuccess));
   }
@@ -237,24 +233,24 @@ public class SynonymSteps {
   @Given("^\\[search-service] prepare find synonym by wrong word using properties using properties data$")
   public void searchServicePrepareFindSynonymByWrongWordUsingPropertiesUsingPropertiesData()
  {
-   searchserviceData.setWrongword(searchserviceProperties.get("wrongword"));
-   searchserviceData.setPage(searchserviceProperties.get("page"));
-   searchserviceData.setSize(searchserviceProperties.get("size"));
-   searchserviceData.setPagenumberForIMlist(searchserviceProperties.get("pagenumberForIMlist"));
+   searchServiceData.setWrongword(searchServiceProperties.get("wrongword"));
+   searchServiceData.setPage(searchServiceProperties.get("page"));
+   searchServiceData.setSize(searchServiceProperties.get("size"));
+   searchServiceData.setPagenumberForIMlist(searchServiceProperties.get("pagenumberForIMlist"));
   }
 
   @When("^\\[search-service] send find synonym by wrong word request$")
   public void searchServiceSendFindSynonymByWrongWordRequest()  {
     ResponseApi<GdnRestListResponse<SynonymsResponse>> response =
-        searchServiceController.FindSynonymRequestByWrongWord();
-    searchserviceData.setFindSynonymnByWord(response);
+        searchServiceController.findSynonymRequestByWrongWord();
+    searchServiceData.setFindSynonymnByWord(response);
   }
 
   @Then("^\\[search-service] find synonym by wrong word request response success should be '(.*)'$")
   public void searchServiceFindSynonymByWrongWordRequestResponseSuccessShouldBeTrue(Boolean isSuccess)
     {
       ResponseApi<GdnRestListResponse<SynonymsResponse>> response =
-          searchserviceData.getFindSynonymnByWord();
+          searchServiceData.getFindSynonymnByWord();
       boolean result = response.getResponseBody().isSuccess();
       assertThat("is Success is wrong", result, equalTo(isSuccess));
   }

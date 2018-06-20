@@ -14,15 +14,12 @@ public class SearchInterceptor implements ServiceInterceptor {
 
   @Override
   public boolean isSupport(String serviceName) {
-    System.out.println("testing");
-    if (serviceName.equalsIgnoreCase("searchservice")) {
-      System.out.println("true");
-      return true;
-    } else {
-      System.out.println("false");
+      if(serviceName.equalsIgnoreCase("searchservice")){
+        return true;
+      }
       return false;
     }
-  }
+
 
   @Override
   public void prepare(RequestSpecification requestSpecification) {

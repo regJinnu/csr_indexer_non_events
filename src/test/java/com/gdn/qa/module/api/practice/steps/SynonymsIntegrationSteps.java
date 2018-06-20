@@ -17,30 +17,30 @@ import static org.hamcrest.Matchers.equalTo;
 @CucumberStepsDefinition
 public class SynonymsIntegrationSteps {
   @Autowired
-  SearchServiceController searchServiceController;
+  private SearchServiceController searchServiceController;
 
   @Autowired
-  SearchServiceProperties searchserviceProperties;
+ private SearchServiceProperties searchServiceProperties;
 
   @Autowired
-  SearchServiceData searchserviceData;
+  private SearchServiceData searchServiceData;
   @Given("^\\[search-service] prepare delete synonyms using properties using properties data$")
   public void searchServicePrepareDeleteSynonymsUsingPropertiesUsingPropertiesData()
     {
-      searchserviceData.setSearchTerm(searchserviceProperties.get("searchTerm"));
+      searchServiceData.setSearchTerm(searchServiceProperties.get("searchTerm"));
   }
 
   @When("^\\[search-service] send delete synonym request$")
   public void searchServiceSendDeleteSynonymRequest()  {
     ResponseApi<GdnBaseRestResponse> response =
         searchServiceController.deleteSynonymFromSolr();
-    searchserviceData.setSearchServiceResponse(response);
+    searchServiceData.setSearchServiceResponse(response);
   }
 
   @Then("^\\[search-service] create delete synonym request response success should be '(.*)'$")
   public void searchServiceCreateDeleteSynonymRequestResponseSuccessShouldBeTrue(Boolean isSuccess)
      {
-       ResponseApi<GdnBaseRestResponse> response = searchserviceData.getSearchServiceResponse();
+       ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
        boolean result = response.getResponseBody().isSuccess();
        assertThat("is Success is wrong", result, equalTo(isSuccess));
   }
@@ -48,20 +48,20 @@ public class SynonymsIntegrationSteps {
   @Given("^\\[search-service] prepare update synonyms to solr using properties using properties data$")
   public void searchServicePrepareUpdateSynonymsToSolrUsingPropertiesUsingPropertiesData()
     {
-      searchserviceData.setWrongword(searchserviceProperties.get("wrongword"));
+      searchServiceData.setWrongword(searchServiceProperties.get("wrongword"));
   }
 
   @When("^\\[search-service] send update synonyms to solr request$")
   public void searchServiceSendUpdateSynonymsToSolrRequest() {
     ResponseApi<GdnBaseRestResponse> response =
         searchServiceController.updateSynonymFromSolr();
-    searchserviceData.setSearchServiceResponse(response);
+    searchServiceData.setSearchServiceResponse(response);
   }
 
   @Then("^\\[search-service] create update synonym to solr request response success should be '(.*)'$")
   public void searchServiceCreateUpdateSynonymToSolrRequestResponseSuccessShouldBeTrue(Boolean isSuccess)
       {
-        ResponseApi<GdnBaseRestResponse> response = searchserviceData.getSearchServiceResponse();
+        ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
         boolean result = response.getResponseBody().isSuccess();
         assertThat("is Success is wrong", result, equalTo(isSuccess));
   }

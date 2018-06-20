@@ -10,6 +10,7 @@ import com.gdn.qa.module.api.practice.data.SearchServiceData;
 import com.gdn.qa.module.api.practice.properties.SearchServiceProperties;
 import com.gdn.x.search.rest.web.model.KeywordResponse;
 import com.gdn.x.search.rest.web.model.ValidateIdAndGetNameResponse;
+import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoClientURI;
@@ -30,65 +31,67 @@ import static org.hamcrest.Matchers.equalToIgnoringCase;
 @CucumberStepsDefinition
 public class KeywordSteps {
   @Autowired
-  SearchServiceController searchServiceController;
+ private SearchServiceController searchServiceController;
 
   @Autowired
-  SearchServiceProperties searchserviceProperties;
+  private SearchServiceProperties searchServiceProperties;
 
   @Autowired
-  SearchServiceData searchserviceData;
+ private SearchServiceData searchServiceData;
 
   @Given("^\\[search-service] prepare save keyword using properties using properties data$")
   public void searchServicePrepareSaveKeywordUsingPropertiesUsingPropertiesData() {
-    searchserviceData.setKeyword(searchserviceProperties.get("keyword"));
-    searchserviceData.setNegativeKeyword(searchserviceProperties.get("negativeKeyword"));
-    searchserviceData.setCategoryProductId(searchserviceProperties.get("categoryProductId"));
-    searchserviceData.setCategoryProductName(searchserviceProperties.get("categoryProductName"));
-    searchserviceData.setType(searchserviceProperties.get("type"));
+    searchServiceData.setKeyword(searchServiceProperties.get("keyword"));
+    searchServiceData.setNegativeKeyword(searchServiceProperties.get("negativeKeyword"));
+    searchServiceData.setCategoryProductId(searchServiceProperties.get("categoryProductId"));
+    searchServiceData.setCategoryProductName(searchServiceProperties.get("categoryProductName"));
+    searchServiceData.setType(searchServiceProperties.get("type"));
   }
 
   @When("^\\[search-service] send save keyword request$")
   public void searchServiceSendSaveKeywordRequest() {
-    ResponseApi<GdnBaseRestResponse> response = searchServiceController.BodyOfSaveKeyword();
-    searchserviceData.setSearchServiceResponse(response);
+    ResponseApi<GdnBaseRestResponse> response = searchServiceController.bodyOfSaveKeyword();
+    searchServiceData.setSearchServiceResponse(response);
   }
 
   @Then("^\\[search-service] save keyword request response success should be '(.*)'$")
   public void searchServiceSaveKeywordRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
-    ResponseApi<GdnBaseRestResponse> response = searchserviceData.getSearchServiceResponse();
+    ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
   }
 
   @Given("^\\[search-service] prepare request to get list of keywords$")
   public void searchServicePrepareRequestToGetListOfKeywords() {
-    searchserviceData.setPage(searchserviceProperties.get("page"));
-    searchserviceData.setSize(searchserviceProperties.get("size"));
-    searchserviceData.setMongoURL(searchserviceProperties.get("mongoURL"));
-    searchserviceData.setMongoDB(searchserviceProperties.get("mongoDB"));
+    searchServiceData.setPage(searchServiceProperties.get("page"));
+    searchServiceData.setSize(searchServiceProperties.get("size"));
+    searchServiceData.setMongoURL(searchServiceProperties.get("mongoURL"));
+    searchServiceData.setMongoDB(searchServiceProperties.get("mongoDB"));
   }
 
   @When("^\\[search-service] send listing keyword request$")
   public void searchServiceSendListingKeywordRequest() {
     ResponseApi<GdnRestListResponse<KeywordResponse>> response =
-        searchServiceController.FindListOfKeywords();
-    searchserviceData.setListOfKeywordsRequest(response);
+        searchServiceController.findListOfKeywords();
+    searchServiceData.setListOfKeywordsRequest(response);
   }
 
   @Then("^\\[search-service] list keyword request response success should be '(.*)'$")
   public void searchServiceListKeywordRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
     ResponseApi<GdnRestListResponse<KeywordResponse>> response =
-        searchserviceData.getListOfKeywordsRequest();
+        searchServiceData.getListOfKeywordsRequest();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
     MongoClientURI uri =
-        new MongoClientURI(searchserviceData.getMongoURL());
+        new MongoClientURI(searchServiceData.getMongoURL());
     MongoClient mongoClient = new MongoClient(uri);
     MongoClientOptions.Builder optionsBuilder = MongoClientOptions.builder();
     optionsBuilder.connectTimeout(30000);
-    MongoDatabase db = mongoClient.getDatabase(searchserviceData.getMongoDB());
+    MongoDatabase db = mongoClient.getDatabase(searchServiceData.getMongoDB());
     MongoCollection<Document> collection = db.getCollection("keyword_list");
-    long totalCount = collection.count();
+    BasicDBObject whereQuery = new BasicDBObject();
+    whereQuery.put("STORE_ID", "10001");
+    long totalCount = collection.count(whereQuery);
     System.out.println(
         collection.count() + "__________________NUMBER FROM DB_______________________________");
     assertThat(totalCount, equalTo(response.getResponseBody().getPageMetaData().getTotalRecords()));
@@ -97,20 +100,20 @@ public class KeywordSteps {
 
   @Given("^\\[search-service] prepare request to get find by keyword$")
   public void searchServicePrepareRequestToGetFindByKeyword() {
-    searchserviceData.setKeyword(searchserviceProperties.get("keyword"));
+    searchServiceData.setKeyword(searchServiceProperties.get("keyword"));
   }
 
   @When("^\\[search-service] send find by keyword request$")
   public void searchServiceSendFindByKeywordRequest() {
     ResponseApi<GdnRestSingleResponse<KeywordResponse>> response =
-        searchServiceController.FindByKeywordRequest();
-    searchserviceData.setFindKeywordRequest(response);
+        searchServiceController.findByKeywordRequest();
+    searchServiceData.setFindKeywordRequest(response);
   }
 
   @Then("^\\[search-service]find by keyword request response success should be true$")
   public void searchServiceFindByKeywordRequestResponseSuccessShouldBeTrue() {
     ResponseApi<GdnRestSingleResponse<KeywordResponse>> response =
-        searchserviceData.getFindKeywordRequest();
+        searchServiceData.getFindKeywordRequest();
     assertThat(response.getResponseBody().getValue().getCategoryProductName(),
         equalTo("test test"));
     assertThat(response.getResponseBody().getValue().getCategoryProductId(),
@@ -118,9 +121,9 @@ public class KeywordSteps {
     assertThat(response.getResponseBody().getValue().getKeyword(), equalTo("testautomation"));
     // assertThat(response.getResponseBody().getValue().getNegativeKeyword(), equalTo("backcase"));
     String autoKeywordId = response.getResponseBody().getValue().getId();
-    searchserviceData.setAutoKeywordId(autoKeywordId);
+    searchServiceData.setAutoKeywordId(autoKeywordId);
     Date autoUpdatedDate = response.getResponseBody().getValue().getUpdatedDate();
-    searchserviceData.setAutoUpdatedDate(autoUpdatedDate);
+    searchServiceData.setAutoUpdatedDate(autoUpdatedDate);
     System.out.println(
         "------------------------------------------------------ID----------------------------------"
             + autoKeywordId);
@@ -129,20 +132,20 @@ public class KeywordSteps {
 
   @Given("^\\[search-service] prepare request to get keyword find by ID$")
   public void searchServicePrepareRequestToGetKeywordFindByID() {
-    searchserviceData.setAutoKeywordId(searchserviceData.getAutoKeywordId());
+    searchServiceData.setAutoKeywordId(searchServiceData.getAutoKeywordId());
   }
 
   @When("^\\[search-service] send find keyword by ID request$")
   public void searchServiceSendFindKeywordByIDRequest() {
     ResponseApi<GdnRestSingleResponse<KeywordResponse>> response =
-        searchServiceController.FindKeywordRequestByID();
-    searchserviceData.setFindKeywordRequest(response);
+        searchServiceController.findKeywordRequestByID();
+    searchServiceData.setFindKeywordRequest(response);
   }
 
   @Then("^\\[search-service]find keyword by id request response success should be true$")
   public void searchServiceFindKeywordByIdRequestResponseSuccessShouldBeTrue() {
     ResponseApi<GdnRestSingleResponse<KeywordResponse>> response =
-        searchserviceData.getFindKeywordRequest();
+        searchServiceData.getFindKeywordRequest();
     assertThat(response.getResponseBody().getValue().getNegativeKeyword(), equalTo("backcase"));
     assertThat(response.getResponseBody().getValue().getCategoryProductName(),
         equalTo("test test"));
@@ -155,25 +158,25 @@ public class KeywordSteps {
   @Given("^\\[search-service] prepare request to get keyword find by date$")
   public void searchServicePrepareRequestToGetKeywordFindByDate() {
     System.out.println("--------------------DATE--------------------------------"
-        + searchserviceData.getAutoUpdatedDate());
-    searchserviceData.setAutoUpdatedDate(searchserviceData.getAutoUpdatedDate());
-    searchserviceData.setCategoryProductName(searchserviceProperties.get("categoryProductName"));
-    searchserviceData.setPage(searchserviceProperties.get("page"));
-    searchserviceData.setSize(searchserviceProperties.get("size"));
+        + searchServiceData.getAutoUpdatedDate());
+    searchServiceData.setAutoUpdatedDate(searchServiceData.getAutoUpdatedDate());
+    searchServiceData.setCategoryProductName(searchServiceProperties.get("categoryProductName"));
+    searchServiceData.setPage(searchServiceProperties.get("page"));
+    searchServiceData.setSize(searchServiceProperties.get("size"));
 
   }
 
   @When("^\\[search-service] send find keyword by date request$")
   public void searchServiceSendFindKeywordByDateRequest() {
     ResponseApi<GdnRestListResponse<KeywordResponse>> response =
-        searchServiceController.FindKeywordsByDate();
-    searchserviceData.setListOfKeywordsRequest(response);
+        searchServiceController.findKeywordsByDate();
+    searchServiceData.setListOfKeywordsRequest(response);
   }
 
   @Then("^\\[search-service]find keyword by date request response success should be true$")
   public void searchServiceFindKeywordByDateRequestResponseSuccessShouldBeTrue() {
     ResponseApi<GdnRestListResponse<KeywordResponse>> response =
-        searchserviceData.getListOfKeywordsRequest();
+        searchServiceData.getListOfKeywordsRequest();
     assertThat(response.getResponseBody().getContent().get(0).getCategoryProductName(),
         equalTo("test test"));
     assertThat(response.getResponseBody().getContent().get(0).getNegativeKeyword(),
@@ -186,94 +189,92 @@ public class KeywordSteps {
 
   @Given("^\\[search-service] prepare request to find if the product exists$")
   public void searchServicePrepareRequestToFindIfTheProductExists() {
-    searchserviceData.setCategoryProductId(searchserviceProperties.get("categoryProductId"));
+    searchServiceData.setCategoryProductId(searchServiceProperties.get("categoryProductId"));
   }
 
   @When("^\\[search-service] send request to find if the product exists$")
   public void searchServiceSendRequestToFindIfTheProductExists() {
-    ResponseApi<GdnBaseRestResponse> response = searchServiceController.FindIfProductExists();
-    searchserviceData.setSearchServiceResponse(response);
+    ResponseApi<GdnBaseRestResponse> response = searchServiceController.findIfProductExists();
+    searchServiceData.setSearchServiceResponse(response);
   }
 
   @Then("^\\[search-service]find if the product exists request response success should be '(.*)'$")
   public void searchServiceFindIfTheProductExistsRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
-    ResponseApi<GdnBaseRestResponse> response = searchserviceData.getSearchServiceResponse();
+    ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
   }
 
   @Given("^\\[search-service] prepare request to update the existing product$")
   public void searchServicePrepareRequestToUpdateTheExistingProduct() {
-    searchserviceData.setAutoKeywordId(searchserviceData.getAutoKeywordId());
-    searchserviceData.setKeyword(searchserviceProperties.get("keyword"));
-    searchserviceData.setUpdatedNegativeKeyword(searchserviceProperties.get("updatedNegativeKeyword"));
-    searchserviceData.setCategoryProductId(searchserviceProperties.get("categoryProductId"));
-    searchserviceData.setCategoryProductName(searchserviceProperties.get("categoryProductName"));
-    searchserviceData.setType(searchserviceProperties.get("type"));
+    searchServiceData.setAutoKeywordId(searchServiceData.getAutoKeywordId());
+    searchServiceData.setKeyword(searchServiceProperties.get("keyword"));
+    searchServiceData.setUpdatedNegativeKeyword(searchServiceProperties.get("updatedNegativeKeyword"));
+    searchServiceData.setCategoryProductId(searchServiceProperties.get("categoryProductId"));
+    searchServiceData.setCategoryProductName(searchServiceProperties.get("categoryProductName"));
+    searchServiceData.setType(searchServiceProperties.get("type"));
 
   }
 
   @When("^\\[search-service] send request to update the existing product$")
   public void searchServiceSendRequestToUpdateTheExistingProduct() {
     ResponseApi<GdnBaseRestResponse> response =
-        searchServiceController.BodyOfUpdateExistingKeyword();
-    searchserviceData.setSearchServiceResponse(response);
+        searchServiceController.bodyOfUpdateExistingKeyword();
+    searchServiceData.setSearchServiceResponse(response);
   }
 
   @Then("^\\[search-service]find if the update the existing product request response success should be '(.*)'$")
   public void searchServiceFindIfTheUpdateTheExistingProductRequestResponseSuccessShouldBeTrue(
       Boolean isSuccess) {
-    ResponseApi<GdnBaseRestResponse> response = searchserviceData.getSearchServiceResponse();
+    ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
   }
 
   @Given("^\\[search-service] prepare request to validate id and get name$")
   public void searchServicePrepareRequestToValidateIdAndGetName() {
-    searchserviceData.setCategoryProductId(searchserviceProperties.get("categoryProductId"));
-    searchserviceData.setType(searchserviceProperties.get("type"));
+    searchServiceData.setValidate(searchServiceProperties.get("validate"));
+    searchServiceData.setType(searchServiceProperties.get("type"));
   }
 
   @When("^\\[search-service] send request to validate id and get name$")
   public void searchServiceSendRequestToValidateIdAndGetName() {
     ResponseApi<GdnRestSingleResponse<ValidateIdAndGetNameResponse>> response =
-        searchServiceController.ValidateIdAndGetName();
-    searchserviceData.setValidateIdAndGetName(response);
+        searchServiceController.validateIdAndGetName();
+    searchServiceData.setValidateIdAndGetName(response);
   }
 
   @Then("^\\[search-service]find if the validate ID and Get Name request response success should be '(.*)'$")
   public void searchServiceFindIfTheValidateIDAndGetNameRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
     ResponseApi<GdnRestSingleResponse<ValidateIdAndGetNameResponse>> response =
-        searchserviceData.getValidateIdAndGetName();
+        searchServiceData.getValidateIdAndGetName();
     assertThat(response.getResponseBody().getValue().getCategoryProductName(),
-        equalTo("test test"));
+        equalTo("BBB_DS 1"));
     assertThat(response.getResponseBody().getValue().getCategoryProductId(),
-        equalTo("MTA-0306233"));
-    assertThat(response.getResponseBody().getValue().getKeyword(), equalTo("testautomation"));
-    //assertThat(response.getResponseBody().getValue().getNegativeKeyword(), equalTo("backcase"));
+        equalTo("MTA-0306144"));
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
   }
 
   @Given("^\\[search-service] prepare request to find keyword$")
   public void searchServicePrepareRequestToFindKeyword() {
-    searchserviceData.setIndex(searchserviceProperties.get("index"));
-    searchserviceData.setPage(searchserviceProperties.get("page"));
-    searchserviceData.setSize(searchserviceProperties.get("size"));
-    searchserviceData.setCategoryProductId(searchserviceProperties.get("categoryProductId"));
+    searchServiceData.setIndex(searchServiceProperties.get("index"));
+    searchServiceData.setPage(searchServiceProperties.get("page"));
+    searchServiceData.setSize(searchServiceProperties.get("size"));
+    searchServiceData.setCategoryProductId(searchServiceProperties.get("categoryProductId"));
   }
 
   @When("^\\[search-service] send request to find keyword$")
   public void searchServiceSendRequestToFindKeyword() {
     ResponseApi<GdnRestListResponse<KeywordResponse>> response =
-        searchServiceController.FindListOfKeywordsWithKeyValuePair();
-    searchserviceData.setListOfKeywordsRequest(response);
+        searchServiceController.findListOfKeywordsWithKeyValuePair();
+    searchServiceData.setListOfKeywordsRequest(response);
   }
 
   @Then("^\\[search-service]find if the find keyword request response success should be '(.*)'$")
   public void searchServiceFindIfTheFindKeywordRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
     ResponseApi<GdnRestListResponse<KeywordResponse>> response =
-        searchserviceData.getListOfKeywordsRequest();
+        searchServiceData.getListOfKeywordsRequest();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
     assertThat(response.getResponseBody().getContent().get(0).getCategoryProductName(),
@@ -288,128 +289,128 @@ public class KeywordSteps {
 
   @Given("^\\[search-service] prepare request to find keyword by querying in wrong way$")
   public void searchServicePrepareRequestToFindKeywordByQueryingInWrongWay() {
-    searchserviceData.setCategoryProductName(searchserviceProperties.get("categoryProductName"));
-    searchserviceData.setPage(searchserviceProperties.get("page"));
-    searchserviceData.setSize(searchserviceProperties.get("size"));
-    searchserviceData.setCategoryProductId(searchserviceProperties.get("categoryProductId"));
+    searchServiceData.setCategoryProductName(searchServiceProperties.get("categoryProductName"));
+    searchServiceData.setPage(searchServiceProperties.get("page"));
+    searchServiceData.setSize(searchServiceProperties.get("size"));
+    searchServiceData.setCategoryProductId(searchServiceProperties.get("categoryProductId"));
   }
 
   @When("^\\[search-service] send request to find keyword by querying in wrong way$")
   public void searchServiceSendRequestToFindKeywordByQueryingInWrongWay() {
     ResponseApi<GdnRestListResponse<KeywordResponse>> response =
-        searchServiceController.FindListOfKeywordsWithWrongInput();
-    searchserviceData.setListOfKeywordsRequest(response);
+        searchServiceController.findListOfKeywordsWithWrongInput();
+    searchServiceData.setListOfKeywordsRequest(response);
   }
 
   @Then("^\\[search-service]find if the find keyword by querying in wrong way request response success should be true$")
   public void searchServiceFindIfTheFindKeywordByQueryingInWrongWayRequestResponseSuccessShouldBeTrue() {
     ResponseApi<GdnRestListResponse<KeywordResponse>> response =
-        searchserviceData.getListOfKeywordsRequest();
+        searchServiceData.getListOfKeywordsRequest();
     assertThat(response.getResponseBody().isSuccess(), equalTo(false));
     assertThat(response.getResponseBody().getErrorCode(), equalTo("empty data"));
   }
 
   @Given("^\\[search-service] prepare request to get find by non existing keyword$")
   public void searchServicePrepareRequestToGetFindByNonExistingKeyword() {
-    searchserviceData.setWrongword(searchserviceProperties.get("wrongword"));
+    searchServiceData.setWrongword(searchServiceProperties.get("wrongword"));
   }
 
   @When("^\\[search-service] send find by non existing keyword request$")
   public void searchServiceSendFindByNonExistingKeywordRequest() {
     ResponseApi<GdnRestSingleResponse<KeywordResponse>> response =
-        searchServiceController.FindByNonExistingKeywordRequest();
-    searchserviceData.setFindKeywordRequest(response);
+        searchServiceController.findByNonExistingKeywordRequest();
+    searchServiceData.setFindKeywordRequest(response);
   }
 
   @Then("^\\[search-service]find by non existing keyword request response success should be true$")
   public void searchServiceFindByNonExistingKeywordRequestResponseSuccessShouldBeTrue() {
     ResponseApi<GdnRestSingleResponse<KeywordResponse>> response =
-        searchserviceData.getFindKeywordRequest();
+        searchServiceData.getFindKeywordRequest();
     assertThat(response.getResponseBody().getErrorMessage(), equalToIgnoringCase("unspecified"));
     assertThat(response.getResponseBody().isSuccess(), equalTo(false));
   }
 
   @Given("^\\[search-service] prepare request to get keyword find by wrong ID$")
   public void searchServicePrepareRequestToGetKeywordFindByWrongID() {
-    searchserviceData.setWrongid(searchserviceData.getWrongid());
+    searchServiceData.setWrongid(searchServiceData.getWrongid());
   }
 
   @When("^\\[search-service] send find keyword by wrong ID request$")
   public void searchServiceSendFindKeywordByWrongIDRequest() {
     ResponseApi<GdnRestSingleResponse<KeywordResponse>> response =
-        searchServiceController.FindKeywordRequestByWrongID();
-    searchserviceData.setFindKeywordRequest(response);
+        searchServiceController.findKeywordRequestByWrongID();
+    searchServiceData.setFindKeywordRequest(response);
   }
 
   @Then("^\\[search-service]find keyword by wrong id request response success should be true$")
   public void searchServiceFindKeywordByWrongIdRequestResponseSuccessShouldBeTrue() {
     ResponseApi<GdnRestSingleResponse<KeywordResponse>> response =
-        searchserviceData.getFindKeywordRequest();
+        searchServiceData.getFindKeywordRequest();
     assertThat(response.getResponseBody().getErrorMessage(), equalToIgnoringCase("DATA_NOT_FOUND"));
     assertThat(response.getResponseBody().getErrorCode(), equalToIgnoringCase("empty data"));
   }
 
   @Given("^\\[search-service] prepare request to get keyword find by wrong date$")
   public void searchServicePrepareRequestToGetKeywordFindByWrongDate() {
-    searchserviceData.setKeywordForsearchingWithDateStamp(searchserviceProperties.get("keywordForsearchingWithDateStamp"));
-    searchserviceData.setWrongdate(searchserviceProperties.get("wrongdate"));
-    searchserviceData.setPage(searchserviceProperties.get("page"));
-    searchserviceData.setSize(searchserviceProperties.get("size"));
+    searchServiceData.setKeywordForsearchingWithDateStamp(searchServiceProperties.get("keywordForsearchingWithDateStamp"));
+    searchServiceData.setWrongdate(searchServiceProperties.get("wrongdate"));
+    searchServiceData.setPage(searchServiceProperties.get("page"));
+    searchServiceData.setSize(searchServiceProperties.get("size"));
   }
 
   @When("^\\[search-service] send find keyword by wrong  date request$")
   public void searchServiceSendFindKeywordByWrongDateRequest() {
     ResponseApi<GdnRestListResponse<KeywordResponse>> response =
-        searchServiceController.FindKeywordsByWrongDate();
-    searchserviceData.setListOfKeywordsRequest(response);
+        searchServiceController.findKeywordsByWrongDate();
+    searchServiceData.setListOfKeywordsRequest(response);
   }
 
   @Then("^\\[search-service]find keyword by wrong date request response success should be true$")
   public void searchServiceFindKeywordByWrongDateRequestResponseSuccessShouldBeTrue() {
     ResponseApi<GdnRestListResponse<KeywordResponse>> response =
-        searchserviceData.getListOfKeywordsRequest();
+        searchServiceData.getListOfKeywordsRequest();
     assertThat(response.getResponseBody().isSuccess(), equalTo(true));
     //assertThat(response.getResponseBody().getContent(), equalTo([]));
   }
 
   @Given("^\\[search-service] prepare request to find non existing product$")
   public void searchServicePrepareRequestToFindNonExistingProduct() {
-    searchserviceData.setWrongcategoryId(searchserviceProperties.get("wrongcategoryId"));
+    searchServiceData.setWrongcategoryId(searchServiceProperties.get("wrongcategoryId"));
   }
 
   @When("^\\[search-service] send request to find if the non existing product$")
   public void searchServiceSendRequestToFindIfTheNonExistingProduct() {
     ResponseApi<GdnBaseRestResponse> response = searchServiceController.findForNonExistingProduct();
-    searchserviceData.setSearchServiceResponse(response);
+    searchServiceData.setSearchServiceResponse(response);
   }
 
   @Then("^\\[search-service]check response for request to find keyword which is not existing$")
   public void searchServiceCheckResponseForRequestToFindKeywordWhichIsNotExisting() {
-    ResponseApi<GdnBaseRestResponse> response = searchserviceData.getSearchServiceResponse();
+    ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
     assertThat(response.getResponseBody().getErrorCode(), equalTo(null));
     assertThat(response.getResponseBody().getErrorMessage(), equalTo("true"));
   }
 
   @Given("^\\[search-service] prepare request to update the non existing product$")
   public void searchServicePrepareRequestToUpdateTheNonExistingProduct() {
-    searchserviceData.setWrongid(searchserviceProperties.get("wrongid"));
-    searchserviceData.setKeyword(searchserviceProperties.get("keyword"));
-    searchserviceData.setUpdatedNegativeKeyword(searchserviceProperties.get("updatedNegativeKeyword"));
-    searchserviceData.setCategoryProductId(searchserviceProperties.get("categoryProductId"));
-    searchserviceData.setCategoryProductName(searchserviceProperties.get("categoryProductName"));
-    searchserviceData.setType(searchserviceProperties.get("type"));
+    searchServiceData.setWrongid(searchServiceProperties.get("wrongid"));
+    searchServiceData.setKeyword(searchServiceProperties.get("keyword"));
+    searchServiceData.setUpdatedNegativeKeyword(searchServiceProperties.get("updatedNegativeKeyword"));
+    searchServiceData.setCategoryProductId(searchServiceProperties.get("categoryProductId"));
+    searchServiceData.setCategoryProductName(searchServiceProperties.get("categoryProductName"));
+    searchServiceData.setType(searchServiceProperties.get("type"));
   }
 
   @When("^\\[search-service] send request to update the non existing product$")
   public void searchServiceSendRequestToUpdateTheNonExistingProduct() {
     ResponseApi<GdnBaseRestResponse> response =
-        searchServiceController.BodyOfUpdateNonExistingKeyword();
-    searchserviceData.setSearchServiceResponse(response);
+        searchServiceController.bodyOfUpdateNonExistingKeyword();
+    searchServiceData.setSearchServiceResponse(response);
   }
 
   @Then("^\\[search-service]find if the update the non existing product request response success should be false$")
   public void searchServiceFindIfTheUpdateTheNonExistingProductRequestResponseSuccessShouldBeFalse() {
-    ResponseApi<GdnBaseRestResponse> response = searchserviceData.getSearchServiceResponse();
+    ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
     assertThat(response.getResponseBody().getErrorMessage(), equalToIgnoringCase("unspecified"));
     assertThat(response.getResponseBody().getErrorCode(),
         equalTo("Can not find data :at keyword but try to update it. id :12345"));
@@ -417,21 +418,21 @@ public class KeywordSteps {
 
   @Given("^\\[search-service] prepare request by providing invalidate id$")
   public void searchServicePrepareRequestByProvidingInvalidateId() {
-    searchserviceData.setWrongid(searchserviceProperties.get("wrongid"));
-    searchserviceData.setType(searchserviceProperties.get("type"));
+    searchServiceData.setWrongid(searchServiceProperties.get("wrongid"));
+    searchServiceData.setType(searchServiceProperties.get("type"));
   }
 
   @When("^\\[search-service] send request by providing invalidate id$")
   public void searchServiceSendRequestByProvidingInvalidateId() {
     ResponseApi<GdnRestSingleResponse<ValidateIdAndGetNameResponse>> response =
-        searchServiceController.ValidateNonExistingIdAndGetName();
-    searchserviceData.setValidateIdAndGetName(response);
+        searchServiceController.validateNonExistingIdAndGetName();
+    searchServiceData.setValidateIdAndGetName(response);
   }
 
   @Then("^\\[search-service]check the response by paasing invalid ID as input$")
   public void searchServiceCheckTheResponseByPaasingInvalidIDAsInput() {
     ResponseApi<GdnRestSingleResponse<ValidateIdAndGetNameResponse>> response =
-        searchserviceData.getValidateIdAndGetName();
+        searchServiceData.getValidateIdAndGetName();
     assertThat(response.getResponseBody().getErrorCode(), equalToIgnoringCase("VALIDATION_ERROR"));
     assertThat(response.getResponseBody().getErrorMessage(),
         equalToIgnoringCase("cannot find category / product id : 12345"));
@@ -439,65 +440,65 @@ public class KeywordSteps {
 
   @Given("^\\[search-service] prepare request to delete keyword$")
   public void searchServicePrepareRequestToDeleteKeyword() {
-    searchserviceData.setAutoKeywordId(searchserviceData.getAutoKeywordId());
-    searchserviceData.setKeyword(searchserviceProperties.get("keyword"));
-    searchserviceData.setNegativeKeyword(searchserviceProperties.get("negativeKeyword"));
-    searchserviceData.setCategoryProductId(searchserviceProperties.get("categoryProductId"));
-    searchserviceData.setCategoryProductName(searchserviceProperties.get("categoryProductName"));
-    searchserviceData.setType(searchserviceProperties.get("type"));
+    searchServiceData.setAutoKeywordId(searchServiceData.getAutoKeywordId());
+    searchServiceData.setKeyword(searchServiceProperties.get("keyword"));
+    searchServiceData.setNegativeKeyword(searchServiceProperties.get("negativeKeyword"));
+    searchServiceData.setCategoryProductId(searchServiceProperties.get("categoryProductId"));
+    searchServiceData.setCategoryProductName(searchServiceProperties.get("categoryProductName"));
+    searchServiceData.setType(searchServiceProperties.get("type"));
   }
 
   @When("^\\[search-service] send request to delete keyword$")
   public void searchServiceSendRequestToDeleteKeyword() {
-    ResponseApi<GdnBaseRestResponse> response = searchServiceController.BodyOfDeleteKeyword();
-    searchserviceData.setSearchServiceResponse(response);
+    ResponseApi<GdnBaseRestResponse> response = searchServiceController.bodyOfDeleteKeyword();
+    searchServiceData.setSearchServiceResponse(response);
   }
 
   @Then("^\\[search-service]find if the delete keyword request response success should be '(.*)'$")
   public void searchServiceFindIfTheDeleteKeywordRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
-    ResponseApi<GdnBaseRestResponse> response = searchserviceData.getSearchServiceResponse();
+    ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
   }
 
   @Given("^\\[search-service] prepare request to delete non existing keyword$")
   public void searchServicePrepareRequestToDeleteNonExistingKeyword() {
-    searchserviceData.setWrongid(searchserviceProperties.get("wrongid"));
-    searchserviceData.setKeyword(searchserviceProperties.get("keyword"));
-    searchserviceData.setNegativeKeyword(searchserviceProperties.get("negativeKeyword"));
-    searchserviceData.setCategoryProductId(searchserviceProperties.get("categoryProductId"));
-    searchserviceData.setCategoryProductName(searchserviceProperties.get("categoryProductName"));
-    searchserviceData.setType(searchserviceProperties.get("type"));
+    searchServiceData.setWrongid(searchServiceProperties.get("wrongid"));
+    searchServiceData.setKeyword(searchServiceProperties.get("keyword"));
+    searchServiceData.setNegativeKeyword(searchServiceProperties.get("negativeKeyword"));
+    searchServiceData.setCategoryProductId(searchServiceProperties.get("categoryProductId"));
+    searchServiceData.setCategoryProductName(searchServiceProperties.get("categoryProductName"));
+    searchServiceData.setType(searchServiceProperties.get("type"));
   }
 
   @When("^\\[search-service] send request to delete non existing keyword$")
   public void searchServiceSendRequestToDeleteNonExistingKeyword() {
     ResponseApi<GdnBaseRestResponse> response =
-        searchServiceController.BodyOfDeleteNonExistingKeyword();
-    searchserviceData.setSearchServiceResponse(response);
+        searchServiceController.bodyOfDeleteNonExistingKeyword();
+    searchServiceData.setSearchServiceResponse(response);
   }
 
   @Then("^\\[search-service]find if the non existing delete keyword request response$")
   public void searchServiceFindIfTheNonExistingDeleteKeywordRequestResponse() {
-    ResponseApi<GdnBaseRestResponse> response = searchserviceData.getSearchServiceResponse();
+    ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
     assertThat(response.getResponseBody().getErrorCode(), equalTo(null));
   }
 
   @Given("^\\[search-service] prepare request to upload keyword$")
   public void searchServicePrepareRequestToUploadKeyword() {
-    searchserviceData.setEmail(searchserviceProperties.get("email"));
-   searchserviceData.setPath(searchserviceProperties.get("path"));
+    searchServiceData.setEmail(searchServiceProperties.get("email"));
+    searchServiceData.setPath(searchServiceProperties.get("path"));
   }
 
   @When("^\\[search-service] send request to upload keyword$")
   public void searchServiceSendRequestToUploadKeyword() {
     ResponseApi<GdnBaseRestResponse> response = searchServiceController.uploadKeyword();
-    searchserviceData.setSearchServiceResponse(response);
+    searchServiceData.setSearchServiceResponse(response);
   }
 
   @Then("^\\[search-service]find the upload keyword request response is '(.*)'$")
   public void searchServiceFindTheUploadKeywordRequestResponseIsTrue(Boolean isSuccess) {
-    ResponseApi<GdnBaseRestResponse> response = searchserviceData.getSearchServiceResponse();
+    ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
     assertThat(response.getResponseBody().getErrorMessage(), equalTo("File upload in progress"));
     assertThat(response.getResponseBody().getErrorCode(), equalTo(null));
     boolean result = response.getResponseBody().isSuccess();

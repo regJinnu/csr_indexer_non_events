@@ -14,7 +14,7 @@ Feature:Category Intent Controller
     Then [search-service] check the Delete search term request response
 
   @SaveSearchTerm
-  Scenario: User wants to add new searchTerm which has IM
+  Scenario: User wants to add new searchTerm which has intent mining
     Given [search-service] prepare request for saving searchTerm which has intent mining
     When [search-service] send request to save the search term which has intent mining
     Then [search-service] find that the save searchTerm having IM request response success should be 'true'
