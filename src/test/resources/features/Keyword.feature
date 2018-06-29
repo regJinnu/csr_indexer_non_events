@@ -1,4 +1,4 @@
-@Keyword   @TestSuiteID=9040152
+@Keyword
 Feature: Keyword related API's
 
   @SaveKeyword @id

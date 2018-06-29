@@ -1,4 +1,4 @@
-@SynonymIntegrationAPI  @TestSuiteID=9040152
+@SynonymIntegrationAPI
 Feature: Synonym Integration API's
 
   @DeleteIntegrationSynonymsSOLR

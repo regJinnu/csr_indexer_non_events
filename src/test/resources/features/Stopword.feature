@@ -1,4 +1,4 @@
-@StopWord  @TestSuiteID=9040152
+@StopWord
 Feature: Stopword related API's
 
   @SaveStopword

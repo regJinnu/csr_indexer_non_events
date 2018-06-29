@@ -1,4 +1,4 @@
-@MongoQuery  @TestSuiteID=9040152
+@MongoQuery
 Feature: Mongo query tab related api's
 
   @RunDeltaIndex

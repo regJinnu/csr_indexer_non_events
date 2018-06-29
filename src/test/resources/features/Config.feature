@@ -1,4 +1,4 @@
-@Config  @TestSuiteID=9040152
+@Config
 Feature:Config controller related API's
 
   @FindByName

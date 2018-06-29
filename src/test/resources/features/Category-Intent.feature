@@ -1,4 +1,4 @@
-@category-intent  @TestSuiteID=9040152
+@category-intent
 Feature:Category Intent Controller
 
   @DeleteSearchTerm

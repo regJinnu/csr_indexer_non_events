@@ -1,4 +1,4 @@
-@Synonym  @TestSuiteID=9040152
+@Synonym
 Feature: Synonym related API's
 
   @CreateSynonyms

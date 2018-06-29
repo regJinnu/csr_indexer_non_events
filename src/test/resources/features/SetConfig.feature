@@ -1,4 +1,4 @@
-@SetConfig  @TestSuiteID=9040152
+@SetConfig
 Feature: Set Config related API's
 
   @FetchSaveConfig
