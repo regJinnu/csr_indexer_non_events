@@ -1,4 +1,4 @@
-@FeedExclusion
+@FeedExclusionFeature
 Feature: Feed exclusion entity related API's
 
   @SaveFeed

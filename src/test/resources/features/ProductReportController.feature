@@ -1,4 +1,4 @@
-@ProductReportController
+@ProductReportControllerFeature
 Feature: Product report controller api's
 
   @QueryToGetCatergoryList

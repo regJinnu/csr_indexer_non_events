@@ -1,4 +1,4 @@
-@SetConfig
+@SetConfigFeature
 Feature: Set Config related API's
 
   @FetchSaveConfig

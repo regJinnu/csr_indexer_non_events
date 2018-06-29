@@ -1,4 +1,4 @@
-@BoostedKeyword
+@BoostedKeywordFeature
 Feature: Boosted keyword related api's
 
   @FindBoostedKeyword @id1

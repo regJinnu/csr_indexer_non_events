@@ -1,4 +1,4 @@
-@Synonym
+@SynonymFeature
 Feature: Synonym related API's
 
   @CreateSynonyms

@@ -1,4 +1,4 @@
-@ProductController
+@ProductControllerFeature
   Feature: Product Controller feature related api's
 
     @GetProductRawDataByProductID

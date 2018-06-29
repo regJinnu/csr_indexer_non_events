@@ -1,4 +1,4 @@
-@Keyword
+@KeywordFeature
 Feature: Keyword related API's
 
   @SaveKeyword @id

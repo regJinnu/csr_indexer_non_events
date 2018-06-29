@@ -1,4 +1,4 @@
-@KeywordIndex
+@KeywordIndexFeature
 Feature: Keyword index controller related api's
 
   @CleanUp

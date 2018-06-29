@@ -1,4 +1,4 @@
-@category-intent
+@category-intentFeature
 Feature:Category Intent Controller
 
   @DeleteSearchTerm

@@ -27,44 +27,43 @@ public class ScheduledEventsSteps {
   private SearchServiceData searchServiceData;
 
   @Given("^\\[search-service] prepare request to delete the unpublished products$")
-  public void searchServicePrepareRequestToDeleteTheUnpublishedProducts()  {
+  public void searchServicePrepareRequestToDeleteTheUnpublishedProducts() {
 
   }
 
   @When("^\\[search-service] send request to delete the unpublished products$")
-  public void searchServiceSendRequestToDeleteTheUnpublishedProducts()  {
+  public void searchServiceSendRequestToDeleteTheUnpublishedProducts() {
     ResponseApi<GdnBaseRestResponse> response = searchServiceController.deleteUnpublished();
     searchServiceData.setSearchServiceResponse(response);
   }
 
   @Then("^\\[search-service] fetch delete the unpublished products response success should be '(.*)'$")
-  public void searchServiceFetchDeleteTheUnpublishedProductsResponseSuccessShouldBeTrue(Boolean isSuccess)
-      {
-        ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
-        boolean result = response.getResponseBody().isSuccess();
-        assertThat("is Success is wrong", result, equalTo(isSuccess));
-        assertThat(response.getResponseBody().getErrorMessage(),containsString("Deleting of unpublished products finished"));
+  public void searchServiceFetchDeleteTheUnpublishedProductsResponseSuccessShouldBeTrue(Boolean isSuccess) {
+    ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
+    boolean result = response.getResponseBody().isSuccess();
+    assertThat("is Success is wrong", result, equalTo(isSuccess));
+    assertThat(response.getResponseBody().getErrorMessage(),
+        containsString("Deleting of unpublished products finished"));
   }
 
   @Given("^\\[search-service] prepare request to fetch scheduled events from mongo and do atomic update to solr$")
-  public void searchServicePrepareRequestToFetchScheduledEventsFromMongoAndDoAtomicUpdateToSolr()
-      {
+  public void searchServicePrepareRequestToFetchScheduledEventsFromMongoAndDoAtomicUpdateToSolr() {
 
   }
 
   @When("^\\[search-service] send request to fetch scheduled events from mongo and do atomic update to solr$")
-  public void searchServiceSendRequestToFetchScheduledEventsFromMongoAndDoAtomicUpdateToSolr()
-    {
-      ResponseApi<GdnBaseRestResponse> response = searchServiceController.fetchTheListOfUnpublishedProducts();
-      searchServiceData.setSearchServiceResponse(response);
+  public void searchServiceSendRequestToFetchScheduledEventsFromMongoAndDoAtomicUpdateToSolr() {
+    ResponseApi<GdnBaseRestResponse> response =
+        searchServiceController.fetchTheListOfUnpublishedProducts();
+    searchServiceData.setSearchServiceResponse(response);
   }
 
   @Then("^\\[search-service] fetch scheduled events from mongo and do atomic update to solr response success should be '(.*)'$")
-  public void searchServiceFetchScheduledEventsFromMongoAndDoAtomicUpdateToSolrResponseSuccessShouldBeTrue(Boolean isSuccess)
-    {
-      ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
-      boolean result = response.getResponseBody().isSuccess();
-      assertThat("is Success is wrong", result, equalTo(isSuccess));
+  public void searchServiceFetchScheduledEventsFromMongoAndDoAtomicUpdateToSolrResponseSuccessShouldBeTrue(
+      Boolean isSuccess) {
+    ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
+    boolean result = response.getResponseBody().isSuccess();
+    assertThat("is Success is wrong", result, equalTo(isSuccess));
 
   }
 }

@@ -1,4 +1,4 @@
-@SynonymIntegrationAPI
+@SynonymIntegrationAPIFeature
 Feature: Synonym Integration API's
 
   @DeleteIntegrationSynonymsSOLR

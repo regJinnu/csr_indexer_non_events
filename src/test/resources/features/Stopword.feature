@@ -1,4 +1,4 @@
-@StopWord
+@StopWordFeature
 Feature: Stopword related API's
 
   @SaveStopword

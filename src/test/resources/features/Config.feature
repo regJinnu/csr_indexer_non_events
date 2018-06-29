@@ -1,4 +1,4 @@
-@Config
+@ConfigFeature
 Feature:Config controller related API's
 
   @FindByName

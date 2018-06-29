@@ -1,4 +1,4 @@
-@StopwordIntegration
+@StopwordIntegrationFeature
 Feature: Stopword integration API's
 
   @DeleteStopwordIntegration
