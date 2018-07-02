@@ -44,7 +44,7 @@ Feature: Boosted keyword related api's
     Then [search-service] check update boosted keyword request with wrong id response
 
 
-  @Regression  @GetAllListOfBoostedKeywords
+  @Regression  @GetAllListOfBoostedKeyword
   Scenario:User wants to get the list of boosted keywords
     Given [search-service] prepare request to list all the boosted keywords using properties using properties data
     When  [search-service] send request to list all the boosted keywords
