@@ -1,4 +1,4 @@
-@StopWordFeature
+@StopWordFeature @Regression
 Feature: Stopword related API's
 
   @SaveStopword

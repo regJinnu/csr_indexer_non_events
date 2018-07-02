@@ -1,4 +1,4 @@
-@ClickThroughDataFeature
+@ClickThroughDataFeature @Regression
 Feature:Fetch click-through data from BRS and index to solr and Redis
 
 

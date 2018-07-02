@@ -1,4 +1,4 @@
-@KeywordFeature
+@KeywordFeature @Regression
 Feature: Keyword related API's
 
   @SaveKeyword @id

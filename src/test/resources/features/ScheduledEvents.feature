@@ -1,4 +1,4 @@
-@ScheduledEventsApi
+@ScheduledEventsApi @Regression
 Feature: Scheduled events related api's
 
   @DeleteUnpublishedProducts

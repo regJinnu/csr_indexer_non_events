@@ -1,4 +1,4 @@
-@KeywordIndexFeature
+@KeywordIndexFeature @Regression
 Feature: Keyword index controller related api's
 
   @CleanUp

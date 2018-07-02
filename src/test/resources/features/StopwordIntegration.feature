@@ -1,4 +1,4 @@
-@StopwordIntegrationFeature
+@StopwordIntegrationFeature @Regression
 Feature: Stopword integration API's
 
   @DeleteStopwordIntegration

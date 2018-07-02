@@ -1,4 +1,4 @@
-@SynonymFeature
+@SynonymFeature  @Regression
 Feature: Synonym related API's
 
   @CreateSynonyms

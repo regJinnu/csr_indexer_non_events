@@ -1,4 +1,4 @@
-@ConfigFeature
+@ConfigFeature @Regression
 Feature:Config controller related API's
 
   @FindByName

@@ -1,4 +1,4 @@
-@category-intentFeature
+@category-intentFeature  @Regression
 Feature:Category Intent Controller
 
   @DeleteSearchTerm

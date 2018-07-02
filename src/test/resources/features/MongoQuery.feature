@@ -1,4 +1,4 @@
-@MongoQueryFeature
+@MongoQueryFeature @Regression
 Feature: Mongo query tab related api's
 
   @RunDeltaIndex

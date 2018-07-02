@@ -1,4 +1,4 @@
-@SetConfigFeature
+@SetConfigFeature @Regression
 Feature: Set Config related API's
 
   @FetchSaveConfig

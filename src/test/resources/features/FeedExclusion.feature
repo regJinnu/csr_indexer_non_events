@@ -1,4 +1,4 @@
-@FeedExclusionFeature
+@FeedExclusionFeature @Regression
 Feature: Feed exclusion entity related API's
 
   @SaveFeed

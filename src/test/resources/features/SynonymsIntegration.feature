@@ -1,4 +1,4 @@
-@SynonymIntegrationAPIFeature
+@SynonymIntegrationAPIFeature @Regression
 Feature: Synonym Integration API's
 
   @DeleteIntegrationSynonymsSOLR

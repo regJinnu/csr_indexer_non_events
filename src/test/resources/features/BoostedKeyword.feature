@@ -1,4 +1,4 @@
-@BoostedKeywordFeature
+@BoostedKeywordFeature @Regression
 Feature: Boosted keyword related api's
 
   @FindBoostedKeyword @id1
