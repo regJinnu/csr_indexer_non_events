@@ -1,13 +1,13 @@
-@MongoQueryFeature @Regression
+@MongoQueryFeature
 Feature: Mongo query tab related api's
 
-  @RunDeltaIndex
+  @Regression @RunDeltaIndex
   Scenario: User wants to query to mongo and fetch classes
     Given [search-service] prepare request to query to mongo and fetch classes
     When  [search-service] send request to query to mongo and fetch classes
     Then [search-service] request to query to mongo and fetch classes response success should be 'true'
 
-  @QueryToMongo
+  @Regression @QueryToMongo
   Scenario: User wants to query to mongo
     Given [search-service] prepare request to query to mongo
     When  [search-service] send request to query to mongo

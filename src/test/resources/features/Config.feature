@@ -1,7 +1,7 @@
-@ConfigFeature @Regression
+@ConfigFeature
 Feature:Config controller related API's
 
-  @FindByName
+  @Regression @FindByName
   Scenario: User wants to search for Config by giving name
     Given [search-service] prepare find config by name request using properties using properties data
     When  [search-service] send find config by name request
@@ -13,7 +13,7 @@ Feature:Config controller related API's
     When  [search-service] send find config by name which is not present in the config list
     Then [search-service] check the response for finding config with name which is not present
 
-  @FindById
+  @Regression @FindById
   Scenario: User wants to search for config by giving ID
     Given [search-service] prepare find config by id request using properties using properties data
     When [search-service] send find config by id request
@@ -26,7 +26,7 @@ Feature:Config controller related API's
     Then [search-service] check the response for finding config with wrong id
 
 
-  @FindByWord
+  @Regression @FindByWord
   Scenario: User wants to search for config by giving word
     Given [search-service] prepare find config by word request using properties using properties data
     When [search-service] send find config by word request
@@ -38,7 +38,7 @@ Feature:Config controller related API's
     When [search-service] send find request config by non existing word in the config list
     Then [search-service] check the response for finding config with wrong word
 
-  @Update
+  @Regression @Update
   Scenario: User wants to update the existing config
     Given [search-service] prepare update existing config request using properties using properties data
     When [search-service] send update config request
@@ -50,7 +50,7 @@ Feature:Config controller related API's
     When [search-service] send update config request with empty body
     Then [search-service] check out the response of update config with empty body
 
-  @Delete
+  @Regression @Delete
   Scenario: User wants to delete the existing config
     Given [search-service] prepare delete existing config request using properties using properties data
     When [search-service] send delete config request
@@ -62,7 +62,7 @@ Feature:Config controller related API's
     When [search-service] send delete config request with wrong id
     Then [search-service] check the response for deleting config with wrong id
 
-  @Save
+  @Regression @Save
   Scenario: User wants to save the config
     Given [search-service] prepare save config request using properties using properties data
     When  [search-service] send save config request
@@ -74,7 +74,7 @@ Feature:Config controller related API's
     When [search-service] send save config request with empty body
     Then [search-service] check response for saving config with empty body
 
-  @ConfigList
+  @Regression @ConfigList
   Scenario: User wants to the existing configs
     Given [search-service] prepare get config list request using properties using properties data
     When [search-service] send get config list request
