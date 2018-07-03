@@ -1,7 +1,6 @@
 package com.gdn.qa.x_search.api.test.utils;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.gdn.qa.x_search.api.test.data.MongoData;
 import com.google.gson.Gson;
 import com.mongodb.*;
@@ -10,10 +9,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.ArrayList;
-
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.regex;
 import static com.mongodb.client.model.Updates.combine;
@@ -60,15 +56,14 @@ public class MongoHelper {
     collection.updateOne(eq(queryField,queryValue),combine(set(updateField,updateValue)));
   }
 
-  public static void main(String args[]){
+  public void insertInMongo(String collectionName,Document document){
+    MongoCollection<Document> collection = initializeDatabase(collectionName);
+    collection.insertOne(document);
+  }
 
-    MongoHelper mongoHelper = new MongoHelper();
-    System.out.println("Count from DB:"+mongoHelper.countOfRecordsInCollection("config_list"));
-    System.out.println("-------Before Update--------");
-    mongoHelper.getMongoDocumentByQuery("config_list", "NAME", "product.popularity.max.product.id.per.request");
-    mongoHelper.updateMongo("config_list","NAME","product.popularity.max.product.id.per.request","VALUE","2000");
-    System.out.println("-------After Update--------");
-    mongoHelper.getMongoDocumentByQuery("config_list", "NAME", "product.popularity.max.product.id.per.request");
+  public void deleteFromMongo(String collectionName,String queryField,String queryValue){
+    MongoCollection<Document> collection = initializeDatabase(collectionName);
+    collection.deleteOne(eq(queryField,queryValue));
   }
 
 }
