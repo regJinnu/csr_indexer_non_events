@@ -74,6 +74,8 @@ public class SearchServiceData {
   private String className;
   private String mongoValue;
   private String key;
+  private String productCodeForReindex;
+  private String skuForReindex;
   private ResponseApi<GdnRestSingleResponse> validateID;
   private ResponseApi<GdnBaseRestResponse> searchServiceResponse;
   private ResponseApi<GdnRestSingleResponse<ConfigResponse>> findByRequest;
@@ -95,6 +97,6 @@ public class SearchServiceData {
   private ResponseApi<GdnRestListResponse<KeywordBoostProductResponse>> findBoostedKeyword;
   private ResponseApi<GdnRestSingleResponse<KeywordBoostProductResponse>> findBoostedKeywordByID;
   private ResponseApi<GdnRestSingleResponse<ProductResponse>> findDataByProductID;
-
+  private ResponseApi<GdnRestSingleResponse> processFailedIds;
 }
 

@@ -1231,4 +1231,30 @@ public class SearchServiceController extends ServiceApi {
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
+
+  public ResponseApi<GdnRestSingleResponse> prepareRequestForProcessingFailedIds(){
+    Response response = service("searchservice")
+        .get("/index/failed-ids");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse>() {});
+  }
+
+  public ResponseApi<GdnBaseRestResponse> prepareRequestForIndexing(String type,String value){
+
+    String postReq="{\""+type+"\": [\""+value+"\" ]}";
+    Response response = service("searchservice")
+        .body(postReq)
+        .post("/index/product");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {});
+  }
+
+  public static void main(String args[]){
+
+    SearchServiceController searchServiceController = new SearchServiceController();
+    searchServiceController.prepareRequestForIndexing("productCodes","MTA-0311957");
+    searchServiceController.prepareRequestForIndexing("skus","TH7-15791-00118");
+
+  }
+
 }

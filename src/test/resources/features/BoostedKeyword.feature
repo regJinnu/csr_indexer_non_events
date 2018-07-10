@@ -1,7 +1,7 @@
 @BoostedKeywordFeature
 Feature: Boosted keyword related api's
 
-  @Regression @FindBoostedKeyword @id1
+  @Regression @FindBoostedKeyword
   Scenario:  User wants to find boosted keyword
     Given [search-service] prepare request to find boosted keyword using properties using properties data
     When  [search-service] send request to find boosted keyword
