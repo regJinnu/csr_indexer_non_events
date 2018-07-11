@@ -117,7 +117,6 @@ public class KeywordSteps {
     assertThat(response.getResponseBody().getValue().getCategoryProductId(),
         equalTo("MTA-0306233"));
     assertThat(response.getResponseBody().getValue().getKeyword(), equalTo("testautomation"));
-    // assertThat(response.getResponseBody().getValue().getNegativeKeyword(), equalTo("backcase"));
     String autoKeywordId = response.getResponseBody().getValue().getId();
     searchServiceData.setAutoKeywordId(autoKeywordId);
     Date autoUpdatedDate = response.getResponseBody().getValue().getUpdatedDate();
