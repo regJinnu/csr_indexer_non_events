@@ -1,4 +1,4 @@
-@StopwordIntegrationFeature
+@StopwordIntegrationFeature @TestSuiteID=9317806
 Feature: Stopword integration API's
 
   @Regression  @DeleteStopwordIntegration

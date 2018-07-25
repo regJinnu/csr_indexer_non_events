@@ -99,4 +99,45 @@ public class CucumberHooks {
       e.printStackTrace();
     }
   }
+
+  @Before("@Multidelete")
+  public void beforeMultiDelete(){
+
+    Date date = null;
+    try {
+      date = dateFormat.parse("2017-09-19T05:19:45.468Z");
+      Document multiDeleteKeywordBoostDoc1 = new Document("_class" , "com.gdn.x.search.entity.KeywordBoostProduct")
+          .append("_id","98765")
+          .append("keyword" , "automation")
+          .append("products" , "MTA-0309256,MTA-0306144")
+          .append("version" , 0)
+          .append("CREATED_DATE" , date)
+          .append("CREATED_BY" , "user-dev-src")
+          .append("UPDATED_DATE" , date)
+          .append("UPDATED_BY" , "user-dev-src")
+          .append("STORE_ID" , "10001")
+          .append("MARK_FOR_DELETE" , false);
+
+      mongoHelper.insertInMongo("keyword_boost_keyword_list",multiDeleteKeywordBoostDoc1);
+
+      Document multiDeleteKeywordBoostDoc2 = new Document("_class" , "com.gdn.x.search.entity.KeywordBoostProduct")
+          .append("_id","43210")
+          .append("keyword" , "testing")
+          .append("products" , "MTA-0309256,MTA-0306144")
+          .append("version" , 0)
+          .append("CREATED_DATE" , date)
+          .append("CREATED_BY" , "user-dev-src")
+          .append("UPDATED_DATE" , date)
+          .append("UPDATED_BY" , "user-dev-src")
+          .append("STORE_ID" , "10001")
+          .append("MARK_FOR_DELETE" , false);
+
+      mongoHelper.insertInMongo("keyword_boost_keyword_list",multiDeleteKeywordBoostDoc2);
+
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+  }
+
+
 }

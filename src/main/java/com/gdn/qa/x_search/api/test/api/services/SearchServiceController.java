@@ -11,13 +11,7 @@ import com.gdn.qa.automation.core.template.TemplateApi;
 import com.gdn.qa.x_search.api.test.data.SearchServiceData;
 import com.gdn.x.product.rest.web.model.response.SimpleStringResponse;
 import com.gdn.x.search.rest.web.model.*;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
-import com.mongodb.MongoClientURI;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import io.restassured.response.Response;
-import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -1090,26 +1084,6 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnBaseRestResponse> bodyOfRequestOfMultiDelete() throws Exception {
-    MongoClientURI uri =
-        new MongoClientURI(searchServiceData.getMongoURL());
-    MongoClient mongoClient = new MongoClient(uri);
-    MongoClientOptions.Builder optionsBuilder = MongoClientOptions.builder();
-    optionsBuilder.connectTimeout(30000);
-    MongoDatabase db = mongoClient.getDatabase(searchServiceData.getMongoDB());
-    MongoCollection<Document> collection = db.getCollection("keyword_boost_keyword_list");
-    Document document1 = new Document();
-    document1.put("_id","98765");
-    document1.put("keyword","automation");
-    document1.put("products", "MTA-0309256,MTA-0306144");
-    document1.put("STORE_ID","10001");
-    collection.insertOne(document1);
-    Document document2 = new Document();
-    document2.put("_id","43210");
-    document2.put("keyword","testing");
-    document2.put("products", "MTA-0309256,MTA-0306144");
-    document2.put("STORE_ID","10001");
-    collection.insertOne(document2);
-    Thread.sleep(5000);
     String Bodytemplate = "[\n" + "  {\n" + "    \"id\": \"98765\"\n"
         + "   }, {\n" + "\"id\": \"43210\"\n" + "}\n" + "]";
     Response response = service("searchservice").body(Bodytemplate).post("/keywordBoost/multidelete");

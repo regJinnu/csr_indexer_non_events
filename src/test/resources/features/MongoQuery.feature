@@ -1,4 +1,4 @@
-@MongoQueryFeature
+@MongoQueryFeature @TestSuiteID=9317806
 Feature: Mongo query tab related api's
 
   @Regression @RunDeltaIndex

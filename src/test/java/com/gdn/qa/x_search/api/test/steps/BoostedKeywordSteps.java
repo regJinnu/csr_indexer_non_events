@@ -8,12 +8,9 @@ import com.gdn.qa.x_search.api.test.CucumberStepsDefinition;
 import com.gdn.qa.x_search.api.test.api.services.SearchServiceController;
 import com.gdn.qa.x_search.api.test.data.SearchServiceData;
 import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
+import com.gdn.qa.x_search.api.test.utils.MongoHelper;
 import com.gdn.x.search.rest.web.model.KeywordBoostProductResponse;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
-import com.mongodb.MongoClientURI;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.FindIterable;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -21,6 +18,7 @@ import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 
@@ -34,6 +32,8 @@ public class BoostedKeywordSteps {
 
   @Autowired
   private SearchServiceData searchServiceData;
+
+  MongoHelper mongoHelper = new MongoHelper();
 
   @Given("^\\[search-service] prepare request to find boosted keyword using properties using properties data$")
   public void searchServicePrepareRequestToFindBoostedKeywordUsingPropertiesUsingPropertiesData() {
@@ -90,8 +90,6 @@ public class BoostedKeywordSteps {
   @Given("^\\[search-service] prepare request to list boosted keyword using properties using properties data$")
   public void searchServicePrepareRequestToListBoostedKeywordUsingPropertiesUsingPropertiesData() {
     searchServiceData.setSize(searchServiceProperties.get("size"));
-    searchServiceData.setMongoURL(searchServiceProperties.get("mongoURL"));
-    searchServiceData.setMongoDB(searchServiceProperties.get("mongoDB"));
   }
 
   @When("^\\[search-service] send request to list boosted keyword$")
@@ -107,13 +105,7 @@ public class BoostedKeywordSteps {
         searchServiceData.getFindBoostedKeyword();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
-    MongoClientURI uri = new MongoClientURI(searchServiceData.getMongoURL());
-    MongoClient mongoClient = new MongoClient(uri);
-    MongoClientOptions.Builder optionsBuilder = MongoClientOptions.builder();
-    optionsBuilder.connectTimeout(30000);
-    MongoDatabase db = mongoClient.getDatabase(searchServiceData.getMongoDB());
-    MongoCollection<Document> collection = db.getCollection("keyword_boost_keyword_list");
-    long totalCount = collection.count();
+    long totalCount = mongoHelper.countOfRecordsInCollection("keyword_boost_keyword_list");
     assertThat(totalCount, equalTo(response.getResponseBody().getPageMetaData().getTotalRecords()));
 
   }
@@ -180,7 +172,15 @@ public class BoostedKeywordSteps {
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
     assertThat(response.getResponseBody().getErrorMessage(),equalTo("File upload in progress"));
-  }
+    FindIterable<Document>
+        mongoIterator=mongoHelper.getMongoDocumentByQuery("keyword_boost_keyword_list","keyword","uvw");
+    for (Document doc : mongoIterator){
+      String docInStringFormat=doc.toString();
+      System.out.println("---------------------------------Mongo Doc:----------------------------"+docInStringFormat);
+      assertThat(docInStringFormat ,containsString("keyword=uvw"));
+      assertThat(docInStringFormat ,containsString("products=MTA-0309256,MTA-0307450"));
+    }
+   }
 
   @Given("^\\[search-service] prepare request to delete boosted keyword using properties using properties data$")
   public void searchServicePrepareRequestToDeleteBoostedKeywordUsingPropertiesUsingPropertiesData()
@@ -231,8 +231,6 @@ public class BoostedKeywordSteps {
   @Given("^\\[search-service] prepare request to perform multi delete using properties using properties data$")
   public void searchServicePrepareRequestToPerformMultiDeleteUsingPropertiesUsingPropertiesData()
   {
-    searchServiceData.setMongoURL(searchServiceProperties.get("mongoURL"));
-    searchServiceData.setMongoDB(searchServiceProperties.get("mongoDB"));
 }
 
   @When("^\\[search-service] send request to perform multi delete$")

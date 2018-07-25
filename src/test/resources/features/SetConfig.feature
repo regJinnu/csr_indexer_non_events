@@ -1,4 +1,4 @@
-@SetConfigFeature
+@SetConfigFeature @TestSuiteID=9317806
 Feature: Set Config related API's
 
   @Regression @FetchSaveConfig

@@ -28,8 +28,8 @@
         <serenity.testlink.integration.version>3.4.0</serenity.testlink.integration.version>
         <testlink.devkey>f34384c07f81441603e641e4eed748e4</testlink.devkey>
         <testlink.project>X-Search</testlink.project>
-        <testlink.plan>X-search train release 28 Jun 2018</testlink.plan>
-        <testlink.build>1.9.0-1</testlink.build>
+        <testlink.plan>July26thRelease</testlink.plan>
+        <testlink.build>4.2.0-5</testlink.build>
     </properties>
 
     <dependencies>

@@ -8,12 +8,10 @@ import com.gdn.qa.x_search.api.test.CucumberStepsDefinition;
 import com.gdn.qa.x_search.api.test.api.services.SearchServiceController;
 import com.gdn.qa.x_search.api.test.data.SearchServiceData;
 import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
+import com.gdn.qa.x_search.api.test.utils.MongoHelper;
 import com.gdn.x.search.rest.web.model.StopWordResponse;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
-import com.mongodb.MongoClientURI;
+import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -34,6 +32,8 @@ public class StopwordsSteps {
 
   @Autowired
   private SearchServiceData searchServiceData;
+
+  MongoHelper mongoHelper = new MongoHelper();
   @Given("^\\[search-service] prepare save stopword using properties using properties data$")
   public void searchServicePrepareSaveStopwordUsingPropertiesUsingPropertiesData()
       {
@@ -105,8 +105,7 @@ public class StopwordsSteps {
       {
         searchServiceData.setPage(searchServiceProperties.get("page"));
         searchServiceData.setSize(searchServiceProperties.get("size"));
-        searchServiceData.setMongoURL(searchServiceProperties.get("mongoURL"));
-        searchServiceData.setMongoDB(searchServiceProperties.get("mongoDB"));
+
   }
 
   @When("^\\[search-service] send list stopword  request$")
@@ -121,14 +120,11 @@ public class StopwordsSteps {
         ResponseApi<GdnRestListResponse<StopWordResponse>> response=searchServiceData.getFindStopword();
         boolean result = response.getResponseBody().isSuccess();
         assertThat("is Success is wrong", result, equalTo(isSuccess));
-        MongoClientURI uri =
-            new MongoClientURI(searchServiceData.getMongoURL());
-        MongoClient mongoClient = new MongoClient(uri);
-        MongoClientOptions.Builder optionsBuilder = MongoClientOptions.builder();
-        optionsBuilder.connectTimeout(30000);
-        MongoDatabase db = mongoClient.getDatabase(searchServiceData.getMongoDB());
-        MongoCollection<Document> collection = db.getCollection("stopword_list");
-        long totalCount = collection.count();
+        MongoCollection<Document> collection =
+            mongoHelper.initializeDatabase("stopword_list");
+        BasicDBObject whereQuery = new BasicDBObject();
+        whereQuery.put("STORE_ID", "10001");
+        long totalCount = collection.count(whereQuery);
         assertThat(totalCount, equalTo(response.getResponseBody().getPageMetaData().getTotalRecords()));
   }
 
