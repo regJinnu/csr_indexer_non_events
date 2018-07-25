@@ -12,14 +12,13 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import java.io.IOException;
 import java.util.*;
-
 import org.apache.solr.common.SolrInputDocument;
+
+import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_URL;
+import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_URL_NO_PARAM;
 
 
 public class SolrHelper {
-
-  public static final String SOLR_URL = "http://seoulsolr6-01.uata.lokal:8983/solr/productCollectionNew";
-  public static final String SOLR_URL_NO_PARAM = "http://seoulsolr6-01.uata.lokal:8983/solr";
 
   public SolrHelper() {
   }

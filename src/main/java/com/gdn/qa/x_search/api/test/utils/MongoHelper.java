@@ -10,6 +10,8 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.json.JSONObject;
 import java.util.ArrayList;
+
+import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.MONGO_SERVER_ADDRESS;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.regex;
 import static com.mongodb.client.model.Updates.combine;
@@ -22,7 +24,7 @@ public class MongoHelper {
 
   public MongoCollection<Document> initializeDatabase(String collectionName){
 
-    ServerAddress serverAddress = new ServerAddress("mongodb-01.uata.lokal",27017);
+    ServerAddress serverAddress = new ServerAddress(MONGO_SERVER_ADDRESS,27017);
     MongoCredential mongoCredential = MongoCredential.createCredential("search","x_search","search".toCharArray());
     MongoClient mongoClient=new MongoClient(serverAddress, new ArrayList<MongoCredential>() {{ add(mongoCredential); }});
     MongoDatabase mongoDatabase=mongoClient.getDatabase("x_search");
