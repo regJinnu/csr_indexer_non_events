@@ -22,7 +22,7 @@ public class MongoHelper {
 
   public MongoCollection<Document> initializeDatabase(String collectionName){
 
-    ServerAddress serverAddress = new ServerAddress("mongodb-01.uatb.lokal",27017);
+    ServerAddress serverAddress = new ServerAddress("mongodb-01.uata.lokal",27017);
     MongoCredential mongoCredential = MongoCredential.createCredential("search","x_search","search".toCharArray());
     MongoClient mongoClient=new MongoClient(serverAddress, new ArrayList<MongoCredential>() {{ add(mongoCredential); }});
     MongoDatabase mongoDatabase=mongoClient.getDatabase("x_search");

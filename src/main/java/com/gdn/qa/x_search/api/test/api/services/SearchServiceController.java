@@ -9,6 +9,7 @@ import com.gdn.qa.automation.core.restassured.ResponseApi;
 import com.gdn.qa.automation.core.restassured.ServiceApi;
 import com.gdn.qa.automation.core.template.TemplateApi;
 import com.gdn.qa.x_search.api.test.data.SearchServiceData;
+import com.gdn.x.product.rest.web.model.response.SimpleStringResponse;
 import com.gdn.x.search.rest.web.model.*;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
@@ -1249,12 +1250,19 @@ public class SearchServiceController extends ServiceApi {
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {});
   }
 
-  public static void main(String args[]){
-
-    SearchServiceController searchServiceController = new SearchServiceController();
-    searchServiceController.prepareRequestForIndexing("productCodes","MTA-0311957");
-    searchServiceController.prepareRequestForIndexing("skus","TH7-15791-00118");
-
+  public ResponseApi<GdnRestSingleResponse<SimpleStringResponse>> prepareRequestForListingServicesForReindexing(){
+    Response response = service("searchservice")
+        .get("/index/services");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<SimpleStringResponse>>() {});
   }
 
+
+  public ResponseApi<GdnBaseRestResponse> prepareRequestForReviewAndRatingIndex(){
+    Response response = service("searchservice")
+        .post("/update/review-and-rating");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {});
+
+  }
 }

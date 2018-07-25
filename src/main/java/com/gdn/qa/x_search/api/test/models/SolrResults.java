@@ -21,12 +21,19 @@ public class SolrResults {
   @Field
   private int isInStock;
   @Field
+  private int reviewCount;
+  @Field
+  private String rating;
+  @Field
+  private long reviewAndRatingServiceLastUpdatedTimestamp;
+  @Field
   private String nameSearch;
   @Field("categorySequenceAN-1000001")
   private int categorySequenceAN;
 
   public SolrResults(String nameSearch, String brandSearch, String description, String level0Id,
-      String sku, boolean isSynchronised, int categorySequenceAN,Date lastModifiedDate,int isInStock) {
+      String sku, boolean isSynchronised, int categorySequenceAN,Date lastModifiedDate,int isInStock,
+      String rating,int reviewCount,long reviewAndRatingServiceLastUpdatedTimestamp) {
     this.nameSearch = nameSearch;
     this.brandSearch = brandSearch;
     this.description = description;
@@ -36,6 +43,9 @@ public class SolrResults {
     this.lastModifiedDate = lastModifiedDate;
     this.categorySequenceAN=categorySequenceAN;
     this.isInStock=isInStock;
+    this.reviewCount=reviewCount;
+    this.rating=rating;
+    this.reviewAndRatingServiceLastUpdatedTimestamp = reviewAndRatingServiceLastUpdatedTimestamp;
   }
 
   public SolrResults(){
@@ -113,6 +123,30 @@ public class SolrResults {
 
   public void setLastModifiedDate(Date lastModifiedDate) {
     this.lastModifiedDate = lastModifiedDate;
+  }
+
+  public int getReviewCount() {
+    return reviewCount;
+  }
+
+  public void setReviewCount(int reviewCount) {
+    this.reviewCount = reviewCount;
+  }
+
+  public String getRating() {
+    return rating;
+  }
+
+  public void setRating(String rating) {
+    this.rating = rating;
+  }
+
+  public long getReviewAndRatingServiceLastUpdatedTimestamp() {
+    return reviewAndRatingServiceLastUpdatedTimestamp;
+  }
+
+  public void setReviewAndRatingServiceLastUpdatedTimestamp(long reviewAndRatingServiceLastUpdatedTimestamp) {
+    this.reviewAndRatingServiceLastUpdatedTimestamp = reviewAndRatingServiceLastUpdatedTimestamp;
   }
 
   @Override

@@ -18,8 +18,8 @@ import org.apache.solr.common.SolrInputDocument;
 
 public class SolrHelper {
 
-  public static final String SOLR_URL = "http://seoulsolr6-01.uatb.lokal:8983/solr/productCollectionNew";
-  public static final String SOLR_URL_NO_PARAM = "http://seoulsolr6-01.uatb.lokal:8983/solr";
+  public static final String SOLR_URL = "http://seoulsolr6-01.uata.lokal:8983/solr/productCollectionNew";
+  public static final String SOLR_URL_NO_PARAM = "http://seoulsolr6-01.uata.lokal:8983/solr";
 
   public SolrHelper() {
   }
@@ -66,7 +66,7 @@ public class SolrHelper {
     return dataList;
   }
 
-  public static int updateSolrDataForAutomation(String queryText, String requestHandler,String field, int rows)
+  public static int updateSolrDataForAutomation(String queryText, String requestHandler,String field, int rows,String caseToBeUpdated)
       throws IOException, SolrServerException {
 
     HttpSolrClient httpSolrClient = initializeSolr(SOLR_URL);
@@ -76,12 +76,22 @@ public class SolrHelper {
 
     Map<String, Object> solrUpdate = new HashMap<>();
     solrUpdate.put(SolrFieldNames.ID, solrDocument.getFieldValue("id"));
-    solrUpdate.put(SolrFieldNames.IS_IN_STOCK, "0" );
+
+    switch (caseToBeUpdated){
+      case "oos":
+        solrUpdate.put(SolrFieldNames.IS_IN_STOCK, "0" );
+        break;
+      case "reviewAndRating":
+        solrUpdate.put(SolrFieldNames.RATING, "0" );
+        solrUpdate.put(SolrFieldNames.REVIEW_COUNT,0);
+        break;
+    }
+
 
     SolrInputDocument solrInputDocument = new SolrInputDocument();
-
+    solrInputDocument.addField(SolrFieldNames.ID,solrUpdate.remove(SolrFieldNames.ID));
     for(Map.Entry<String, Object> entry : solrUpdate.entrySet())
-    solrInputDocument.addField(entry.getKey(),entry.getValue());
+    solrInputDocument.addField(entry.getKey(),Collections.singletonMap("set",entry.getValue()));
 
     UpdateResponse updateResponse = httpSolrClient.add(solrInputDocument);
 
@@ -91,11 +101,14 @@ public class SolrHelper {
 /*  public static void main(String args[]){
 
     try {
-      int status = updateSolrDataForAutomation("id:TH7-15791-00118-00001","/select","id",1);
+      System.out.println("-----Review Count ---"+SolrHelper.getSolrProd("id:TH7-15791-00015-00001","/select","reviewCount",1).get(0).getReviewCount());
+      System.out.println("-----Rating--{}--"+SolrHelper.getSolrProd("id:TH7-15791-00015-00001","/select","rating",1).get(0).getRating());
+      int status = updateSolrDataForAutomation("id:TH7-15791-00015-00001","/select","id",1,"reviewAndRating");
+      System.out.println("-----Review Count ---"+SolrHelper.getSolrProd("id:TH7-15791-00015-00001","/select","reviewCount",1).get(0).getReviewCount());
+      System.out.println("-----Rating--{}--"+SolrHelper.getSolrProd("id:TH7-15791-00015-00001","/select","rating",1).get(0).getRating());
       System.out.println("Status:"+status);
-    } catch (IOException e) {
-      e.printStackTrace();
-    } catch (SolrServerException e) {
+
+    } catch (Exception e) {
       e.printStackTrace();
     }
 

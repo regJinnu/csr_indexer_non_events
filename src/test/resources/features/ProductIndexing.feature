@@ -22,3 +22,17 @@ Feature: Product Indexing Api
     Given [search-service] product is OOS in SOLR and isInStock in Xproduct
     When [search-service] sends request for indexing the product using 'sku'
     Then [search-service] indexes the provided product
+
+  @ListServices
+  Scenario: Verify that list of services configured for service index is proper
+
+    Given [search-service] list of services are configured
+    When [search-service] sends request for listing services for reindex
+    Then [search-service] all services configured are listed
+
+  @ReviewAndRatingIndex
+  Scenario: Verify that review and rating indexing updates proper data in SOLR
+
+    Given [search-service] product is having different rating and review in SOLR and concerned service
+    When [search-service] sends request for indexing with review and rating
+    Then [search-service] data is corrected in SOLR

@@ -4,6 +4,7 @@ import com.gdn.common.web.wrapper.response.GdnBaseRestResponse;
 import com.gdn.common.web.wrapper.response.GdnRestListResponse;
 import com.gdn.common.web.wrapper.response.GdnRestSingleResponse;
 import com.gdn.qa.automation.core.restassured.ResponseApi;
+import com.gdn.x.product.rest.web.model.response.SimpleStringResponse;
 import com.gdn.x.search.rest.web.model.*;
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -76,6 +77,7 @@ public class SearchServiceData {
   private String key;
   private String productCodeForReindex;
   private String skuForReindex;
+  private String queryForReindex;
   private ResponseApi<GdnRestSingleResponse> validateID;
   private ResponseApi<GdnBaseRestResponse> searchServiceResponse;
   private ResponseApi<GdnRestSingleResponse<ConfigResponse>> findByRequest;
@@ -98,5 +100,6 @@ public class SearchServiceData {
   private ResponseApi<GdnRestSingleResponse<KeywordBoostProductResponse>> findBoostedKeywordByID;
   private ResponseApi<GdnRestSingleResponse<ProductResponse>> findDataByProductID;
   private ResponseApi<GdnRestSingleResponse> processFailedIds;
+  private ResponseApi<GdnRestSingleResponse<SimpleStringResponse>> listReindexServices;
 }
 

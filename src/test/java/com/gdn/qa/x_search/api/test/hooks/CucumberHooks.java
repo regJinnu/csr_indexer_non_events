@@ -84,7 +84,7 @@ public class CucumberHooks {
     try {
       date = dateFormat.parse("2017-09-19T05:19:45.468Z");
       Document failedIdsDoc = new Document("_class" , "com.gdn.x.search.entity.SolrFailedIds")
-          .append("product_id" , "MTA-0311766")
+          .append("product_id" , "MTA-0305736")
           .append("id_type" , "PRODUCT_CODE")
           .append("version" , 0)
           .append("CREATED_DATE" , date)
