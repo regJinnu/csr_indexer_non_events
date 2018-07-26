@@ -36,3 +36,11 @@ Feature: Product Indexing Api
     Given [search-service] product is having different rating and review in SOLR and concerned service
     When [search-service] sends request for indexing with review and rating
     Then [search-service] data is corrected in SOLR
+
+  @CategoryReindex
+  Scenario: Verify category reindex reindexing all products in the category
+
+    Given [search-service] data is different in Solr and Xproduct for products in category
+    When [search-service] sends request for category reindex
+    Then [search-service] data is corrected for all products in the category
+

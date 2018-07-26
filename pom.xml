@@ -25,7 +25,7 @@
         <member.version>1.19.0-3</member.version>
         <badak.core>1.3.10</badak.core>
 
-        <serenity.testlink.integration.version>3.4.0</serenity.testlink.integration.version>
+        <serenity.testlink.integration.version>3.4.3</serenity.testlink.integration.version>
         <testlink.devkey>f34384c07f81441603e641e4eed748e4</testlink.devkey>
         <testlink.project>X-Search</testlink.project>
         <testlink.plan>July26thRelease</testlink.plan>

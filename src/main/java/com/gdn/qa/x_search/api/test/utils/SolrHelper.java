@@ -84,8 +84,15 @@ public class SolrHelper {
         solrUpdate.put(SolrFieldNames.RATING, "0" );
         solrUpdate.put(SolrFieldNames.REVIEW_COUNT,0);
         break;
+      case "categoryReindex":
+        solrUpdate.put(SolrFieldNames.IS_IN_STOCK, "0" );
+        solrUpdate.put(SolrFieldNames.RATING, "4" );
+        solrUpdate.put(SolrFieldNames.REVIEW_COUNT,10);
+        solrUpdate.put(SolrFieldNames.MERCHANT_COMMISSION_TYPE,"CC");
+        solrUpdate.put(SolrFieldNames.MERCHANT_RATING,3.0);
+        solrUpdate.put(SolrFieldNames.LOCATION,"Origin-ABC");
+        break;
     }
-
 
     SolrInputDocument solrInputDocument = new SolrInputDocument();
     solrInputDocument.addField(SolrFieldNames.ID,solrUpdate.remove(SolrFieldNames.ID));
@@ -96,21 +103,5 @@ public class SolrHelper {
 
     return updateResponse.getStatus();
   }
-
-/*  public static void main(String args[]){
-
-    try {
-      System.out.println("-----Review Count ---"+SolrHelper.getSolrProd("id:TH7-15791-00015-00001","/select","reviewCount",1).get(0).getReviewCount());
-      System.out.println("-----Rating--{}--"+SolrHelper.getSolrProd("id:TH7-15791-00015-00001","/select","rating",1).get(0).getRating());
-      int status = updateSolrDataForAutomation("id:TH7-15791-00015-00001","/select","id",1,"reviewAndRating");
-      System.out.println("-----Review Count ---"+SolrHelper.getSolrProd("id:TH7-15791-00015-00001","/select","reviewCount",1).get(0).getReviewCount());
-      System.out.println("-----Rating--{}--"+SolrHelper.getSolrProd("id:TH7-15791-00015-00001","/select","rating",1).get(0).getRating());
-      System.out.println("Status:"+status);
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-  }*/
 
 }

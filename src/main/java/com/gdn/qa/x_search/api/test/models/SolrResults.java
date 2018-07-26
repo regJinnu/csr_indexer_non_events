@@ -28,12 +28,19 @@ public class SolrResults {
   private long reviewAndRatingServiceLastUpdatedTimestamp;
   @Field
   private String nameSearch;
+  @Field
+  private String merchantCommissionType;
+  @Field
+  private Double merchantRating;
+  @Field
+  private String location;
   @Field("categorySequenceAN-1000001")
   private int categorySequenceAN;
 
   public SolrResults(String nameSearch, String brandSearch, String description, String level0Id,
       String sku, boolean isSynchronised, int categorySequenceAN,Date lastModifiedDate,int isInStock,
-      String rating,int reviewCount,long reviewAndRatingServiceLastUpdatedTimestamp) {
+      String rating,int reviewCount,long reviewAndRatingServiceLastUpdatedTimestamp,
+      String location,String merchantCommissionType,Double merchantRating) {
     this.nameSearch = nameSearch;
     this.brandSearch = brandSearch;
     this.description = description;
@@ -46,6 +53,9 @@ public class SolrResults {
     this.reviewCount=reviewCount;
     this.rating=rating;
     this.reviewAndRatingServiceLastUpdatedTimestamp = reviewAndRatingServiceLastUpdatedTimestamp;
+    this.merchantCommissionType = merchantCommissionType;
+    this.merchantRating = merchantRating;
+    this.location = location;
   }
 
   public SolrResults(){
@@ -148,6 +158,31 @@ public class SolrResults {
   public void setReviewAndRatingServiceLastUpdatedTimestamp(long reviewAndRatingServiceLastUpdatedTimestamp) {
     this.reviewAndRatingServiceLastUpdatedTimestamp = reviewAndRatingServiceLastUpdatedTimestamp;
   }
+
+  public String getMerchantCommissionType() {
+    return merchantCommissionType;
+  }
+
+  public void setMerchantCommissionType(String merchantCommissionType) {
+    this.merchantCommissionType = merchantCommissionType;
+  }
+
+  public Double getMerchantRating() {
+    return merchantRating;
+  }
+
+  public void setMerchantRating(Double merchantRating) {
+    this.merchantRating = merchantRating;
+  }
+
+  public String getLocation() {
+    return location;
+  }
+
+  public void setLocation(String location) {
+    this.location = location;
+  }
+
 
   @Override
   public String toString() {

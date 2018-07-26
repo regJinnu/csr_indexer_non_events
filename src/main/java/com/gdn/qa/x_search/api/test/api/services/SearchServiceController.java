@@ -1239,4 +1239,19 @@ public class SearchServiceController extends ServiceApi {
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {});
 
   }
+
+  public ResponseApi<GdnBaseRestResponse> prepareRequestForCategoryReindex(String categoryCode){
+
+    String requestJson = "{\n" + "\"categoryCodes\": [ \""+categoryCode +"\"]\n" + "}";
+
+    Response response = service("searchservice")
+        .body(requestJson)
+        .post("/index/category");
+
+    response.getBody().prettyPrint();
+
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {});
+
+  }
+
 }

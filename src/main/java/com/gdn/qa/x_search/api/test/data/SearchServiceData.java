@@ -78,6 +78,8 @@ public class SearchServiceData {
   private String productCodeForReindex;
   private String skuForReindex;
   private String queryForReindex;
+  private String categoryForReindex;
+  private String queryForCategoryReindex;
   private ResponseApi<GdnRestSingleResponse> validateID;
   private ResponseApi<GdnBaseRestResponse> searchServiceResponse;
   private ResponseApi<GdnRestSingleResponse<ConfigResponse>> findByRequest;

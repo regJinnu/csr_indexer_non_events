@@ -177,7 +177,6 @@ public class ProductIndexingSteps {
       solrCommit("productCollectionNew");
       int reviewCount = SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","reviewCount",1).get(0).getReviewCount();
       String rating = SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","rating",1).get(0).getRating();
-      System.out.println("-----Review Count ---"+reviewCount+"-----Rating--{}--"+rating);
       LOGGER.debug("-----Review Count ---{}-----Rating--{}--",reviewCount,rating);
       assertThat("Test Product not set in SOLR",reviewCount,equalTo(0));
       assertThat("Test Product not set in SOLR",rating,equalTo("0"));
@@ -218,8 +217,131 @@ public class ProductIndexingSteps {
       LOGGER.debug("------Earlier Date---- lastModifiedActual ----:{}",reviewAndRatingTimestampActual);
       LOGGER.debug("------Update Date---- lastModifiedUpdated ----:{}",reviewAndRatingTimestampUpdated);
 
-      System.out.println("--reviewAndRatingTimestampUpdated---"+reviewAndRatingTimestampUpdated+" reviewAndRatingTimestampActual"+reviewAndRatingTimestampActual);
       assertThat("reviewAndRatingTimestamp is not Updated",reviewAndRatingTimestampUpdated,greaterThan(reviewAndRatingTimestampActual));
+    }
+    catch (Exception e){
+      e.printStackTrace();
+    }
+  }
+
+  @Given("^\\[search-service] data is different in Solr and Xproduct for products in category$")
+  public void checkCategoryDataIsDifferentInXprodAndSolr(){
+    searchServiceData.setQueryForCategoryReindex(searchServiceProperties.get("queryForCategoryReindex"));
+    searchServiceData.setCategoryForReindex(searchServiceProperties.get("categoryForReindex"));
+    try {
+      int status = updateSolrDataForAutomation(searchServiceData.getQueryForCategoryReindex(),"/select","id",1,"categoryReindex");
+      assertThat("Updating solr fields to different values failed",status,equalTo(0));
+      solrCommit("productCollectionNew");
+
+      int reviewCount =
+          SolrHelper.getSolrProd(searchServiceData.getQueryForCategoryReindex(),
+              "/select",
+              "reviewCount",
+              1).get(0).getReviewCount();
+
+      String rating =
+          SolrHelper.getSolrProd(searchServiceData.getQueryForCategoryReindex(),
+              "/select",
+              "rating",
+              1).get(0).getRating();
+
+      int oosFlag =
+          SolrHelper.getSolrProd(searchServiceData.getQueryForCategoryReindex(),
+              "/select",
+              "isInStock",
+              1).get(0).getIsInStock();
+
+      String merchantCommissionType =
+          SolrHelper.getSolrProd(searchServiceData.getQueryForCategoryReindex(),
+              "/select",
+              "merchantCommissionType",
+              1).get(0).getMerchantCommissionType();
+      Double merchantRating = SolrHelper.getSolrProd(searchServiceData.getQueryForCategoryReindex(),
+          "/select",
+          "merchantRating",
+          1).get(0).getMerchantRating();
+
+      String location = SolrHelper.getSolrProd(searchServiceData.getQueryForCategoryReindex(),
+          "/select",
+          "location",
+          1).get(0).getLocation();
+
+      System.out.println("--reviewCount--"+reviewCount+"---rating--"+reviewCount+"--oosFlag--"+oosFlag+"--merchantRating-"+merchantRating+"--merchantCommissionType-"+merchantCommissionType+"--location--"+location);
+
+      assertThat("Test Product not set in SOLR",reviewCount,equalTo(10));
+      assertThat("Test Product not set in SOLR",rating,equalTo("4"));
+      assertThat("Test Product not set in SOLR",oosFlag,equalTo(0));
+      assertThat("Test Product not set in SOLR",merchantRating,equalTo(3.0));
+      assertThat("Test Product not set in SOLR",merchantCommissionType,equalTo("CC"));
+      assertThat("Test Product not set in SOLR",location,equalTo("Origin-ABC"));
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  @When("^\\[search-service] sends request for category reindex$")
+  public void sendCategoryReindexRequest(){
+
+    ResponseApi<GdnBaseRestResponse> responseApi =
+        searchServiceController.prepareRequestForCategoryReindex(searchServiceData.getCategoryForReindex());
+    searchServiceData.setSearchServiceResponse(responseApi);
+
+  }
+
+  @Then("^\\[search-service] data is corrected for all products in the category$")
+  public void checkDataInSolrIsCorrectedAfterCategoryReindex(){
+
+    ResponseApi<GdnBaseRestResponse> responseApi = searchServiceData.getSearchServiceResponse();
+
+    assertThat("Status Code Not 200", responseApi.getResponse().getStatusCode(), equalTo(200));
+
+    try {
+      Thread.sleep(3000);
+      solrCommit("productCollectionNew");
+
+      int reviewCount =
+          SolrHelper.getSolrProd(searchServiceData.getQueryForCategoryReindex(),
+              "/select",
+              "reviewCount",
+              1).get(0).getReviewCount();
+
+      String rating =
+          SolrHelper.getSolrProd(searchServiceData.getQueryForCategoryReindex(),
+              "/select",
+              "rating",
+              1).get(0).getRating();
+
+      int oosFlag =
+          SolrHelper.getSolrProd(searchServiceData.getQueryForCategoryReindex(),
+              "/select",
+              "isInStock",
+              1).get(0).getIsInStock();
+
+      String merchantCommissionType =
+          SolrHelper.getSolrProd(searchServiceData.getQueryForCategoryReindex(),
+              "/select",
+              "merchantCommissionType",
+              1).get(0).getMerchantCommissionType();
+      Double merchantRating = SolrHelper.getSolrProd(searchServiceData.getQueryForCategoryReindex(),
+          "/select",
+          "merchantRating",
+          1).get(0).getMerchantRating();
+
+      String location = SolrHelper.getSolrProd(searchServiceData.getQueryForCategoryReindex(),
+          "/select",
+          "location",
+          1).get(0).getLocation();
+
+      System.out.println("--reviewCount--"+reviewCount+"---rating--"+reviewCount+"--oosFlag--"+oosFlag+"--merchantRating-"+merchantRating+"--merchantCommissionType-"+merchantCommissionType+"--location--"+location);
+
+      assertThat("Test Product not set in SOLR",reviewCount,not(equalTo(10)));
+      assertThat("Test Product not set in SOLR",rating,not(equalTo("4")));
+      assertThat("Test Product not set in SOLR",oosFlag,equalTo(1));
+      assertThat("Test Product not set in SOLR",merchantRating,not(equalTo(3.0)));
+      assertThat("Test Product not set in SOLR",merchantCommissionType,not(equalTo("CC")));
+      assertThat("Test Product not set in SOLR",location,not(equalTo("Origin-ABC")));
+
     }
     catch (Exception e){
       e.printStackTrace();
