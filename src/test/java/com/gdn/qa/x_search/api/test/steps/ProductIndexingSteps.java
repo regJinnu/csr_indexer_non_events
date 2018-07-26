@@ -13,9 +13,8 @@ import com.gdn.x.product.rest.web.model.response.SimpleStringResponse;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,6 +24,7 @@ import static com.gdn.qa.x_search.api.test.utils.SolrHelper.updateSolrDataForAut
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
+@Slf4j
 @CucumberStepsDefinition
 public class ProductIndexingSteps {
 
@@ -42,9 +42,7 @@ public class ProductIndexingSteps {
   Date lastModifiedUpdated ;
   long reviewAndRatingTimestampActual;
   long reviewAndRatingTimestampUpdated;
-
-
-  static Logger LOGGER = LoggerFactory.getLogger(ProductIndexingSteps.class);
+  
 
   private static final String expectedListOfervices = "MERCHANT_SERVICE,ANALYTICS_SERVICE,STORE_CLOSE_SERVICE,LOCATION_AND_INVENTORY_SERVICE,PRODUCT_REVIEW_AND_RATING_SERVICE,PRISTINE_SERVICE,KEYWORD_SERVICE,CAMPAIGN_SERVICE,BOOSTED_KEYWORD,MODEL_NUMBER_EXTRACTION,NONE";
 
@@ -54,7 +52,7 @@ public class ProductIndexingSteps {
     assertThat("No failed Ids", countOfFailedIds, not(equalTo(0)));
     try {
        lastModifiedActual = SolrHelper.getSolrProd("level0Id:MTA-0305736","/select","lastModifiedDate",1).get(0).getLastModifiedDate();
-      System.out.println("------Earlier Date---- lastModifiedActual ----:{}"+lastModifiedActual);
+      log.debug("------Earlier Date---- lastModifiedActual ----:{}"+lastModifiedActual);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -77,12 +75,10 @@ public class ProductIndexingSteps {
 
     try {
       solrCommit("productCollectionNew");
-      lastModifiedUpdated = SolrHelper.getSolrProd("level0Id:MTA-0305736","/select","lastModifiedDate",1).get(0).getLastModifiedDate();
-      LOGGER.debug("------Earlier Date---- lastModifiedActual ----:{}",lastModifiedActual);
-      LOGGER.debug("------Update Date---- lastModifiedUpdated ----:{}",lastModifiedUpdated);
 
-      System.out.println("------Earlier Date---- lastModifiedActual ----:{}"+lastModifiedActual);
-      System.out.println("------Update Date---- lastModifiedUpdated ----:{}"+lastModifiedUpdated);
+      lastModifiedUpdated = SolrHelper.getSolrProd("level0Id:MTA-0305736","/select","lastModifiedDate",1).get(0).getLastModifiedDate();
+      log.debug("------Earlier Date---- lastModifiedActual ----:{}",lastModifiedActual);
+      log.debug("------Update Date---- lastModifiedUpdated ----:{}",lastModifiedUpdated);
 
       assertThat("Last Modified Data is not Updated",lastModifiedUpdated,greaterThan(lastModifiedActual));
     } catch (Exception e) {
@@ -177,7 +173,7 @@ public class ProductIndexingSteps {
       solrCommit("productCollectionNew");
       int reviewCount = SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","reviewCount",1).get(0).getReviewCount();
       String rating = SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","rating",1).get(0).getRating();
-      LOGGER.debug("-----Review Count ---{}-----Rating--{}--",reviewCount,rating);
+      log.debug("-----Review Count ---{}-----Rating--{}--",reviewCount,rating);
       assertThat("Test Product not set in SOLR",reviewCount,equalTo(0));
       assertThat("Test Product not set in SOLR",rating,equalTo("0"));
       reviewAndRatingTimestampActual = SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","reviewAndRatingServiceLastUpdatedTimestamp",1).get(0).getReviewAndRatingServiceLastUpdatedTimestamp();
@@ -207,15 +203,14 @@ public class ProductIndexingSteps {
       int reviewCount = SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","reviewCount",1).get(0).getReviewCount();
       String rating = SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","rating",1).get(0).getRating();
 
-      System.out.println("-----Review Count ---"+reviewCount+"-----Rating----"+rating);
-      LOGGER.debug("-----Review Count ---{}-----Rating--{}--",reviewCount,rating);
+      log.debug("-----Review Count ---{}-----Rating--{}--",reviewCount,rating);
       assertThat("Review and rating not indexed",reviewCount,not(equalTo(0)));
       assertThat("Product not OOS in SOLR",rating,not(equalTo("0")));
 
       reviewAndRatingTimestampUpdated = SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","reviewAndRatingServiceLastUpdatedTimestamp",1).get(0).getReviewAndRatingServiceLastUpdatedTimestamp();
 
-      LOGGER.debug("------Earlier Date---- lastModifiedActual ----:{}",reviewAndRatingTimestampActual);
-      LOGGER.debug("------Update Date---- lastModifiedUpdated ----:{}",reviewAndRatingTimestampUpdated);
+      log.debug("------Earlier Date---- lastModifiedActual ----:{}",reviewAndRatingTimestampActual);
+      log.debug("------Update Date---- lastModifiedUpdated ----:{}",reviewAndRatingTimestampUpdated);
 
       assertThat("reviewAndRatingTimestamp is not Updated",reviewAndRatingTimestampUpdated,greaterThan(reviewAndRatingTimestampActual));
     }
@@ -266,7 +261,7 @@ public class ProductIndexingSteps {
           "location",
           1).get(0).getLocation();
 
-      System.out.println("--reviewCount--"+reviewCount+"---rating--"+reviewCount+"--oosFlag--"+oosFlag+"--merchantRating-"+merchantRating+"--merchantCommissionType-"+merchantCommissionType+"--location--"+location);
+      log.debug("--reviewCount--{}---rating--{}--reviewCount--{}--oosFlag--{}--merchantRating---{}--merchantCommissionType---{}--location--{}--",reviewCount,rating,reviewCount,oosFlag,merchantRating,merchantCommissionType,location);
 
       assertThat("Test Product not set in SOLR",reviewCount,equalTo(10));
       assertThat("Test Product not set in SOLR",rating,equalTo("4"));
@@ -297,7 +292,7 @@ public class ProductIndexingSteps {
     assertThat("Status Code Not 200", responseApi.getResponse().getStatusCode(), equalTo(200));
 
     try {
-      Thread.sleep(3000);
+      Thread.sleep(10000);
       solrCommit("productCollectionNew");
 
       int reviewCount =
@@ -333,7 +328,7 @@ public class ProductIndexingSteps {
           "location",
           1).get(0).getLocation();
 
-      System.out.println("--reviewCount--"+reviewCount+"---rating--"+reviewCount+"--oosFlag--"+oosFlag+"--merchantRating-"+merchantRating+"--merchantCommissionType-"+merchantCommissionType+"--location--"+location);
+      log.error("--reviewCount--{}---rating--{}--reviewCount--{}--oosFlag--{}--merchantRating---{}--merchantCommissionType---{}--location--{}--",reviewCount,rating,reviewCount,oosFlag,merchantRating,merchantCommissionType,location);
 
       assertThat("Test Product not set in SOLR",reviewCount,not(equalTo(10)));
       assertThat("Test Product not set in SOLR",rating,not(equalTo("4")));

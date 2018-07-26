@@ -9,7 +9,7 @@
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Sample Cucumber Spring project</name>
+    <name>X-search api automation suite</name>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -200,7 +200,7 @@
                 </executions>
             </plugin>
             <!--Uncomment this to Integrate with testlink-->
-        <!--    <plugin>
+       <plugin>
                 <groupId>com.gdn.qa.util</groupId>
                 <artifactId>serenity-testlink-integration</artifactId>
                 <version>${serenity.testlink.integration.version}</version>
@@ -220,7 +220,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin> -->
+            </plugin>
         </plugins>
     </build>
 
