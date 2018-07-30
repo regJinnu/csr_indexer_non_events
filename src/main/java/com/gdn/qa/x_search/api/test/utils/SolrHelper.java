@@ -104,4 +104,16 @@ public class SolrHelper {
     return updateResponse.getStatus();
   }
 
+  public static void deleteSolrDocByQuery(String solrQuery){
+    HttpSolrClient httpSolrClient = initializeSolr(SOLR_URL);
+    try {
+      httpSolrClient.deleteByQuery(solrQuery);
+    } catch (SolrServerException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+
 }

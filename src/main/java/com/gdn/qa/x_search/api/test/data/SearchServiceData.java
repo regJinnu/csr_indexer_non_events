@@ -80,6 +80,7 @@ public class SearchServiceData {
   private String queryForReindex;
   private String categoryForReindex;
   private String queryForCategoryReindex;
+  private String queryForReindexOfDeletedProd;
   private ResponseApi<GdnRestSingleResponse> validateID;
   private ResponseApi<GdnBaseRestResponse> searchServiceResponse;
   private ResponseApi<GdnRestSingleResponse<ConfigResponse>> findByRequest;

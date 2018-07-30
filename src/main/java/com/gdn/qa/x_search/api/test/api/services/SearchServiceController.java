@@ -1254,4 +1254,14 @@ public class SearchServiceController extends ServiceApi {
 
   }
 
+  public ResponseApi<GdnBaseRestResponse> prepareRequestForFullReindexing(String solrToSolr,String serviceName){
+    Response response = service("searchservice")
+        .queryParam("solr",solrToSolr)
+        .queryParam("services",serviceName)
+        .post("/index/product-revamp");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {});
+  }
+
+
 }

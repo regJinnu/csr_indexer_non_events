@@ -70,4 +70,9 @@ public class MongoHelper {
     collection.deleteOne(eq(queryField,queryValue));
   }
 
+  public void deleteAllFromMongo(String collectionName){
+    MongoCollection<Document> collection = initializeDatabase(collectionName);
+    collection.deleteMany(new Document());
+  }
+
 }

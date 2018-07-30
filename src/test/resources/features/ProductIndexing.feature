@@ -46,8 +46,8 @@ Feature: Product Indexing Api
 
 
   @FullReindexWithXproduct
-  Scenario: Verify category reindex reindexing all products in the category
+  Scenario: Verify full reindex with Xproduct
 
     Given [search-service] data is different in Solr and Xproduct for products in category
-    When [search-service] sends request for category reindex
-    Then [search-service] data is corrected for all products in the category
+    When [search-service] sends request for full reindex with xproduct option
+    Then [search-service] test data is reindexed
