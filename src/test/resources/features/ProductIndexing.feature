@@ -1,4 +1,4 @@
-@FailedProductIndexFeature @TestSuiteID=9317806
+@ProductIndexFeature @TestSuiteID=9317806
 Feature: Product Indexing Api
 
   @ProcessFailedIds
@@ -9,14 +9,14 @@ Feature: Product Indexing Api
     Then [search-service] indexes the Ids present in DB
     And [search-service] removes the entries from DB
 
-  @TestIndex
+  @IndexByProductCode
   Scenario: Verify that a product can be reindexed using productCode
 
     Given [search-service] product is OOS in SOLR and isInStock in Xproduct
     When [search-service] sends request for indexing the product using 'productCode'
     Then [search-service] indexes the provided product
 
-  @TestIndex
+  @IndexByProductSku
   Scenario: Verify that a product can be reindexed using productSku
 
     Given [search-service] product is OOS in SOLR and isInStock in Xproduct
@@ -51,3 +51,10 @@ Feature: Product Indexing Api
     Given [search-service] data is different in Solr and Xproduct for products in category
     When [search-service] sends request for full reindex with xproduct option
     Then [search-service] test data is reindexed
+
+  @ProcessDeltaStoredEvents
+  Scenario: Verify Stored Delta processing
+
+    Given [search-service] events are present in IndexingListNew collection
+    When [search-service] sends request for processing stored delta
+    Then [search-service] products stored in table are reindexed

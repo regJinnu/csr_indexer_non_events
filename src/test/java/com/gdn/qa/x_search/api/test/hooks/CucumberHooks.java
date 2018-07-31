@@ -139,4 +139,46 @@ public class CucumberHooks {
     }
   }
 
+  @Before("@ProcessDeltaStoredEvents")
+  public void beforeProcessingStoredEvents(){
+
+    Date date = null;
+    try {
+      date = dateFormat.parse("2018-07-30T11:45:39.235Z");
+
+      Document storedDeltaDoc1 = new Document("_class" , "com.gdn.x.search.entity.EventIndexingEntity")
+          .append("code" , "MTA-0305736")
+          .append("type" , "productCode")
+          .append("processHost", "1")
+          .append("isFailed", "0")
+          .append("eventType" , "ALL")
+          .append("version" , 0)
+          .append("CREATED_DATE" , date)
+          .append("CREATED_BY" , "user-dev-src")
+          .append("UPDATED_DATE" , date)
+          .append("UPDATED_BY" , "user-dev-src")
+          .append("MARK_FOR_DELETE" , false);
+
+      Document storedDeltaDoc2 = new Document("_class" , "com.gdn.x.search.entity.EventIndexingEntity")
+          .append("code" , "TOA-15142-00072-00001")
+          .append("type" , "id")
+          .append("processHost", "1")
+          .append("isFailed", "0")
+          .append("eventType" , "LOCATION_AND_INVENTORY_SERVICE")
+          .append("version" , 0)
+          .append("CREATED_DATE" , date)
+          .append("CREATED_BY" , "user-dev-src")
+          .append("UPDATED_DATE" , date)
+          .append("UPDATED_BY" , "user-dev-src")
+          .append("MARK_FOR_DELETE" , false);
+
+      mongoHelper.insertInMongo("indexing_list_new",storedDeltaDoc1);
+      mongoHelper.insertInMongo("indexing_list_new",storedDeltaDoc2);
+
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+
+  }
+
 }

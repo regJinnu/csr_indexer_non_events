@@ -1263,5 +1263,11 @@ public class SearchServiceController extends ServiceApi {
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {});
   }
 
+  public ResponseApi<GdnRestSingleResponse<SimpleStringResponse>> prepareRequestForProcessingStoredDelta(){
+    Response response = service("searchservice")
+        .get("/index/process-delta-stored-events");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<SimpleStringResponse>>() {});
+  }
 
 }

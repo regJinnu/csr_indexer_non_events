@@ -81,8 +81,8 @@ public class SolrHelper {
         solrUpdate.put(SolrFieldNames.IS_IN_STOCK, "0" );
         break;
       case "reviewAndRating":
-        solrUpdate.put(SolrFieldNames.RATING, "0" );
-        solrUpdate.put(SolrFieldNames.REVIEW_COUNT,0);
+        solrUpdate.put(SolrFieldNames.RATING, "23" );
+        solrUpdate.put(SolrFieldNames.REVIEW_COUNT,100);
         break;
       case "categoryReindex":
         solrUpdate.put(SolrFieldNames.IS_IN_STOCK, "0" );

@@ -81,6 +81,8 @@ public class SearchServiceData {
   private String categoryForReindex;
   private String queryForCategoryReindex;
   private String queryForReindexOfDeletedProd;
+  private String queryForReviewAndRatingIndex;
+  private String queryForProductCode;
   private ResponseApi<GdnRestSingleResponse> validateID;
   private ResponseApi<GdnBaseRestResponse> searchServiceResponse;
   private ResponseApi<GdnRestSingleResponse<ConfigResponse>> findByRequest;
