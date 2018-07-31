@@ -1,7 +1,6 @@
 package com.gdn.qa.x_search.api.test.utils;
 
 
-import com.gdn.qa.x_search.api.test.data.MongoData;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
@@ -19,9 +18,6 @@ import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;
 
 public class MongoHelper {
-
-  MongoData mongoData;
-
 
   public MongoCollection<Document> initializeDatabase(String collectionName){
 
@@ -46,13 +42,6 @@ public class MongoHelper {
     String pattern = ".*" + query.getString(queryField) + ".*";
     FindIterable<Document> mongoDoc = collection.find(regex(queryField,pattern,"i"));
     return mongoDoc;
-/*    for (Document doc : mongoDoc){
-      JSONObject jsonObject = new JSONObject(doc);
-      Gson gson = new Gson();
-      mongoData = gson.fromJson(jsonObject.toString(), MongoData.class);
-      System.out.println(mongoData.getNAME());
-      System.out.println(mongoData.getVALUE());
-    }*/
   }
 
   public void updateMongo(String collectionName,String queryField,String queryValue,String updateField,String updateValue){

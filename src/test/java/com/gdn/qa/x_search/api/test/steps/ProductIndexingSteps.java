@@ -498,7 +498,7 @@ public class ProductIndexingSteps {
 
       int status = updateSolrDataForAutomation(query,"/select","id",1,"reviewAndRating");
       assertThat("Updating review and rating in SOLR doc failed",status,equalTo(0));
-
+      solrCommit("productCollectionNew");
       int reviewCount = SolrHelper.getSolrProd(query, "/select", "reviewCount", 1).get(0).getReviewCount();
       String rating = SolrHelper.getSolrProd(query, "/select", "rating", 1).get(0).getRating();
 
@@ -511,6 +511,7 @@ public class ProductIndexingSteps {
 
       int statusInv = updateSolrDataForAutomation(queryInv,"/select","id",1,"oos");
       assertThat("Updating isInStock field in SOLR failed",status,equalTo(0));
+      solrCommit("productCollectionNew");
 
       int oosFlag = SolrHelper.getSolrProd(queryInv, "/select", "isInStock", 1).get(0).getIsInStock();
       assertThat("Product not OOS",oosFlag,equalTo(0));
