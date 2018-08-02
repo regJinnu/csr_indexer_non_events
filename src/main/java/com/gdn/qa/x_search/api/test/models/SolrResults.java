@@ -36,11 +36,18 @@ public class SolrResults {
   private String location;
   @Field("categorySequenceAN-1000001")
   private int categorySequenceAN;
+  @Field
+  private long startDateStoreClosed;
+  @Field
+  private long endDateStoreClosed;
+  @Field
+  private int isDelayShipping;
 
   public SolrResults(String nameSearch, String brandSearch, String description, String level0Id,
       String sku, boolean isSynchronised, int categorySequenceAN,Date lastModifiedDate,int isInStock,
       String rating,int reviewCount,long reviewAndRatingServiceLastUpdatedTimestamp,
-      String location,String merchantCommissionType,Double merchantRating) {
+      String location,String merchantCommissionType,Double merchantRating,
+      long startDateStoreClosed,long endDateStoreClosed, int isDelayShipping) {
     this.nameSearch = nameSearch;
     this.brandSearch = brandSearch;
     this.description = description;
@@ -56,6 +63,9 @@ public class SolrResults {
     this.merchantCommissionType = merchantCommissionType;
     this.merchantRating = merchantRating;
     this.location = location;
+    this.isDelayShipping = isDelayShipping;
+    this.startDateStoreClosed = startDateStoreClosed;
+    this.endDateStoreClosed = endDateStoreClosed;
   }
 
   public SolrResults(){
@@ -182,6 +192,32 @@ public class SolrResults {
   public void setLocation(String location) {
     this.location = location;
   }
+
+
+  public long getStartDateStoreClosed() {
+    return startDateStoreClosed;
+  }
+
+  public void setStartDateStoreClosed(long startDateStoreClosed) {
+    this.startDateStoreClosed = startDateStoreClosed;
+  }
+
+  public long getEndDateStoreClosed() {
+    return endDateStoreClosed;
+  }
+
+  public void setEndDateStoreClosed(long endDateStoreClosed) {
+    this.endDateStoreClosed = endDateStoreClosed;
+  }
+
+  public int getIsDelayShipping() {
+    return isDelayShipping;
+  }
+
+  public void setIsDelayShipping(int isDelayShipping) {
+    this.isDelayShipping = isDelayShipping;
+  }
+
 
 
   @Override

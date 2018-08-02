@@ -1,5 +1,5 @@
 @InventoryEventsTestFeature
-Feature: Verify Inventory OOS and Non OOS events
+Feature: Verify indexing by Inventory OOS and Non OOS events
 
   @OOSEvent
   Scenario: Verify inventory oos event

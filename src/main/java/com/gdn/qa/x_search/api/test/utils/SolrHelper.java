@@ -95,6 +95,11 @@ public class SolrHelper {
         solrUpdate.put(SolrFieldNames.MERCHANT_RATING,3.0);
         solrUpdate.put(SolrFieldNames.LOCATION,"Origin-ABC");
         break;
+      case "closedStore":
+        solrUpdate.put(SolrFieldNames.START_DATE_STORE_CLOSED,1111111111L);
+        solrUpdate.put(SolrFieldNames.END_DATE_STORE_CLOSED,22222222L);
+        solrUpdate.put(SolrFieldNames.IS_DELAY_SHIPPING,3);
+        break;
     }
 
     SolrInputDocument solrInputDocument = new SolrInputDocument();

@@ -2,11 +2,15 @@ package com.gdn.qa.x_search.api.test.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gdn.qa.x_search.api.test.data.BPStoreClosedEvent;
 import com.gdn.qa.x_search.api.test.data.OOSEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 
 /**
  * @author kumar on 01/08/18
@@ -47,4 +51,26 @@ private ApplicationContext applicationContext;
 
   }
 
+  public void publishStoreClosedEvent(String businessPartnerCode,boolean isDelayShipping) {
+
+    Date date = new Date();
+    DateTime dtStart = new DateTime(date);
+    DateTime dtEnd = dtStart.plusDays(2);
+
+    BPStoreClosedEvent bpStoreClosedEvent = BPStoreClosedEvent.builder().
+        timestamp(System.currentTimeMillis()).
+        businessPartnerCode(businessPartnerCode).
+        startDate(dtStart.getMillis()).
+        endDate(dtEnd.getMillis()).
+        publishType("EXECUTE_START").
+        startDateWithBufferClosingStoreDay(dtEnd.getMillis()).
+        delayShipping(isDelayShipping).build();
+
+    try {
+      kafkaSender.send("com.gdn.x.bpservice.store.closing.publish",objectMapper.writeValueAsString(bpStoreClosedEvent));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+
+  }
 }
