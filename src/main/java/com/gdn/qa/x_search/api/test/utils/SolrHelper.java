@@ -80,6 +80,9 @@ public class SolrHelper {
       case "oos":
         solrUpdate.put(SolrFieldNames.IS_IN_STOCK, "0" );
         break;
+      case "nonOOS":
+        solrUpdate.put(SolrFieldNames.IS_IN_STOCK, "1" );
+        break;
       case "reviewAndRating":
         solrUpdate.put(SolrFieldNames.RATING, "23" );
         solrUpdate.put(SolrFieldNames.REVIEW_COUNT,100);

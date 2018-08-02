@@ -58,3 +58,10 @@ Feature: Product Indexing Api
     Given [search-service] events are present in IndexingListNew collection
     When [search-service] sends request for processing stored delta
     Then [search-service] products stored in table are reindexed
+
+  @IndexStatus
+  Scenario: Verify index status api
+
+    Given [search-service] api exist to get indexing status
+    When [search-service] sends request to get indexing status
+    Then [search-service] status is received
