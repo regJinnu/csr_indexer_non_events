@@ -1270,4 +1270,11 @@ public class SearchServiceController extends ServiceApi {
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<SimpleStringResponse>>() {});
   }
 
+  public ResponseApi<GdnRestSingleResponse<StatusReIndexResponse>> prepareRequestForGettingIndexingStatus(){
+    Response response = service("searchservice")
+        .get("/index/status");
+    response.getBody().prettyPrint();
+   return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<StatusReIndexResponse>>() {});
+  }
+
 }

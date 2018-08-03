@@ -107,5 +107,6 @@ public class SearchServiceData {
   private ResponseApi<GdnRestSingleResponse<ProductResponse>> findDataByProductID;
   private ResponseApi<GdnRestSingleResponse> processFailedIds;
   private ResponseApi<GdnRestSingleResponse<SimpleStringResponse>> listReindexServices;
+  private ResponseApi<GdnRestSingleResponse<StatusReIndexResponse>> reindexStatus;
 }
 

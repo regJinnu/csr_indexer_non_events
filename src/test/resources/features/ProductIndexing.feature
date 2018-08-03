@@ -1,4 +1,4 @@
-@ProductIndexFeature @TestSuiteID=9317806
+@ProductIndexFeature @TestSuiteID=9395463
 Feature: Product Indexing Api
 
   @ProcessFailedIds
@@ -64,4 +64,4 @@ Feature: Product Indexing Api
 
     Given [search-service] api exist to get indexing status
     When [search-service] sends request to get indexing status
-    Then [search-service] status is received
+    Then [search-service] indexing status is received

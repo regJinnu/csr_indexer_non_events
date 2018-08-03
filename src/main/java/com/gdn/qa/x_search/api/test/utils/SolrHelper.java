@@ -84,12 +84,12 @@ public class SolrHelper {
         solrUpdate.put(SolrFieldNames.IS_IN_STOCK, "1" );
         break;
       case "reviewAndRating":
-        solrUpdate.put(SolrFieldNames.RATING, "23" );
+        solrUpdate.put(SolrFieldNames.RATING, 23 );
         solrUpdate.put(SolrFieldNames.REVIEW_COUNT,100);
         break;
       case "categoryReindex":
         solrUpdate.put(SolrFieldNames.IS_IN_STOCK, "0" );
-        solrUpdate.put(SolrFieldNames.RATING, "4" );
+        solrUpdate.put(SolrFieldNames.RATING, 4 );
         solrUpdate.put(SolrFieldNames.REVIEW_COUNT,10);
         solrUpdate.put(SolrFieldNames.MERCHANT_COMMISSION_TYPE,"CC");
         solrUpdate.put(SolrFieldNames.MERCHANT_RATING,3.0);
