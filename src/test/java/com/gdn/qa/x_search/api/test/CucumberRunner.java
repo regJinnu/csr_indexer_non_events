@@ -6,6 +6,6 @@ import org.junit.runner.RunWith;
 
 @RunWith(CucumberWithSerenity.class)
 @CucumberOptions(features = "src/test/resources/features/", format = {
-    "json:target/destination/cucumber.json"}, tags = {})
+    "json:target/destination/cucumber.json"}, tags = {" @BPProfileUpdateFields"})
 public class CucumberRunner {
 }

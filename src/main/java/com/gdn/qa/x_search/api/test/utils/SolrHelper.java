@@ -84,12 +84,12 @@ public class SolrHelper {
         solrUpdate.put(SolrFieldNames.IS_IN_STOCK, "1" );
         break;
       case "reviewAndRating":
-        solrUpdate.put(SolrFieldNames.RATING, 23 );
+        solrUpdate.put(SolrFieldNames.RATING, "23" );
         solrUpdate.put(SolrFieldNames.REVIEW_COUNT,100);
         break;
       case "categoryReindex":
         solrUpdate.put(SolrFieldNames.IS_IN_STOCK, "0" );
-        solrUpdate.put(SolrFieldNames.RATING, 4 );
+        solrUpdate.put(SolrFieldNames.RATING, "4" );
         solrUpdate.put(SolrFieldNames.REVIEW_COUNT,10);
         solrUpdate.put(SolrFieldNames.MERCHANT_COMMISSION_TYPE,"CC");
         solrUpdate.put(SolrFieldNames.MERCHANT_RATING,3.0);
@@ -123,5 +123,21 @@ public class SolrHelper {
     }
   }
 
+  public static void addSolrDocument(){
+    HttpSolrClient httpSolrClient = initializeSolr(SOLR_URL);
+    SolrInputDocument solrInputDocument = new SolrInputDocument();
+    solrInputDocument.addField("id","AAA-60015-00008-00001-PP-3001012");
+    solrInputDocument.addField("merchantCode","AAA-60015");
+    solrInputDocument.addField("cnc","true");
+    try {
+      UpdateResponse updateResponse = httpSolrClient.add(solrInputDocument);
+      httpSolrClient.commit();
+    } catch (SolrServerException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+  }
 
 }

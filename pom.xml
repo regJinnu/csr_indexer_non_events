@@ -24,12 +24,12 @@
         <selenium.version>3.11.0</selenium.version>
         <member.version>1.19.0-3</member.version>
         <badak.core>1.3.10</badak.core>
-        <xsearch.version>3.18.2-1</xsearch.version>
+        <xsearch.version>4.2.0-6</xsearch.version>
         <serenity.testlink.integration.version>3.4.3</serenity.testlink.integration.version>
-        <testlink.devkey>f34384c07f81441603e641e4eed748e4</testlink.devkey>
+        <testlink.devkey>b0f60503e7aab68af1e6072faf5124d6</testlink.devkey>
         <testlink.project>X-Search</testlink.project>
-        <testlink.plan>X-search Hotfix 3rdAug2018</testlink.plan>
-        <testlink.build>3.18.2-1</testlink.build>
+        <testlink.plan>Minor_Deployment_2018-08-20_X-SEARCH</testlink.plan>
+        <testlink.build>4.2.0-6</testlink.build>
     </properties>
 
     <dependencies>

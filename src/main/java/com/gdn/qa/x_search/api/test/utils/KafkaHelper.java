@@ -2,14 +2,16 @@ package com.gdn.qa.x_search.api.test.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gdn.qa.x_search.api.test.data.BPStoreClosedEvent;
-import com.gdn.qa.x_search.api.test.data.OOSEvent;
+import com.gdn.qa.x_search.api.test.data.*;
+import io.vavr.collection.List;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 /**
@@ -41,9 +43,11 @@ private ApplicationContext applicationContext;
     try {
 
       if(type.equals("oos"))
-        kafkaSender.send("com.gdn.x.inventory.stock.oos.event",objectMapper.writeValueAsString(oosEvent));
+        kafkaSender.send("com.gdn.x.inventory.stock.oos.event",
+            objectMapper.writeValueAsString(oosEvent));
       else if (type.equals("nonOOS"))
-        kafkaSender.send("com.gdn.x.inventory.stock.non.oos.event",objectMapper.writeValueAsString(oosEvent));
+        kafkaSender.send("com.gdn.x.inventory.stock.non.oos.event",
+            objectMapper.writeValueAsString(oosEvent));
 
     } catch (JsonProcessingException e) {
       e.printStackTrace();
@@ -71,6 +75,55 @@ private ApplicationContext applicationContext;
     } catch (JsonProcessingException e) {
       e.printStackTrace();
     }
+
+  }
+
+  public void publishBPprofileFieldUpdateEvent(String businessPartnerCode){
+
+    CompanyV0 companyV0 = CompanyV0.builder().
+        changedFields(Collections.singleton(CompanyChangeFields.CNC_ACTIVATED)).
+        cncActivated(false).
+        build();
+
+    BPprofileUpdateFields bPprofileUpdateFields = BPprofileUpdateFields.builder().
+        timestamp(System.currentTimeMillis()).
+        businessPartnerCode(businessPartnerCode).
+        company(companyV0).
+        build();
+
+    try {
+      kafkaSender.send("com.gdn.x.businesspartner.profile.update.fields",
+          objectMapper.writeValueAsString(bPprofileUpdateFields));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void publishLogisticOptionChange(String merchant,String logisticOption){
+
+    ArrayList<String> commissionType = new ArrayList<>();
+    commissionType.add("TD");
+
+    ArrayList<String> merchantList = new ArrayList<>();
+    merchantList.add(merchant);
+
+    ArrayList<String> logisticProdCodeList = new ArrayList<>();
+    logisticProdCodeList.add(logisticOption);
+
+    LogisticOptionChange logisticOptionChange = LogisticOptionChange.builder().
+        timestamp(System.currentTimeMillis()).
+        commissionTypeList(commissionType).
+        merchantIdList(merchantList).
+        logisticProductCodeList(logisticProdCodeList).
+        build();
+
+    try {
+      kafkaSender.send("com.gdn.x.shipping.domain.logistic.option.change.event",
+          objectMapper.writeValueAsString(logisticOptionChange));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+
 
   }
 }

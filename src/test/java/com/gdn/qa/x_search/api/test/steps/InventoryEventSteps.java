@@ -47,7 +47,7 @@ public class InventoryEventSteps {
 
       int status = updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),"/select","id",1,"nonOOS");
       assertThat("Updating isInStock field in SOLR failed",status,equalTo(0));
-      solrCommit("productCollectionNew");
+      solrCommit("productCollection4206");
 
       int oosFlag = SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1).get(0).getIsInStock();
       log.warn("-----Product Set non OOS before test---{}",oosFlag);
@@ -65,8 +65,8 @@ public class InventoryEventSteps {
    kafkaHelper.publishOOSEvent(itemSku,"TH7-15791","oos");
 
     try {
-      Thread.sleep(5000);
-      solrCommit("productCollectionNew");
+      Thread.sleep(10000);
+      solrCommit("productCollection4206");
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -96,7 +96,7 @@ public class InventoryEventSteps {
 
       int status = updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),"/select","id",1,"oos");
       assertThat("Updating isInStock field in SOLR failed",status,equalTo(0));
-      solrCommit("productCollectionNew");
+      solrCommit("productCollection4206");
 
       int oosFlag = SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1).get(0).getIsInStock();
       assertThat("Product OOS",oosFlag,equalTo(0));
@@ -114,8 +114,8 @@ public class InventoryEventSteps {
     kafkaHelper.publishOOSEvent(itemSku,"TH7-15791","nonOOS");
 
     try {
-      Thread.sleep(5000);
-      solrCommit("productCollectionNew");
+      Thread.sleep(10000);
+      solrCommit("productCollection4206");
     } catch (Exception e) {
       e.printStackTrace();
     }

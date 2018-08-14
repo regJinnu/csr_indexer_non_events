@@ -23,7 +23,7 @@ public class SolrResults {
   @Field
   private int reviewCount;
   @Field
-  private int rating;
+  private String rating;
   @Field
   private long reviewAndRatingServiceLastUpdatedTimestamp;
   @Field
@@ -45,7 +45,7 @@ public class SolrResults {
 
   public SolrResults(String nameSearch, String brandSearch, String description, String level0Id,
       String sku, boolean isSynchronised, int categorySequenceAN,Date lastModifiedDate,int isInStock,
-      int rating,int reviewCount,long reviewAndRatingServiceLastUpdatedTimestamp,
+      String rating,int reviewCount,long reviewAndRatingServiceLastUpdatedTimestamp,
       String location,String merchantCommissionType,Double merchantRating,
       long startDateStoreClosed,long endDateStoreClosed, int isDelayShipping) {
     this.nameSearch = nameSearch;
@@ -153,11 +153,11 @@ public class SolrResults {
     this.reviewCount = reviewCount;
   }
 
-  public int getRating() {
+  public String getRating() {
     return rating;
   }
 
-  public void setRating(int rating) {
+  public void setRating(String rating) {
     this.rating = rating;
   }
 

@@ -53,7 +53,7 @@ public class BusinessPartnerEventSteps {
           1,
           "closedStore");
       assertThat("Updating SOLR fields for test failed", status, equalTo(0));
-      solrCommit("productCollectionNew");
+      solrCommit("productCollection4206");
 
       int isDelayShipping =
           SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(), "/select", "isDelayShipping", 1)
@@ -87,7 +87,7 @@ public class BusinessPartnerEventSteps {
 
     try {
       Thread.sleep(60000);
-      solrCommit("productCollectionNew");
+      solrCommit("productCollection4206");
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -132,6 +132,40 @@ public class BusinessPartnerEventSteps {
       e.printStackTrace();
     }
 
+  }
+
+  @Given("^\\[search-service] cnc is set as true in products for merchant$")
+  public void setCncTrueForTestProduct(){
+
+    SolrHelper.addSolrDocument();
+    try {
+      assertThat(SolrHelper.getSolrProdCount("id:AAA-60015-00008-00001-PP-3001012","/select"),equalTo(1L));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+
+
+  @When("^\\[search-service] consumes com.gdn.x.businesspartner.profile.update.fields event$")
+  public void searchConsumesBPprofileUpdateEvent(){
+    kafkaHelper.publishBPprofileFieldUpdateEvent("AAA-60015");
+    try {
+      Thread.sleep(60000);
+      solrCommit("productCollection4206");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+
+  @Then("^\\[search-service] cnc true is removed for all products under that merchant$")
+  public void checkCncIsRemoved(){
+    try {
+      assertThat(SolrHelper.getSolrProdCount("id:AAA-60015-00008-00001-PP-3001012","/select"),equalTo(0L));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
 }
