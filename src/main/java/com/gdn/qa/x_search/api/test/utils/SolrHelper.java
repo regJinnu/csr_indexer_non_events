@@ -100,6 +100,11 @@ public class SolrHelper {
         solrUpdate.put(SolrFieldNames.END_DATE_STORE_CLOSED,22222222L);
         solrUpdate.put(SolrFieldNames.IS_DELAY_SHIPPING,3);
         break;
+      case "logisticOption":
+        solrUpdate.put(SolrFieldNames.MERCHANT_COMMISSION_TYPE,"TEST_COMM_TYPE");
+        solrUpdate.put(SolrFieldNames.LOGISTIC_OPTIONS,"TEST_LOGISTIC_OPTION");
+        solrUpdate.put(SolrFieldNames.LOCATION,"TEST_LOCATION");
+        break;
     }
 
     SolrInputDocument solrInputDocument = new SolrInputDocument();

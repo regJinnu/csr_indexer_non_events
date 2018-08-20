@@ -3,16 +3,13 @@ package com.gdn.qa.x_search.api.test.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gdn.qa.x_search.api.test.data.*;
-import io.vavr.collection.List;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
+import java.util.*;
 
 /**
  * @author kumar on 01/08/18
@@ -99,10 +96,10 @@ private ApplicationContext applicationContext;
     }
   }
 
-  public void publishLogisticOptionChange(String merchant,String logisticOption){
+  public void publishLogisticOptionChange(String merchant,String logisticOption,String commType){
 
     ArrayList<String> commissionType = new ArrayList<>();
-    commissionType.add("TD");
+    commissionType.add(commType);
 
     ArrayList<String> merchantList = new ArrayList<>();
     merchantList.add(merchant);
@@ -115,6 +112,7 @@ private ApplicationContext applicationContext;
         commissionTypeList(commissionType).
         merchantIdList(merchantList).
         logisticProductCodeList(logisticProdCodeList).
+        logisticOptionCode("EXPRESS").
         build();
 
     try {
@@ -124,6 +122,15 @@ private ApplicationContext applicationContext;
       e.printStackTrace();
     }
 
+  }
+
+  public void publishLogisticProductOriginsChangeEvent(){
+    List<String> originList = new ArrayList<>(Arrays.asList("Origin-Jakarta","Origin-Karawang","Origin-Bekasi","Origin-Depok",
+        "Origin-Bandung","Origin-Bogor","Origin-Tangerang","Origin-Semarang","Origin-Surabaya","Origin-Medan",
+        "Origin-Denpasar","Origin-Kuta","Origin-Makasar","Origin-Yogyakarta","Origin-Warungku Angke",
+        "Origin-Solo","Origin-Sidoardjo","Origin-Malang","Origin-Padang","Origin-Palembang"));
+
 
   }
+
 }

@@ -47,7 +47,13 @@ public class CucumberHooks {
     } catch (ParseException e) {
       e.printStackTrace();
     }
+  }
 
+
+  @Before("@LogisticOriginChangeEvent")
+  public void beforeLogisticOriginChangeEvent(){
+    mongoHelper.deleteAllFromMongo("product_atomic_reindex_queue");
+    mongoHelper.deleteFromMongo("product_atomic_reindex_data_candidate","solrfieldName" , "location");
   }
 
 

@@ -2,6 +2,7 @@ package com.gdn.qa.x_search.api.test.models;
 
 import org.apache.solr.client.solrj.beans.Field;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class SolrResults {
@@ -42,31 +43,49 @@ public class SolrResults {
   private long endDateStoreClosed;
   @Field
   private int isDelayShipping;
+  @Field
+  private ArrayList<String> logisticOptions;
 
-  public SolrResults(String nameSearch, String brandSearch, String description, String level0Id,
-      String sku, boolean isSynchronised, int categorySequenceAN,Date lastModifiedDate,int isInStock,
-      String rating,int reviewCount,long reviewAndRatingServiceLastUpdatedTimestamp,
-      String location,String merchantCommissionType,Double merchantRating,
-      long startDateStoreClosed,long endDateStoreClosed, int isDelayShipping) {
-    this.nameSearch = nameSearch;
+  public SolrResults(String brandSearch,
+      String description,
+      String level0Id,
+      String sku,
+      boolean isSynchronised,
+      Date lastModifiedDate,
+      int isInStock,
+      int reviewCount,
+      String rating,
+      long reviewAndRatingServiceLastUpdatedTimestamp,
+      String nameSearch,
+      String merchantCommissionType,
+      Double merchantRating,
+      String location,
+      int categorySequenceAN,
+      long startDateStoreClosed,
+      long endDateStoreClosed,
+      int isDelayShipping,
+      ArrayList<String> logisticOptions) {
     this.brandSearch = brandSearch;
     this.description = description;
     this.level0Id = level0Id;
     this.sku = sku;
     this.isSynchronised = isSynchronised;
     this.lastModifiedDate = lastModifiedDate;
-    this.categorySequenceAN=categorySequenceAN;
-    this.isInStock=isInStock;
-    this.reviewCount=reviewCount;
-    this.rating=rating;
+    this.isInStock = isInStock;
+    this.reviewCount = reviewCount;
+    this.rating = rating;
     this.reviewAndRatingServiceLastUpdatedTimestamp = reviewAndRatingServiceLastUpdatedTimestamp;
+    this.nameSearch = nameSearch;
     this.merchantCommissionType = merchantCommissionType;
     this.merchantRating = merchantRating;
     this.location = location;
-    this.isDelayShipping = isDelayShipping;
+    this.categorySequenceAN = categorySequenceAN;
     this.startDateStoreClosed = startDateStoreClosed;
     this.endDateStoreClosed = endDateStoreClosed;
+    this.isDelayShipping = isDelayShipping;
+    this.logisticOptions = logisticOptions;
   }
+
 
   public SolrResults(){
 
@@ -217,6 +236,16 @@ public class SolrResults {
   public void setIsDelayShipping(int isDelayShipping) {
     this.isDelayShipping = isDelayShipping;
   }
+
+
+  public ArrayList<String> getLogisticOptions() {
+    return logisticOptions;
+  }
+
+  public void setLogisticOptions(ArrayList<String> logisticOptions) {
+    this.logisticOptions = logisticOptions;
+  }
+
 
 
 
