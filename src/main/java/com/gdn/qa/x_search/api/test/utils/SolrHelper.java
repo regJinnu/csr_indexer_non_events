@@ -105,6 +105,10 @@ public class SolrHelper {
         solrUpdate.put(SolrFieldNames.LOGISTIC_OPTIONS,"TEST_LOGISTIC_OPTION");
         solrUpdate.put(SolrFieldNames.LOCATION,"TEST_LOCATION");
         break;
+      case "price":
+        solrUpdate.put(SolrFieldNames.OFFER_PRICE,4545455.45);
+        solrUpdate.put(SolrFieldNames.LIST_PRICE,4545455.50);
+        break;
     }
 
     SolrInputDocument solrInputDocument = new SolrInputDocument();
@@ -142,7 +146,22 @@ public class SolrHelper {
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
 
+  public static void addSolrDocumentForItemChangeEvent(String itemSku,String sku,String productCode){
+    HttpSolrClient httpSolrClient = initializeSolr(SOLR_URL);
+    SolrInputDocument solrInputDocument = new SolrInputDocument();
+    solrInputDocument.addField("id",itemSku);
+    solrInputDocument.addField("sku",sku);
+    solrInputDocument.addField("productCode",productCode);
+    try {
+      UpdateResponse updateResponse = httpSolrClient.add(solrInputDocument);
+      httpSolrClient.commit();
+    } catch (SolrServerException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
 }

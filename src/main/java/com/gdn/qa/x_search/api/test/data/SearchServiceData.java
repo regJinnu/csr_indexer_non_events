@@ -77,6 +77,7 @@ public class SearchServiceData {
   private String key;
   private String productCodeForReindex;
   private String skuForReindex;
+  private String itemSkuForReindex;
   private String queryForReindex;
   private String categoryForReindex;
   private String queryForCategoryReindex;

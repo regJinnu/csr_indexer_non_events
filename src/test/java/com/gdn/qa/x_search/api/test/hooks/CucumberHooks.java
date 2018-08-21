@@ -187,4 +187,14 @@ public class CucumberHooks {
 
   }
 
+  @Before("@ItemChangeDeleteEvent")
+  public void beforeItemChangeDeleteEvent(){
+    mongoHelper.deleteFromMongo("deleted_products","_id","AAA-60015-00008");
+  }
+
+  @Before("@ProductChangeDeleteEvent")
+  public void beforeProductChangeDeleteEvent(){
+    mongoHelper.deleteFromMongo("deleted_products","_id","MTA-66666");
+  }
+
 }

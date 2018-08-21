@@ -45,6 +45,10 @@ public class SolrResults {
   private int isDelayShipping;
   @Field
   private ArrayList<String> logisticOptions;
+  @Field
+  private Double offerPrice;
+  @Field
+  private Double listPrice;
 
   public SolrResults(String brandSearch,
       String description,
@@ -64,7 +68,9 @@ public class SolrResults {
       long startDateStoreClosed,
       long endDateStoreClosed,
       int isDelayShipping,
-      ArrayList<String> logisticOptions) {
+      ArrayList<String> logisticOptions,
+      Double offerPrice,
+      Double listPrice) {
     this.brandSearch = brandSearch;
     this.description = description;
     this.level0Id = level0Id;
@@ -84,6 +90,8 @@ public class SolrResults {
     this.endDateStoreClosed = endDateStoreClosed;
     this.isDelayShipping = isDelayShipping;
     this.logisticOptions = logisticOptions;
+    this.offerPrice = offerPrice;
+    this.listPrice = listPrice;
   }
 
 
@@ -105,6 +113,23 @@ public class SolrResults {
 
   public void setIsInStock(int isInStock) {
     this.isInStock = isInStock;
+  }
+
+
+  public Double getOfferPrice() {
+    return offerPrice;
+  }
+
+  public void setOfferPrice(Double offerPrice) {
+    this.offerPrice = offerPrice;
+  }
+
+  public Double getListPrice() {
+    return listPrice;
+  }
+
+  public void setListPrice(Double listPrice) {
+    this.listPrice = listPrice;
   }
 
 

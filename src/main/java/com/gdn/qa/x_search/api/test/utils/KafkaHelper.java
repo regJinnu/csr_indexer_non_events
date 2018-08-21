@@ -133,4 +133,39 @@ private ApplicationContext applicationContext;
 
   }
 
+  public void publishItemChangeEvent(String itemSku,String productSku,boolean isArchived,boolean isSynchronised){
+
+    ItemChangeEvent itemChangeEvent = ItemChangeEvent.builder().
+        timestamp(System.currentTimeMillis()).
+        itemSku(itemSku).
+        productSku(productSku).
+        isArchived(isArchived).
+        isSynchronized(isSynchronised).
+        uniqueId(itemSku).
+        build();
+
+    try {
+      kafkaSender.send("com.gdn.x.product.item.change",objectMapper.writeValueAsString(itemChangeEvent));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void publishProductChangeEvent(String productCode,String productSku,boolean markForDelete,boolean isSynchronised){
+
+    ProductChangeEvent productChangeEvent = ProductChangeEvent.builder().
+        timestamp(System.currentTimeMillis()).
+        productCode(productCode).
+        productSku(productSku).
+        markForDelete(markForDelete).
+        isSynchronized(isSynchronised).
+        build();
+
+    try {
+      kafkaSender.send("com.gdn.x.product.product.change",objectMapper.writeValueAsString(productChangeEvent));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
 }
