@@ -1,4 +1,4 @@
-@LogisticOptionsEvent
+@LogisticOptionsEvent @TestSuiteID=9474896
 
 Feature: Verify indexing by logistic option events
 

@@ -1,4 +1,4 @@
-@BusinessPartnerStoreClosedEvent @TestSuiteID=9429123
+@BusinessPartnerStoreClosedEvent @TestSuiteID=9474896
 Feature: Verify indexing by business partner store closed events
 
   Scenario: Verify store closed events with delay shipping off
