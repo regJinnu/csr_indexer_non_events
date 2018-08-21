@@ -24,6 +24,7 @@ import java.util.Date;
 
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.REDIS_HOST;
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.REDIS_PORT;
+import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_DEFAULT_COLLECTION;
 import static com.gdn.qa.x_search.api.test.utils.SolrHelper.solrCommit;
 import static com.gdn.qa.x_search.api.test.utils.SolrHelper.updateSolrDataForAutomation;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -499,7 +500,8 @@ public class ProductIndexingSteps {
 
       int status = updateSolrDataForAutomation(query,"/select","id",1,"reviewAndRating");
       assertThat("Updating review and rating in SOLR doc failed",status,equalTo(0));
-      solrCommit("productCollection4206");
+      Thread.sleep(10000);
+      solrCommit(SOLR_DEFAULT_COLLECTION);
       int reviewCount = SolrHelper.getSolrProd(query, "/select", "reviewCount", 1).get(0).getReviewCount();
       String rating = SolrHelper.getSolrProd(query, "/select", "rating", 1).get(0).getRating();
 

@@ -112,7 +112,7 @@ public class KeywordSteps {
     assertThat(response.getResponseBody().getValue().getKeyword(), equalTo("testautomation"));
     String autoKeywordId = response.getResponseBody().getValue().getId();
     searchServiceData.setAutoKeywordId(autoKeywordId);
-    Date autoUpdatedDate = response.getResponseBody().getValue().getUpdatedDate();
+    Date autoUpdatedDate = response.getResponseBody().getValue().getCreatedDate();
     searchServiceData.setAutoUpdatedDate(autoUpdatedDate);
 
   }
