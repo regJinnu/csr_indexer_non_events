@@ -131,4 +131,13 @@ public class LogisticOptionEventSteps {
 
   }
 
+  @When("^\\[search-service] receives ORIGIN CHANGE event$")
+  public void searchConsumesOriginChangeEvent(){
+
+  }
+
+  @When("^\\[search-service] run api to convert High to Low")
+  public void runApiToConvertHighToLow()
+  {}
+
 }
