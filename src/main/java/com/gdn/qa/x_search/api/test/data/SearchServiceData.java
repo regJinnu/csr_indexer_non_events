@@ -86,6 +86,8 @@ public class SearchServiceData {
   private String queryForProductCode;
   private String businessPartnerCode;
   private int errorMessage;
+  private String unSyncProduct;
+  private String queryForUnsyncProduct;
   private ResponseApi<GdnRestSingleResponse> validateID;
   private ResponseApi<GdnBaseRestResponse> searchServiceResponse;
   private ResponseApi<GdnRestSingleResponse<ConfigResponse>> findByRequest;
