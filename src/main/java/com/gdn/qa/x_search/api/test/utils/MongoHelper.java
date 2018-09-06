@@ -65,4 +65,17 @@ public class MongoHelper {
     collection.deleteMany(new Document());
   }
 
+  //Example to show update with multiple filter conditions
+
+/*  public void updateMongoWithMultipleFilterConditions(String collectionName){
+
+    MongoCollection<Document> collection = initializeDatabase(collectionName);
+    Bson filter = new Document("SOURCE","GSMARENA").append("CRAWLER_PAGE","SIMPLE");
+
+    Bson updatedValue = new Document("PAGE_DEPTH",0);
+    Bson updateOperationDocument = new Document("$set", updatedValue);
+    collection.updateOne(filter,updateOperationDocument);
+
+  }*/
+
 }

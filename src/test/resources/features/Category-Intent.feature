@@ -1,4 +1,4 @@
-@category-intentFeature @TestSuiteID=9474896
+@category-intentFeature @TestSuiteID=9566460
 Feature:Category Intent Controller
 
   @Regression @DeleteSearchTerm

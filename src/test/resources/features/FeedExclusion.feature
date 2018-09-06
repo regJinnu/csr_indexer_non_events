@@ -1,4 +1,4 @@
-@FeedExclusionFeature @TestSuiteID=9474896
+@FeedExclusionFeature @TestSuiteID=9566460
 Feature: Feed exclusion entity related API's
 
   @Regression @SaveFeed

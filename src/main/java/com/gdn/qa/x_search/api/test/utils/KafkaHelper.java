@@ -130,6 +130,11 @@ private ApplicationContext applicationContext;
         "Origin-Denpasar","Origin-Kuta","Origin-Makasar","Origin-Yogyakarta","Origin-Warungku Angke",
         "Origin-Solo","Origin-Sidoardjo","Origin-Malang","Origin-Padang","Origin-Palembang"));
 
+    LogisticProductOriginChangeEvent logisticProductOriginChangeEvent = LogisticProductOriginChangeEvent.builder().
+        originList(originList).
+        logisticProductCode("").
+        build();
+
 
   }
 
