@@ -4,6 +4,7 @@ import com.gdn.common.web.wrapper.response.GdnBaseRestResponse;
 import com.gdn.common.web.wrapper.response.GdnRestListResponse;
 import com.gdn.common.web.wrapper.response.GdnRestSingleResponse;
 import com.gdn.qa.automation.core.restassured.ResponseApi;
+import com.gdn.x.product.rest.web.model.response.SimpleStringResponse;
 import com.gdn.x.search.rest.web.model.*;
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -74,6 +75,27 @@ public class SearchServiceData {
   private String className;
   private String mongoValue;
   private String key;
+  private String productCodeForReindex;
+  private String skuForReindex;
+  private String itemSkuForReindex;
+  private String queryForReindex;
+  private String categoryForReindex;
+  private String queryForCategoryReindex;
+  private String queryForReindexOfDeletedProd;
+  private String queryForReviewAndRatingIndex;
+  private String queryForProductCode;
+  private String businessPartnerCode;
+  private int errorMessage;
+  private String unSyncProduct;
+  private String queryForUnsyncProduct;
+  private String campaignName;
+  private String campaignCode;
+  private String campaignProductSku;
+  private String campaignItemSku;
+  private String campaignDiscount;
+  private String campaignFieldInSOLR;
+  private String campaignCodeList;
+  private String itemSkuForRemove;
   private ResponseApi<GdnRestSingleResponse> validateID;
   private ResponseApi<GdnBaseRestResponse> searchServiceResponse;
   private ResponseApi<GdnRestSingleResponse<ConfigResponse>> findByRequest;
@@ -95,6 +117,8 @@ public class SearchServiceData {
   private ResponseApi<GdnRestListResponse<KeywordBoostProductResponse>> findBoostedKeyword;
   private ResponseApi<GdnRestSingleResponse<KeywordBoostProductResponse>> findBoostedKeywordByID;
   private ResponseApi<GdnRestSingleResponse<ProductResponse>> findDataByProductID;
-
+  private ResponseApi<GdnRestSingleResponse> processFailedIds;
+  private ResponseApi<GdnRestSingleResponse<SimpleStringResponse>> listReindexServices;
+  private ResponseApi<GdnRestSingleResponse<StatusReIndexResponse>> reindexStatus;
 }
 

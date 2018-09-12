@@ -1,13 +1,13 @@
-@BoostedKeywordFeature
+@BoostedKeywordFeature @TestSuiteID=9566460
 Feature: Boosted keyword related api's
 
-  @Regression @FindBoostedKeyword @id1
+  @Regression @FindBoostedKeyword
   Scenario:  User wants to find boosted keyword
     Given [search-service] prepare request to find boosted keyword using properties using properties data
     When  [search-service] send request to find boosted keyword
     Then [search-service] find boosted keyword request response success should be 'true'
 
-  @Regression @FindBoostedKeyword @NegativeCase
+  @Regression @NegativeCaseFindBoostedKeyword
   Scenario:  User wants to find boosted keyword
     Given [search-service] prepare request to find boosted keyword which is not present using properties using properties data
     When  [search-service] send request to find boosted keyword which is not present
@@ -31,7 +31,7 @@ Feature: Boosted keyword related api's
     When  [search-service] send request to list boosted keyword
     Then [search-service] list boosted keyword request response success should be 'true'
 
-  @Regression @UpdateBoostedKeyword @id1
+  @Regression @UpdateBoostedKeyword
   Scenario: User wants to update the boosted keyword
     Given [search-service] prepare request to update boosted keyword using properties using properties data
     When  [search-service] send request to update boosted keyword
@@ -62,13 +62,13 @@ Feature: Boosted keyword related api's
     When  [search-service] send request to upload the file of wrong format
     Then [search-service] upload the file of wrong format request response success should be 'false'
 
-  @Regression @DeleteBoostedKeyword @id1
+  @Regression @DeleteBoostedKeyword
   Scenario:User wants to delete the boosted keyword
     Given [search-service] prepare request to delete boosted keyword using properties using properties data
     When  [search-service] send request to delete boosted keyword
     Then [search-service] delete the boosted keyword request response success should be 'true'
 
-  @Regression @ValidateBoostedKeyword @id1
+  @Regression @ValidateBoostedKeyword
   Scenario:User wants to validate the boosted keyword
     Given [search-service] prepare request to validate boosted keyword using properties using properties data
     When  [search-service] send request to validate boosted keyword

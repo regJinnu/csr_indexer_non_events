@@ -1,7 +1,7 @@
-@KeywordFeature @Regression
+@KeywordFeature @TestSuiteID=9566460
 Feature: Keyword related API's
 
-  @Regression @SaveKeyword @id
+  @Regression @SaveKeyword
   Scenario: User wants to upload new keyword
     Given [search-service] prepare save keyword using properties using properties data
     When  [search-service] send save keyword request
@@ -13,7 +13,7 @@ Feature: Keyword related API's
     When  [search-service] send listing keyword request
     Then [search-service] list keyword request response success should be 'true'
 
-  @Regression @FindByKeyword @id
+  @Regression @FindByKeyword
   Scenario: User wants to search by using keyword
     Given [search-service] prepare request to get find by keyword
     When  [search-service] send find by keyword request
@@ -37,13 +37,13 @@ Feature: Keyword related API's
     When  [search-service] send find keyword by wrong ID request
     Then [search-service]find keyword by wrong id request response success should be true
 
-  @Regression @FindKeywordByDateStamp @id
+  @Regression @FindKeywordByDateStamp
   Scenario: User wants to search keyword  by date stamp
     Given [search-service] prepare request to get keyword find by date
     When  [search-service] send find keyword by date request
     Then [search-service]find keyword by date request response success should be true
 
-  @Regression @FindKeywordByProvidingWrongDate @id
+  @Regression @FindKeywordByProvidingWrongDate
   Scenario:User wants to search keyword  by wrong date stamp
     Given [search-service] prepare request to get keyword find by wrong date
     When  [search-service] send find keyword by wrong  date request
@@ -73,7 +73,7 @@ Feature: Keyword related API's
     When [search-service] send request to update the non existing product
     Then [search-service]find if the update the non existing product request response success should be false
 
-  @Regression  @ValidateIdAndGetName @id
+  @Regression  @ValidateIdAndGetName
   Scenario: User wants to validate ID and Get Name
     Given [search-service] prepare request to validate id and get name
     When [search-service] send request to validate id and get name
@@ -97,7 +97,7 @@ Feature: Keyword related API's
     When  [search-service] send request to find keyword by querying in wrong way
     Then [search-service]find if the find keyword by querying in wrong way request response success should be true
 
-  @Regression @DeleteKeyword @id
+  @Regression @DeleteKeyword
   Scenario: User wants to delete the Keyword
     Given [search-service] prepare request to delete keyword
     When  [search-service] send request to delete keyword

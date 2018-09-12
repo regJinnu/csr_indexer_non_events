@@ -1,4 +1,4 @@
-@ConfigFeature
+@ConfigFeature @TestSuiteID=9566460
 Feature:Config controller related API's
 
   @Regression @FindByName
@@ -75,7 +75,7 @@ Feature:Config controller related API's
     Then [search-service] check response for saving config with empty body
 
   @Regression @ConfigList
-  Scenario: User wants to the existing configs
+  Scenario: User wants the existing configs
     Given [search-service] prepare get config list request using properties using properties data
     When [search-service] send get config list request
     Then [search-service] get config list by request response success should be 'true'

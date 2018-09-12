@@ -8,16 +8,11 @@ import com.gdn.qa.x_search.api.test.CucumberStepsDefinition;
 import com.gdn.qa.x_search.api.test.api.services.SearchServiceController;
 import com.gdn.qa.x_search.api.test.data.SearchServiceData;
 import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
+import com.gdn.qa.x_search.api.test.utils.MongoHelper;
 import com.gdn.x.search.rest.web.model.FeedExclusionEntityResponse;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
-import com.mongodb.MongoClientURI;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -34,6 +29,8 @@ public class FeedExclusionSteps {
 
   @Autowired
   private SearchServiceData searchServiceData;
+
+  MongoHelper mongoHelper = new MongoHelper();
 
 
   @Given("^\\[search-service] prepare save feed exclusion using properties using properties data$")
@@ -130,8 +127,6 @@ public class FeedExclusionSteps {
   public void searchServicePrepareFindFeedExclusionListUsingPropertiesUsingPropertiesData() {
     searchServiceData.setPage(searchServiceProperties.get("page"));
     searchServiceData.setSize(searchServiceProperties.get("size"));
-    searchServiceData.setMongoURL(searchServiceProperties.get("mongoURL"));
-    searchServiceData.setMongoDB(searchServiceProperties.get("mongoDB"));
   }
 
   @When("^\\[search-service] send find feed exclusion list$")
@@ -145,14 +140,7 @@ public class FeedExclusionSteps {
   public void searchServiceFindFeedExclusionListRequestResponseSuccessShouldBeTrue() {
     ResponseApi<GdnRestListResponse<FeedExclusionEntityResponse>> response =
         searchServiceData.getFindFeedRequest();
-    MongoClientURI uri =
-        new MongoClientURI(searchServiceData.getMongoURL());
-    MongoClient mongoClient = new MongoClient(uri);
-    MongoClientOptions.Builder optionsBuilder = MongoClientOptions.builder();
-    optionsBuilder.connectTimeout(30000);
-    MongoDatabase db = mongoClient.getDatabase(searchServiceData.getMongoDB());
-    MongoCollection<Document> collection = db.getCollection("feed_exclusion_list");
-    long totalCount = collection.count();
+    long totalCount = mongoHelper.countOfRecordsInCollection("feed_exclusion_list");
     assertThat(response.getResponseBody().getPageMetaData().getTotalRecords(), equalTo(totalCount));
   }
 

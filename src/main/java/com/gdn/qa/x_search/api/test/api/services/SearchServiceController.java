@@ -9,14 +9,9 @@ import com.gdn.qa.automation.core.restassured.ResponseApi;
 import com.gdn.qa.automation.core.restassured.ServiceApi;
 import com.gdn.qa.automation.core.template.TemplateApi;
 import com.gdn.qa.x_search.api.test.data.SearchServiceData;
+import com.gdn.x.product.rest.web.model.response.SimpleStringResponse;
 import com.gdn.x.search.rest.web.model.*;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
-import com.mongodb.MongoClientURI;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import io.restassured.response.Response;
-import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +38,7 @@ public class SearchServiceController extends ServiceApi {
     data.put("name", searchServiceData.getName());
 
     String bodyRequest = templateAPI.createFromString(bodyTemplate, data);
-    Response response = service("searchservice").body(bodyRequest).post("/config/delete");
+    Response response = service("searchservice").body(bodyRequest).post("/api/search/config/delete");
 
     response.getBody().prettyPrint();
 
@@ -61,7 +56,7 @@ public class SearchServiceController extends ServiceApi {
     String bodyRequest = templateAPI.createFromString(bodyTemplate, data);
     Response response = service("searchservice")
         //.queryParam("username","testuser")
-        .body(bodyRequest).post("/config/delete");
+        .body(bodyRequest).post("/api/search/config/delete");
 
     response.getBody().prettyPrint();
 
@@ -81,7 +76,7 @@ public class SearchServiceController extends ServiceApi {
     data.put("value", searchServiceData.getValue());
 
     String bodyRequest = templateAPI.createFromString(Bodytemplate, data);
-    Response response = service("searchservice").body(bodyRequest).post("/config/save");
+    Response response = service("searchservice").body(bodyRequest).post("/api/search/config/save");
     response.getBody().prettyPrint();
 
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
@@ -98,7 +93,7 @@ public class SearchServiceController extends ServiceApi {
 
 
     String bodyRequest = templateAPI.createFromString(Bodytemplate, data);
-    Response response = service("searchservice").body(bodyRequest).post("/config/save");
+    Response response = service("searchservice").body(bodyRequest).post("/api/search/config/save");
     response.getBody().prettyPrint();
 
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
@@ -117,7 +112,7 @@ public class SearchServiceController extends ServiceApi {
     data.put("value", searchServiceData.getUpdatedValue());
 
     String bodyRequest = templateAPI.createFromString(Bodytemplate, data);
-    Response response = service("searchservice").body(bodyRequest).post("/config/update");
+    Response response = service("searchservice").body(bodyRequest).post("/api/search/config/update");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -132,7 +127,7 @@ public class SearchServiceController extends ServiceApi {
     data.put("id", searchServiceData.getEmptyid());
     data.put("name", searchServiceData.getEmptyname());
     String bodyRequest = templateAPI.createFromString(Bodytemplate, data);
-    Response response = service("searchservice").body(bodyRequest).post("/config/update");
+    Response response = service("searchservice").body(bodyRequest).post("/api/search/config/update");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -142,7 +137,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnRestSingleResponse<ConfigResponse>> findByNameResponse() {
     Response response = service("searchservice")
         .queryParam("name", searchServiceData.getName())
-        .get("/config/find-by-name");
+        .get("/api/search/config/find-by-name");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<ConfigResponse>>() {
     });
@@ -151,7 +146,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnRestSingleResponse<ConfigResponse>> findByWrongNameResponse() {
     Response response = service("searchservice")
         .queryParam("name", searchServiceData.getWrongname())
-        .get("/config/find-by-name");
+        .get("/api/search/config/find-by-name");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<ConfigResponse>>() {
     });
@@ -159,7 +154,7 @@ public class SearchServiceController extends ServiceApi {
 
   public ResponseApi<GdnRestSingleResponse<ConfigResponse>> setFindByIDResponse() {
     Response response = service("searchservice").queryParam("id", searchServiceData.getAutoid())
-        .get("/config/find-by-id");
+        .get("/api/search/config/find-by-id");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<ConfigResponse>>() {
     });
@@ -168,7 +163,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnRestSingleResponse<ConfigResponse>> setFindByWrongIDResponse() {
     Response response = service("searchservice")
         .queryParam("id", searchServiceData.getWrongid())
-        .get("/config/find-by-id");
+        .get("/api/search/config/find-by-id");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<ConfigResponse>>() {
     });
@@ -178,7 +173,7 @@ public class SearchServiceController extends ServiceApi {
     Response response = service("searchservice").queryParam("word", searchServiceData.getWord())
         .queryParam("page", searchServiceData.getPage())
         .queryParam("size", searchServiceData.getSize())
-        .get("/config/find");
+        .get("/api/search/config/find");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<ConfigResponse>>() {
     });
@@ -189,7 +184,7 @@ public class SearchServiceController extends ServiceApi {
         service("searchservice").queryParam("word", searchServiceData.getWrongname())
             .queryParam("page", searchServiceData.getPage())
             .queryParam("size", searchServiceData.getSize())
-            .get("/config/find");
+            .get("/api/search/config/find");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<ConfigResponse>>() {
     });
@@ -199,7 +194,7 @@ public class SearchServiceController extends ServiceApi {
     Response response = service("searchservice")
         .queryParam("page", searchServiceData.getPage())
         .queryParam("size", searchServiceData.getSize())
-        .get("/config/list");
+        .get("/api/search/config/list");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<ConfigResponse>>() {
     });
@@ -208,7 +203,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnBaseRestResponse> fetchClickthroughDataFromBRS() {
     Response response = service("searchservice")
         .queryParam("username", searchServiceData.getUsername())
-        .post("/clickthrough/fetch-data");
+        .post("/api/search/clickthrough/fetch-data");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -217,7 +212,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnBaseRestResponse> fetchClickthroughDataAndStoreIntoRedis() {
     Response response = service("searchservice")
         .queryParam("username", searchServiceData.getUsername())
-        .post("/clickthrough/store-click-through-and-category-redis");
+        .post("/api/search/clickthrough/store-click-through-and-category-redis");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -226,7 +221,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnBaseRestResponse> deleteSearchTermWhichHasIntentMining() {
     Response response = service("searchservice")
         .queryParam("searchTerm", searchServiceData.getSearchTerm())
-        .post("/categoryIntent/deleteCategory");
+        .post("/api/search/categoryIntent/deleteCategory");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -235,7 +230,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnBaseRestResponse> deleteSearchTermWhichDoesNotIntentMining() {
     Response response = service("searchservice")
         .queryParam("searchTerm", searchServiceData.getSearchTermNotPresent())
-        .post("/categoryIntent/deleteCategory");
+        .post("/api/search/categoryIntent/deleteCategory");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -246,7 +241,7 @@ public class SearchServiceController extends ServiceApi {
         .queryParam("word", searchServiceData.getSearchTerm())
         .queryParam("page", searchServiceData.getPage())
         .queryParam("size", searchServiceData.getSize())
-        .get("/categoryIntent/find");
+        .get("/api/search/categoryIntent/find");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -257,7 +252,7 @@ public class SearchServiceController extends ServiceApi {
         .queryParam("word", searchServiceData.getSearchTermNotPresent())
         .queryParam("page", searchServiceData.getPage())
         .queryParam("size", searchServiceData.getSize())
-        .get("/categoryIntent/find");
+        .get("/api/search/categoryIntent/find");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -266,7 +261,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnRestSingleResponse<CategoryIntentResponse>> findCategoryIdForSearchTerm() {
     Response response = service("searchservice")
         .queryParam("searchTerm", searchServiceData.getSearchTerm())
-        .get("/categoryIntent/getCategory");
+        .get("/api/search/categoryIntent/getCategory");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,
         new TypeReference<GdnRestSingleResponse<CategoryIntentResponse>>() {
@@ -276,7 +271,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnRestSingleResponse<CategoryIntentResponse>> findCategoryIdForSearchTermNotPresent() {
     Response response = service("searchservice")
         .queryParam("searchTerm", searchServiceData.getSearchTermNotPresent())
-        .get("/categoryIntent/getCategory");
+        .get("/api/search/categoryIntent/getCategory");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,
         new TypeReference<GdnRestSingleResponse<CategoryIntentResponse>>() {
@@ -287,7 +282,7 @@ public class SearchServiceController extends ServiceApi {
     Response response = service("searchservice")
         .queryParam("page", searchServiceData.getPage())
         .queryParam("size", searchServiceData.getSize())
-        .get("/categoryIntent/list");
+        .get("/api/search/categoryIntent/list");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,
         new TypeReference<GdnRestListResponse<CategoryIntentResponse>>() {
@@ -299,14 +294,14 @@ public class SearchServiceController extends ServiceApi {
         .queryParam("searchTerm", searchServiceData.getSearchTerm())
         .queryParam("categoryId", searchServiceData.getCategoryId())
         .queryParam("turnedOn", searchServiceData.getTurnedOn())
-        .post("/categoryIntent/save");
+        .post("/api/search/categoryIntent/save");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
   public ResponseApi<GdnBaseRestResponse> updateSearchTermWhichHasIntentMiningIntoRedis() {
-    Response response = service("searchservice").post("/categoryIntent/updateInRedis");
+    Response response = service("searchservice").post("/api/search/categoryIntent/updateInRedis");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -315,7 +310,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnBaseRestResponse> validateCategoryID() {
     Response response = service("searchservice")
         .queryParam("categoryId", searchServiceData.getCategoryId())
-        .post("/categoryIntent/validateCategory");
+        .post("/api/search/categoryIntent/validateCategory");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -324,7 +319,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnBaseRestResponse> validateInValidCategoryID() {
     Response response = service("searchservice")
         .queryParam("categoryId", searchServiceData.getWrongcategoryId())
-        .post("/categoryIntent/validateCategory");
+        .post("/api/search/categoryIntent/validateCategory");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -333,7 +328,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnRestSingleResponse<SearchTermCategoryClickThroughResponse>> fetchListOfSearchTermsWhichHasImFromRedis() {
     Response response = service("searchservice")
         .queryParam("page", searchServiceData.getPagenumberForIMlist())
-        .get("/clickthrough/get-click-through-and-category-redis");
+        .get("/api/search/clickthrough/get-click-through-and-category-redis");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,
         new TypeReference<GdnRestSingleResponse<SearchTermCategoryClickThroughResponse>>() {
@@ -350,7 +345,7 @@ public class SearchServiceController extends ServiceApi {
     //  data.put("positiveType",searchserviceData.getPositiveFilter());
     String bodyRequest = templateAPI.createFromString(Bodytemplate, data);
     Response response =
-        service("searchservice").body(bodyRequest).post("/feed-exclusion-entity/save");
+        service("searchservice").body(bodyRequest).post("/api/search/feed-exclusion-entity/save");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -362,7 +357,7 @@ public class SearchServiceController extends ServiceApi {
         .queryParam("word", searchServiceData.getFeedValue())
         .queryParam("page", searchServiceData.getPage())
         .queryParam("size", searchServiceData.getSize())
-        .get("/feed-exclusion-entity/find");
+        .get("/api/search/feed-exclusion-entity/find");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,
         new TypeReference<GdnRestListResponse<FeedExclusionEntityResponse>>() {
@@ -374,7 +369,7 @@ public class SearchServiceController extends ServiceApi {
         .queryParam("word", searchServiceData.getWrongword())
         .queryParam("page", searchServiceData.getPage())
         .queryParam("size", searchServiceData.getSize())
-        .get("/feed-exclusion-entity/find");
+        .get("/api/search/feed-exclusion-entity/find");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,
         new TypeReference<GdnRestListResponse<FeedExclusionEntityResponse>>() {
@@ -384,7 +379,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnRestSingleResponse<FeedExclusionEntityResponse>> findFeedByID() {
     Response response = service("searchservice")
         .queryParam("id", searchServiceData.getAutoFeedId())
-        .get("/feed-exclusion-entity/find-by-id");
+        .get("/api/search/feed-exclusion-entity/find-by-id");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,
         new TypeReference<GdnRestSingleResponse<FeedExclusionEntityResponse>>() {
@@ -394,7 +389,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnRestSingleResponse<FeedExclusionEntityResponse>> findFeedByWrongID() {
     Response response = service("searchservice")
         .queryParam("id", searchServiceData.getWrongid())
-        .get("/feed-exclusion-entity/find-by-id");
+        .get("/api/search/feed-exclusion-entity/find-by-id");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,
         new TypeReference<GdnRestSingleResponse<FeedExclusionEntityResponse>>() {
@@ -405,7 +400,7 @@ public class SearchServiceController extends ServiceApi {
     Response response = service("searchservice")
         .queryParam("page", searchServiceData.getPage())
         .queryParam("size", searchServiceData.getSize())
-        .get("/feed-exclusion-entity/list");
+        .get("/api/search/feed-exclusion-entity/list");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,
         new TypeReference<GdnRestListResponse<FeedExclusionEntityResponse>>() {
@@ -424,7 +419,7 @@ public class SearchServiceController extends ServiceApi {
     String bodyRequest = templateAPI.createFromString(Bodytemplate, data);
     Response response = service("searchservice")
         .body(bodyRequest)
-        .post("/feed-exclusion-entity/update");
+        .post("/api/search/feed-exclusion-entity/update");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -441,7 +436,7 @@ public class SearchServiceController extends ServiceApi {
     String bodyRequest = templateAPI.createFromString(Bodytemplate, data);
     Response response = service("searchservice")
         .body(bodyRequest)
-        .post("/feed-exclusion-entity/update");
+        .post("/api/search/feed-exclusion-entity/update");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -458,7 +453,7 @@ public class SearchServiceController extends ServiceApi {
     String bodyRequest = templateAPI.createFromString(Bodytemplate, data);
     Response response = service("searchservice")
         .body(bodyRequest)
-        .post("/feed-exclusion-entity/delete");
+        .post("/api/search/feed-exclusion-entity/delete");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -478,7 +473,7 @@ public class SearchServiceController extends ServiceApi {
     data.put("type", searchServiceData.getType());
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
     Response response =
-        service("searchservice").body(bodyRequest).post("/keyword/save");
+        service("searchservice").body(bodyRequest).post("/api/search/keyword/save");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -499,7 +494,7 @@ public class SearchServiceController extends ServiceApi {
     data.put("type", searchServiceData.getType());
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
     Response response =
-        service("searchservice").body(bodyRequest).post("/keyword/update");
+        service("searchservice").body(bodyRequest).post("/api/search/keyword/update");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -520,7 +515,7 @@ public class SearchServiceController extends ServiceApi {
     data.put("type", searchServiceData.getType());
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
     Response response =
-        service("searchservice").body(bodyRequest).post("/keyword/update");
+        service("searchservice").body(bodyRequest).post("/api/search/keyword/update");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -530,7 +525,7 @@ public class SearchServiceController extends ServiceApi {
     Response response = service("searchservice")
         .queryParam("page", searchServiceData.getPage())
         .queryParam("size", searchServiceData.getSize())
-        .get("/keyword/list");
+        .get("/api/search/keyword/list");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<KeywordResponse>>() {
     });
@@ -539,7 +534,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnRestSingleResponse<KeywordResponse>> findByKeywordRequest() {
     Response response = service("searchservice")
         .queryParam("keyword", searchServiceData.getKeyword())
-        .get("/keyword/find-by-keyword");
+        .get("/api/search/keyword/find-by-keyword");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<KeywordResponse>>() {
     });
@@ -548,7 +543,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnRestSingleResponse<KeywordResponse>> findByNonExistingKeywordRequest() {
     Response response = service("searchservice")
         .queryParam("keyword", searchServiceData.getWrongword())
-        .get("/keyword/find-by-keyword");
+        .get("/api/search/keyword/find-by-keyword");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<KeywordResponse>>() {
     });
@@ -557,7 +552,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnRestSingleResponse<KeywordResponse>> findKeywordRequestByID() {
     Response response = service("searchservice")
         .queryParam("id", searchServiceData.getAutoKeywordId())
-        .get("/keyword/find-by-id");
+        .get("/api/search/keyword/find-by-id");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<KeywordResponse>>() {
     });
@@ -566,7 +561,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnRestSingleResponse<KeywordResponse>> findSynonymRequestByID() {
     Response response = service("searchservice")
         .queryParam("id", searchServiceData.getAutoSynonymnId())
-        .get("/synonyms/find-by-id");
+        .get("/api/search/synonyms/find-by-id");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<KeywordResponse>>() {
     });
@@ -575,7 +570,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnRestSingleResponse<KeywordResponse>> findSynonymRequestByWrongID() {
     Response response = service("searchservice")
         .queryParam("id", searchServiceData.getWrongid())
-        .get("/synonyms/find-by-id");
+        .get("/api/search/synonyms/find-by-id");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<KeywordResponse>>() {
     });
@@ -585,7 +580,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnRestSingleResponse<KeywordResponse>> findKeywordRequestByWrongID() {
     Response response = service("searchservice")
         .queryParam("id", searchServiceData.getWrongid())
-        .get("/keyword/find-by-id");
+        .get("/api/search/keyword/find-by-id");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<KeywordResponse>>() {
     });
@@ -597,7 +592,7 @@ public class SearchServiceController extends ServiceApi {
         .queryParam("word", searchServiceData.getCategoryProductName())
         .queryParam("page", searchServiceData.getPage())
         .queryParam("size", searchServiceData.getSize())
-        .get("/keyword/page");
+        .get("/api/search/keyword/page");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<KeywordResponse>>() {
     });
@@ -609,7 +604,7 @@ public class SearchServiceController extends ServiceApi {
         .queryParam("word", searchServiceData.getKeywordForsearchingWithDateStamp())
         .queryParam("page", searchServiceData.getPage())
         .queryParam("size", searchServiceData.getSize())
-        .get("/keyword/page");
+        .get("/api/search/keyword/page");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<KeywordResponse>>() {
     });
@@ -618,7 +613,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnBaseRestResponse> findIfProductExists() {
     Response response = service("searchservice")
         .queryParam("productId", searchServiceData.getCategoryProductId())
-        .get("/keyword/product-exist");
+        .get("/api/search/keyword/product-exist");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -627,7 +622,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnBaseRestResponse> findForNonExistingProduct() {
     Response response = service("searchservice")
         .queryParam("productId", searchServiceData.getWrongcategoryId())
-        .get("/keyword/product-exist");
+        .get("/api/search/keyword/product-exist");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -639,7 +634,7 @@ public class SearchServiceController extends ServiceApi {
         .queryParam("word", searchServiceData.getCategoryProductId())
         .queryParam("page", searchServiceData.getPage())
         .queryParam("size", searchServiceData.getSize())
-        .get("/keyword/find");
+        .get("/api/search/keyword/find");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<KeywordResponse>>() {
     });
@@ -651,7 +646,7 @@ public class SearchServiceController extends ServiceApi {
         .queryParam("word", searchServiceData.getCategoryProductId())
         .queryParam("page", searchServiceData.getPage())
         .queryParam("size", searchServiceData.getSize())
-        .get("/keyword/find");
+        .get("/api/search/keyword/find");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<KeywordResponse>>() {
     });
@@ -661,7 +656,7 @@ public class SearchServiceController extends ServiceApi {
     Response response = service("searchservice")
         .queryParam("categoryProductId", searchServiceData.getValidate())
         .queryParam("type", searchServiceData.getType())
-        .get("/keyword/validate-id-and-get-name");
+        .get("/api/search/keyword/validate-id-and-get-name");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,
         new TypeReference<GdnRestSingleResponse<ValidateIdAndGetNameResponse>>() {
@@ -672,7 +667,7 @@ public class SearchServiceController extends ServiceApi {
     Response response = service("searchservice")
         .queryParam("categoryProductId", searchServiceData.getWrongid())
         .queryParam("type", searchServiceData.getType())
-        .get("/keyword/validate-id-and-get-name");
+        .get("/api/search/keyword/validate-id-and-get-name");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,
         new TypeReference<GdnRestSingleResponse<ValidateIdAndGetNameResponse>>() {
@@ -694,7 +689,7 @@ public class SearchServiceController extends ServiceApi {
     data.put("type", searchServiceData.getType());
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
     Response response =
-        service("searchservice").body(bodyRequest).post("/keyword/delete");
+        service("searchservice").body(bodyRequest).post("/api/search/keyword/delete");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -715,21 +710,21 @@ public class SearchServiceController extends ServiceApi {
     data.put("type", searchServiceData.getType());
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
     Response response =
-        service("searchservice").body(bodyRequest).post("/keyword/delete");
+        service("searchservice").body(bodyRequest).post("/api/search/keyword/delete");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
   public ResponseApi<GdnBaseRestResponse> getCategoryList() {
-    Response response = service("searchservice").post("/fetch-category-list");
+    Response response = service("searchservice").post("/api/search/fetch-category-list");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
   public ResponseApi<GdnBaseRestResponse> getMerchantList() {
-    Response response = service("searchservice").post("/fetch-merchant-list");
+    Response response = service("searchservice").post("/api/search/fetch-merchant-list");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -739,7 +734,7 @@ public class SearchServiceController extends ServiceApi {
     Response response = service("searchservice")
         .queryParam("category", searchServiceData.getCategoryId())
         .queryParam("merchant", searchServiceData.getMerchant())
-        .post("/product-data-report");
+        .post("/api/search/product-data-report");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -751,14 +746,14 @@ public class SearchServiceController extends ServiceApi {
         .header("content-type", "multipart/data")
         .queryParam("email", searchServiceData.getEmail())
         .multiPart(new File(searchServiceData.getPath()))
-        .post("/keyword/upload");
+        .post("/api/search/keyword/upload");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
   public ResponseApi<GdnBaseRestResponse> generateSynonyms() {
-    Response response = service("searchservice").get("/synonyms/create-synonyms");
+    Response response = service("searchservice").get("/api/search/synonyms/create-synonyms");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -767,7 +762,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnRestSingleResponse<SynonymsResponse>> findByKey() {
     Response response = service("searchservice")
         .queryParam("key", searchServiceData.getSearchTerm())
-        .get("/synonyms/find-by-key");
+        .get("/api/search/synonyms/find-by-key");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<SynonymsResponse>>() {
     });
@@ -776,7 +771,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnRestSingleResponse<SynonymsResponse>> findByWrongKey() {
     Response response = service("searchservice")
         .queryParam("key", searchServiceData.getWrongname())
-        .get("/synonyms/find-by-key");
+        .get("/api/search/synonyms/find-by-key");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<SynonymsResponse>>() {
     });
@@ -788,7 +783,7 @@ public class SearchServiceController extends ServiceApi {
         .queryParam("page", searchServiceData.getPage())
         .queryParam("size", searchServiceData.getSize())
         .queryParam("status", searchServiceData.getPagenumberForIMlist())
-        .get("/synonyms/find");
+        .get("/api/search/synonyms/find");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<SynonymsResponse>>() {
     });
@@ -800,7 +795,7 @@ public class SearchServiceController extends ServiceApi {
         .queryParam("page", searchServiceData.getPage())
         .queryParam("size", searchServiceData.getSize())
         .queryParam("status", searchServiceData.getPagenumberForIMlist())
-        .get("/synonyms/find");
+        .get("/api/search/synonyms/find");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<SynonymsResponse>>() {
     });
@@ -811,7 +806,7 @@ public class SearchServiceController extends ServiceApi {
         .queryParam("page", searchServiceData.getPage())
         .queryParam("size", searchServiceData.getSize())
         .queryParam("status", searchServiceData.getPagenumberForIMlist())
-        .get("/synonyms/list");
+        .get("/api/search/synonyms/list");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<SynonymsResponse>>() {
     });
@@ -826,7 +821,7 @@ public class SearchServiceController extends ServiceApi {
     data.put("synonyms",searchServiceData.getSynonyms());
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
     Response response =
-        service("searchservice").body(bodyRequest).post("/synonyms/delete");
+        service("searchservice").body(bodyRequest).post("/api/search/synonyms/delete");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -835,7 +830,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnBaseRestResponse> deleteSynonymFromSolr() {
     Response response = service("searchservice")
         .queryParam("key", searchServiceData.getSearchTerm())
-        .delete("/integration/delete");
+        .delete("/api/search/integration/delete");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -844,7 +839,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnBaseRestResponse> updateSynonymFromSolr() {
     Response response = service("searchservice")
         .queryParam("updateAll", searchServiceData.getWrongword())
-        .post("/integration/update");
+        .post("/api/search/integration/update");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -859,7 +854,7 @@ public class SearchServiceController extends ServiceApi {
     data.put("sync", searchServiceData.getSync());
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
     Response response =
-        service("searchservice").body(bodyRequest).post("/stopword/save");
+        service("searchservice").body(bodyRequest).post("/api/search/stopword/save");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -870,7 +865,7 @@ public class SearchServiceController extends ServiceApi {
         .queryParam("word", searchServiceData.getSearchTerm())
         .queryParam("page",searchServiceData.getPage())
         .queryParam("size",searchServiceData.getSize())
-        .get("/stopword/find");
+        .get("/api/search/stopword/find");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<StopWordResponse>>() {
     });
@@ -881,7 +876,7 @@ public class SearchServiceController extends ServiceApi {
         .queryParam("word", searchServiceData.getWrongword())
         .queryParam("page",searchServiceData.getPage())
         .queryParam("size",searchServiceData.getSize())
-        .get("/stopword/find");
+        .get("/api/search/stopword/find");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<StopWordResponse>>() {
     });
@@ -890,7 +885,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnRestSingleResponse<StopWordResponse>> findStopwordByID(){
     Response response = service("searchservice")
         .queryParam("id", searchServiceData.getAutoStopwordID())
-        .get("/stopword/find-by-id");
+        .get("/api/search/stopword/find-by-id");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<StopWordResponse>>() {
     });
@@ -899,7 +894,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnRestSingleResponse<StopWordResponse>> findStopwordByWrongID(){
     Response response = service("searchservice")
         .queryParam("id", searchServiceData.getWrongid())
-        .get("/stopword/find-by-id");
+        .get("/api/search/stopword/find-by-id");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<StopWordResponse>>() {
     });
@@ -909,7 +904,7 @@ public class SearchServiceController extends ServiceApi {
     Response response = service("searchservice")
         .queryParam("page",searchServiceData.getPage())
         .queryParam("size",searchServiceData.getSize())
-        .get("/stopword/list");
+        .get("/api/search/stopword/list");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<StopWordResponse>>() {
     });
@@ -923,7 +918,7 @@ public class SearchServiceController extends ServiceApi {
     data.put("id",searchServiceData.getAutoStopwordID());
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
     Response response =
-        service("searchservice").body(bodyRequest).post("/stopword/update");
+        service("searchservice").body(bodyRequest).post("/api/search/stopword/update");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -937,7 +932,7 @@ public class SearchServiceController extends ServiceApi {
     data.put("id",searchServiceData.getWrongid());
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
     Response response =
-        service("searchservice").body(bodyRequest).post("/stopword/update");
+        service("searchservice").body(bodyRequest).post("/api/search/stopword/update");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -951,7 +946,7 @@ public class SearchServiceController extends ServiceApi {
     data.put("id",searchServiceData.getAutoStopwordID());
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
     Response response =
-        service("searchservice").body(bodyRequest).post("/stopword/delete");
+        service("searchservice").body(bodyRequest).post("/api/search/stopword/delete");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -960,7 +955,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnBaseRestResponse> deleteStopwordIntegration() {
     Response response = service("searchservice")
         .queryParam("key", searchServiceData.getSearchTerm())
-        .delete("/integration/stopword/delete");
+        .delete("/api/search/integration/stopword/delete");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -969,7 +964,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnBaseRestResponse> updateStopwordFromSolr() {
     Response response = service("searchservice")
         .queryParam("updateAll", searchServiceData.getWrongword())
-        .post("/integration/stopword/update");
+        .post("/api/search/integration/stopword/update");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -978,7 +973,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnRestSingleResponse<SetConfigResponse>> setConfigRequest(){
     Response response = service("searchservice")
         .queryParam("name", searchServiceData.getSetConfig())
-        .get("/fetchSaveConfig");
+        .get("/api/search/fetchSaveConfig");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<SetConfigResponse>>() {
     });
@@ -987,7 +982,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnBaseRestResponse> updateFieldCache() {
     Response response = service("searchservice")
         .queryParam("fieldName", searchServiceData.getFieldName())
-        .get("/updateFieldCache");
+        .get("/api/search/updateFieldCache");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -995,7 +990,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnBaseRestResponse> updateNonExistingFieldCache() {
     Response response = service("searchservice")
         .queryParam("fieldName", searchServiceData.getWrongname())
-        .get("/updateFieldCache");
+        .get("/api/search/updateFieldCache");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -1005,7 +1000,7 @@ public class SearchServiceController extends ServiceApi {
     Response response = service("searchservice")
         .queryParam("word", searchServiceData.getSearchTerm())
         .queryParam("size",searchServiceData.getSize())
-        .get("/keywordBoost/find");
+        .get("/api/search/keywordBoost/find");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<KeywordBoostProductResponse>>() {
     });
@@ -1014,7 +1009,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnRestSingleResponse<KeywordBoostProductResponse>> findBoostedKeywordByID(){
     Response response = service("searchservice")
         .queryParam("id", searchServiceData.getAutoBoostedKeywordID())
-        .get("/keywordBoost/findById");
+        .get("/api/search/keywordBoost/findById");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<KeywordBoostProductResponse>>() {
     });
@@ -1023,7 +1018,7 @@ public class SearchServiceController extends ServiceApi {
   public  ResponseApi<GdnRestListResponse<KeywordBoostProductResponse>> listBoostedKeyword(){
     Response response = service("searchservice")
         .queryParam("size",searchServiceData.getSize())
-        .get("/keywordBoost/list");
+        .get("/api/search/keywordBoost/list");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<KeywordBoostProductResponse>>() {
     });
@@ -1039,7 +1034,7 @@ public class SearchServiceController extends ServiceApi {
     data.put("products", searchServiceData.getProductID());
 
     String bodyRequest = templateAPI.createFromString(Bodytemplate, data);
-    Response response = service("searchservice").body(bodyRequest).post("/keywordBoost/update");
+    Response response = service("searchservice").body(bodyRequest).post("/api/search/keywordBoost/update");
     response.getBody().prettyPrint();
 
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
@@ -1048,7 +1043,7 @@ public class SearchServiceController extends ServiceApi {
 
   public  ResponseApi<GdnRestListResponse<KeywordBoostProductResponse>> listAllBoostedKeyword(){
     Response response = service("searchservice")
-        .get("/keywordBoost/getAll");
+        .get("/api/search/keywordBoost/getAll");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<KeywordBoostProductResponse>>() {
     });
@@ -1058,7 +1053,7 @@ public class SearchServiceController extends ServiceApi {
         .header("content-type", "multipart/data")
         .queryParam("email", searchServiceData.getEmail())
         .multiPart(new File(searchServiceData.getPathForBoostedKeyword()))
-        .post("/keywordBoost/upload");
+        .post("/api/search/keywordBoost/upload");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -1074,7 +1069,7 @@ public class SearchServiceController extends ServiceApi {
     data.put("keyword", searchServiceData.getSearchTerm());
     data.put("products", searchServiceData.getProductID());
     String bodyRequest = templateAPI.createFromString(Bodytemplate, data);
-    Response response = service("searchservice").body(bodyRequest).post("/keywordBoost/delete");
+    Response response = service("searchservice").body(bodyRequest).post("/api/search/keywordBoost/delete");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -1082,36 +1077,16 @@ public class SearchServiceController extends ServiceApi {
 
   public ResponseApi<GdnRestSingleResponse> bodyOfRequestOfValidateID(String incorrectID,String correctID) {
     String Bodytemplate="[\""+correctID+"\",\""+incorrectID+"\"]";
-   Response response=service("searchservice").body(Bodytemplate).post("/keywordBoost/validate");
+   Response response=service("searchservice").body(Bodytemplate).post("/api/search/keywordBoost/validate");
    response.getBody().prettyPrint();
    return jsonApi.fromJson(response,new TypeReference<GdnRestSingleResponse>(){
     });
   }
 
   public ResponseApi<GdnBaseRestResponse> bodyOfRequestOfMultiDelete() throws Exception {
-    MongoClientURI uri =
-        new MongoClientURI(searchServiceData.getMongoURL());
-    MongoClient mongoClient = new MongoClient(uri);
-    MongoClientOptions.Builder optionsBuilder = MongoClientOptions.builder();
-    optionsBuilder.connectTimeout(30000);
-    MongoDatabase db = mongoClient.getDatabase(searchServiceData.getMongoDB());
-    MongoCollection<Document> collection = db.getCollection("keyword_boost_keyword_list");
-    Document document1 = new Document();
-    document1.put("_id","98765");
-    document1.put("keyword","automation");
-    document1.put("products", "MTA-0309256,MTA-0306144");
-    document1.put("STORE_ID","10001");
-    collection.insertOne(document1);
-    Document document2 = new Document();
-    document2.put("_id","43210");
-    document2.put("keyword","testing");
-    document2.put("products", "MTA-0309256,MTA-0306144");
-    document2.put("STORE_ID","10001");
-    collection.insertOne(document2);
-    Thread.sleep(5000);
     String Bodytemplate = "[\n" + "  {\n" + "    \"id\": \"98765\"\n"
         + "   }, {\n" + "\"id\": \"43210\"\n" + "}\n" + "]";
-    Response response = service("searchservice").body(Bodytemplate).post("/keywordBoost/multidelete");
+    Response response = service("searchservice").body(Bodytemplate).post("/api/search/keywordBoost/multidelete");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -1121,7 +1096,7 @@ public class SearchServiceController extends ServiceApi {
     Response response = service("searchservice")
         .queryParam("word", searchServiceData.getWrongname())
         .queryParam("size",searchServiceData.getSize())
-        .get("/keywordBoost/find");
+        .get("/api/search/keywordBoost/find");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<KeywordBoostProductResponse>>() {
     });
@@ -1130,7 +1105,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnRestSingleResponse<KeywordBoostProductResponse>> findBoostedKeywordByWrongID(){
     Response response = service("searchservice")
         .queryParam("id", searchServiceData.getWrongid())
-        .get("/keywordBoost/findById");
+        .get("/api/search/keywordBoost/findById");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<KeywordBoostProductResponse>>() {
     });
@@ -1145,7 +1120,7 @@ public class SearchServiceController extends ServiceApi {
     data.put("products", searchServiceData.getProductID());
 
     String bodyRequest = templateAPI.createFromString(Bodytemplate, data);
-    Response response = service("searchservice").body(bodyRequest).post("/keywordBoost/update");
+    Response response = service("searchservice").body(bodyRequest).post("/api/search/keywordBoost/update");
     response.getBody().prettyPrint();
 
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
@@ -1157,7 +1132,7 @@ public class SearchServiceController extends ServiceApi {
         .header("content-type", "multipart/data")
         .queryParam("email", searchServiceData.getEmail())
         .multiPart(new File(searchServiceData.getWrongFile()))
-        .post("/keywordBoost/upload");
+        .post("/api/search/keywordBoost/upload");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -1165,7 +1140,7 @@ public class SearchServiceController extends ServiceApi {
 
   public ResponseApi<GdnBaseRestResponse> cleanUp() {
     Response response = service("searchservice")
-        .post("/searchkeyword/cleanup");
+        .post("/api/search/searchkeyword/cleanup");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -1173,7 +1148,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnBaseRestResponse> debug() {
     Response response = service("searchservice")
         .queryParam("searchKeyword",searchServiceData.getSearchTerm())
-        .get("/searchkeyword/debugDetected");
+        .get("/api/search/searchkeyword/debugDetected");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -1181,7 +1156,7 @@ public class SearchServiceController extends ServiceApi {
 
   public ResponseApi<GdnBaseRestResponse> deltaIndex() {
     Response response = service("searchservice")
-        .post("/searchkeyword/delta-index");
+        .post("/api/search/searchkeyword/delta-index");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -1190,7 +1165,7 @@ public class SearchServiceController extends ServiceApi {
 
   public ResponseApi<GdnBaseRestResponse> mongoClasses() {
     Response response = service("searchservice")
-        .post("/mongo/classes");
+        .post("/api/search/mongo/classes");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -1203,14 +1178,14 @@ public class SearchServiceController extends ServiceApi {
         .queryParam("value",searchServiceData.getMongoValue())
         .queryParam("className",searchServiceData.getClassName())
         .queryParam("queryType",searchServiceData.getQueryType())
-        .post("/query/mongo");
+        .post("/api/search/query/mongo");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
   public ResponseApi<GdnRestSingleResponse<ProductResponse>> bodyOfRequestToQueryWithProductID(String correctID) {
     String Bodytemplate="{\n" + "  \"value\": [\n" + "    \""+correctID+"\"\n" + "  ]\n" + "}";
-    Response response=service("searchservice").body(Bodytemplate).post("/product");
+    Response response=service("searchservice").body(Bodytemplate).post("/api/search/product");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,new TypeReference<GdnRestSingleResponse<ProductResponse>>(){
     });
@@ -1218,7 +1193,7 @@ public class SearchServiceController extends ServiceApi {
 
   public ResponseApi<GdnBaseRestResponse> deleteUnpublished() {
     Response response = service("searchservice")
-        .get("/scheduled-events/delete-unpublished");
+        .get("/api/search/scheduled-events/delete-unpublished");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -1226,9 +1201,87 @@ public class SearchServiceController extends ServiceApi {
 
   public ResponseApi<GdnBaseRestResponse> fetchTheListOfUnpublishedProducts() {
     Response response = service("searchservice")
-        .post("/scheduled-events/process-events");
+        .post("/api/search/scheduled-events/process-events");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
+
+  public ResponseApi<GdnRestSingleResponse> prepareRequestForProcessingFailedIds(){
+    Response response = service("searchservice")
+        .get("/api/search/index/failed-ids");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse>() {});
+  }
+
+  public ResponseApi<GdnBaseRestResponse> prepareRequestForIndexing(String type,String value){
+
+    String postReq="{\""+type+"\": [\""+value+"\" ]}";
+    Response response = service("searchservice")
+        .body(postReq)
+        .post("/api/search/index/product");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {});
+  }
+
+  public ResponseApi<GdnRestSingleResponse<SimpleStringResponse>> prepareRequestForListingServicesForReindexing(){
+    Response response = service("searchservice")
+        .get("/api/search/index/services");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<SimpleStringResponse>>() {});
+  }
+
+
+  public ResponseApi<GdnBaseRestResponse> prepareRequestForReviewAndRatingIndex(){
+    Response response = service("searchservice")
+        .post("/api/search/update/review-and-rating");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {});
+
+  }
+
+  public ResponseApi<GdnBaseRestResponse> prepareRequestForCategoryReindex(String categoryCode){
+
+    String requestJson = "{\n" + "\"categoryCodes\": [ \""+categoryCode +"\"]\n" + "}";
+
+    Response response = service("searchservice")
+        .body(requestJson)
+        .post("/api/search/index/category");
+
+    response.getBody().prettyPrint();
+
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {});
+
+  }
+
+  public ResponseApi<GdnBaseRestResponse> prepareRequestForFullReindexing(String solrToSolr,String serviceName){
+    Response response = service("searchservice")
+        .queryParam("solr",solrToSolr)
+        .queryParam("services",serviceName)
+        .post("/api/search/index/product-revamp");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {});
+  }
+
+  public ResponseApi<GdnRestSingleResponse<SimpleStringResponse>> prepareRequestForProcessingStoredDelta(){
+    Response response = service("searchservice")
+        .get("/api/search/index/process-delta-stored-events");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<SimpleStringResponse>>() {});
+  }
+
+  public ResponseApi<GdnRestSingleResponse<StatusReIndexResponse>> prepareRequestForGettingIndexingStatus(){
+    Response response = service("searchservice")
+        .get("/api/search/index/status");
+    response.getBody().prettyPrint();
+   return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<StatusReIndexResponse>>() {});
+  }
+
+  public ResponseApi<GdnBaseRestResponse> prepareRequestForAtomicReindexQueue(){
+    Response response = service("searchservice")
+        .get("/api/atomic/reindex");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response,new TypeReference<GdnBaseRestResponse>() {});
+  }
+
 }

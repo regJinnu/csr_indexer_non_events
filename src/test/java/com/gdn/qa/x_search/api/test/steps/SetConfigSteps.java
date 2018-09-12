@@ -12,6 +12,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
@@ -84,7 +85,8 @@ public class SetConfigSteps {
   public void searchServiceUpdateNonExistingFieldCacheRequestResponseSuccessShouldBeFalse()
   {
     ResponseApi<GdnBaseRestResponse> response=searchServiceData.getSearchServiceResponse();
-    assertThat(response.getResponseBody().getErrorCode(),equalTo("UNSPECIFIED"));
-    assertThat(response.getResponseBody().isSuccess(),equalTo(false));
+    assertThat("Status Code Not 200", response.getResponse().getStatusCode(), equalTo(500));
+  //  assertThat(response.getResponseBody().getErrorMessage(),containsString("undefined field"));
+   // assertThat(response.getResponseBody().getErrorCode(),equalTo("UNSPECIFIED"));
   }
 }
