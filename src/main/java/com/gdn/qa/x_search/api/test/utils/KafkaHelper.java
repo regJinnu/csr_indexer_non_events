@@ -173,4 +173,106 @@ private ApplicationContext applicationContext;
     }
   }
 
+
+  public void publishCampaignEvent(String campaignName,
+      String campaignCode,
+      String productSku,
+      String itemSku,
+      Double discount) {
+
+    Date date = new Date();
+    DateTime dtStart = new DateTime(date);
+    DateTime dtEnd = dtStart.plusDays(1);
+
+    String itemSku1 = itemSku.split(",")[0];
+    String itemSku2 = itemSku.split(",")[1];
+
+    ProductSkuEventModel productSkuEventModel1=ProductSkuEventModel.builder()
+        .productSku(productSku).itemSku(itemSku1).discount(discount).build();
+
+    ProductSkuEventModel productSkuEventModel2=ProductSkuEventModel.builder()
+        .productSku(productSku).itemSku(itemSku2).discount(discount).build();
+
+    List<ProductSkuEventModel> skuList = new ArrayList<>();
+    skuList.add(productSkuEventModel1);
+    skuList.add(productSkuEventModel2);
+
+
+    CampaignPublishEvent campaignPublishEvent = CampaignPublishEvent.builder()
+        .timestamp(System.currentTimeMillis())
+        .campaignName(campaignName)
+        .campaignCode(campaignCode)
+        .skuList(skuList)
+        .promotionStartTime(dtStart.toDate())
+        .promotionEndTime(dtEnd.toDate())
+        .build();
+    try {
+      kafkaSender.send("com.gdn.x.campaign.published",
+          objectMapper.writeValueAsString(campaignPublishEvent));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void campaignRemoveEvent(
+      String campaignCode,
+      String productSku,
+      String itemSkuForRemove,
+      Double discount){
+
+    ProductSkuEventModel productSkuEventModel=ProductSkuEventModel.builder()
+        .productSku(productSku).itemSku(itemSkuForRemove).discount(discount).build();
+
+    CampaignRemoveEvent campaignRemoveEvent= CampaignRemoveEvent.builder()
+        .campaignCode(campaignCode)
+        .skuList(Collections.singletonList(productSkuEventModel))
+        .timestamp(System.currentTimeMillis()).build();
+    try {
+      kafkaSender.send("com.gdn.x.campaign.product.removed",
+          objectMapper.writeValueAsString(campaignRemoveEvent));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
+
+  public void campaignLiveEvent( String campaignCodeList, boolean markForDelete){
+
+    List<String> CampaignList = new ArrayList<>();
+    CampaignList.add(String.valueOf(campaignCodeList));
+    CampaignLiveEvents campaignLiveEvents=CampaignLiveEvents.builder().
+        campaignCodeList(CampaignList).timestamp(System.currentTimeMillis()).storeId("10001").markForDelete(markForDelete).build();
+    try {
+      kafkaSender.send("com.gdn.x.campaign.live",
+          objectMapper.writeValueAsString(campaignLiveEvents));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void campaignStopEvent( String campaignCode, boolean markForDelete){
+
+    CampaignStopEvent campaignStopEvent= CampaignStopEvent.builder().campaignCode(campaignCode)
+        .timestamp(System.currentTimeMillis()).storeId("10001").markForDelete(markForDelete).build();
+    try {
+      kafkaSender.send("com.gdn.x.campaign.stopped",
+          objectMapper.writeValueAsString(campaignStopEvent));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void campaignEndEvent(String campaignCodeList, boolean markForDelete){
+    List<String> CampaignList = new ArrayList<>();
+    CampaignList.add(String.valueOf(campaignCodeList));
+    CampaignLiveEvents campaignLiveEvents=CampaignLiveEvents.builder().
+        campaignCodeList(CampaignList).timestamp(System.currentTimeMillis()).storeId("10001").markForDelete(markForDelete).build();
+    try {
+      kafkaSender.send("com.gdn.x.campaign.ended",
+          objectMapper.writeValueAsString(campaignLiveEvents));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
 }

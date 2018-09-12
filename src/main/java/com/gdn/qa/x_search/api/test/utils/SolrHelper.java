@@ -36,7 +36,7 @@ public class SolrHelper {
     return initializeSolr(SOLR_URL_NO_PARAM).commit(collectionName).getStatus();
   }
 
-  public static SolrQuery initializeSolrQuery(String queryText, String requestHandler,int rows,String fields){
+  public static SolrQuery initializeSolrQuery(String queryText, String requestHandler,int rows,String fields,String fq){
     SolrQuery solrQuery = new SolrQuery();
     solrQuery.setQuery(queryText);
     solrQuery.setRequestHandler(requestHandler);
@@ -45,7 +45,10 @@ public class SolrHelper {
     solrQuery.addFilterQuery("{!collapse field=level0Id sort='merchantScore desc'}");
     solrQuery.addFilterQuery("published:1 AND salesCatalogCategoryCount:[1 TO *]");
     }
-
+    if (fq!=null && !fq.isEmpty())
+    {
+      solrQuery.addFilterQuery(fq);
+    }
     solrQuery.setRows(rows);
     solrQuery.setFields(fields);
     return solrQuery;
@@ -54,14 +57,22 @@ public class SolrHelper {
 
   public static long getSolrProdCount(String queryText, String requestHandler) throws Exception {
     HttpSolrClient httpSolrClient = initializeSolr(SOLR_URL);
-    SolrQuery solrQuery = initializeSolrQuery(queryText,requestHandler,0,"id");
+    SolrQuery solrQuery = initializeSolrQuery(queryText,requestHandler,0,"id","");
+    QueryResponse queryResponse = httpSolrClient.query(solrQuery);
+    return queryResponse.getResults().getNumFound();
+  }
+
+
+  public static long getSolrProdCountWithFq(String queryText, String requestHandler,String fq) throws Exception {
+    HttpSolrClient httpSolrClient = initializeSolr(SOLR_URL);
+    SolrQuery solrQuery = initializeSolrQuery(queryText,requestHandler,0,"id",fq);
     QueryResponse queryResponse = httpSolrClient.query(solrQuery);
     return queryResponse.getResults().getNumFound();
   }
 
   public static List<SolrResults>  getSolrProd(String queryText, String requestHandler,String field,int rows) throws Exception {
     HttpSolrClient httpSolrClient = initializeSolr(SOLR_URL);
-    SolrQuery solrQuery = initializeSolrQuery(queryText,requestHandler,rows,field);
+    SolrQuery solrQuery = initializeSolrQuery(queryText,requestHandler,rows,field,"");
     QueryResponse queryResponse = httpSolrClient.query(solrQuery);
     SolrDocumentList solrDocuments = queryResponse.getResults();
     DocumentObjectBinder binder = new DocumentObjectBinder();
@@ -73,7 +84,7 @@ public class SolrHelper {
       throws IOException, SolrServerException {
 
     HttpSolrClient httpSolrClient = initializeSolr(SOLR_URL);
-    SolrQuery solrQuery = initializeSolrQuery(queryText,requestHandler,rows,field);
+    SolrQuery solrQuery = initializeSolrQuery(queryText,requestHandler,rows,field,"");
     QueryResponse queryResponse = httpSolrClient.query(solrQuery);
     SolrDocument solrDocument = queryResponse.getResults().get(0);
 

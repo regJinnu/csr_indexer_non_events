@@ -88,6 +88,14 @@ public class SearchServiceData {
   private int errorMessage;
   private String unSyncProduct;
   private String queryForUnsyncProduct;
+  private String campaignName;
+  private String campaignCode;
+  private String campaignProductSku;
+  private String campaignItemSku;
+  private String campaignDiscount;
+  private String campaignFieldInSOLR;
+  private String campaignCodeList;
+  private String itemSkuForRemove;
   private ResponseApi<GdnRestSingleResponse> validateID;
   private ResponseApi<GdnBaseRestResponse> searchServiceResponse;
   private ResponseApi<GdnRestSingleResponse<ConfigResponse>> findByRequest;

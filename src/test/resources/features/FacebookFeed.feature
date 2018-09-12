@@ -17,3 +17,4 @@ Feature: Verification of Facebook Feed
     And [search-service] all items for same product are not written only default is written
     And [search-service] records not satisfying the solr query are not written in file
     And [search-service] records satisfying exclusion are not written in file
+    And [search-service] facebook feed last updated time is updated in config_list
