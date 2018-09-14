@@ -5,26 +5,24 @@ import com.gdn.qa.automation.core.restassured.ResponseApi;
 import com.gdn.qa.x_search.api.test.CucumberStepsDefinition;
 import com.gdn.qa.x_search.api.test.api.services.FeedController;
 import com.gdn.qa.x_search.api.test.data.SearchServiceData;
-import com.gdn.qa.x_search.api.test.models.SolrResults;
 import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
 import com.gdn.qa.x_search.api.test.utils.DownloadHelper;
 import com.gdn.qa.x_search.api.test.utils.MongoHelper;
 import com.gdn.qa.x_search.api.test.utils.ProcessShellCommands;
 import com.gdn.qa.x_search.api.test.utils.SolrHelper;
 import com.jcraft.jsch.ChannelSftp;
-import cucumber.api.java.en.And;
+import com.mongodb.client.FindIterable;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Vector;
-
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -98,7 +96,15 @@ public class FacebookSteps {
   @Given("^\\[search-service] exists api to run facebook full feed$")
   public void searchServiceExistsApiToRunFacebookFullFeed(){
 
-   }
+    FindIterable<Document> findIterable = mongoHelper.getMongoDocumentByQuery("config_list",
+        "NAME",
+        "facebook.feed.last.updated.date");
+
+    String facebookLastUpdatedTime = mongoHelper.getSpecificFieldfromMongoDocument(findIterable,"VALUE");
+
+    searchServiceData.setFacebookFeedLastUpdatedTime(facebookLastUpdatedTime);
+
+  }
 
   @When("^\\[search-service] runs api to generate full feed$")
   public void searchServiceRunsApiToGenerateFullFeed(){
@@ -132,7 +138,13 @@ public class FacebookSteps {
 
     File dir = new File(LOCAL_STORAGE_LOCATION);
 
-    assertThat("Files not deleted in local system",downloadHelper.purgeDirectory(dir),equalTo(true));
+    try {
+      FileUtils.cleanDirectory(dir);
+    } catch (IOException e) {
+      log.error("Failed to delete files in local directory");
+    }
+
+//    assertThat("Files not deleted in local system",downloadHelper.purgeDirectory(dir),equalTo(true));
 
     for (ChannelSftp.LsEntry lsEntry:files) {
 
@@ -168,7 +180,7 @@ public class FacebookSteps {
         .reduce((count1, count2) -> count1 + count2)
         .orElse(0);
 
-    assertThat("No of Records in File", countOfRecordsInFile, equalTo(searchServiceData.getErrorMessage()));
+    assertThat("No of Records in File", countOfRecordsInFile-files.size(), equalTo(searchServiceData.getErrorMessage()));
 
   }
 
@@ -199,7 +211,7 @@ public class FacebookSteps {
           "verifyFacebookRecords.sh",
           searchServiceData.getProductCodeForReindex());
 
-      assertThat("Sync prod not found",output,equalTo("1"));
+      assertThat("Sync prod not found",output.trim(),equalTo("1"));
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -213,20 +225,20 @@ public class FacebookSteps {
 
     try {
 
-      searchServiceData.setQueryForProductCode(searchServiceProperties.get("queryForProductCode"));
-      searchServiceData.setProductCodeForReindex(searchServiceProperties.get("productCodeForReindex"));
+      searchServiceData.setUnSyncProduct(searchServiceProperties.get("unSyncProduct"));
+      searchServiceData.setQueryForUnsyncProduct(searchServiceProperties.get("queryForUnsyncProduct"));
 
       boolean isSynchronised =
-          SolrHelper.getSolrProd(searchServiceData.getQueryForProductCode(), SELECT_HANDLER,
+          SolrHelper.getSolrProd(searchServiceData.getQueryForUnsyncProduct(), SELECT_HANDLER,
               "isSynchronised", 1).get(0).getIsSynchronised();
 
-      assertThat("Product is not synchronised",isSynchronised,equalTo(true));
+      assertThat("Product is not unsync",isSynchronised,equalTo(false));
 
       String output = ProcessShellCommands.getShellScriptActualOutput(
           "verifyFacebookRecords.sh",
-          searchServiceData.getProductCodeForReindex());
+          searchServiceData.getUnSyncProduct());
 
-      assertThat("Sync prod not found",output,equalTo("1"));
+      assertThat("Unsync prod not found",output.trim(),equalTo("1"));
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -237,15 +249,98 @@ public class FacebookSteps {
   @Then("^\\[search-service] all items for same product are not written only default is written$")
   public void searchServiceAllItemsForSameProductAreNotWrittenOnlyDefaultIsWritte(){
 
+    try {
+
+
+      searchServiceData.setDefaultProd(searchServiceProperties.get("defaultProd"));
+
+
+      String output = ProcessShellCommands.getShellScriptActualOutput(
+          "verifyFacebookRecords.sh",
+          searchServiceData.getDefaultProd());
+
+      assertThat("More than 1 entry for same product",output.trim(),equalTo("1"));
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
   }
 
   @Then("^\\[search-service] records not satisfying the solr query are not written in file$")
   public void searchServiceRecordsNotSatisfyingTheSolrQueryAreNotWrittenInFile(){
 
+    try {
+
+      searchServiceData.setFbOOSProd(searchServiceProperties.get("fbOOSProd"));
+
+      String output = ProcessShellCommands.getShellScriptActualOutput(
+          "verifyFacebookRecords.sh",
+          searchServiceData.getFbOOSProd());
+
+      assertThat("OOS product part of feed",output.trim(),equalTo("0"));
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   @Then("^\\[search-service] records satisfying exclusion are not written in file$")
   public void searchServiceRecordsSatisfyingExclusionAreNotWrittenInFile(){
+
+    try {
+
+      searchServiceData.setFbExcludedProd(searchServiceProperties.get("fbExcludedProd"));
+
+      String output = ProcessShellCommands.getShellScriptActualOutput(
+          "verifyFacebookRecords.sh",
+          searchServiceData.getFbExcludedProd());
+
+      assertThat("Excluded product part of feed",output.trim(),equalTo("0"));
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+  }
+
+  @Then("^\\[search-service] facebook feed last updated time is updated in config_list$")
+  public void checkLastUpdatedTimeIsUpdated(){
+
+
+    FindIterable<Document> findIterable = mongoHelper.getMongoDocumentByQuery("config_list",
+        "NAME",
+        "facebook.feed.last.updated.date");
+
+    String facebookLastUpdatedTimeNew = mongoHelper.getSpecificFieldfromMongoDocument(findIterable,"VALUE");
+
+    log.error("--facebookLastUpdatedTime-{}-----facebookLastUpdatedTimeNew-{}-----",searchServiceData.getFacebookFeedLastUpdatedTime(),facebookLastUpdatedTimeNew);
+
+    assertThat("last modified date is not updated",facebookLastUpdatedTimeNew,greaterThan(searchServiceData.getFacebookFeedLastUpdatedTime()));
+
+
+  }
+
+  @Then("^\\[search-service] all fields are populated in the feed$")
+  public void checkAllFieldsArePresentWithValue(){
+
+    try {
+
+      String output = ProcessShellCommands.getShellScriptActualOutput(
+          "getFacebookRecords.sh",
+          searchServiceData.getUnSyncProduct());
+
+      assertThat("Unsync Prod Details not as expected",output.trim(),equalTo(FB_UNSYNC));
+
+      String outputSync = ProcessShellCommands.getShellScriptActualOutput(
+          "getFacebookRecords.sh",
+          searchServiceData.getDefaultProd());
+
+      assertThat("Sync Prod Details not as expected",outputSync.trim(),equalTo(FB_SYNC));
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
   }
 }

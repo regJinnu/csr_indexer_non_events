@@ -96,6 +96,10 @@ public class SearchServiceData {
   private String campaignFieldInSOLR;
   private String campaignCodeList;
   private String itemSkuForRemove;
+  private String facebookFeedLastUpdatedTime;
+  private String defaultProd;
+  private String fbOOSProd;
+  private String fbExcludedProd;
   private ResponseApi<GdnRestSingleResponse> validateID;
   private ResponseApi<GdnBaseRestResponse> searchServiceResponse;
   private ResponseApi<GdnRestSingleResponse<ConfigResponse>> findByRequest;

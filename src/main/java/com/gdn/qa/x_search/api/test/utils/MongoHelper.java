@@ -8,6 +8,8 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import java.util.ArrayList;
 
@@ -63,6 +65,28 @@ public class MongoHelper {
   public void deleteAllFromMongo(String collectionName){
     MongoCollection<Document> collection = initializeDatabase(collectionName);
     collection.deleteMany(new Document());
+  }
+
+
+  public String getSpecificFieldfromMongoDocument(FindIterable<Document> findIterable,String fieldToExtract){
+
+    String result="";
+
+
+    for (Document document:findIterable
+    ) {
+      result = document.toJson();
+    }
+
+    try {
+      JSONParser parser = new JSONParser();
+      JSONObject jsonObject = (JSONObject) parser.parse(result);
+      return (String) jsonObject.get(fieldToExtract);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    return result;
   }
 
   //Example to show update with multiple filter conditions
