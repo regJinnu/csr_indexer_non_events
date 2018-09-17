@@ -55,7 +55,8 @@ private ApplicationContext applicationContext;
   public void publishStoreClosedEvent(String businessPartnerCode,boolean isDelayShipping) {
 
     Date date = new Date();
-    DateTime dtStart = new DateTime(date);
+    DateTime dtStartWithBuffer = new DateTime(date);
+    DateTime dtStart = dtStartWithBuffer.plusDays(2);
     DateTime dtEnd = dtStart.plusDays(2);
 
     BPStoreClosedEvent bpStoreClosedEvent = BPStoreClosedEvent.builder().
@@ -64,7 +65,7 @@ private ApplicationContext applicationContext;
         startDate(dtStart.getMillis()).
         endDate(dtEnd.getMillis()).
         publishType("EXECUTE_START").
-        startDateWithBufferClosingStoreDay(dtEnd.getMillis()).
+        startDateWithBufferClosingStoreDay(dtStartWithBuffer.getMillis()).
         delayShipping(isDelayShipping).build();
 
     try {

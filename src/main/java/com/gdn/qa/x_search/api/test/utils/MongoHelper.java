@@ -1,6 +1,7 @@
 package com.gdn.qa.x_search.api.test.utils;
 
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
@@ -12,6 +13,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.MONGO_SERVER_ADDRESS;
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.MONGO_SERVER_PORT;
@@ -50,6 +52,11 @@ public class MongoHelper {
   public void updateMongo(String collectionName,String queryField,String queryValue,String updateField,String updateValue){
     MongoCollection<Document> collection = initializeDatabase(collectionName);
     collection.updateOne(eq(queryField,queryValue),combine(set(updateField,updateValue)));
+  }
+
+  public void updateAllMongo(String collectionName,String updateField, Date updateValue){
+    MongoCollection<Document> collection = initializeDatabase(collectionName);
+    collection.updateMany(new BasicDBObject(),combine(set(updateField,updateValue)));
   }
 
   public void insertInMongo(String collectionName,Document document){
