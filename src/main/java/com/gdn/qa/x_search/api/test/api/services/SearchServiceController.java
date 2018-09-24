@@ -1284,4 +1284,321 @@ public class SearchServiceController extends ServiceApi {
     return jsonApi.fromJson(response,new TypeReference<GdnBaseRestResponse>() {});
   }
 
+  public ResponseApi<GdnRestListResponse<FlightResponse>> allFlights() {
+    Response response = service("searchservice")
+        .queryParam("authenticator", searchServiceData.getAuthenticator())
+        .get("/api/search/intent-rules/flight/get-all");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<FlightResponse>>() {
+    });
+  }
+  public ResponseApi<GdnRestListResponse<PlaceholderRuleResponse>> getAllPlaceholder() {
+    Response response = service("searchservice")
+        .queryParam("authenticator", searchServiceData.getAuthenticator())
+        .get("/api/search/intent-rules/placeholder-rule/get-all");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<PlaceholderRuleResponse>>(){
+    });
+  }
+
+  public ResponseApi<GdnBaseRestResponse> addTrainMapping(String id, String searchTerm, String effectiveValue) {
+    String BodyTemplate = "{\n" +
+        "  \"id\": \""+id+"\",\n" +
+        "  \"searchTerm\": \""+searchTerm+"\",\n" +
+        "  \"effectiveValue\": \""+effectiveValue+"\"\n" +
+        "}";
+    Map<String, String> data = new HashMap<>();
+    data.put("id", id);
+    data.put("searchTerm", searchTerm);
+    data.put("effectiveValue", effectiveValue);
+    String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
+    Response response =
+        service("searchservice").body(bodyRequest).post("/api/search/intent-rules/train/add");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+  public ResponseApi<GdnRestListResponse<TrainResponse>> getAllTrain() {
+    Response response = service("searchservice")
+        .queryParam("authenticator", searchServiceData.getAuthenticator())
+        .get("/api/search/intent-rules/train/get-all");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<TrainResponse>>(){
+    });
+  }
+  public ResponseApi<GdnBaseRestResponse> deleteTrainMapping() {
+    Response response = service("searchservice")
+        .queryParam("authenticator", searchServiceData.getAuthenticator())
+        .queryParam("id", searchServiceData.getAutoTrainId())
+        .delete("/api/search/intent-rules/train/delete");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+
+  public ResponseApi<GdnBaseRestResponse> deleteTrainMappingWithWrongId() {
+    Response response = service("searchservice")
+        .queryParam("authenticator", searchServiceData.getAuthenticator())
+        .queryParam("id", searchServiceData.getWrongid())
+        .delete("/api/search/intent-rules/train/delete");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+
+  public ResponseApi<GdnBaseRestResponse> deleteFlightMapping() {
+    Response response = service("searchservice")
+        .queryParam("authenticator", searchServiceData.getAuthenticator())
+        .queryParam("id", searchServiceData.getAutoFlightId())
+        .delete("/api/search/intent-rules/flight/delete");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+  public ResponseApi<GdnBaseRestResponse> deleteFlightWithWrongId() {
+    Response response = service("searchservice")
+        .queryParam("authenticator", searchServiceData.getAuthenticator())
+        .queryParam("id", searchServiceData.getWrongid())
+        .delete("/api/search/intent-rules/flight/delete");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+  public ResponseApi<GdnBaseRestResponse> deletePlaceholderWithWrongId() {
+    Response response = service("searchservice")
+        .queryParam("authenticator", searchServiceData.getAuthenticator())
+        .queryParam("id", searchServiceData.getWrongid())
+        .delete("/api/search/intent-rules/placeholder-rule/delete");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+  public ResponseApi<GdnBaseRestResponse> deletePlaceholder() {
+    Response response = service("searchservice")
+        .queryParam("authenticator", searchServiceData.getAuthenticator())
+        .queryParam("id", searchServiceData.getAutoPlaceholderId())
+        .delete("/api/search/intent-rules/placeholder-rule/delete");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+
+  public ResponseApi<GdnBaseRestResponse> saveFlight(String id, String searchTerm, String effectiveValue) {
+    String BodyTemplate = "{\n" +
+        "  \"id\": \""+id+"\",\n" +
+        "  \"searchTerm\": \""+searchTerm+"\",\n" +
+        "  \"effectiveValue\": \""+effectiveValue+"\"\n" +
+        "}";
+    Map<String, String> data = new HashMap<>();
+    data.put("id", id);
+    data.put("searchTerm", searchTerm);
+    data.put("effectiveValue", effectiveValue);
+    String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
+    Response response =
+        service("searchservice").body(bodyRequest).post("/api/search/intent-rules/flight/add");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+  public ResponseApi<GdnBaseRestResponse> addPlaceholderRules(String id, String name, String searchTerm, String effectiveSearchPattern, String type) {
+    String BodyTemplate = "{\n" +
+        "  \"id\": \""+id+"\",\n" +
+        "  \"name\": \""+name+"\",\n" +
+        "  \"searchTerm\": \""+searchTerm+"\",\n" +
+        "  \"effectiveSearchPattern\": \""+effectiveSearchPattern+"\",\n" +
+        "  \"type\": \""+type+"\"\n" +
+        "}";
+    Map<String, String> data = new HashMap<>();
+    data.put("id", id);
+    data.put("name", name);
+    data.put("searchTerm", searchTerm);
+    data.put("effectiveSearchPattern", effectiveSearchPattern);
+    data.put("type", type);
+    String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
+    Response response =
+        service("searchservice").body(bodyRequest).post("/api/search/intent-rules/placeholder-rule/add");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+  public ResponseApi<GdnBaseRestResponse> updatePlaceholder() {
+    String BodyTemplate = "{\n" +
+        "  \"id\": \"{{id}}\",\n" +
+        "  \"name\": \"{{name}}\",\n" +
+        "  \"searchTerm\": \"{{searchTerm}}\",\n" +
+        "  \"effectiveSearchPattern\": \"{{effectiveSearchPattern}}\",\n" +
+        "  \"type\": \"{{type}}\"\n" +
+        "}";
+    Map<String, String> data = new HashMap<>();
+    data.put("id", searchServiceData.getId());
+    data.put("name", searchServiceData.getName());
+    data.put("searchTerm", searchServiceData.getSearchTerm());
+    data.put("effectiveSearchPattern", searchServiceData.getEffectiveSearchPattern());
+    data.put("type", searchServiceData.getType());
+    String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
+    Response response =
+        service("searchservice").body(bodyRequest).put("/api/search/intent-rules/placeholder-rule/update");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+  public ResponseApi<GdnBaseRestResponse> updatePlaceholderWithNonExistingId() {
+    String BodyTemplate = "{\n" +
+        "  \"id\": \"{{id}}\",\n" +
+        "  \"name\": \"{{name}}\",\n" +
+        "  \"searchTerm\": \"{{searchTerm}}\",\n" +
+        "  \"effectiveSearchPattern\": \"{{effectiveSearchPattern}}\",\n" +
+        "  \"type\": \"{{type}}\"\n" +
+        "}";
+    Map<String, String> data = new HashMap<>();
+    data.put("id", searchServiceData.getWrongid());
+    data.put("name", searchServiceData.getName());
+    data.put("searchTerm", searchServiceData.getSearchTerm());
+    data.put("effectiveSearchPattern", searchServiceData.getEffectiveSearchPattern());
+    data.put("type", searchServiceData.getType());
+    String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
+    Response response =
+        service("searchservice").body(bodyRequest).put("/api/search/intent-rules/placeholder-rule/update");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+
+  public ResponseApi<GdnBaseRestResponse> addSearchRule() {
+    String BodyTemplate = "{\n" +
+        "  \"id\": \"{{id}}\",\n" +
+        "  \"searchTerm\": \"{{searchTerm}}\",\n" +
+        "  \"filterQuery\": \"{{filterQuery}}\",\n" +
+        "  \"sortType\": \"{{sortType}}\",\n" +
+        "  \"effectiveSearchPattern\": \"{{effectiveSearchPattern}}\",\n" +
+        "  \"defaultLogic\": {\n" +
+        "    \"filterQuery\": \"{{filterQuery}}\",\n" +
+        "    \"sortType\": \"{{sortType}}\"\n" +
+        "  },\n" +
+        "  \"url\": \"{{url}}\",\n" +
+        "  \"type\": \"{{type}}\",\n" +
+        "  \"rank\": {{rank}},\n" +
+        "  \"spel\": \"{{spel}}\"\n" +
+        "}";
+    Map<String, String> data = new HashMap<>();
+    data.put("id", searchServiceData.getId());
+    data.put("searchTerm", searchServiceData.getSearchTerm());
+    data.put("filterQuery", searchServiceData.getFilterQuery());
+    data.put("sortType", searchServiceData.getSortType());
+    data.put("effectiveSearchPattern", searchServiceData.getEffectiveSearchPattern());
+    data.put("defaultLogic.filterQuery", searchServiceData.getFilterQuery());
+    data.put("defaultLogic.sortType", searchServiceData.getSortType());
+    data.put("url", searchServiceData.getUrl());
+    data.put("type", searchServiceData.getType());
+    data.put("rank", String.valueOf(searchServiceData.getRank()));
+    data.put("spel", searchServiceData.getSpel());
+    String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
+    Response response =
+        service("searchservice").body(bodyRequest).post("/api/search/intent-rules/search-rule/add");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+  public ResponseApi<GdnBaseRestResponse> rerankSearchRule(){
+    String BodyTemplate = "[\n" +
+        "  {\n" +
+        "    \"id\": \"{{id}}\",\n" +
+        "    \"searchTerm\": \"{{searchTerm}}\",\n" +
+        "    \"filterQuery\": \"{{filterQuery}}\",\n" +
+        "    \"sortType\": \"{{sortType}}\",\n" +
+        "    \"effectiveSearchPattern\": \"{{effectiveSearchPattern}}\",\n" +
+        "    \"defaultLogic\": {\n" +
+        "      \"filterQuery\": \"{{filterQuery}}\",\n" +
+        "      \"sortType\": \"{{sortType}}\"\n" +
+        "    },\n" +
+        "    \"url\": \"{{url}}\",\n" +
+        "    \"type\": \"{{type}}\",\n" +
+        "    \"rank\": {{rank}},\n" +
+        "    \"spel\": \"{{spel}}\"\n" +
+        "  }\n" +
+        "]";
+    Map<String, String> data = new HashMap<>();
+    data.put("id", searchServiceData.getId());
+    data.put("searchTerm", searchServiceData.getSearchTerm());
+    data.put("filterQuery", searchServiceData.getFilterQuery());
+    data.put("sortType", searchServiceData.getSortType());
+    data.put("effectiveSearchPattern", searchServiceData.getEffectiveSearchPattern());
+    data.put("defaultLogic.filterQuery", searchServiceData.getFilterQuery());
+    data.put("defaultLogic.sortType", searchServiceData.getSortType());
+    data.put("url", searchServiceData.getUrl());
+    data.put("type", searchServiceData.getType());
+    data.put("rank", String.valueOf(searchServiceData.getRank()));
+    data.put("spel", searchServiceData.getSpel());
+    String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
+    Response response =
+        service("searchservice").body(bodyRequest).post("/api/search/intent-rules/search-rule/rerank");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+  public ResponseApi<GdnBaseRestResponse> updateSearchRule() {
+    String BodyTemplate = "{\n" +
+        "  \"id\": \"{{id}}\",\n" +
+        "  \"searchTerm\": \"{{searchTerm}}\",\n" +
+        "  \"filterQuery\": \"{{filterQuery}}\",\n" +
+        "  \"sortType\": \"{{sortType}}\",\n" +
+        "  \"effectiveSearchPattern\": \"{{effectiveSearchPattern}}\",\n" +
+        "  \"defaultLogic\": {\n" +
+        "    \"filterQuery\": \"{{filterQuery}}\",\n" +
+        "    \"sortType\": \"{{sortType}}\"\n" +
+        "  },\n" +
+        "  \"url\": \"{{url}}\",\n" +
+        "  \"type\": \"{{type}}\",\n" +
+        "  \"rank\": {{rank}},\n" +
+        "  \"spel\": \"{{spel}}\"\n" +
+        "}";
+    Map<String, String> data = new HashMap<>();
+    data.put("id", searchServiceData.getId());
+    data.put("searchTerm", searchServiceData.getSearchTerm());
+    data.put("filterQuery", searchServiceData.getFilterQuery());
+    data.put("sortType", searchServiceData.getSortType());
+    data.put("effectiveSearchPattern", searchServiceData.getEffectiveSearchPattern());
+    data.put("defaultLogic.filterQuery", searchServiceData.getFilterQuery());
+    data.put("defaultLogic.sortType", searchServiceData.getSortType());
+    data.put("url", searchServiceData.getUrl());
+    data.put("type", searchServiceData.getType());
+    data.put("rank", String.valueOf(searchServiceData.getRank()));
+    data.put("spel", searchServiceData.getSpel());
+    String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
+    Response response =
+        service("searchservice").body(bodyRequest).put("/api/search/intent-rules/search-rule/update");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+
+  public ResponseApi<GdnRestListResponse<SearchRuleResponse>> getAllSearch() {
+    Response response = service("searchservice")
+        .queryParam("authenticator", searchServiceData.getAuthenticator())
+        .get("/api/search/intent-rules/search-rule/get-all");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<SearchRuleResponse>>(){
+    });
+  }
+  public ResponseApi<GdnBaseRestResponse> deleteSearchRule() {
+    Response response = service("searchservice")
+        .queryParam("authenticator", searchServiceData.getAuthenticator())
+        .queryParam("id", searchServiceData.getAutoSearchId())
+        .delete("/api/search/intent-rules/search-rule/delete");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+
+  public ResponseApi<GdnBaseRestResponse> deleteSearchRuleWithWrongId() {
+    Response response = service("searchservice")
+        .queryParam("authenticator", searchServiceData.getAuthenticator())
+        .queryParam("id", searchServiceData.getWrongid())
+        .delete("/api/search/intent-rules/search-rule/delete");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+
+
 }

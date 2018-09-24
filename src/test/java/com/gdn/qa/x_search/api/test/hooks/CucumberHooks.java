@@ -197,4 +197,26 @@ public class CucumberHooks {
     mongoHelper.deleteFromMongo("deleted_products","_id","MTA-66666");
   }
 
+  @Before("@AddPlaceholderRules")
+  public void beforeAddingDeleteDuplicatePlaceholder(){
+    System.out.println("you are in cucumberhook");
+    mongoHelper.deleteFromMongo("placeholder_im_rule","_id", "5b0649b782ce7044d664bcc6");
+  }
+
+  @Before("@AddFlight")
+  public void beforeAddingDeleteDuplicateFlight(){
+    System.out.println("you are in cucumberhook");
+    mongoHelper.deleteFromMongo("flight_dictionary","_id","5b0649b782ce7044d664bcc6");
+  }
+
+  @Before("@AddSearchRule")
+  public void beforeAddingDeleteDuplicateSearchRule(){
+    mongoHelper.deleteFromMongo("search_rule","_id", "5b0649b782ce7044d664bcc6");
+  }
+
+  @Before("@AddTrainMapping")
+  public void beforeAddingDeleteDuplicateTrainMapping(){
+    mongoHelper.deleteFromMongo("train_dictionary","_id", "5b0649b782ce7044d664bcc6");
+  }
+
 }
