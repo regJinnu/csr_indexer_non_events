@@ -5,6 +5,7 @@ import com.gdn.qa.automation.core.restassured.ResponseApi;
 import com.gdn.qa.x_search.api.test.CucumberStepsDefinition;
 import com.gdn.qa.x_search.api.test.api.services.FeedController;
 import com.gdn.qa.x_search.api.test.data.SearchServiceData;
+import com.gdn.qa.x_search.api.test.models.RedisCount;
 import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
 import com.gdn.qa.x_search.api.test.utils.DownloadHelper;
 import com.gdn.qa.x_search.api.test.utils.MongoHelper;
@@ -12,6 +13,8 @@ import com.gdn.qa.x_search.api.test.utils.ProcessShellCommands;
 import com.gdn.qa.x_search.api.test.utils.SolrHelper;
 import com.jcraft.jsch.ChannelSftp;
 import com.mongodb.client.FindIterable;
+import cucumber.api.PendingException;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -19,8 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
-import java.io.File;
-import java.io.IOException;
+
+import java.io.*;
 import java.util.Arrays;
 import java.util.Vector;
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.*;
@@ -50,6 +53,7 @@ public class FacebookSteps {
 
   DownloadHelper downloadHelper = new DownloadHelper(SERVER_IP, SERVER_PORT, SERVER_USERNAME, SERVER_PASSWORD);
 
+
   @Given("^\\[search-service] exists api for storing all ids in redis$")
   public void searchServiceExistsApiForStoringAllIdsInRedis() {
 
@@ -61,7 +65,6 @@ public class FacebookSteps {
     ResponseApi<GdnBaseRestResponse> gdnBaseRestResponseResponseApi =
         feedController.prepareFacebookPopulateAllIdsRequest();
     searchServiceData.setSearchServiceResponse(gdnBaseRestResponseResponseApi);
-
   }
 
   @Then("^\\[search-service] all documents are removed from product feed map collection$")
@@ -84,8 +87,19 @@ public class FacebookSteps {
 
     Integer errorCode = Integer.valueOf(searchServiceResponse.getResponseBody().getErrorCode());
 
-    searchServiceData.setErrorMessage(errorCode);
+   // searchServiceData.setErrorMessage(errorCode);
 
+    FileOutputStream fos = null;
+    try {
+      fos = new FileOutputStream(LOCAL_STORAGE_LOCATION+"Count.txt");
+      DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos));
+      outStream.writeUTF(searchServiceResponse.getResponseBody().getErrorCode());
+      outStream.close();
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
     log.error("----Ids stored in Redis-----"+errorCode);
 
     assertThat("No entries stored in redis",errorCode,greaterThan(0));
@@ -96,12 +110,27 @@ public class FacebookSteps {
   @Given("^\\[search-service] exists api to run facebook full feed$")
   public void searchServiceExistsApiToRunFacebookFullFeed(){
 
+    String count="";
+    DataInputStream reader;
+    try (FileInputStream fis = new FileInputStream(LOCAL_STORAGE_LOCATION + "Count.txt")) {
+      reader = new DataInputStream(fis);
+      count = reader.readUTF();
+      reader.close();
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+
+    log.error("---Ids in redis---"+count);
+
     FindIterable<Document> findIterable = mongoHelper.getMongoDocumentByQuery("config_list",
         "NAME",
         "facebook.feed.last.updated.date");
 
     String facebookLastUpdatedTime = mongoHelper.getSpecificFieldfromMongoDocument(findIterable,"VALUE");
-
+    searchServiceData.setErrorMessage(Integer.valueOf(count));
     searchServiceData.setFacebookFeedLastUpdatedTime(facebookLastUpdatedTime);
 
   }
@@ -307,7 +336,6 @@ public class FacebookSteps {
   @Then("^\\[search-service] facebook feed last updated time is updated in config_list$")
   public void checkLastUpdatedTimeIsUpdated(){
 
-
     FindIterable<Document> findIterable = mongoHelper.getMongoDocumentByQuery("config_list",
         "NAME",
         "facebook.feed.last.updated.date");
@@ -341,6 +369,48 @@ public class FacebookSteps {
     } catch (Exception e) {
       e.printStackTrace();
     }
+
+  }
+
+  @Given("^\\[search-service] exists api to run facebook delta feed$")
+  public void searchServiceExistsApiToRunFacebookDeltaFeed()  {
+
+    FindIterable<Document> findIterable = mongoHelper.getMongoDocumentByQuery("config_list",
+        "NAME",
+        "facebook.feed.last.updated.date");
+
+    String facebookLastUpdatedTime = mongoHelper.getSpecificFieldfromMongoDocument(findIterable,"VALUE");
+    searchServiceData.setFacebookFeedLastUpdatedTime(facebookLastUpdatedTime);
+
+  }
+
+  @Given("^\\[search-service] data is updated in SOLR$")
+  public void searchServiceDataIsUpdatedInSOLR() {
+
+  }
+
+
+  @When("^\\[search-service] runs api to generate facebook delta feed$")
+  public void searchServiceRunsApiToGenerateFacebookDeltaFeed() {
+
+    ResponseApi<GdnBaseRestResponse> gdnBaseRestResponseResponseApi =
+        feedController.prepareFacebookDeltaFeedRequest();
+    searchServiceData.setSearchServiceResponse(gdnBaseRestResponseResponseApi);
+
+  }
+
+
+  @Then("^\\[search-service] new delta directory with files are created in specified location$")
+  public void searchServiceNewDeltaDirectoryWithFilesAreCreatedInSpecifiedLocation() {
+
+    ResponseApi<GdnBaseRestResponse> searchServiceResponse = searchServiceData.getSearchServiceResponse();
+
+    assertThat("Response code not 200",searchServiceResponse.getResponse().getStatusCode(),equalTo(200));
+  }
+
+
+  @Then("^\\[search-service] products which are updated are written in files$")
+  public void searchServiceProductsWhichAreUpdatedAreWrittenInFiles(){
 
   }
 }

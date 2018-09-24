@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @Builder
 public class CampaignLiveEvents {
-  private List<String> campaignCodeList;
+  List<CampaignEventModel> campaigns;
   private long timestamp;
   private String storeId;
   private boolean markForDelete;

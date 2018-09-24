@@ -838,7 +838,7 @@ public class SearchServiceController extends ServiceApi {
 
   public ResponseApi<GdnBaseRestResponse> updateSynonymFromSolr() {
     Response response = service("searchservice")
-        .queryParam("updateAll", searchServiceData.getWrongword())
+        .queryParam("updateAll", "true")
         .post("/api/search/integration/update");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {

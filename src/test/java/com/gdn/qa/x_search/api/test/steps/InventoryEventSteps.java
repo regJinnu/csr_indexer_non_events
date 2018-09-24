@@ -150,7 +150,7 @@ public class InventoryEventSteps {
 
   }
 
-  @Given("^\\[search-service] force.stop flag is set to (.*)$")
+  @Given("^\\[search-service] force.stop flag is set to '(.*)'$")
   public void searchServiceForceStopFlagIsSetAccordingly(String flag) {
     mongoHelper.updateMongo("config_list","NAME","force.stop.solr.updates","VALUE",flag);
     mongoHelper.updateMongo("config_list","NAME","process.delta.during.reindex","VALUE","false");
@@ -178,7 +178,7 @@ public class InventoryEventSteps {
     RedisHelper.deleteAll(REDIS_HOST,REDIS_PORT);
   }
 
-  @And("^\\[search-service] inventory (.*) event is not configured as whitelist$")
+  @And("^\\[search-service] inventory '(.*)' event is not configured as whitelist$")
   public void searchServiceInventoryOosEventIsNotConfiguredAsWhitelist(String event){
     mongoHelper.updateMongo("config_list","NAME","whitelist.events","VALUE","abc");
     try {

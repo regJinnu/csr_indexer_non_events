@@ -1,4 +1,4 @@
-@FacebookFeed @TestSuiteID=
+@FacebookFeed @TestSuiteID=9677376
 Feature: Verification of Facebook Feed
 
   @PopulateFacebookIdsInRedis
@@ -21,3 +21,12 @@ Feature: Verification of Facebook Feed
     And [search-service] records satisfying exclusion are not written in file
     And [search-service] facebook feed last updated time is updated in config_list
     And [search-service] all fields are populated in the feed
+
+  @FacebookDeltaFeed
+  Scenario: Verify facebook delta feed
+    Given [search-service] exists api to run facebook delta feed
+    And [search-service] data is updated in SOLR
+    When [search-service] runs api to generate facebook delta feed
+    Then [search-service] new delta directory with files are created in specified location
+    And [search-service] products which are updated are written in files
+    And [search-service] facebook feed last updated time is updated in config_list

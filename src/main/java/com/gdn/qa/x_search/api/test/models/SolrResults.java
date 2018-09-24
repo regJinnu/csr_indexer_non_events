@@ -138,7 +138,6 @@ public class SolrResults {
     this.isInStock = isInStock;
   }
 
-
   public Double getOfferPrice() {
     return offerPrice;
   }
@@ -154,7 +153,6 @@ public class SolrResults {
   public void setListPrice(Double listPrice) {
     this.listPrice = listPrice;
   }
-
 
   public String getNameSearch() {
     return nameSearch;

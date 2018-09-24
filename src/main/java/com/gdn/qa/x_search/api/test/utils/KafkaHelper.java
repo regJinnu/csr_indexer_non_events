@@ -237,12 +237,32 @@ private ApplicationContext applicationContext;
   }
 
 
-  public void campaignLiveEvent( String campaignCodeList, boolean markForDelete){
+  public void campaignLiveEvent( String campaignCode, String campaignName, boolean isExclusive,
+      String tagLabel, boolean markForDelete){
 
-    List<String> CampaignList = new ArrayList<>();
-    CampaignList.add(String.valueOf(campaignCodeList));
-    CampaignLiveEvents campaignLiveEvents=CampaignLiveEvents.builder().
-        campaignCodeList(CampaignList).timestamp(System.currentTimeMillis()).storeId("10001").markForDelete(markForDelete).build();
+    Date dtStart = new Date();
+    Date dtEnd = new Date(dtStart.getTime() + (1000 * 60 * 60 * 24));
+
+
+    List<CampaignEventModel> campaignEventModelList = new ArrayList<>();
+
+    CampaignEventModel campaignEventModel = CampaignEventModel.builder()
+        .campaignCode(campaignCode)
+        .campaignName(campaignName)
+        .exclusive(isExclusive)
+        .tagLabel(tagLabel)
+        .promotionEndTime(dtEnd)
+        .promotionStartTime(dtStart)
+        .build();
+
+    campaignEventModelList.add(campaignEventModel);
+
+    CampaignLiveEvents campaignLiveEvents=CampaignLiveEvents.builder()
+        .campaigns(campaignEventModelList)
+        .timestamp(System.currentTimeMillis())
+        .storeId("10001")
+        .markForDelete(markForDelete)
+        .build();
     try {
       kafkaSender.send("com.gdn.x.campaign.live",
           objectMapper.writeValueAsString(campaignLiveEvents));
@@ -264,13 +284,15 @@ private ApplicationContext applicationContext;
   }
 
   public void campaignEndEvent(String campaignCodeList, boolean markForDelete){
-    List<String> CampaignList = new ArrayList<>();
-    CampaignList.add(String.valueOf(campaignCodeList));
-    CampaignLiveEvents campaignLiveEvents=CampaignLiveEvents.builder().
-        campaignCodeList(CampaignList).timestamp(System.currentTimeMillis()).storeId("10001").markForDelete(markForDelete).build();
-    try {
+    List<String> campaignList = new ArrayList<>();
+    campaignList.add(String.valueOf(campaignCodeList));
+    CampaignEndEvent campaignEndEvent = CampaignEndEvent.builder().
+        campaignCodeList(campaignList).
+        markForDelete(false)
+        .build();
+      try {
       kafkaSender.send("com.gdn.x.campaign.ended",
-          objectMapper.writeValueAsString(campaignLiveEvents));
+          objectMapper.writeValueAsString(campaignEndEvent));
     } catch (JsonProcessingException e) {
       e.printStackTrace();
     }
