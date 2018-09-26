@@ -31,6 +31,7 @@ public class ContextualSearchSteps {
   String autoPlaceholderId = "";
   String autoSearchId = "";
   String autoTrainid = "";
+  public long count= 0L;
   MongoHelper mongoHelper = new MongoHelper();
   @Autowired
   private SearchServiceController searchServiceController;
@@ -57,7 +58,6 @@ public class ContextualSearchSteps {
     ResponseApi<GdnRestListResponse<FlightResponse>> response = searchServiceData.getAllFlights();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
-    long count = 0L;
     for (int i = 0; i < response.getResponseBody().getContent().size(); i++) {
       count++;
       searchServiceData.setAutoFlightId(response.getResponseBody().getContent().get(i).getId());
@@ -71,7 +71,6 @@ public class ContextualSearchSteps {
     searchServiceData.setTrainSearchTerm(searchServiceProperties.get("trainSearchTerm"));
     searchServiceData.setTrainMapping(searchServiceProperties.get("trainMapping"));
     valid = mongoHelper.countOfRecordsInCollection("flight_dictionary");
-    System.out.println("count" + valid);
   }
 
   @When("^\\[search-service] send add flight mapping request$")
@@ -87,7 +86,6 @@ public class ContextualSearchSteps {
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
     long valid1 = mongoHelper.countOfRecordsInCollection("flight_dictionary");
-    System.out.println("count2: " + valid1);
     assertThat(valid1, greaterThan(valid));
   }
 
@@ -95,8 +93,6 @@ public class ContextualSearchSteps {
   public void searchServicePrepareRequestDeleteFlightMapping() {
     searchServiceData.setAuthenticator(searchServiceProperties.get("authenticator"));
     searchServiceData.getAutoFlightId();
-    System.out.println(
-        "---searchServiceData.getAutoFlightId()---" + searchServiceData.getAutoFlightId());
     valid = mongoHelper.countOfRecordsInCollection("flight_dictionary");
   }
 
@@ -164,7 +160,6 @@ public class ContextualSearchSteps {
         searchServiceData.getGetAllPlaceholder();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
-    long count = 0L;
     for (int i = 0; i < response.getResponseBody().getContent().size(); i++) {
       count++;
       searchServiceData.setAutoPlaceholderId(response.getResponseBody()
@@ -221,8 +216,6 @@ public class ContextualSearchSteps {
         mongoHelper.getMongoDocumentByQuery("placeholder_im_rule", "name", "test.api");
     for (Document doc : mongoIterator) {
       String docInStringFormat = doc.toString();
-      System.out.println("---------------------------------Mongo Doc:----------------------------"
-          + docInStringFormat);
       assertThat(docInStringFormat, containsString("name=test.api"));
     }
   }
@@ -385,8 +378,6 @@ public class ContextualSearchSteps {
   public void searchServicePrepareDeleteSearchRuleRequest() {
     searchServiceData.setAuthenticator(searchServiceProperties.get("authenticator"));
     searchServiceData.getAutoSearchId();
-    System.out.println(
-        "---searchServiceData.getAutoSearchId()---" + searchServiceData.getAutoSearchId());
     valid = mongoHelper.countOfRecordsInCollection("search_rule");
   }
 
@@ -459,8 +450,6 @@ public class ContextualSearchSteps {
         mongoHelper.getMongoDocumentByQuery("search_rule", "search_pattern", "test.api");
     for (Document doc : mongoIterator) {
       String docInStringFormat = doc.toString();
-      System.out.println("---------------------------------Mongo Doc:----------------------------"
-          + docInStringFormat);
       assertThat(docInStringFormat, containsString("search_pattern=test.api"));
     }
 
@@ -520,8 +509,6 @@ public class ContextualSearchSteps {
   public void searchServicePrepareRequestToDeleteTrainMapping() {
     searchServiceData.setAuthenticator(searchServiceProperties.get("authenticator"));
     searchServiceData.getAutoTrainId();
-    System.out.println(
-        "---searchServiceData.getAutoTrainId()---" + searchServiceData.getAutoTrainId());
     valid = mongoHelper.countOfRecordsInCollection("train_dictionary");
   }
 
