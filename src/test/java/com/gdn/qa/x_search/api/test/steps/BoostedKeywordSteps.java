@@ -174,7 +174,6 @@ public class BoostedKeywordSteps {
         mongoIterator=mongoHelper.getMongoDocumentByQuery("keyword_boost_keyword_list","keyword","uvw");
     for (Document doc : mongoIterator){
       String docInStringFormat=doc.toString();
-      System.out.println("---------------------------------Mongo Doc:----------------------------"+docInStringFormat);
       assertThat(docInStringFormat ,containsString("keyword=uvw"));
       assertThat(docInStringFormat ,containsString("products=MTA-0309256,MTA-0307450"));
     }
