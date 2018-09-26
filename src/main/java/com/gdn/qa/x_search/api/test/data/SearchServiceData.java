@@ -108,6 +108,9 @@ public class SearchServiceData {
   private String autoSearchId;
   private String autoTrainId;
   private String effectiveSearchPattern;
+  private String trainSearchTerm;
+  private String trainMapping;
+  private String searchRulSearchTerm;
   private ResponseApi<GdnRestListResponse<TrainResponse>> getAllTrain;
   private ResponseApi<GdnRestListResponse<SearchRuleResponse>> getAllSearchRule;
   private ResponseApi<GdnRestListResponse<PlaceholderRuleResponse>> getAllPlaceholder;

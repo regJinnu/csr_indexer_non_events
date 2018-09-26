@@ -20,9 +20,7 @@ import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.*;
 
 @CucumberStepsDefinition
 public class ContextualSearchSteps {
@@ -70,8 +68,8 @@ public class ContextualSearchSteps {
   @Given("^\\[search-service] prepare request to add a flight$")
   public void searchServicePrepareRequestToAddAFlight() {
     searchServiceData.setId(searchServiceProperties.get("id"));
-    searchServiceData.setSearchTerm(searchServiceProperties.get("searchTerm"));
-    searchServiceData.setEffectiveValue(searchServiceProperties.get("effectiveValue"));
+    searchServiceData.setTrainSearchTerm(searchServiceProperties.get("trainSearchTerm"));
+    searchServiceData.setTrainMapping(searchServiceProperties.get("trainMapping"));
     valid = mongoHelper.countOfRecordsInCollection("flight_dictionary");
     System.out.println("count" + valid);
   }
@@ -180,9 +178,7 @@ public class ContextualSearchSteps {
   @Given("^\\[search-service] prepare request to delete placeholder$")
   public void searchServicePrepareRequestToDeletePlaceholder() {
     searchServiceData.setAuthenticator(searchServiceProperties.get("authenticator"));
-    searchServiceData.getAutoPlaceholderId();
-    System.out.println(
-        "---searchServiceData.getPlaceholderId()---" + searchServiceData.getAutoPlaceholderId());
+    searchServiceData.setId(searchServiceProperties.get("id"));
     valid = mongoHelper.countOfRecordsInCollection("placeholder_im_rule");
   }
 
@@ -221,15 +217,14 @@ public class ContextualSearchSteps {
     ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
-    int count = 0;
-    FindIterable<Document> validatingPutRequest = mongoHelper.getMongoDocumentByQuery(
-        "placeholder_im_rule",
-        "_id",
-        "5b0649b782ce7044d664bcc6");
-    for (Document doc : validatingPutRequest) {
-      count++;
+    FindIterable<Document> mongoIterator =
+        mongoHelper.getMongoDocumentByQuery("placeholder_im_rule", "name", "test.api");
+    for (Document doc : mongoIterator) {
+      String docInStringFormat = doc.toString();
+      System.out.println("---------------------------------Mongo Doc:----------------------------"
+          + docInStringFormat);
+      assertThat(docInStringFormat, containsString("name=test.api"));
     }
-    assertThat(count, equalTo(1));
   }
 
   @Given("^\\[search-service] prepare request to delete flight with wrong id$")
@@ -311,26 +306,29 @@ public class ContextualSearchSteps {
   }
 
   @Given("^\\[search-service] prepare request to delete placeholder with wrong id$")
-  public void searchServicePrepareRequestToDeletePlaceholderWithWrongId()  {
+  public void searchServicePrepareRequestToDeletePlaceholderWithWrongId() {
     searchServiceData.setAuthenticator(searchServiceProperties.get("authenticator"));
     searchServiceData.setWrongid(searchServiceProperties.get("wrongid"));
     valid = mongoHelper.countOfRecordsInCollection("placeholder_im_rule");
   }
+
   @When("^\\[search-service] send delete placeholder with wrong id request$")
-  public void searchServiceSendDeletePlaceholderWithWrongIdRequest()  {
+  public void searchServiceSendDeletePlaceholderWithWrongIdRequest() {
     ResponseApi<GdnBaseRestResponse> response =
         searchServiceController.deletePlaceholderWithWrongId();
     searchServiceData.setSearchServiceResponse(response);
   }
+
   @Then("^\\[search-service] delete placeholder with wrong id request response should be true$")
-  public void searchServiceDeletePlaceholderWithWrongIdRequestResponseShouldBeTrue()  {
+  public void searchServiceDeletePlaceholderWithWrongIdRequestResponseShouldBeTrue() {
     long valid1 = mongoHelper.countOfRecordsInCollection("placeholder_im_rule");
     assertThat(valid, equalTo(valid1));
   }
+
   @Given("^\\[search-service] prepare request to add search rule$")
-  public void searchServicePrepareRequestToAddSearchRule()  {
+  public void searchServicePrepareRequestToAddSearchRule() {
     searchServiceData.setId(searchServiceProperties.get("id"));
-    searchServiceData.setSearchTerm(searchServiceProperties.get("searchTerm"));
+    searchServiceData.setSearchRulSearchTerm(searchServiceProperties.get("searchRulSearchTerm"));
     searchServiceData.setFilterQuery(searchServiceProperties.get("filterQuery"));
     searchServiceData.setSortType(searchServiceProperties.get("sortType"));
     searchServiceData.setEffectiveSearchPattern(searchServiceProperties.get("effectiveSearchPattern"));
@@ -340,68 +338,77 @@ public class ContextualSearchSteps {
     searchServiceData.setSpel(searchServiceProperties.get("spel"));
     valid = mongoHelper.countOfRecordsInCollection("search_rule");
   }
+
   @When("^\\[search-service] send add search rule request$")
-  public void searchServiceSendAddSearchRuleRequest()  {
+  public void searchServiceSendAddSearchRuleRequest() {
     ResponseApi<GdnBaseRestResponse> response = searchServiceController.addSearchRule();
     searchServiceData.setSearchServiceResponse(response);
   }
+
   @Then("^\\[search-service] add search rule request response should be '(.*)'$")
-  public void searchServiceAddSearchRuleRequestResponseShouldBeTrue(Boolean isSuccess)  {
+  public void searchServiceAddSearchRuleRequestResponseShouldBeTrue(Boolean isSuccess) {
     ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
     long valid1 = mongoHelper.countOfRecordsInCollection("search_rule");
     assertThat(valid1, greaterThan(valid));
   }
+
   @Given("^\\[search-service] prepare request to get all search rule$")
-  public void searchServicePrepareRequestToGetAllSearchRule()  {
+  public void searchServicePrepareRequestToGetAllSearchRule() {
     searchServiceData.setAuthenticator(searchServiceProperties.get("authenticator"));
     valid = mongoHelper.countOfRecordsInCollection("search_rule");
   }
+
   @When("^\\[search-service] send get all search rule request$")
-  public void searchServiceSendGetAllSearchRuleRequest()  {
+  public void searchServiceSendGetAllSearchRuleRequest() {
     ResponseApi<GdnRestListResponse<SearchRuleResponse>> response =
         searchServiceController.getAllSearch();
     searchServiceData.setGetAllSearchRule(response);
   }
+
   @Then("^\\[search-service] get all search rule request response should be '(.*)'$")
-  public void searchServiceGetAllSearchRuleRequestResponseShouldBeTrue(Boolean isSuccess)  {
+  public void searchServiceGetAllSearchRuleRequestResponseShouldBeTrue(Boolean isSuccess) {
     ResponseApi<GdnRestListResponse<SearchRuleResponse>> response =
         searchServiceData.getGetAllSearchRule();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
     long count = 0L;
-    for(int i = 0;i < response.getResponseBody().getContent().size(); i++) {
+    for (int i = 0; i < response.getResponseBody().getContent().size(); i++) {
       count++;
       searchServiceData.setAutoSearchId(response.getResponseBody().getContent().get(i).getId());
     }
     assertThat(count, equalTo(valid));
   }
+
   @Given("^\\[search-service] prepare delete search rule request$")
   public void searchServicePrepareDeleteSearchRuleRequest() {
     searchServiceData.setAuthenticator(searchServiceProperties.get("authenticator"));
     searchServiceData.getAutoSearchId();
-    System.out.println("---searchServiceData.getAutoSearchId()---"+searchServiceData.getAutoSearchId());
+    System.out.println(
+        "---searchServiceData.getAutoSearchId()---" + searchServiceData.getAutoSearchId());
     valid = mongoHelper.countOfRecordsInCollection("search_rule");
   }
+
   @When("^\\[search-service] send delete search rule request$")
-  public void searchServiceSendDeleteSearchRuleRequest()  {
-    ResponseApi<GdnBaseRestResponse> response =
-        searchServiceController.deleteSearchRule();
+  public void searchServiceSendDeleteSearchRuleRequest() {
+    ResponseApi<GdnBaseRestResponse> response = searchServiceController.deleteSearchRule();
     searchServiceData.setSearchServiceResponse(response);
   }
+
   @Then("^\\[search-service] delete search rule request response success should be '(.*)'$")
-  public void searchServiceDeleteSearchRuleRequestResponseSuccessShouldBeTrue(Boolean isSuccess)  {
+  public void searchServiceDeleteSearchRuleRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
     ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
     long valid1 = mongoHelper.countOfRecordsInCollection("search_rule");
     assertThat(valid1, lessThan(valid));
   }
+
   @Given("^\\[search-service] prepare request to rerank search rule$")
-  public void searchServicePrepareRequestToRerankSearchRule()  {
+  public void searchServicePrepareRequestToRerankSearchRule() {
     searchServiceData.setId(searchServiceProperties.get("id"));
-    searchServiceData.setSearchTerm(searchServiceProperties.get("searchTerm"));
+    searchServiceData.setSearchRulSearchTerm(searchServiceProperties.get("searchRulSearchTerm"));
     searchServiceData.setFilterQuery(searchServiceProperties.get("filterQuery"));
     searchServiceData.setSortType(searchServiceProperties.get("sortType"));
     searchServiceData.setEffectiveSearchPattern(searchServiceProperties.get("effectiveSearchPattern"));
@@ -410,21 +417,24 @@ public class ContextualSearchSteps {
     searchServiceData.setRank(Integer.valueOf(searchServiceProperties.get("rank")));
     searchServiceData.setSpel(searchServiceProperties.get("spel"));
   }
+
   @When("^\\[search-service] send rerank search rule request$")
-  public void searchServiceSendRerankSearchRuleRequest()  {
+  public void searchServiceSendRerankSearchRuleRequest() {
     ResponseApi<GdnBaseRestResponse> response = searchServiceController.rerankSearchRule();
     searchServiceData.setSearchServiceResponse(response);
   }
+
   @Then("^\\[search-service] rerank search rule request response should be '(.*)'$")
-  public void searchServiceRerankSearchRuleRequestResponseShouldBeTrue(Boolean isSuccess)  {
+  public void searchServiceRerankSearchRuleRequestResponseShouldBeTrue(Boolean isSuccess) {
     ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
   }
+
   @Given("^\\[search-service] prepare request to update search rule$")
-  public void searchServicePrepareRequestToUpdateSearchRule()  {
+  public void searchServicePrepareRequestToUpdateSearchRule() {
     searchServiceData.setId(searchServiceProperties.get("id"));
-    searchServiceData.setSearchTerm(searchServiceProperties.get("searchTerm"));
+    searchServiceData.setName(searchServiceProperties.get("name"));
     searchServiceData.setFilterQuery(searchServiceProperties.get("filterQuery"));
     searchServiceData.setSortType(searchServiceProperties.get("sortType"));
     searchServiceData.setEffectiveSearchPattern(searchServiceProperties.get("effectiveSearchPattern"));
@@ -433,120 +443,139 @@ public class ContextualSearchSteps {
     searchServiceData.setRank(Integer.valueOf(searchServiceProperties.get("rank")));
     searchServiceData.setSpel(searchServiceProperties.get("spel"));
   }
+
   @When("^\\[search-service] send update search rule request$")
-  public void searchServiceSendUpdateSearchRuleRequest()  {
+  public void searchServiceSendUpdateSearchRuleRequest() {
     ResponseApi<GdnBaseRestResponse> response = searchServiceController.updateSearchRule();
     searchServiceData.setSearchServiceResponse(response);
   }
+
   @Then("^\\[search-service] update search rule request response should be '(.*)'$")
-  public void searchServiceUpdateSearchRuleRequestResponseShouldBeTrue(Boolean isSuccess)  {
+  public void searchServiceUpdateSearchRuleRequestResponseShouldBeTrue(Boolean isSuccess) {
     ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
-    int count = 0;
-    FindIterable<org.bson.Document> validatingPutRequest =
-        mongoHelper.getMongoDocumentByQuery("search_rule", "_id", "5b0649b782ce7044d664bcc6");
-    for (Document doc : validatingPutRequest){
-      count++;
+    FindIterable<Document> mongoIterator =
+        mongoHelper.getMongoDocumentByQuery("search_rule", "search_pattern", "test.api");
+    for (Document doc : mongoIterator) {
+      String docInStringFormat = doc.toString();
+      System.out.println("---------------------------------Mongo Doc:----------------------------"
+          + docInStringFormat);
+      assertThat(docInStringFormat, containsString("search_pattern=test.api"));
     }
-    assertThat(count,equalTo(1));
+
   }
+
   @Given("^\\[search-service] prepare add train mapping request$")
-  public void searchServicePrepareAddTrainMappingRequest()  {
+  public void searchServicePrepareAddTrainMappingRequest() {
     searchServiceData.setId(searchServiceProperties.get("id"));
-    searchServiceData.setSearchTerm(searchServiceProperties.get("searchTerm"));
-    searchServiceData.setEffectiveValue(searchServiceProperties.get("effectiveValue"));
+    searchServiceData.setTrainSearchTerm(searchServiceProperties.get("trainSearchTerm"));
+    searchServiceData.setTrainMapping(searchServiceProperties.get("trainMapping"));
     valid = mongoHelper.countOfRecordsInCollection("train_dictionary");
   }
+
   @When("^\\[search-service] send add train mapping request$")
-  public void searchServiceSendAddTrainMappingRequest()  {
-    ResponseApi<GdnBaseRestResponse> response = searchServiceController.addTrainMapping("5b0649b782ce7044d664bcc6","testingapi", "2");
+  public void searchServiceSendAddTrainMappingRequest() {
+    ResponseApi<GdnBaseRestResponse> response =
+        searchServiceController.addTrainMapping("5b0649b782ce7044d664bcc6", "testingapi", "2");
     searchServiceData.setSearchServiceResponse(response);
   }
+
   @Then("^\\[search-service] add train mapping request response should be '(.*)'$")
-  public void searchServiceAddTrainMappingRequestResponseShouldBeTrue(Boolean isSuccess)  {
+  public void searchServiceAddTrainMappingRequestResponseShouldBeTrue(Boolean isSuccess) {
     ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
     long valid1 = mongoHelper.countOfRecordsInCollection("train_dictionary");
     assertThat(valid1, greaterThan(valid));
   }
+
   @Given("^\\[search-service] prepare get all train mapping request$")
-  public void searchServicePrepareGetAllTrainMappingRequest()  {
+  public void searchServicePrepareGetAllTrainMappingRequest() {
     searchServiceData.setAuthenticator(searchServiceProperties.get("authenticator"));
     valid = mongoHelper.countOfRecordsInCollection("train_dictionary");
   }
+
   @When("^\\[search-service] send get all train mapping request$")
-  public void searchServiceSendGetAllTrainMappingRequest()  {
+  public void searchServiceSendGetAllTrainMappingRequest() {
     ResponseApi<GdnRestListResponse<TrainResponse>> response =
         searchServiceController.getAllTrain();
     searchServiceData.setGetAllTrain(response);
   }
+
   @Then("^\\[search-service] get all train mapping request response should be '(.*)'$")
-  public void searchServiceGetAllTrainMappingRequestResponseShouldBeTrue(Boolean isSuccess)  {
-    ResponseApi<GdnRestListResponse<TrainResponse>> response =
-        searchServiceData.getGetAllTrain();
+  public void searchServiceGetAllTrainMappingRequestResponseShouldBeTrue(Boolean isSuccess) {
+    ResponseApi<GdnRestListResponse<TrainResponse>> response = searchServiceData.getGetAllTrain();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
     long count = 0L;
-    for(int i = 0;i < response.getResponseBody().getContent().size(); i++) {
+    for (int i = 0; i < response.getResponseBody().getContent().size(); i++) {
       count++;
       searchServiceData.setAutoTrainId(response.getResponseBody().getContent().get(i).getId());
     }
     assertThat(count, equalTo(valid));
   }
+
   @Given("^\\[search-service] prepare request to delete train mapping$")
-  public void searchServicePrepareRequestToDeleteTrainMapping()  {
+  public void searchServicePrepareRequestToDeleteTrainMapping() {
     searchServiceData.setAuthenticator(searchServiceProperties.get("authenticator"));
     searchServiceData.getAutoTrainId();
-    System.out.println("---searchServiceData.getAutoTrainId()---"+searchServiceData.getAutoTrainId());
+    System.out.println(
+        "---searchServiceData.getAutoTrainId()---" + searchServiceData.getAutoTrainId());
     valid = mongoHelper.countOfRecordsInCollection("train_dictionary");
   }
+
   @When("^\\[search-service] send delete train mapping request$")
-  public void searchServiceSendDeleteTrainMappingRequest()  {
-    ResponseApi<GdnBaseRestResponse> response =
-        searchServiceController.deleteTrainMapping();
+  public void searchServiceSendDeleteTrainMappingRequest() {
+    ResponseApi<GdnBaseRestResponse> response = searchServiceController.deleteTrainMapping();
     searchServiceData.setSearchServiceResponse(response);
   }
+
   @Then("^\\[search-service] delete train mapping request response should be '(.*)'$")
-  public void searchServiceDeleteTrainMappingRequestResponseShouldBeTrue(Boolean isSuccess)  {
+  public void searchServiceDeleteTrainMappingRequestResponseShouldBeTrue(Boolean isSuccess) {
     ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
     long valid1 = mongoHelper.countOfRecordsInCollection("train_dictionary");
     assertThat(valid, greaterThan(valid1));
   }
+
   @Given("^\\[search-service] prepare request to delete search rule with wrong id$")
-  public void searchServicePrepareRequestToDeleteSearchRuleWithWrongId()  {
+  public void searchServicePrepareRequestToDeleteSearchRuleWithWrongId() {
     searchServiceData.setAuthenticator(searchServiceProperties.get("authenticator"));
     searchServiceData.setWrongid(searchServiceProperties.get("wrongid"));
     valid = mongoHelper.countOfRecordsInCollection("search_rule");
   }
+
   @When("^\\[search-service] send delete search rule with wrong id request$")
-  public void searchServiceSendDeleteSearchRuleWithWrongIdRequest()  {
+  public void searchServiceSendDeleteSearchRuleWithWrongIdRequest() {
     ResponseApi<GdnBaseRestResponse> response =
         searchServiceController.deleteSearchRuleWithWrongId();
     searchServiceData.setSearchServiceResponse(response);
   }
+
   @Then("^\\[search-service] delete search rule with wrong id request response should be true$")
-  public void searchServiceDeleteSearchRuleWithWrongIdRequestResponseShouldBeTrue()  {
+  public void searchServiceDeleteSearchRuleWithWrongIdRequestResponseShouldBeTrue() {
     long valid1 = mongoHelper.countOfRecordsInCollection("search_rule");
     assertThat(valid1, equalTo(valid));
   }
+
   @Given("^\\[search-service] prepare request to delete train mapping with wrong id$")
-  public void searchServicePrepareRequestToDeleteTrainMappingWithWrongId()  {
+  public void searchServicePrepareRequestToDeleteTrainMappingWithWrongId() {
     searchServiceData.setAuthenticator(searchServiceProperties.get("authenticator"));
     searchServiceData.setWrongid(searchServiceProperties.get("wrongid"));
     valid = mongoHelper.countOfRecordsInCollection("train_dictionary");
   }
+
   @When("^\\[search-service] send delete train mapping with wrong id request$")
-  public void searchServiceSendDeleteTrainMappingWithWrongIdRequest()  {
+  public void searchServiceSendDeleteTrainMappingWithWrongIdRequest() {
     ResponseApi<GdnBaseRestResponse> response =
         searchServiceController.deleteTrainMappingWithWrongId();
     searchServiceData.setSearchServiceResponse(response);
   }
+
   @Then("^\\[search-service] delete train mapping with wrong id request response should be true$")
-  public void searchServiceDeleteTrainMappingWithWrongIdRequestResponseShouldBeTrue()  {
+  public void searchServiceDeleteTrainMappingWithWrongIdRequestResponseShouldBeTrue() {
     long valid1 = mongoHelper.countOfRecordsInCollection("train_dictionary");
     assertThat(valid1, equalTo(valid));
   }

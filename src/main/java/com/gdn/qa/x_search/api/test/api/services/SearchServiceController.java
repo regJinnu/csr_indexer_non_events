@@ -33,12 +33,13 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnBaseRestResponse> bodyofDeleteConfigRequest() {
     String bodyTemplate = "{\n" + "  \"id\": \"{{id}}\",\n" + "  \"name\": \"{{name}}\"\n" + "}";
 
-   Map<String, String> data = new HashMap<>();
+    Map<String, String> data = new HashMap<>();
     data.put("id", searchServiceData.getAutoid());
     data.put("name", searchServiceData.getName());
 
     String bodyRequest = templateAPI.createFromString(bodyTemplate, data);
-    Response response = service("searchservice").body(bodyRequest).post("/api/search/config/delete");
+    Response response =
+        service("searchservice").body(bodyRequest).post("/api/search/config/delete");
 
     response.getBody().prettyPrint();
 
@@ -112,7 +113,8 @@ public class SearchServiceController extends ServiceApi {
     data.put("value", searchServiceData.getUpdatedValue());
 
     String bodyRequest = templateAPI.createFromString(Bodytemplate, data);
-    Response response = service("searchservice").body(bodyRequest).post("/api/search/config/update");
+    Response response =
+        service("searchservice").body(bodyRequest).post("/api/search/config/update");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -127,7 +129,8 @@ public class SearchServiceController extends ServiceApi {
     data.put("id", searchServiceData.getEmptyid());
     data.put("name", searchServiceData.getEmptyname());
     String bodyRequest = templateAPI.createFromString(Bodytemplate, data);
-    Response response = service("searchservice").body(bodyRequest).post("/api/search/config/update");
+    Response response =
+        service("searchservice").body(bodyRequest).post("/api/search/config/update");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -135,8 +138,7 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnRestSingleResponse<ConfigResponse>> findByNameResponse() {
-    Response response = service("searchservice")
-        .queryParam("name", searchServiceData.getName())
+    Response response = service("searchservice").queryParam("name", searchServiceData.getName())
         .get("/api/search/config/find-by-name");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<ConfigResponse>>() {
@@ -144,9 +146,9 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnRestSingleResponse<ConfigResponse>> findByWrongNameResponse() {
-    Response response = service("searchservice")
-        .queryParam("name", searchServiceData.getWrongname())
-        .get("/api/search/config/find-by-name");
+    Response response =
+        service("searchservice").queryParam("name", searchServiceData.getWrongname())
+            .get("/api/search/config/find-by-name");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<ConfigResponse>>() {
     });
@@ -161,8 +163,7 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnRestSingleResponse<ConfigResponse>> setFindByWrongIDResponse() {
-    Response response = service("searchservice")
-        .queryParam("id", searchServiceData.getWrongid())
+    Response response = service("searchservice").queryParam("id", searchServiceData.getWrongid())
         .get("/api/search/config/find-by-id");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<ConfigResponse>>() {
@@ -191,8 +192,7 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnRestListResponse<ConfigResponse>> configListResponse() {
-    Response response = service("searchservice")
-        .queryParam("page", searchServiceData.getPage())
+    Response response = service("searchservice").queryParam("page", searchServiceData.getPage())
         .queryParam("size", searchServiceData.getSize())
         .get("/api/search/config/list");
     response.getBody().prettyPrint();
@@ -201,35 +201,35 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnBaseRestResponse> fetchClickthroughDataFromBRS() {
-    Response response = service("searchservice")
-        .queryParam("username", searchServiceData.getUsername())
-        .post("/api/search/clickthrough/fetch-data");
+    Response response =
+        service("searchservice").queryParam("username", searchServiceData.getUsername())
+            .post("/api/search/clickthrough/fetch-data");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
   public ResponseApi<GdnBaseRestResponse> fetchClickthroughDataAndStoreIntoRedis() {
-    Response response = service("searchservice")
-        .queryParam("username", searchServiceData.getUsername())
-        .post("/api/search/clickthrough/store-click-through-and-category-redis");
+    Response response =
+        service("searchservice").queryParam("username", searchServiceData.getUsername())
+            .post("/api/search/clickthrough/store-click-through-and-category-redis");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
   public ResponseApi<GdnBaseRestResponse> deleteSearchTermWhichHasIntentMining() {
-    Response response = service("searchservice")
-        .queryParam("searchTerm", searchServiceData.getSearchTerm())
-        .post("/api/search/categoryIntent/deleteCategory");
+    Response response =
+        service("searchservice").queryParam("searchTerm", searchServiceData.getSearchTerm())
+            .post("/api/search/categoryIntent/deleteCategory");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
   public ResponseApi<GdnBaseRestResponse> deleteSearchTermWhichDoesNotIntentMining() {
-    Response response = service("searchservice")
-        .queryParam("searchTerm", searchServiceData.getSearchTermNotPresent())
+    Response response = service("searchservice").queryParam("searchTerm",
+        searchServiceData.getSearchTermNotPresent())
         .post("/api/search/categoryIntent/deleteCategory");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
@@ -237,31 +237,31 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnBaseRestResponse> findSearchTermWhichHasIntentMining() {
-    Response response = service("searchservice")
-        .queryParam("word", searchServiceData.getSearchTerm())
-        .queryParam("page", searchServiceData.getPage())
-        .queryParam("size", searchServiceData.getSize())
-        .get("/api/search/categoryIntent/find");
+    Response response =
+        service("searchservice").queryParam("word", searchServiceData.getSearchTerm())
+            .queryParam("page", searchServiceData.getPage())
+            .queryParam("size", searchServiceData.getSize())
+            .get("/api/search/categoryIntent/find");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
   public ResponseApi<GdnBaseRestResponse> findSearchTermWhichDoesNotIntentMining() {
-    Response response = service("searchservice")
-        .queryParam("word", searchServiceData.getSearchTermNotPresent())
-        .queryParam("page", searchServiceData.getPage())
-        .queryParam("size", searchServiceData.getSize())
-        .get("/api/search/categoryIntent/find");
+    Response response =
+        service("searchservice").queryParam("word", searchServiceData.getSearchTermNotPresent())
+            .queryParam("page", searchServiceData.getPage())
+            .queryParam("size", searchServiceData.getSize())
+            .get("/api/search/categoryIntent/find");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
   public ResponseApi<GdnRestSingleResponse<CategoryIntentResponse>> findCategoryIdForSearchTerm() {
-    Response response = service("searchservice")
-        .queryParam("searchTerm", searchServiceData.getSearchTerm())
-        .get("/api/search/categoryIntent/getCategory");
+    Response response =
+        service("searchservice").queryParam("searchTerm", searchServiceData.getSearchTerm())
+            .get("/api/search/categoryIntent/getCategory");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,
         new TypeReference<GdnRestSingleResponse<CategoryIntentResponse>>() {
@@ -269,9 +269,8 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnRestSingleResponse<CategoryIntentResponse>> findCategoryIdForSearchTermNotPresent() {
-    Response response = service("searchservice")
-        .queryParam("searchTerm", searchServiceData.getSearchTermNotPresent())
-        .get("/api/search/categoryIntent/getCategory");
+    Response response = service("searchservice").queryParam("searchTerm",
+        searchServiceData.getSearchTermNotPresent()).get("/api/search/categoryIntent/getCategory");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,
         new TypeReference<GdnRestSingleResponse<CategoryIntentResponse>>() {
@@ -279,8 +278,7 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnRestListResponse<CategoryIntentResponse>> findlistOfSearchTerms() {
-    Response response = service("searchservice")
-        .queryParam("page", searchServiceData.getPage())
+    Response response = service("searchservice").queryParam("page", searchServiceData.getPage())
         .queryParam("size", searchServiceData.getSize())
         .get("/api/search/categoryIntent/list");
     response.getBody().prettyPrint();
@@ -290,11 +288,11 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnBaseRestResponse> saveSearchTermWhichHasIntentMining() {
-    Response response = service("searchservice")
-        .queryParam("searchTerm", searchServiceData.getSearchTerm())
-        .queryParam("categoryId", searchServiceData.getCategoryId())
-        .queryParam("turnedOn", searchServiceData.getTurnedOn())
-        .post("/api/search/categoryIntent/save");
+    Response response =
+        service("searchservice").queryParam("searchTerm", searchServiceData.getSearchTerm())
+            .queryParam("categoryId", searchServiceData.getCategoryId())
+            .queryParam("turnedOn", searchServiceData.getTurnedOn())
+            .post("/api/search/categoryIntent/save");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -308,27 +306,27 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnBaseRestResponse> validateCategoryID() {
-    Response response = service("searchservice")
-        .queryParam("categoryId", searchServiceData.getCategoryId())
-        .post("/api/search/categoryIntent/validateCategory");
+    Response response =
+        service("searchservice").queryParam("categoryId", searchServiceData.getCategoryId())
+            .post("/api/search/categoryIntent/validateCategory");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
   public ResponseApi<GdnBaseRestResponse> validateInValidCategoryID() {
-    Response response = service("searchservice")
-        .queryParam("categoryId", searchServiceData.getWrongcategoryId())
-        .post("/api/search/categoryIntent/validateCategory");
+    Response response =
+        service("searchservice").queryParam("categoryId", searchServiceData.getWrongcategoryId())
+            .post("/api/search/categoryIntent/validateCategory");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
   public ResponseApi<GdnRestSingleResponse<SearchTermCategoryClickThroughResponse>> fetchListOfSearchTermsWhichHasImFromRedis() {
-    Response response = service("searchservice")
-        .queryParam("page", searchServiceData.getPagenumberForIMlist())
-        .get("/api/search/clickthrough/get-click-through-and-category-redis");
+    Response response =
+        service("searchservice").queryParam("page", searchServiceData.getPagenumberForIMlist())
+            .get("/api/search/clickthrough/get-click-through-and-category-redis");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,
         new TypeReference<GdnRestSingleResponse<SearchTermCategoryClickThroughResponse>>() {
@@ -353,11 +351,11 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnRestListResponse<FeedExclusionEntityResponse>> findFeedByWord() {
-    Response response = service("searchservice")
-        .queryParam("word", searchServiceData.getFeedValue())
-        .queryParam("page", searchServiceData.getPage())
-        .queryParam("size", searchServiceData.getSize())
-        .get("/api/search/feed-exclusion-entity/find");
+    Response response =
+        service("searchservice").queryParam("word", searchServiceData.getFeedValue())
+            .queryParam("page", searchServiceData.getPage())
+            .queryParam("size", searchServiceData.getSize())
+            .get("/api/search/feed-exclusion-entity/find");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,
         new TypeReference<GdnRestListResponse<FeedExclusionEntityResponse>>() {
@@ -365,11 +363,11 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnRestListResponse<FeedExclusionEntityResponse>> findFeedByWrongWord() {
-    Response response = service("searchservice")
-        .queryParam("word", searchServiceData.getWrongword())
-        .queryParam("page", searchServiceData.getPage())
-        .queryParam("size", searchServiceData.getSize())
-        .get("/api/search/feed-exclusion-entity/find");
+    Response response =
+        service("searchservice").queryParam("word", searchServiceData.getWrongword())
+            .queryParam("page", searchServiceData.getPage())
+            .queryParam("size", searchServiceData.getSize())
+            .get("/api/search/feed-exclusion-entity/find");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,
         new TypeReference<GdnRestListResponse<FeedExclusionEntityResponse>>() {
@@ -377,8 +375,7 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnRestSingleResponse<FeedExclusionEntityResponse>> findFeedByID() {
-    Response response = service("searchservice")
-        .queryParam("id", searchServiceData.getAutoFeedId())
+    Response response = service("searchservice").queryParam("id", searchServiceData.getAutoFeedId())
         .get("/api/search/feed-exclusion-entity/find-by-id");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,
@@ -387,8 +384,7 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnRestSingleResponse<FeedExclusionEntityResponse>> findFeedByWrongID() {
-    Response response = service("searchservice")
-        .queryParam("id", searchServiceData.getWrongid())
+    Response response = service("searchservice").queryParam("id", searchServiceData.getWrongid())
         .get("/api/search/feed-exclusion-entity/find-by-id");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,
@@ -397,8 +393,7 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnRestListResponse<FeedExclusionEntityResponse>> listAllFeedExclusions() {
-    Response response = service("searchservice")
-        .queryParam("page", searchServiceData.getPage())
+    Response response = service("searchservice").queryParam("page", searchServiceData.getPage())
         .queryParam("size", searchServiceData.getSize())
         .get("/api/search/feed-exclusion-entity/list");
     response.getBody().prettyPrint();
@@ -417,9 +412,8 @@ public class SearchServiceController extends ServiceApi {
     data.put("feedType", searchServiceData.getFeedType());
     //   data.put("positiveType",searchserviceData.getPositiveFilter());
     String bodyRequest = templateAPI.createFromString(Bodytemplate, data);
-    Response response = service("searchservice")
-        .body(bodyRequest)
-        .post("/api/search/feed-exclusion-entity/update");
+    Response response =
+        service("searchservice").body(bodyRequest).post("/api/search/feed-exclusion-entity/update");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -434,9 +428,8 @@ public class SearchServiceController extends ServiceApi {
     data.put("value", searchServiceData.getFeedValue());
     data.put("feedType", searchServiceData.getFeedType());
     String bodyRequest = templateAPI.createFromString(Bodytemplate, data);
-    Response response = service("searchservice")
-        .body(bodyRequest)
-        .post("/api/search/feed-exclusion-entity/update");
+    Response response =
+        service("searchservice").body(bodyRequest).post("/api/search/feed-exclusion-entity/update");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -451,9 +444,8 @@ public class SearchServiceController extends ServiceApi {
     data.put("value", searchServiceData.getUpdateFeedValue());
     data.put("feedType", searchServiceData.getFeedType());
     String bodyRequest = templateAPI.createFromString(Bodytemplate, data);
-    Response response = service("searchservice")
-        .body(bodyRequest)
-        .post("/api/search/feed-exclusion-entity/delete");
+    Response response =
+        service("searchservice").body(bodyRequest).post("/api/search/feed-exclusion-entity/delete");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -472,8 +464,7 @@ public class SearchServiceController extends ServiceApi {
     data.put("categoryProductName", searchServiceData.getCategoryProductName());
     data.put("type", searchServiceData.getType());
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
-    Response response =
-        service("searchservice").body(bodyRequest).post("/api/search/keyword/save");
+    Response response = service("searchservice").body(bodyRequest).post("/api/search/keyword/save");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -522,8 +513,7 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnRestListResponse<KeywordResponse>> findListOfKeywords() {
-    Response response = service("searchservice")
-        .queryParam("page", searchServiceData.getPage())
+    Response response = service("searchservice").queryParam("page", searchServiceData.getPage())
         .queryParam("size", searchServiceData.getSize())
         .get("/api/search/keyword/list");
     response.getBody().prettyPrint();
@@ -532,44 +522,43 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnRestSingleResponse<KeywordResponse>> findByKeywordRequest() {
-    Response response = service("searchservice")
-        .queryParam("keyword", searchServiceData.getKeyword())
-        .get("/api/search/keyword/find-by-keyword");
+    Response response =
+        service("searchservice").queryParam("keyword", searchServiceData.getKeyword())
+            .get("/api/search/keyword/find-by-keyword");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<KeywordResponse>>() {
     });
   }
 
   public ResponseApi<GdnRestSingleResponse<KeywordResponse>> findByNonExistingKeywordRequest() {
-    Response response = service("searchservice")
-        .queryParam("keyword", searchServiceData.getWrongword())
-        .get("/api/search/keyword/find-by-keyword");
+    Response response =
+        service("searchservice").queryParam("keyword", searchServiceData.getWrongword())
+            .get("/api/search/keyword/find-by-keyword");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<KeywordResponse>>() {
     });
   }
 
   public ResponseApi<GdnRestSingleResponse<KeywordResponse>> findKeywordRequestByID() {
-    Response response = service("searchservice")
-        .queryParam("id", searchServiceData.getAutoKeywordId())
-        .get("/api/search/keyword/find-by-id");
+    Response response =
+        service("searchservice").queryParam("id", searchServiceData.getAutoKeywordId())
+            .get("/api/search/keyword/find-by-id");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<KeywordResponse>>() {
     });
   }
 
   public ResponseApi<GdnRestSingleResponse<KeywordResponse>> findSynonymRequestByID() {
-    Response response = service("searchservice")
-        .queryParam("id", searchServiceData.getAutoSynonymnId())
-        .get("/api/search/synonyms/find-by-id");
+    Response response =
+        service("searchservice").queryParam("id", searchServiceData.getAutoSynonymnId())
+            .get("/api/search/synonyms/find-by-id");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<KeywordResponse>>() {
     });
   }
 
   public ResponseApi<GdnRestSingleResponse<KeywordResponse>> findSynonymRequestByWrongID() {
-    Response response = service("searchservice")
-        .queryParam("id", searchServiceData.getWrongid())
+    Response response = service("searchservice").queryParam("id", searchServiceData.getWrongid())
         .get("/api/search/synonyms/find-by-id");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<KeywordResponse>>() {
@@ -578,8 +567,7 @@ public class SearchServiceController extends ServiceApi {
 
 
   public ResponseApi<GdnRestSingleResponse<KeywordResponse>> findKeywordRequestByWrongID() {
-    Response response = service("searchservice")
-        .queryParam("id", searchServiceData.getWrongid())
+    Response response = service("searchservice").queryParam("id", searchServiceData.getWrongid())
         .get("/api/search/keyword/find-by-id");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<KeywordResponse>>() {
@@ -587,50 +575,49 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnRestListResponse<KeywordResponse>> findKeywordsByDate() {
-    Response response = service("searchservice")
-        .queryParam("currentDate", searchServiceData.getAutoUpdatedDate())
-        .queryParam("word", searchServiceData.getCategoryProductName())
-        .queryParam("page", searchServiceData.getPage())
-        .queryParam("size", searchServiceData.getSize())
-        .get("/api/search/keyword/page");
+    Response response =
+        service("searchservice").queryParam("currentDate", searchServiceData.getAutoUpdatedDate())
+            .queryParam("word", searchServiceData.getCategoryProductName())
+            .queryParam("page", searchServiceData.getPage())
+            .queryParam("size", searchServiceData.getSize())
+            .get("/api/search/keyword/page");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<KeywordResponse>>() {
     });
   }
 
   public ResponseApi<GdnRestListResponse<KeywordResponse>> findKeywordsByWrongDate() {
-    Response response = service("searchservice")
-        .queryParam("currentDate", searchServiceData.getWrongdate())
-        .queryParam("word", searchServiceData.getKeywordForsearchingWithDateStamp())
-        .queryParam("page", searchServiceData.getPage())
-        .queryParam("size", searchServiceData.getSize())
-        .get("/api/search/keyword/page");
+    Response response =
+        service("searchservice").queryParam("currentDate", searchServiceData.getWrongdate())
+            .queryParam("word", searchServiceData.getKeywordForsearchingWithDateStamp())
+            .queryParam("page", searchServiceData.getPage())
+            .queryParam("size", searchServiceData.getSize())
+            .get("/api/search/keyword/page");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<KeywordResponse>>() {
     });
   }
 
   public ResponseApi<GdnBaseRestResponse> findIfProductExists() {
-    Response response = service("searchservice")
-        .queryParam("productId", searchServiceData.getCategoryProductId())
-        .get("/api/search/keyword/product-exist");
+    Response response =
+        service("searchservice").queryParam("productId", searchServiceData.getCategoryProductId())
+            .get("/api/search/keyword/product-exist");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
   public ResponseApi<GdnBaseRestResponse> findForNonExistingProduct() {
-    Response response = service("searchservice")
-        .queryParam("productId", searchServiceData.getWrongcategoryId())
-        .get("/api/search/keyword/product-exist");
+    Response response =
+        service("searchservice").queryParam("productId", searchServiceData.getWrongcategoryId())
+            .get("/api/search/keyword/product-exist");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
   public ResponseApi<GdnRestListResponse<KeywordResponse>> findListOfKeywordsWithKeyValuePair() {
-    Response response = service("searchservice")
-        .queryParam("index", searchServiceData.getIndex())
+    Response response = service("searchservice").queryParam("index", searchServiceData.getIndex())
         .queryParam("word", searchServiceData.getCategoryProductId())
         .queryParam("page", searchServiceData.getPage())
         .queryParam("size", searchServiceData.getSize())
@@ -641,22 +628,22 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnRestListResponse<KeywordResponse>> findListOfKeywordsWithWrongInput() {
-    Response response = service("searchservice")
-        .queryParam("index", searchServiceData.getCategoryProductName())
-        .queryParam("word", searchServiceData.getCategoryProductId())
-        .queryParam("page", searchServiceData.getPage())
-        .queryParam("size", searchServiceData.getSize())
-        .get("/api/search/keyword/find");
+    Response response =
+        service("searchservice").queryParam("index", searchServiceData.getCategoryProductName())
+            .queryParam("word", searchServiceData.getCategoryProductId())
+            .queryParam("page", searchServiceData.getPage())
+            .queryParam("size", searchServiceData.getSize())
+            .get("/api/search/keyword/find");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<KeywordResponse>>() {
     });
   }
 
   public ResponseApi<GdnRestSingleResponse<ValidateIdAndGetNameResponse>> validateIdAndGetName() {
-    Response response = service("searchservice")
-        .queryParam("categoryProductId", searchServiceData.getValidate())
-        .queryParam("type", searchServiceData.getType())
-        .get("/api/search/keyword/validate-id-and-get-name");
+    Response response =
+        service("searchservice").queryParam("categoryProductId", searchServiceData.getValidate())
+            .queryParam("type", searchServiceData.getType())
+            .get("/api/search/keyword/validate-id-and-get-name");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,
         new TypeReference<GdnRestSingleResponse<ValidateIdAndGetNameResponse>>() {
@@ -664,10 +651,10 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnRestSingleResponse<ValidateIdAndGetNameResponse>> validateNonExistingIdAndGetName() {
-    Response response = service("searchservice")
-        .queryParam("categoryProductId", searchServiceData.getWrongid())
-        .queryParam("type", searchServiceData.getType())
-        .get("/api/search/keyword/validate-id-and-get-name");
+    Response response =
+        service("searchservice").queryParam("categoryProductId", searchServiceData.getWrongid())
+            .queryParam("type", searchServiceData.getType())
+            .get("/api/search/keyword/validate-id-and-get-name");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,
         new TypeReference<GdnRestSingleResponse<ValidateIdAndGetNameResponse>>() {
@@ -731,10 +718,10 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnBaseRestResponse> getProductList() {
-    Response response = service("searchservice")
-        .queryParam("category", searchServiceData.getCategoryId())
-        .queryParam("merchant", searchServiceData.getMerchant())
-        .post("/api/search/product-data-report");
+    Response response =
+        service("searchservice").queryParam("category", searchServiceData.getCategoryId())
+            .queryParam("merchant", searchServiceData.getMerchant())
+            .post("/api/search/product-data-report");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -760,17 +747,16 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnRestSingleResponse<SynonymsResponse>> findByKey() {
-    Response response = service("searchservice")
-        .queryParam("key", searchServiceData.getSearchTerm())
-        .get("/api/search/synonyms/find-by-key");
+    Response response =
+        service("searchservice").queryParam("key", searchServiceData.getSearchTerm())
+            .get("/api/search/synonyms/find-by-key");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<SynonymsResponse>>() {
     });
   }
 
   public ResponseApi<GdnRestSingleResponse<SynonymsResponse>> findByWrongKey() {
-    Response response = service("searchservice")
-        .queryParam("key", searchServiceData.getWrongname())
+    Response response = service("searchservice").queryParam("key", searchServiceData.getWrongname())
         .get("/api/search/synonyms/find-by-key");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<SynonymsResponse>>() {
@@ -778,32 +764,31 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnRestListResponse<SynonymsResponse>> findSynonymRequestByWord() {
-    Response response = service("searchservice")
-        .queryParam("word", searchServiceData.getSearchTerm())
-        .queryParam("page", searchServiceData.getPage())
-        .queryParam("size", searchServiceData.getSize())
-        .queryParam("status", searchServiceData.getPagenumberForIMlist())
-        .get("/api/search/synonyms/find");
+    Response response =
+        service("searchservice").queryParam("word", searchServiceData.getSearchTerm())
+            .queryParam("page", searchServiceData.getPage())
+            .queryParam("size", searchServiceData.getSize())
+            .queryParam("status", searchServiceData.getPagenumberForIMlist())
+            .get("/api/search/synonyms/find");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<SynonymsResponse>>() {
     });
   }
 
   public ResponseApi<GdnRestListResponse<SynonymsResponse>> findSynonymRequestByWrongWord() {
-    Response response = service("searchservice")
-        .queryParam("word", searchServiceData.getWrongword())
-        .queryParam("page", searchServiceData.getPage())
-        .queryParam("size", searchServiceData.getSize())
-        .queryParam("status", searchServiceData.getPagenumberForIMlist())
-        .get("/api/search/synonyms/find");
+    Response response =
+        service("searchservice").queryParam("word", searchServiceData.getWrongword())
+            .queryParam("page", searchServiceData.getPage())
+            .queryParam("size", searchServiceData.getSize())
+            .queryParam("status", searchServiceData.getPagenumberForIMlist())
+            .get("/api/search/synonyms/find");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<SynonymsResponse>>() {
     });
   }
 
   public ResponseApi<GdnRestListResponse<SynonymsResponse>> listSynonyms() {
-    Response response = service("searchservice")
-        .queryParam("page", searchServiceData.getPage())
+    Response response = service("searchservice").queryParam("page", searchServiceData.getPage())
         .queryParam("size", searchServiceData.getSize())
         .queryParam("status", searchServiceData.getPagenumberForIMlist())
         .get("/api/search/synonyms/list");
@@ -818,7 +803,7 @@ public class SearchServiceController extends ServiceApi {
     Map<String, String> data = new HashMap<>();
     data.put("id", searchServiceData.getAutoSynonymnId());
     data.put("key", searchServiceData.getSearchTerm());
-    data.put("synonyms",searchServiceData.getSynonyms());
+    data.put("synonyms", searchServiceData.getSynonyms());
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
     Response response =
         service("searchservice").body(bodyRequest).post("/api/search/synonyms/delete");
@@ -828,18 +813,18 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnBaseRestResponse> deleteSynonymFromSolr() {
-    Response response = service("searchservice")
-        .queryParam("key", searchServiceData.getSearchTerm())
-        .delete("/api/search/integration/delete");
+    Response response =
+        service("searchservice").queryParam("key", searchServiceData.getSearchTerm())
+            .delete("/api/search/integration/delete");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
   public ResponseApi<GdnBaseRestResponse> updateSynonymFromSolr() {
-    Response response = service("searchservice")
-        .queryParam("updateAll", searchServiceData.getWrongword())
-        .post("/api/search/integration/update");
+    Response response =
+        service("searchservice").queryParam("updateAll", searchServiceData.getWrongword())
+            .post("/api/search/integration/update");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -847,7 +832,8 @@ public class SearchServiceController extends ServiceApi {
 
   public ResponseApi<GdnBaseRestResponse> bodyOfSaveStopword() {
     String BodyTemplate =
-        "{\n" + "  \"stopWord\": \"{{stopWord}}\",\n" + "  \"groupName\": \"{{groupName}}\",\n" + "  \"sync\": \"{{sync}}\"\n" + "}";
+        "{\n" + "  \"stopWord\": \"{{stopWord}}\",\n" + "  \"groupName\": \"{{groupName}}\",\n"
+            + "  \"sync\": \"{{sync}}\"\n" + "}";
     Map<String, String> data = new HashMap<>();
     data.put("stopWord", searchServiceData.getSearchTerm());
     data.put("groupName", searchServiceData.getStopwordgroup());
@@ -860,50 +846,48 @@ public class SearchServiceController extends ServiceApi {
     });
   }
 
-  public ResponseApi<GdnRestListResponse<StopWordResponse>> findStopwordByword(){
-    Response response = service("searchservice")
-        .queryParam("word", searchServiceData.getSearchTerm())
-        .queryParam("page",searchServiceData.getPage())
-        .queryParam("size",searchServiceData.getSize())
-        .get("/api/search/stopword/find");
+  public ResponseApi<GdnRestListResponse<StopWordResponse>> findStopwordByword() {
+    Response response =
+        service("searchservice").queryParam("word", searchServiceData.getSearchTerm())
+            .queryParam("page", searchServiceData.getPage())
+            .queryParam("size", searchServiceData.getSize())
+            .get("/api/search/stopword/find");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<StopWordResponse>>() {
     });
   }
 
-  public ResponseApi<GdnRestListResponse<StopWordResponse>> findStopwordByWrongword(){
-    Response response = service("searchservice")
-        .queryParam("word", searchServiceData.getWrongword())
-        .queryParam("page",searchServiceData.getPage())
-        .queryParam("size",searchServiceData.getSize())
-        .get("/api/search/stopword/find");
+  public ResponseApi<GdnRestListResponse<StopWordResponse>> findStopwordByWrongword() {
+    Response response =
+        service("searchservice").queryParam("word", searchServiceData.getWrongword())
+            .queryParam("page", searchServiceData.getPage())
+            .queryParam("size", searchServiceData.getSize())
+            .get("/api/search/stopword/find");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<StopWordResponse>>() {
     });
   }
 
-  public ResponseApi<GdnRestSingleResponse<StopWordResponse>> findStopwordByID(){
-    Response response = service("searchservice")
-        .queryParam("id", searchServiceData.getAutoStopwordID())
+  public ResponseApi<GdnRestSingleResponse<StopWordResponse>> findStopwordByID() {
+    Response response =
+        service("searchservice").queryParam("id", searchServiceData.getAutoStopwordID())
+            .get("/api/search/stopword/find-by-id");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<StopWordResponse>>() {
+    });
+  }
+
+  public ResponseApi<GdnRestSingleResponse<StopWordResponse>> findStopwordByWrongID() {
+    Response response = service("searchservice").queryParam("id", searchServiceData.getWrongid())
         .get("/api/search/stopword/find-by-id");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<StopWordResponse>>() {
     });
   }
 
-  public ResponseApi<GdnRestSingleResponse<StopWordResponse>> findStopwordByWrongID(){
-    Response response = service("searchservice")
-        .queryParam("id", searchServiceData.getWrongid())
-        .get("/api/search/stopword/find-by-id");
-    response.getBody().prettyPrint();
-    return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<StopWordResponse>>() {
-    });
-  }
-
-  public ResponseApi<GdnRestListResponse<StopWordResponse>> listStopword(){
-    Response response = service("searchservice")
-        .queryParam("page",searchServiceData.getPage())
-        .queryParam("size",searchServiceData.getSize())
+  public ResponseApi<GdnRestListResponse<StopWordResponse>> listStopword() {
+    Response response = service("searchservice").queryParam("page", searchServiceData.getPage())
+        .queryParam("size", searchServiceData.getSize())
         .get("/api/search/stopword/list");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<StopWordResponse>>() {
@@ -915,7 +899,7 @@ public class SearchServiceController extends ServiceApi {
         "{\n" + "  \"id\": \"{{id}}\",\n" + "  \"stopWord\": \"{{stopWord}}\"\n" + "}";
     Map<String, String> data = new HashMap<>();
     data.put("stopWord", searchServiceData.getUpdateFeedValue());
-    data.put("id",searchServiceData.getAutoStopwordID());
+    data.put("id", searchServiceData.getAutoStopwordID());
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
     Response response =
         service("searchservice").body(bodyRequest).post("/api/search/stopword/update");
@@ -929,7 +913,7 @@ public class SearchServiceController extends ServiceApi {
         "{\n" + "  \"id\": \"{{id}}\",\n" + "  \"stopWord\": \"{{stopWord}}\"\n" + "}";
     Map<String, String> data = new HashMap<>();
     data.put("stopWord", searchServiceData.getUpdateFeedValue());
-    data.put("id",searchServiceData.getWrongid());
+    data.put("id", searchServiceData.getWrongid());
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
     Response response =
         service("searchservice").body(bodyRequest).post("/api/search/stopword/update");
@@ -943,7 +927,7 @@ public class SearchServiceController extends ServiceApi {
         "{\n" + "  \"id\": \"{{id}}\",\n" + "  \"stopWord\": \"{{stopWord}}\"\n" + "}";
     Map<String, String> data = new HashMap<>();
     data.put("stopWord", searchServiceData.getUpdateFeedValue());
-    data.put("id",searchServiceData.getAutoStopwordID());
+    data.put("id", searchServiceData.getAutoStopwordID());
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
     Response response =
         service("searchservice").body(bodyRequest).post("/api/search/stopword/delete");
@@ -953,75 +937,79 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnBaseRestResponse> deleteStopwordIntegration() {
-    Response response = service("searchservice")
-        .queryParam("key", searchServiceData.getSearchTerm())
-        .delete("/api/search/integration/stopword/delete");
+    Response response =
+        service("searchservice").queryParam("key", searchServiceData.getSearchTerm())
+            .delete("/api/search/integration/stopword/delete");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
   public ResponseApi<GdnBaseRestResponse> updateStopwordFromSolr() {
-    Response response = service("searchservice")
-        .queryParam("updateAll", searchServiceData.getWrongword())
-        .post("/api/search/integration/stopword/update");
+    Response response =
+        service("searchservice").queryParam("updateAll", searchServiceData.getWrongword())
+            .post("/api/search/integration/stopword/update");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
-  public ResponseApi<GdnRestSingleResponse<SetConfigResponse>> setConfigRequest(){
-    Response response = service("searchservice")
-        .queryParam("name", searchServiceData.getSetConfig())
-        .get("/api/search/fetchSaveConfig");
+  public ResponseApi<GdnRestSingleResponse<SetConfigResponse>> setConfigRequest() {
+    Response response =
+        service("searchservice").queryParam("name", searchServiceData.getSetConfig())
+            .get("/api/search/fetchSaveConfig");
     response.getBody().prettyPrint();
-    return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<SetConfigResponse>>() {
-    });
+    return jsonApi.fromJson(response,
+        new TypeReference<GdnRestSingleResponse<SetConfigResponse>>() {
+        });
   }
 
   public ResponseApi<GdnBaseRestResponse> updateFieldCache() {
-    Response response = service("searchservice")
-        .queryParam("fieldName", searchServiceData.getFieldName())
-        .get("/api/search/updateFieldCache");
+    Response response =
+        service("searchservice").queryParam("fieldName", searchServiceData.getFieldName())
+            .get("/api/search/updateFieldCache");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
+
   public ResponseApi<GdnBaseRestResponse> updateNonExistingFieldCache() {
-    Response response = service("searchservice")
-        .queryParam("fieldName", searchServiceData.getWrongname())
-        .get("/api/search/updateFieldCache");
+    Response response =
+        service("searchservice").queryParam("fieldName", searchServiceData.getWrongname())
+            .get("/api/search/updateFieldCache");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
-  public  ResponseApi<GdnRestListResponse<KeywordBoostProductResponse>> findBoostedKeyword(){
-    Response response = service("searchservice")
-        .queryParam("word", searchServiceData.getSearchTerm())
-        .queryParam("size",searchServiceData.getSize())
-        .get("/api/search/keywordBoost/find");
+  public ResponseApi<GdnRestListResponse<KeywordBoostProductResponse>> findBoostedKeyword() {
+    Response response =
+        service("searchservice").queryParam("word", searchServiceData.getSearchTerm())
+            .queryParam("size", searchServiceData.getSize())
+            .get("/api/search/keywordBoost/find");
     response.getBody().prettyPrint();
-    return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<KeywordBoostProductResponse>>() {
-    });
+    return jsonApi.fromJson(response,
+        new TypeReference<GdnRestListResponse<KeywordBoostProductResponse>>() {
+        });
   }
 
-  public ResponseApi<GdnRestSingleResponse<KeywordBoostProductResponse>> findBoostedKeywordByID(){
-    Response response = service("searchservice")
-        .queryParam("id", searchServiceData.getAutoBoostedKeywordID())
-        .get("/api/search/keywordBoost/findById");
+  public ResponseApi<GdnRestSingleResponse<KeywordBoostProductResponse>> findBoostedKeywordByID() {
+    Response response =
+        service("searchservice").queryParam("id", searchServiceData.getAutoBoostedKeywordID())
+            .get("/api/search/keywordBoost/findById");
     response.getBody().prettyPrint();
-    return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<KeywordBoostProductResponse>>() {
-    });
+    return jsonApi.fromJson(response,
+        new TypeReference<GdnRestSingleResponse<KeywordBoostProductResponse>>() {
+        });
   }
 
-  public  ResponseApi<GdnRestListResponse<KeywordBoostProductResponse>> listBoostedKeyword(){
-    Response response = service("searchservice")
-        .queryParam("size",searchServiceData.getSize())
+  public ResponseApi<GdnRestListResponse<KeywordBoostProductResponse>> listBoostedKeyword() {
+    Response response = service("searchservice").queryParam("size", searchServiceData.getSize())
         .get("/api/search/keywordBoost/list");
     response.getBody().prettyPrint();
-    return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<KeywordBoostProductResponse>>() {
-    });
+    return jsonApi.fromJson(response,
+        new TypeReference<GdnRestListResponse<KeywordBoostProductResponse>>() {
+        });
   }
 
   public ResponseApi<GdnBaseRestResponse> bodyOfRequestOfUpdateBoostedKeyword() {
@@ -1034,20 +1022,22 @@ public class SearchServiceController extends ServiceApi {
     data.put("products", searchServiceData.getProductID());
 
     String bodyRequest = templateAPI.createFromString(Bodytemplate, data);
-    Response response = service("searchservice").body(bodyRequest).post("/api/search/keywordBoost/update");
+    Response response =
+        service("searchservice").body(bodyRequest).post("/api/search/keywordBoost/update");
     response.getBody().prettyPrint();
 
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
-  public  ResponseApi<GdnRestListResponse<KeywordBoostProductResponse>> listAllBoostedKeyword(){
-    Response response = service("searchservice")
-        .get("/api/search/keywordBoost/getAll");
+  public ResponseApi<GdnRestListResponse<KeywordBoostProductResponse>> listAllBoostedKeyword() {
+    Response response = service("searchservice").get("/api/search/keywordBoost/getAll");
     response.getBody().prettyPrint();
-    return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<KeywordBoostProductResponse>>() {
-    });
+    return jsonApi.fromJson(response,
+        new TypeReference<GdnRestListResponse<KeywordBoostProductResponse>>() {
+        });
   }
+
   public ResponseApi<GdnBaseRestResponse> uploadBoostedKeyword() {
     Response response = service("searchservice").removeHeader("content-type")
         .header("content-type", "multipart/data")
@@ -1069,47 +1059,54 @@ public class SearchServiceController extends ServiceApi {
     data.put("keyword", searchServiceData.getSearchTerm());
     data.put("products", searchServiceData.getProductID());
     String bodyRequest = templateAPI.createFromString(Bodytemplate, data);
-    Response response = service("searchservice").body(bodyRequest).post("/api/search/keywordBoost/delete");
+    Response response =
+        service("searchservice").body(bodyRequest).post("/api/search/keywordBoost/delete");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
-  public ResponseApi<GdnRestSingleResponse> bodyOfRequestOfValidateID(String incorrectID,String correctID) {
-    String Bodytemplate="[\""+correctID+"\",\""+incorrectID+"\"]";
-   Response response=service("searchservice").body(Bodytemplate).post("/api/search/keywordBoost/validate");
-   response.getBody().prettyPrint();
-   return jsonApi.fromJson(response,new TypeReference<GdnRestSingleResponse>(){
+  public ResponseApi<GdnRestSingleResponse> bodyOfRequestOfValidateID(String incorrectID,
+      String correctID) {
+    String Bodytemplate = "[\"" + correctID + "\",\"" + incorrectID + "\"]";
+    Response response =
+        service("searchservice").body(Bodytemplate).post("/api/search/keywordBoost/validate");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse>() {
     });
   }
 
   public ResponseApi<GdnBaseRestResponse> bodyOfRequestOfMultiDelete() throws Exception {
-    String Bodytemplate = "[\n" + "  {\n" + "    \"id\": \"98765\"\n"
-        + "   }, {\n" + "\"id\": \"43210\"\n" + "}\n" + "]";
-    Response response = service("searchservice").body(Bodytemplate).post("/api/search/keywordBoost/multidelete");
+    String Bodytemplate =
+        "[\n" + "  {\n" + "    \"id\": \"98765\"\n" + "   }, {\n" + "\"id\": \"43210\"\n" + "}\n"
+            + "]";
+    Response response =
+        service("searchservice").body(Bodytemplate).post("/api/search/keywordBoost/multidelete");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
-  public  ResponseApi<GdnRestListResponse<KeywordBoostProductResponse>> findWrongBoostedKeyword(){
-    Response response = service("searchservice")
-        .queryParam("word", searchServiceData.getWrongname())
-        .queryParam("size",searchServiceData.getSize())
-        .get("/api/search/keywordBoost/find");
+  public ResponseApi<GdnRestListResponse<KeywordBoostProductResponse>> findWrongBoostedKeyword() {
+    Response response =
+        service("searchservice").queryParam("word", searchServiceData.getWrongname())
+            .queryParam("size", searchServiceData.getSize())
+            .get("/api/search/keywordBoost/find");
     response.getBody().prettyPrint();
-    return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<KeywordBoostProductResponse>>() {
-    });
+    return jsonApi.fromJson(response,
+        new TypeReference<GdnRestListResponse<KeywordBoostProductResponse>>() {
+        });
   }
 
-  public ResponseApi<GdnRestSingleResponse<KeywordBoostProductResponse>> findBoostedKeywordByWrongID(){
-    Response response = service("searchservice")
-        .queryParam("id", searchServiceData.getWrongid())
+  public ResponseApi<GdnRestSingleResponse<KeywordBoostProductResponse>> findBoostedKeywordByWrongID() {
+    Response response = service("searchservice").queryParam("id", searchServiceData.getWrongid())
         .get("/api/search/keywordBoost/findById");
     response.getBody().prettyPrint();
-    return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<KeywordBoostProductResponse>>() {
-    });
+    return jsonApi.fromJson(response,
+        new TypeReference<GdnRestSingleResponse<KeywordBoostProductResponse>>() {
+        });
   }
+
   public ResponseApi<GdnBaseRestResponse> bodyOfRequestOfUpdateBoostedKeywordWithWrongID() {
     String Bodytemplate = "{\n" + "  \"id\": \"{{id}}\",\n" + "  \"keyword\": \"{{keyword}}\",\n"
         + "  \"products\": \"{{products}}\"\n" + "}";
@@ -1120,7 +1117,8 @@ public class SearchServiceController extends ServiceApi {
     data.put("products", searchServiceData.getProductID());
 
     String bodyRequest = templateAPI.createFromString(Bodytemplate, data);
-    Response response = service("searchservice").body(bodyRequest).post("/api/search/keywordBoost/update");
+    Response response =
+        service("searchservice").body(bodyRequest).post("/api/search/keywordBoost/update");
     response.getBody().prettyPrint();
 
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
@@ -1139,24 +1137,23 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnBaseRestResponse> cleanUp() {
-    Response response = service("searchservice")
-        .post("/api/search/searchkeyword/cleanup");
+    Response response = service("searchservice").post("/api/search/searchkeyword/cleanup");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
+
   public ResponseApi<GdnBaseRestResponse> debug() {
-    Response response = service("searchservice")
-        .queryParam("searchKeyword",searchServiceData.getSearchTerm())
-        .get("/api/search/searchkeyword/debugDetected");
+    Response response =
+        service("searchservice").queryParam("searchKeyword", searchServiceData.getSearchTerm())
+            .get("/api/search/searchkeyword/debugDetected");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
   public ResponseApi<GdnBaseRestResponse> deltaIndex() {
-    Response response = service("searchservice")
-        .post("/api/search/searchkeyword/delta-index");
+    Response response = service("searchservice").post("/api/search/searchkeyword/delta-index");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -1164,8 +1161,7 @@ public class SearchServiceController extends ServiceApi {
 
 
   public ResponseApi<GdnBaseRestResponse> mongoClasses() {
-    Response response = service("searchservice")
-        .post("/api/search/mongo/classes");
+    Response response = service("searchservice").post("/api/search/mongo/classes");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -1173,144 +1169,152 @@ public class SearchServiceController extends ServiceApi {
 
 
   public ResponseApi<GdnBaseRestResponse> mongoQuery() {
-    Response response = service("searchservice")
-        .queryParam("key",searchServiceData.getKey())
-        .queryParam("value",searchServiceData.getMongoValue())
-        .queryParam("className",searchServiceData.getClassName())
-        .queryParam("queryType",searchServiceData.getQueryType())
+    Response response = service("searchservice").queryParam("key", searchServiceData.getKey())
+        .queryParam("value", searchServiceData.getMongoValue())
+        .queryParam("className", searchServiceData.getClassName())
+        .queryParam("queryType", searchServiceData.getQueryType())
         .post("/api/search/query/mongo");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
-  public ResponseApi<GdnRestSingleResponse<ProductResponse>> bodyOfRequestToQueryWithProductID(String correctID) {
-    String Bodytemplate="{\n" + "  \"value\": [\n" + "    \""+correctID+"\"\n" + "  ]\n" + "}";
-    Response response=service("searchservice").body(Bodytemplate).post("/api/search/product");
+
+  public ResponseApi<GdnRestSingleResponse<ProductResponse>> bodyOfRequestToQueryWithProductID(
+      String correctID) {
+    String Bodytemplate =
+        "{\n" + "  \"value\": [\n" + "    \"" + correctID + "\"\n" + "  ]\n" + "}";
+    Response response = service("searchservice").body(Bodytemplate).post("/api/search/product");
     response.getBody().prettyPrint();
-    return jsonApi.fromJson(response,new TypeReference<GdnRestSingleResponse<ProductResponse>>(){
+    return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<ProductResponse>>() {
     });
   }
 
   public ResponseApi<GdnBaseRestResponse> deleteUnpublished() {
-    Response response = service("searchservice")
-        .get("/api/search/scheduled-events/delete-unpublished");
+    Response response =
+        service("searchservice").get("/api/search/scheduled-events/delete-unpublished");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
   public ResponseApi<GdnBaseRestResponse> fetchTheListOfUnpublishedProducts() {
-    Response response = service("searchservice")
-        .post("/api/search/scheduled-events/process-events");
+    Response response =
+        service("searchservice").post("/api/search/scheduled-events/process-events");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
-  public ResponseApi<GdnRestSingleResponse> prepareRequestForProcessingFailedIds(){
-    Response response = service("searchservice")
-        .get("/api/search/index/failed-ids");
+  public ResponseApi<GdnRestSingleResponse> prepareRequestForProcessingFailedIds() {
+    Response response = service("searchservice").get("/api/search/index/failed-ids");
     response.getBody().prettyPrint();
-    return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse>() {});
+    return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse>() {
+    });
   }
 
-  public ResponseApi<GdnBaseRestResponse> prepareRequestForIndexing(String type,String value){
+  public ResponseApi<GdnBaseRestResponse> prepareRequestForIndexing(String type, String value) {
 
-    String postReq="{\""+type+"\": [\""+value+"\" ]}";
-    Response response = service("searchservice")
-        .body(postReq)
-        .post("/api/search/index/product");
+    String postReq = "{\"" + type + "\": [\"" + value + "\" ]}";
+    Response response = service("searchservice").body(postReq).post("/api/search/index/product");
     response.getBody().prettyPrint();
-    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {});
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
   }
 
-  public ResponseApi<GdnRestSingleResponse<SimpleStringResponse>> prepareRequestForListingServicesForReindexing(){
-    Response response = service("searchservice")
-        .get("/api/search/index/services");
+  public ResponseApi<GdnRestSingleResponse<SimpleStringResponse>> prepareRequestForListingServicesForReindexing() {
+    Response response = service("searchservice").get("/api/search/index/services");
     response.getBody().prettyPrint();
-    return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<SimpleStringResponse>>() {});
+    return jsonApi.fromJson(response,
+        new TypeReference<GdnRestSingleResponse<SimpleStringResponse>>() {
+        });
   }
 
 
-  public ResponseApi<GdnBaseRestResponse> prepareRequestForReviewAndRatingIndex(){
-    Response response = service("searchservice")
-        .post("/api/search/update/review-and-rating");
+  public ResponseApi<GdnBaseRestResponse> prepareRequestForReviewAndRatingIndex() {
+    Response response = service("searchservice").post("/api/search/update/review-and-rating");
     response.getBody().prettyPrint();
-    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {});
-
-  }
-
-  public ResponseApi<GdnBaseRestResponse> prepareRequestForCategoryReindex(String categoryCode){
-
-    String requestJson = "{\n" + "\"categoryCodes\": [ \""+categoryCode +"\"]\n" + "}";
-
-    Response response = service("searchservice")
-        .body(requestJson)
-        .post("/api/search/index/category");
-
-    response.getBody().prettyPrint();
-
-    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {});
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
 
   }
 
-  public ResponseApi<GdnBaseRestResponse> prepareRequestForFullReindexing(String solrToSolr,String serviceName){
-    Response response = service("searchservice")
-        .queryParam("solr",solrToSolr)
-        .queryParam("services",serviceName)
+  public ResponseApi<GdnBaseRestResponse> prepareRequestForCategoryReindex(String categoryCode) {
+
+    String requestJson = "{\n" + "\"categoryCodes\": [ \"" + categoryCode + "\"]\n" + "}";
+
+    Response response =
+        service("searchservice").body(requestJson).post("/api/search/index/category");
+
+    response.getBody().prettyPrint();
+
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+
+  }
+
+  public ResponseApi<GdnBaseRestResponse> prepareRequestForFullReindexing(String solrToSolr,
+      String serviceName) {
+    Response response = service("searchservice").queryParam("solr", solrToSolr)
+        .queryParam("services", serviceName)
         .post("/api/search/index/product-revamp");
     response.getBody().prettyPrint();
-    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {});
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
   }
 
-  public ResponseApi<GdnRestSingleResponse<SimpleStringResponse>> prepareRequestForProcessingStoredDelta(){
-    Response response = service("searchservice")
-        .get("/api/search/index/process-delta-stored-events");
+  public ResponseApi<GdnRestSingleResponse<SimpleStringResponse>> prepareRequestForProcessingStoredDelta() {
+    Response response =
+        service("searchservice").get("/api/search/index/process-delta-stored-events");
     response.getBody().prettyPrint();
-    return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<SimpleStringResponse>>() {});
+    return jsonApi.fromJson(response,
+        new TypeReference<GdnRestSingleResponse<SimpleStringResponse>>() {
+        });
   }
 
-  public ResponseApi<GdnRestSingleResponse<StatusReIndexResponse>> prepareRequestForGettingIndexingStatus(){
-    Response response = service("searchservice")
-        .get("/api/search/index/status");
+  public ResponseApi<GdnRestSingleResponse<StatusReIndexResponse>> prepareRequestForGettingIndexingStatus() {
+    Response response = service("searchservice").get("/api/search/index/status");
     response.getBody().prettyPrint();
-   return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<StatusReIndexResponse>>() {});
+    return jsonApi.fromJson(response,
+        new TypeReference<GdnRestSingleResponse<StatusReIndexResponse>>() {
+        });
   }
 
-  public ResponseApi<GdnBaseRestResponse> prepareRequestForAtomicReindexQueue(){
-    Response response = service("searchservice")
-        .get("/api/atomic/reindex");
+  public ResponseApi<GdnBaseRestResponse> prepareRequestForAtomicReindexQueue() {
+    Response response = service("searchservice").get("/api/atomic/reindex");
     response.getBody().prettyPrint();
-    return jsonApi.fromJson(response,new TypeReference<GdnBaseRestResponse>() {});
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
   }
 
   public ResponseApi<GdnRestListResponse<FlightResponse>> allFlights() {
-    Response response = service("searchservice")
-        .queryParam("authenticator", searchServiceData.getAuthenticator())
-        .get("/api/search/intent-rules/flight/get-all");
+    Response response =
+        service("searchservice").queryParam("authenticator", searchServiceData.getAuthenticator())
+            .get("/api/search/intent-rules/flight/get-all");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<FlightResponse>>() {
     });
   }
+
   public ResponseApi<GdnRestListResponse<PlaceholderRuleResponse>> getAllPlaceholder() {
-    Response response = service("searchservice")
-        .queryParam("authenticator", searchServiceData.getAuthenticator())
-        .get("/api/search/intent-rules/placeholder-rule/get-all");
+    Response response =
+        service("searchservice").queryParam("authenticator", searchServiceData.getAuthenticator())
+            .get("/api/search/intent-rules/placeholder-rule/get-all");
     response.getBody().prettyPrint();
-    return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<PlaceholderRuleResponse>>(){
-    });
+    return jsonApi.fromJson(response,
+        new TypeReference<GdnRestListResponse<PlaceholderRuleResponse>>() {
+        });
   }
 
-  public ResponseApi<GdnBaseRestResponse> addTrainMapping(String id, String searchTerm, String effectiveValue) {
-    String BodyTemplate = "{\n" +
-        "  \"id\": \""+id+"\",\n" +
-        "  \"searchTerm\": \""+searchTerm+"\",\n" +
-        "  \"effectiveValue\": \""+effectiveValue+"\"\n" +
-        "}";
+  public ResponseApi<GdnBaseRestResponse> addTrainMapping(String id,
+      String trainSearchTerm,
+      String trainMapping) {
+    String BodyTemplate =
+        "{\n" + "  \"id\": \"" + id + "\",\n" + "  \"searchTerm\": \"" + trainSearchTerm + "\",\n"
+            + "  \"effectiveValue\": \"" + trainMapping + "\"\n" + "}";
     Map<String, String> data = new HashMap<>();
     data.put("id", id);
-    data.put("searchTerm", searchTerm);
-    data.put("effectiveValue", effectiveValue);
+    data.put("searchTerm", trainSearchTerm);
+    data.put("effectiveValue", trainMapping);
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
     Response response =
         service("searchservice").body(bodyRequest).post("/api/search/intent-rules/train/add");
@@ -1318,81 +1322,86 @@ public class SearchServiceController extends ServiceApi {
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
+
   public ResponseApi<GdnRestListResponse<TrainResponse>> getAllTrain() {
-    Response response = service("searchservice")
-        .queryParam("authenticator", searchServiceData.getAuthenticator())
-        .get("/api/search/intent-rules/train/get-all");
+    Response response =
+        service("searchservice").queryParam("authenticator", searchServiceData.getAuthenticator())
+            .get("/api/search/intent-rules/train/get-all");
     response.getBody().prettyPrint();
-    return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<TrainResponse>>(){
+    return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<TrainResponse>>() {
     });
   }
+
   public ResponseApi<GdnBaseRestResponse> deleteTrainMapping() {
-    Response response = service("searchservice")
-        .queryParam("authenticator", searchServiceData.getAuthenticator())
-        .queryParam("id", searchServiceData.getAutoTrainId())
-        .delete("/api/search/intent-rules/train/delete");
+    Response response =
+        service("searchservice").queryParam("authenticator", searchServiceData.getAuthenticator())
+            .queryParam("id", searchServiceData.getAutoTrainId())
+            .delete("/api/search/intent-rules/train/delete");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
   public ResponseApi<GdnBaseRestResponse> deleteTrainMappingWithWrongId() {
-    Response response = service("searchservice")
-        .queryParam("authenticator", searchServiceData.getAuthenticator())
-        .queryParam("id", searchServiceData.getWrongid())
-        .delete("/api/search/intent-rules/train/delete");
+    Response response =
+        service("searchservice").queryParam("authenticator", searchServiceData.getAuthenticator())
+            .queryParam("id", searchServiceData.getWrongid())
+            .delete("/api/search/intent-rules/train/delete");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
   public ResponseApi<GdnBaseRestResponse> deleteFlightMapping() {
-    Response response = service("searchservice")
-        .queryParam("authenticator", searchServiceData.getAuthenticator())
-        .queryParam("id", searchServiceData.getAutoFlightId())
-        .delete("/api/search/intent-rules/flight/delete");
-    response.getBody().prettyPrint();
-    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
-    });
-  }
-  public ResponseApi<GdnBaseRestResponse> deleteFlightWithWrongId() {
-    Response response = service("searchservice")
-        .queryParam("authenticator", searchServiceData.getAuthenticator())
-        .queryParam("id", searchServiceData.getWrongid())
-        .delete("/api/search/intent-rules/flight/delete");
-    response.getBody().prettyPrint();
-    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
-    });
-  }
-  public ResponseApi<GdnBaseRestResponse> deletePlaceholderWithWrongId() {
-    Response response = service("searchservice")
-        .queryParam("authenticator", searchServiceData.getAuthenticator())
-        .queryParam("id", searchServiceData.getWrongid())
-        .delete("/api/search/intent-rules/placeholder-rule/delete");
-    response.getBody().prettyPrint();
-    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
-    });
-  }
-  public ResponseApi<GdnBaseRestResponse> deletePlaceholder() {
-    Response response = service("searchservice")
-        .queryParam("authenticator", searchServiceData.getAuthenticator())
-        .queryParam("id", searchServiceData.getAutoPlaceholderId())
-        .delete("/api/search/intent-rules/placeholder-rule/delete");
+    Response response =
+        service("searchservice").queryParam("authenticator", searchServiceData.getAuthenticator())
+            .queryParam("id", searchServiceData.getAutoFlightId())
+            .delete("/api/search/intent-rules/flight/delete");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
-  public ResponseApi<GdnBaseRestResponse> saveFlight(String id, String searchTerm, String effectiveValue) {
-    String BodyTemplate = "{\n" +
-        "  \"id\": \""+id+"\",\n" +
-        "  \"searchTerm\": \""+searchTerm+"\",\n" +
-        "  \"effectiveValue\": \""+effectiveValue+"\"\n" +
-        "}";
+  public ResponseApi<GdnBaseRestResponse> deleteFlightWithWrongId() {
+    Response response =
+        service("searchservice").queryParam("authenticator", searchServiceData.getAuthenticator())
+            .queryParam("id", searchServiceData.getWrongid())
+            .delete("/api/search/intent-rules/flight/delete");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+
+  public ResponseApi<GdnBaseRestResponse> deletePlaceholderWithWrongId() {
+    Response response =
+        service("searchservice").queryParam("authenticator", searchServiceData.getAuthenticator())
+            .queryParam("id", searchServiceData.getWrongid())
+            .delete("/api/search/intent-rules/placeholder-rule/delete");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+
+  public ResponseApi<GdnBaseRestResponse> deletePlaceholder() {
+    Response response =
+        service("searchservice").queryParam("authenticator", searchServiceData.getAuthenticator())
+            .queryParam("id", searchServiceData.getId())
+            .delete("/api/search/intent-rules/placeholder-rule/delete");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+
+  public ResponseApi<GdnBaseRestResponse> saveFlight(String id,
+      String trainSearchTerm,
+      String trainMapping) {
+    String BodyTemplate =
+        "{\n" + "  \"id\": \"" + id + "\",\n" + "  \"searchTerm\": \"" + trainSearchTerm + "\",\n"
+            + "  \"effectiveValue\": \"" + trainMapping + "\"\n" + "}";
     Map<String, String> data = new HashMap<>();
     data.put("id", id);
-    data.put("searchTerm", searchTerm);
-    data.put("effectiveValue", effectiveValue);
+    data.put("searchTerm", trainSearchTerm);
+    data.put("effectiveValue", trainMapping);
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
     Response response =
         service("searchservice").body(bodyRequest).post("/api/search/intent-rules/flight/add");
@@ -1400,14 +1409,15 @@ public class SearchServiceController extends ServiceApi {
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
-  public ResponseApi<GdnBaseRestResponse> addPlaceholderRules(String id, String name, String searchTerm, String effectiveSearchPattern, String type) {
-    String BodyTemplate = "{\n" +
-        "  \"id\": \""+id+"\",\n" +
-        "  \"name\": \""+name+"\",\n" +
-        "  \"searchTerm\": \""+searchTerm+"\",\n" +
-        "  \"effectiveSearchPattern\": \""+effectiveSearchPattern+"\",\n" +
-        "  \"type\": \""+type+"\"\n" +
-        "}";
+
+  public ResponseApi<GdnBaseRestResponse> addPlaceholderRules(String id,
+      String name,
+      String searchTerm,
+      String effectiveSearchPattern,
+      String type) {
+    String BodyTemplate = "{\n" + "  \"id\": \"" + id + "\",\n" + "  \"name\": \"" + name + "\",\n"
+        + "  \"searchTerm\": \"" + searchTerm + "\",\n" + "  \"effectiveSearchPattern\": \""
+        + effectiveSearchPattern + "\",\n" + "  \"type\": \"" + type + "\"\n" + "}";
     Map<String, String> data = new HashMap<>();
     data.put("id", id);
     data.put("name", name);
@@ -1415,20 +1425,18 @@ public class SearchServiceController extends ServiceApi {
     data.put("effectiveSearchPattern", effectiveSearchPattern);
     data.put("type", type);
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
-    Response response =
-        service("searchservice").body(bodyRequest).post("/api/search/intent-rules/placeholder-rule/add");
+    Response response = service("searchservice").body(bodyRequest)
+        .post("/api/search/intent-rules/placeholder-rule/add");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
+
   public ResponseApi<GdnBaseRestResponse> updatePlaceholder() {
-    String BodyTemplate = "{\n" +
-        "  \"id\": \"{{id}}\",\n" +
-        "  \"name\": \"{{name}}\",\n" +
-        "  \"searchTerm\": \"{{searchTerm}}\",\n" +
-        "  \"effectiveSearchPattern\": \"{{effectiveSearchPattern}}\",\n" +
-        "  \"type\": \"{{type}}\"\n" +
-        "}";
+    String BodyTemplate = "{\n" + "  \"id\": \"{{id}}\",\n" + "  \"name\": \"{{name}}\",\n"
+        + "  \"searchTerm\": \"{{searchTerm}}\",\n"
+        + "  \"effectiveSearchPattern\": \"{{effectiveSearchPattern}}\",\n"
+        + "  \"type\": \"{{type}}\"\n" + "}";
     Map<String, String> data = new HashMap<>();
     data.put("id", searchServiceData.getId());
     data.put("name", searchServiceData.getName());
@@ -1436,20 +1444,18 @@ public class SearchServiceController extends ServiceApi {
     data.put("effectiveSearchPattern", searchServiceData.getEffectiveSearchPattern());
     data.put("type", searchServiceData.getType());
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
-    Response response =
-        service("searchservice").body(bodyRequest).put("/api/search/intent-rules/placeholder-rule/update");
+    Response response = service("searchservice").body(bodyRequest)
+        .put("/api/search/intent-rules/placeholder-rule/update");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
+
   public ResponseApi<GdnBaseRestResponse> updatePlaceholderWithNonExistingId() {
-    String BodyTemplate = "{\n" +
-        "  \"id\": \"{{id}}\",\n" +
-        "  \"name\": \"{{name}}\",\n" +
-        "  \"searchTerm\": \"{{searchTerm}}\",\n" +
-        "  \"effectiveSearchPattern\": \"{{effectiveSearchPattern}}\",\n" +
-        "  \"type\": \"{{type}}\"\n" +
-        "}";
+    String BodyTemplate = "{\n" + "  \"id\": \"{{id}}\",\n" + "  \"name\": \"{{name}}\",\n"
+        + "  \"searchTerm\": \"{{searchTerm}}\",\n"
+        + "  \"effectiveSearchPattern\": \"{{effectiveSearchPattern}}\",\n"
+        + "  \"type\": \"{{type}}\"\n" + "}";
     Map<String, String> data = new HashMap<>();
     data.put("id", searchServiceData.getWrongid());
     data.put("name", searchServiceData.getName());
@@ -1457,32 +1463,25 @@ public class SearchServiceController extends ServiceApi {
     data.put("effectiveSearchPattern", searchServiceData.getEffectiveSearchPattern());
     data.put("type", searchServiceData.getType());
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
-    Response response =
-        service("searchservice").body(bodyRequest).put("/api/search/intent-rules/placeholder-rule/update");
+    Response response = service("searchservice").body(bodyRequest)
+        .put("/api/search/intent-rules/placeholder-rule/update");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
   public ResponseApi<GdnBaseRestResponse> addSearchRule() {
-    String BodyTemplate = "{\n" +
-        "  \"id\": \"{{id}}\",\n" +
-        "  \"searchTerm\": \"{{searchTerm}}\",\n" +
-        "  \"filterQuery\": \"{{filterQuery}}\",\n" +
-        "  \"sortType\": \"{{sortType}}\",\n" +
-        "  \"effectiveSearchPattern\": \"{{effectiveSearchPattern}}\",\n" +
-        "  \"defaultLogic\": {\n" +
-        "    \"filterQuery\": \"{{filterQuery}}\",\n" +
-        "    \"sortType\": \"{{sortType}}\"\n" +
-        "  },\n" +
-        "  \"url\": \"{{url}}\",\n" +
-        "  \"type\": \"{{type}}\",\n" +
-        "  \"rank\": {{rank}},\n" +
-        "  \"spel\": \"{{spel}}\"\n" +
-        "}";
+    String BodyTemplate =
+        "{\n" + "  \"id\": \"{{id}}\",\n" + "  \"searchTerm\": \"{{searchTerm}}\",\n"
+            + "  \"filterQuery\": \"{{filterQuery}}\",\n" + "  \"sortType\": \"{{sortType}}\",\n"
+            + "  \"effectiveSearchPattern\": \"{{effectiveSearchPattern}}\",\n"
+            + "  \"defaultLogic\": {\n" + "    \"filterQuery\": \"{{filterQuery}}\",\n"
+            + "    \"sortType\": \"{{sortType}}\"\n" + "  },\n" + "  \"url\": \"{{url}}\",\n"
+            + "  \"type\": \"{{type}}\",\n" + "  \"rank\": {{rank}},\n"
+            + "  \"spel\": \"{{spel}}\"\n" + "}";
     Map<String, String> data = new HashMap<>();
     data.put("id", searchServiceData.getId());
-    data.put("searchTerm", searchServiceData.getSearchTerm());
+    data.put("searchTerm", searchServiceData.getSearchRulSearchTerm());
     data.put("filterQuery", searchServiceData.getFilterQuery());
     data.put("sortType", searchServiceData.getSortType());
     data.put("effectiveSearchPattern", searchServiceData.getEffectiveSearchPattern());
@@ -1499,27 +1498,20 @@ public class SearchServiceController extends ServiceApi {
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
-  public ResponseApi<GdnBaseRestResponse> rerankSearchRule(){
-    String BodyTemplate = "[\n" +
-        "  {\n" +
-        "    \"id\": \"{{id}}\",\n" +
-        "    \"searchTerm\": \"{{searchTerm}}\",\n" +
-        "    \"filterQuery\": \"{{filterQuery}}\",\n" +
-        "    \"sortType\": \"{{sortType}}\",\n" +
-        "    \"effectiveSearchPattern\": \"{{effectiveSearchPattern}}\",\n" +
-        "    \"defaultLogic\": {\n" +
-        "      \"filterQuery\": \"{{filterQuery}}\",\n" +
-        "      \"sortType\": \"{{sortType}}\"\n" +
-        "    },\n" +
-        "    \"url\": \"{{url}}\",\n" +
-        "    \"type\": \"{{type}}\",\n" +
-        "    \"rank\": {{rank}},\n" +
-        "    \"spel\": \"{{spel}}\"\n" +
-        "  }\n" +
-        "]";
+
+  public ResponseApi<GdnBaseRestResponse> rerankSearchRule() {
+    String BodyTemplate =
+        "[\n" + "  {\n" + "    \"id\": \"{{id}}\",\n" + "    \"searchTerm\": \"{{searchTerm}}\",\n"
+            + "    \"filterQuery\": \"{{filterQuery}}\",\n"
+            + "    \"sortType\": \"{{sortType}}\",\n"
+            + "    \"effectiveSearchPattern\": \"{{effectiveSearchPattern}}\",\n"
+            + "    \"defaultLogic\": {\n" + "      \"filterQuery\": \"{{filterQuery}}\",\n"
+            + "      \"sortType\": \"{{sortType}}\"\n" + "    },\n" + "    \"url\": \"{{url}}\",\n"
+            + "    \"type\": \"{{type}}\",\n" + "    \"rank\": {{rank}},\n"
+            + "    \"spel\": \"{{spel}}\"\n" + "  }\n" + "]";
     Map<String, String> data = new HashMap<>();
     data.put("id", searchServiceData.getId());
-    data.put("searchTerm", searchServiceData.getSearchTerm());
+    data.put("searchTerm", searchServiceData.getSearchRulSearchTerm());
     data.put("filterQuery", searchServiceData.getFilterQuery());
     data.put("sortType", searchServiceData.getSortType());
     data.put("effectiveSearchPattern", searchServiceData.getEffectiveSearchPattern());
@@ -1530,31 +1522,25 @@ public class SearchServiceController extends ServiceApi {
     data.put("rank", String.valueOf(searchServiceData.getRank()));
     data.put("spel", searchServiceData.getSpel());
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
-    Response response =
-        service("searchservice").body(bodyRequest).post("/api/search/intent-rules/search-rule/rerank");
+    Response response = service("searchservice").body(bodyRequest)
+        .post("/api/search/intent-rules/search-rule/rerank");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
+
   public ResponseApi<GdnBaseRestResponse> updateSearchRule() {
-    String BodyTemplate = "{\n" +
-        "  \"id\": \"{{id}}\",\n" +
-        "  \"searchTerm\": \"{{searchTerm}}\",\n" +
-        "  \"filterQuery\": \"{{filterQuery}}\",\n" +
-        "  \"sortType\": \"{{sortType}}\",\n" +
-        "  \"effectiveSearchPattern\": \"{{effectiveSearchPattern}}\",\n" +
-        "  \"defaultLogic\": {\n" +
-        "    \"filterQuery\": \"{{filterQuery}}\",\n" +
-        "    \"sortType\": \"{{sortType}}\"\n" +
-        "  },\n" +
-        "  \"url\": \"{{url}}\",\n" +
-        "  \"type\": \"{{type}}\",\n" +
-        "  \"rank\": {{rank}},\n" +
-        "  \"spel\": \"{{spel}}\"\n" +
-        "}";
+    String BodyTemplate =
+        "{\n" + "  \"id\": \"{{id}}\",\n" + "  \"searchTerm\": \"{{searchTerm}}\",\n"
+            + "  \"filterQuery\": \"{{filterQuery}}\",\n" + "  \"sortType\": \"{{sortType}}\",\n"
+            + "  \"effectiveSearchPattern\": \"{{effectiveSearchPattern}}\",\n"
+            + "  \"defaultLogic\": {\n" + "    \"filterQuery\": \"{{filterQuery}}\",\n"
+            + "    \"sortType\": \"{{sortType}}\"\n" + "  },\n" + "  \"url\": \"{{url}}\",\n"
+            + "  \"type\": \"{{type}}\",\n" + "  \"rank\": {{rank}},\n"
+            + "  \"spel\": \"{{spel}}\"\n" + "}";
     Map<String, String> data = new HashMap<>();
     data.put("id", searchServiceData.getId());
-    data.put("searchTerm", searchServiceData.getSearchTerm());
+    data.put("searchTerm", searchServiceData.getName());
     data.put("filterQuery", searchServiceData.getFilterQuery());
     data.put("sortType", searchServiceData.getSortType());
     data.put("effectiveSearchPattern", searchServiceData.getEffectiveSearchPattern());
@@ -1565,36 +1551,37 @@ public class SearchServiceController extends ServiceApi {
     data.put("rank", String.valueOf(searchServiceData.getRank()));
     data.put("spel", searchServiceData.getSpel());
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
-    Response response =
-        service("searchservice").body(bodyRequest).put("/api/search/intent-rules/search-rule/update");
+    Response response = service("searchservice").body(bodyRequest)
+        .put("/api/search/intent-rules/search-rule/update");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
   public ResponseApi<GdnRestListResponse<SearchRuleResponse>> getAllSearch() {
-    Response response = service("searchservice")
-        .queryParam("authenticator", searchServiceData.getAuthenticator())
-        .get("/api/search/intent-rules/search-rule/get-all");
+    Response response =
+        service("searchservice").queryParam("authenticator", searchServiceData.getAuthenticator())
+            .get("/api/search/intent-rules/search-rule/get-all");
     response.getBody().prettyPrint();
-    return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<SearchRuleResponse>>(){
+    return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<SearchRuleResponse>>() {
     });
   }
+
   public ResponseApi<GdnBaseRestResponse> deleteSearchRule() {
-    Response response = service("searchservice")
-        .queryParam("authenticator", searchServiceData.getAuthenticator())
-        .queryParam("id", searchServiceData.getAutoSearchId())
-        .delete("/api/search/intent-rules/search-rule/delete");
+    Response response =
+        service("searchservice").queryParam("authenticator", searchServiceData.getAuthenticator())
+            .queryParam("id", searchServiceData.getAutoSearchId())
+            .delete("/api/search/intent-rules/search-rule/delete");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
   public ResponseApi<GdnBaseRestResponse> deleteSearchRuleWithWrongId() {
-    Response response = service("searchservice")
-        .queryParam("authenticator", searchServiceData.getAuthenticator())
-        .queryParam("id", searchServiceData.getWrongid())
-        .delete("/api/search/intent-rules/search-rule/delete");
+    Response response =
+        service("searchservice").queryParam("authenticator", searchServiceData.getAuthenticator())
+            .queryParam("id", searchServiceData.getWrongid())
+            .delete("/api/search/intent-rules/search-rule/delete");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });

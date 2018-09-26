@@ -7,7 +7,7 @@ Feature: contextual search related api's
     When [search-service] send add flight mapping request
     Then [search-service] add flight request response success should be 'true'
 
-  @Regression @AddFlightWithoutMandatoryFields @Negetive
+  @Regression @AddFlightWithoutMandatoryFields @Negative
   Scenario: User adding flight without giving mandatory fields
     Given [search-service] prepare request to add flight without giving mandatory fields
     When [search-service] send add flight request without mandatory
@@ -25,7 +25,7 @@ Feature: contextual search related api's
     When [search-service] send delete flight mapping request
     Then [search-service] delete flight mapping request response success should be 'true'
 
-  @Regression @DeleteFlightWithWrongId @Negetive
+  @Regression @DeleteFlightWithWrongId @Negative
   Scenario: User want to delete flight with wrong id
     Given [search-service] prepare request to delete flight with wrong id
     When [search-service] send delete flight with wrong id request
@@ -43,7 +43,7 @@ Feature: contextual search related api's
     When [search-service] send add placeholder rules request
     Then [search-service] add placeholder rules request response success should be 'true'
 
-  @Regression @AddPlaceholderWithoutMandatoryFields @Negetive
+  @Regression @AddPlaceholderWithoutMandatoryFields @Negative
   Scenario: User adding placeholder without giving mandatory fields
     Given [search-service] prepare request to add placeholder without giving mandatory fields
     When [search-service] send add placeholder request without mandatory
@@ -55,7 +55,7 @@ Feature: contextual search related api's
     When [search-service] send update placeholder rule request
     Then [search-service] update placeholder rule request response success should be 'true'
 
-  @Regression @UpdatePlaceholderWithNonExistingId @Negetive
+  @Regression @UpdatePlaceholderWithNonExistingId @Negative
   Scenario: User want to update placeholder with non existing id
     Given [search-service] prepare request to update placeholder with non existing id
     When [search-service] send update placeholder with non existing id request
@@ -127,7 +127,7 @@ Feature: contextual search related api's
     When [search-service] send delete train mapping request
     Then [search-service] delete train mapping request response should be 'true'
 
-  @Regression @DeleteTrainMappingWithWrongId @Negetive
+  @Regression @DeleteTrainMappingWithWrongId @Negative
   Scenario: User want to delete train mapping with wrong id
     Given [search-service] prepare request to delete train mapping with wrong id
     When [search-service] send delete train mapping with wrong id request
