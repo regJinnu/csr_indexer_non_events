@@ -31,12 +31,6 @@ Feature: contextual search related api's
     When [search-service] send delete flight with wrong id request
     Then [search-service] delete flight with wrong id request response should be true
 
-  @Regression @GetAllPlaceholder @Placeholder
-  Scenario: User want to get all placeholder
-    Given [search-service] produce request to get all placeholder
-    When [search-service] send get all placeholder request
-    Then [search-service] get all placeholder request response success should be 'true'
-
   @Regression @AddPlaceholderRules @Placeholder
   Scenario: User want to add placeholder rules
     Given [search-service] prepare request to add placeholder rules
@@ -48,6 +42,12 @@ Feature: contextual search related api's
     Given [search-service] prepare request to add placeholder without giving mandatory fields
     When [search-service] send add placeholder request without mandatory
     Then [search-service] add placeholder without mandatory request response should be true
+
+  @Regression @GetAllPlaceholder @Placeholder
+  Scenario: User want to get all placeholder
+    Given [search-service] produce request to get all placeholder
+    When [search-service] send get all placeholder request
+    Then [search-service] get all placeholder request response success should be 'true'
 
   @Regression @UpdatePlaceholder @Placeholder
   Scenario: User want to update placeholder rule

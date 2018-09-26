@@ -1304,14 +1304,13 @@ public class SearchServiceController extends ServiceApi {
         });
   }
 
-  public ResponseApi<GdnBaseRestResponse> addTrainMapping(String id,
+  public ResponseApi<GdnBaseRestResponse> addTrainMapping(
       String trainSearchTerm,
       String trainMapping) {
     String BodyTemplate =
-        "{\n" + "  \"id\": \"" + id + "\",\n" + "  \"searchTerm\": \"" + trainSearchTerm + "\",\n"
+        "{\n" +"  \"searchTerm\": \"" + trainSearchTerm + "\",\n"
             + "  \"effectiveValue\": \"" + trainMapping + "\"\n" + "}";
     Map<String, String> data = new HashMap<>();
-    data.put("id", id);
     data.put("searchTerm", trainSearchTerm);
     data.put("effectiveValue", trainMapping);
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
@@ -1384,21 +1383,20 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnBaseRestResponse> deletePlaceholder() {
     Response response =
         service("searchservice").queryParam("authenticator", searchServiceData.getAuthenticator())
-            .queryParam("id", searchServiceData.getId())
+            .queryParam("id", searchServiceData.getAutoPlaceholderId())
             .delete(BASEPATH + "intent-rules/placeholder-rule/delete");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
 
-  public ResponseApi<GdnBaseRestResponse> saveFlight(String id,
+  public ResponseApi<GdnBaseRestResponse> saveFlight(
       String trainSearchTerm,
       String trainMapping) {
     String BodyTemplate =
-        "{\n" + "  \"id\": \"" + id + "\",\n" + "  \"searchTerm\": \"" + trainSearchTerm + "\",\n"
+        "{\n"+ " \"searchTerm\": \"" + trainSearchTerm + "\",\n"
             + "  \"effectiveValue\": \"" + trainMapping + "\"\n" + "}";
     Map<String, String> data = new HashMap<>();
-    data.put("id", id);
     data.put("searchTerm", trainSearchTerm);
     data.put("effectiveValue", trainMapping);
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
@@ -1409,16 +1407,15 @@ public class SearchServiceController extends ServiceApi {
     });
   }
 
-  public ResponseApi<GdnBaseRestResponse> addPlaceholderRules(String id,
+  public ResponseApi<GdnBaseRestResponse> addPlaceholderRules(
       String name,
       String searchTerm,
       String effectiveSearchPattern,
       String type) {
-    String BodyTemplate = "{\n" + "  \"id\": \"" + id + "\",\n" + "  \"name\": \"" + name + "\",\n"
+    String BodyTemplate = "{\n" + "  \"name\": \"" + name + "\",\n"
         + "  \"searchTerm\": \"" + searchTerm + "\",\n" + "  \"effectiveSearchPattern\": \""
         + effectiveSearchPattern + "\",\n" + "  \"type\": \"" + type + "\"\n" + "}";
     Map<String, String> data = new HashMap<>();
-    data.put("id", id);
     data.put("name", name);
     data.put("searchTerm", searchTerm);
     data.put("effectiveSearchPattern", effectiveSearchPattern);
@@ -1437,7 +1434,7 @@ public class SearchServiceController extends ServiceApi {
         + "  \"effectiveSearchPattern\": \"{{effectiveSearchPattern}}\",\n"
         + "  \"type\": \"{{type}}\"\n" + "}";
     Map<String, String> data = new HashMap<>();
-    data.put("id", searchServiceData.getId());
+    data.put("id", searchServiceData.getAutoPlaceholderId());
     data.put("name", searchServiceData.getName());
     data.put("searchTerm", searchServiceData.getSearchTerm());
     data.put("effectiveSearchPattern", searchServiceData.getEffectiveSearchPattern());
@@ -1471,7 +1468,7 @@ public class SearchServiceController extends ServiceApi {
 
   public ResponseApi<GdnBaseRestResponse> addSearchRule() {
     String BodyTemplate =
-        "{\n" + "  \"id\": \"{{id}}\",\n" + "  \"searchTerm\": \"{{searchTerm}}\",\n"
+        "{\n" + "  \"searchTerm\": \"{{searchTerm}}\",\n"
             + "  \"filterQuery\": \"{{filterQuery}}\",\n" + "  \"sortType\": \"{{sortType}}\",\n"
             + "  \"effectiveSearchPattern\": \"{{effectiveSearchPattern}}\",\n"
             + "  \"defaultLogic\": {\n" + "    \"filterQuery\": \"{{filterQuery}}\",\n"
@@ -1479,7 +1476,6 @@ public class SearchServiceController extends ServiceApi {
             + "  \"type\": \"{{type}}\",\n" + "  \"rank\": {{rank}},\n"
             + "  \"spel\": \"{{spel}}\"\n" + "}";
     Map<String, String> data = new HashMap<>();
-    data.put("id", searchServiceData.getId());
     data.put("searchTerm", searchServiceData.getSearchRulSearchTerm());
     data.put("filterQuery", searchServiceData.getFilterQuery());
     data.put("sortType", searchServiceData.getSortType());
@@ -1509,7 +1505,7 @@ public class SearchServiceController extends ServiceApi {
             + "    \"type\": \"{{type}}\",\n" + "    \"rank\": {{rank}},\n"
             + "    \"spel\": \"{{spel}}\"\n" + "  }\n" + "]";
     Map<String, String> data = new HashMap<>();
-    data.put("id", searchServiceData.getId());
+    data.put("id", searchServiceData.getAutoSearchId());
     data.put("searchTerm", searchServiceData.getSearchRulSearchTerm());
     data.put("filterQuery", searchServiceData.getFilterQuery());
     data.put("sortType", searchServiceData.getSortType());
@@ -1538,7 +1534,7 @@ public class SearchServiceController extends ServiceApi {
             + "  \"type\": \"{{type}}\",\n" + "  \"rank\": {{rank}},\n"
             + "  \"spel\": \"{{spel}}\"\n" + "}";
     Map<String, String> data = new HashMap<>();
-    data.put("id", searchServiceData.getId());
+    data.put("id", searchServiceData.getAutoSearchId());
     data.put("searchTerm", searchServiceData.getName());
     data.put("filterQuery", searchServiceData.getFilterQuery());
     data.put("sortType", searchServiceData.getSortType());

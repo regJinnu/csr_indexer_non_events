@@ -67,7 +67,6 @@ public class ContextualSearchSteps {
 
   @Given("^\\[search-service] prepare request to add a flight$")
   public void searchServicePrepareRequestToAddAFlight() {
-    searchServiceData.setId(searchServiceProperties.get("id"));
     searchServiceData.setTrainSearchTerm(searchServiceProperties.get("trainSearchTerm"));
     searchServiceData.setTrainMapping(searchServiceProperties.get("trainMapping"));
     valid = mongoHelper.countOfRecordsInCollection("flight_dictionary");
@@ -76,7 +75,7 @@ public class ContextualSearchSteps {
   @When("^\\[search-service] send add flight mapping request$")
   public void searchServiceSendAddFlightMappingRequest() {
     ResponseApi<GdnBaseRestResponse> response =
-        searchServiceController.saveFlight("5b0649b782ce7044d664bcc6", "testingapi", "2");
+        searchServiceController.saveFlight( "testingapi", "2");
     searchServiceData.setSearchServiceResponse(response);
   }
 
@@ -113,7 +112,6 @@ public class ContextualSearchSteps {
 
   @Given("^\\[search-service] prepare request to add placeholder rules$")
   public void searchServicePrepareRequestToAddPlaceholderRules() {
-    searchServiceData.setId(searchServiceProperties.get("id"));
     searchServiceData.setName(searchServiceProperties.get("name"));
     searchServiceData.setSearchTerm(searchServiceProperties.get("searchTerm"));
     searchServiceData.setEffectiveSearchPattern(searchServiceProperties.get("effectiveSearchPattern"));
@@ -124,7 +122,6 @@ public class ContextualSearchSteps {
   @When("^\\[search-service] send add placeholder rules request$")
   public void searchServiceSendAddPlaceholderRulesRequest() {
     ResponseApi<GdnBaseRestResponse> response = searchServiceController.addPlaceholderRules(
-        "5b0649b782ce7044d664bcc6",
         "testapi",
         "testingapi",
         "cheap",
@@ -162,7 +159,7 @@ public class ContextualSearchSteps {
     assertThat("is Success is wrong", result, equalTo(isSuccess));
     for (int i = 0; i < response.getResponseBody().getContent().size(); i++) {
       count++;
-      searchServiceData.setAutoPlaceholderId(response.getResponseBody()
+    searchServiceData.setAutoPlaceholderId(response.getResponseBody()
           .getContent()
           .get(i)
           .getId());
@@ -173,7 +170,7 @@ public class ContextualSearchSteps {
   @Given("^\\[search-service] prepare request to delete placeholder$")
   public void searchServicePrepareRequestToDeletePlaceholder() {
     searchServiceData.setAuthenticator(searchServiceProperties.get("authenticator"));
-    searchServiceData.setId(searchServiceProperties.get("id"));
+    searchServiceData.getAutoPlaceholderId();
     valid = mongoHelper.countOfRecordsInCollection("placeholder_im_rule");
   }
 
@@ -194,7 +191,6 @@ public class ContextualSearchSteps {
 
   @Given("^\\[search-service] prepare request to update placeholder rule$")
   public void searchServicePrepareRequestToUpdatePlaceholderRule() {
-    searchServiceData.setId(searchServiceProperties.get("id"));
     searchServiceData.setName(searchServiceProperties.get("name"));
     searchServiceData.setSearchTerm(searchServiceProperties.get("searchTerm"));
     searchServiceData.setEffectiveSearchPattern(searchServiceProperties.get("effectiveSearchPattern"));
@@ -247,7 +243,7 @@ public class ContextualSearchSteps {
   @When("^\\[search-service] send add flight request without mandatory$")
   public void searchServiceSendAddFlightRequestWithoutMandatory() {
     ResponseApi<GdnBaseRestResponse> response =
-        searchServiceController.saveFlight(null, null, null);
+        searchServiceController.saveFlight( null, null);
     searchServiceData.setSearchServiceResponse(response);
   }
 
@@ -265,7 +261,7 @@ public class ContextualSearchSteps {
   @When("^\\[search-service] send add placeholder request without mandatory$")
   public void searchServiceSendAddPlaceholderRequestWithoutMandatory() {
     ResponseApi<GdnBaseRestResponse> response =
-        searchServiceController.addPlaceholderRules(null, null, null, null, null);
+        searchServiceController.addPlaceholderRules(null, null, null, null);
     searchServiceData.setSearchServiceResponse(response);
   }
 
@@ -320,7 +316,6 @@ public class ContextualSearchSteps {
 
   @Given("^\\[search-service] prepare request to add search rule$")
   public void searchServicePrepareRequestToAddSearchRule() {
-    searchServiceData.setId(searchServiceProperties.get("id"));
     searchServiceData.setSearchRulSearchTerm(searchServiceProperties.get("searchRulSearchTerm"));
     searchServiceData.setFilterQuery(searchServiceProperties.get("filterQuery"));
     searchServiceData.setSortType(searchServiceProperties.get("sortType"));
@@ -398,7 +393,6 @@ public class ContextualSearchSteps {
 
   @Given("^\\[search-service] prepare request to rerank search rule$")
   public void searchServicePrepareRequestToRerankSearchRule() {
-    searchServiceData.setId(searchServiceProperties.get("id"));
     searchServiceData.setSearchRulSearchTerm(searchServiceProperties.get("searchRulSearchTerm"));
     searchServiceData.setFilterQuery(searchServiceProperties.get("filterQuery"));
     searchServiceData.setSortType(searchServiceProperties.get("sortType"));
@@ -424,7 +418,6 @@ public class ContextualSearchSteps {
 
   @Given("^\\[search-service] prepare request to update search rule$")
   public void searchServicePrepareRequestToUpdateSearchRule() {
-    searchServiceData.setId(searchServiceProperties.get("id"));
     searchServiceData.setName(searchServiceProperties.get("name"));
     searchServiceData.setFilterQuery(searchServiceProperties.get("filterQuery"));
     searchServiceData.setSortType(searchServiceProperties.get("sortType"));
@@ -457,7 +450,6 @@ public class ContextualSearchSteps {
 
   @Given("^\\[search-service] prepare add train mapping request$")
   public void searchServicePrepareAddTrainMappingRequest() {
-    searchServiceData.setId(searchServiceProperties.get("id"));
     searchServiceData.setTrainSearchTerm(searchServiceProperties.get("trainSearchTerm"));
     searchServiceData.setTrainMapping(searchServiceProperties.get("trainMapping"));
     valid = mongoHelper.countOfRecordsInCollection("train_dictionary");
@@ -466,7 +458,7 @@ public class ContextualSearchSteps {
   @When("^\\[search-service] send add train mapping request$")
   public void searchServiceSendAddTrainMappingRequest() {
     ResponseApi<GdnBaseRestResponse> response =
-        searchServiceController.addTrainMapping("5b0649b782ce7044d664bcc6", "testingapi", "2");
+        searchServiceController.addTrainMapping("testingapi", "2");
     searchServiceData.setSearchServiceResponse(response);
   }
 
