@@ -122,10 +122,10 @@ public class ItemChangeEventSteps {
   }
 
 
-  @Given("^\\[search-service] test product is added in SOLR$")
-  public void addTestDataToSolrBeforeItemChangeEvent(){
-        SolrHelper.addSolrDocumentForItemChangeEvent("AAA-60015-00008-00001","AAA-60015-00008","MTA-66666");
-        SolrHelper.addSolrDocumentForItemChangeEvent("AAA-60015-00008-00002","AAA-60015-00008","MTA-66666");
+  @Given("^\\[search-service] test product is added in SOLR for '(.*)'$")
+  public void addTestDataToSolrBeforeItemChangeEvent(String eventType){
+        SolrHelper.addSolrDocumentForItemChangeEvent("AAA-60015-00008-00001","AAA-60015-00008","MTA-66666",eventType);
+        SolrHelper.addSolrDocumentForItemChangeEvent("AAA-60015-00008-00002","AAA-60015-00008","MTA-66666",eventType);
     try {
       assertThat("Test Data Not inserted in SOLR",
           SolrHelper.getSolrProdCount("id:AAA-60015-00008-00001",SELECT_HANDLER),

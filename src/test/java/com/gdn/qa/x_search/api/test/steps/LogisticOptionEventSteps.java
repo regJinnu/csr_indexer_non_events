@@ -2,7 +2,6 @@ package com.gdn.qa.x_search.api.test.steps;
 
 import com.gdn.common.web.wrapper.response.GdnBaseRestResponse;
 import com.gdn.qa.automation.core.restassured.ResponseApi;
-import com.gdn.qa.x_search.api.test.Constants.UrlConstants;
 import com.gdn.qa.x_search.api.test.CucumberStepsDefinition;
 import com.gdn.qa.x_search.api.test.api.services.SearchServiceController;
 import com.gdn.qa.x_search.api.test.data.SearchServiceData;
@@ -15,8 +14,8 @@ import cucumber.api.java.en.When;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_DEFAULT_COLLECTION;
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SELECT_HANDLER;
+import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_DEFAULT_COLLECTION;
 import static com.gdn.qa.x_search.api.test.utils.SolrHelper.solrCommit;
 import static com.gdn.qa.x_search.api.test.utils.SolrHelper.updateSolrDataForAutomation;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -78,7 +77,7 @@ public class LogisticOptionEventSteps {
 
   @When("^\\[search-service] consumes logistic option event for a merchant containing test product$")
   public void searchConsumesLogisticOptionChangeEvent(){
-    kafkaHelper.publishLogisticOptionChange("TH7-15791","EXPRESS","CM");
+    kafkaHelper.publishLogisticOptionChange("TOQ-16110","EXPRESS","CM");
     try {
       Thread.sleep(60000);
       solrCommit(SOLR_DEFAULT_COLLECTION);
@@ -133,7 +132,7 @@ public class LogisticOptionEventSteps {
 
   @When("^\\[search-service] receives ORIGIN CHANGE event$")
   public void searchConsumesOriginChangeEvent(){
-
+    kafkaHelper.publishLogisticProductOriginsChangeEvent();
   }
 
   @When("^\\[search-service] run api to convert High to Low")

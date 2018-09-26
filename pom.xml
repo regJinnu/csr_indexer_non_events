@@ -28,8 +28,8 @@
         <serenity.testlink.integration.version>3.4.3</serenity.testlink.integration.version>
         <testlink.devkey>b0f60503e7aab68af1e6072faf5124d6</testlink.devkey>
         <testlink.project>X-Search</testlink.project>
-        <testlink.plan>Minor_Deployment_2018-08-20_X-SEARCH_New</testlink.plan>
-        <testlink.build>QA1_4.2.0-7</testlink.build>
+        <testlink.plan>HotFix_Deployment_2018-09-04</testlink.plan>
+        <testlink.build>4.3.2-7_QA-2</testlink.build>
     </properties>
 
     <dependencies>
@@ -124,6 +124,12 @@
                     <groupId>com.google.guava</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.1.54</version>
         </dependency>
     </dependencies>
 

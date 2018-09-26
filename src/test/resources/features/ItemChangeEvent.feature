@@ -1,4 +1,4 @@
-@XproductEventHandlingFeature @TestSuiteID=9474896
+@XproductEventHandlingFeature @TestSuiteID=9566460
 Feature:Verifying item and product change event listeners
 
   @ItemChangeEvent
@@ -9,7 +9,7 @@ Feature:Verifying item and product change event listeners
 
   @ItemChangeDeleteEvent
   Scenario: Verify item change event when isArchived is set to true
-    Given [search-service] test product is added in SOLR
+    Given [search-service] test product is added in SOLR for 'itemChangeEvent'
     When [search-service] consumes item change event with isArchived is set to true
     Then [search-service] deletes only the item sku of test product from SOLR
     And [search-service] Db entry is created for the Sku in deleted product collection
@@ -22,7 +22,7 @@ Feature:Verifying item and product change event listeners
 
   @ProductChangeDeleteEvent
   Scenario:  Verify product change event when markForDelete is set to true
-    Given [search-service] test product is added in SOLR
+    Given [search-service] test product is added in SOLR for 'productChangeEvent'
     When [search-service] consumes item change event with markForDelete set to true
     Then [search-service] deletes the test product from SOLR
     Then [search-service] Db entry is created for the productCode in deleted product collection

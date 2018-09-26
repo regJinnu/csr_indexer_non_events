@@ -89,6 +89,6 @@ public class ProductControllerSteps {
      ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
      boolean result = response.getResponseBody().isSuccess();
      assertThat("is Success is wrong", result, equalTo(isSuccess));
-     String Response=response.getResponseBody().getErrorMessage();
+
   }
 }

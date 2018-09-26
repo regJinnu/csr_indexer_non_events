@@ -49,6 +49,8 @@ public class SolrResults {
   private Double offerPrice;
   @Field
   private Double listPrice;
+  @Field("campaign_CAMP-0001")
+  private String campaignName;
 
   public SolrResults(String brandSearch,
       String description,
@@ -70,7 +72,7 @@ public class SolrResults {
       int isDelayShipping,
       ArrayList<String> logisticOptions,
       Double offerPrice,
-      Double listPrice) {
+      Double listPrice,String campaignName) {
     this.brandSearch = brandSearch;
     this.description = description;
     this.level0Id = level0Id;
@@ -92,11 +94,20 @@ public class SolrResults {
     this.logisticOptions = logisticOptions;
     this.offerPrice = offerPrice;
     this.listPrice = listPrice;
+    this.campaignName = campaignName;
   }
 
 
   public SolrResults(){
 
+  }
+
+  public String getCampaignName() {
+    return campaignName;
+  }
+
+  public void setCampaignName(String campaignName) {
+    this.campaignName = campaignName;
   }
 
   public int getCategorySequenceAN(){

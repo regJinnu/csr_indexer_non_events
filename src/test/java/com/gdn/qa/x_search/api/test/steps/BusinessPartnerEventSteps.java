@@ -12,6 +12,8 @@ import cucumber.api.java.en.When;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SELECT_HANDLER;
+import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_DEFAULT_COLLECTION;
 import static com.gdn.qa.x_search.api.test.utils.SolrHelper.solrCommit;
 import static com.gdn.qa.x_search.api.test.utils.SolrHelper.updateSolrDataForAutomation;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -48,25 +50,26 @@ public class BusinessPartnerEventSteps {
     try {
 
       int status = updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),
-          "/select",
+          SELECT_HANDLER,
           "id",
           1,
           "closedStore");
       assertThat("Updating SOLR fields for test failed", status, equalTo(0));
-      solrCommit("productCollection4206");
+      solrCommit(SOLR_DEFAULT_COLLECTION);
+      
 
       int isDelayShipping =
-          SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(), "/select", "isDelayShipping", 1)
+          SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "isDelayShipping", 1)
               .get(0)
               .getIsDelayShipping();
 
       long startDateStoreClosed =
-          SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(), "/select", "startDateStoreClosed", 1)
+          SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "startDateStoreClosed", 1)
               .get(0)
               .getStartDateStoreClosed();
 
       long endDateStoreClosed =
-          SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(), "/select", "endDateStoreClosed", 1)
+          SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "endDateStoreClosed", 1)
               .get(0)
               .getEndDateStoreClosed();
 
@@ -87,7 +90,7 @@ public class BusinessPartnerEventSteps {
 
     try {
       Thread.sleep(60000);
-      solrCommit("productCollection4206");
+      solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -98,12 +101,12 @@ public class BusinessPartnerEventSteps {
 
     try {
       long startDateStoreClosed =
-          SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(), "/select", "startDateStoreClosed", 1)
+          SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "startDateStoreClosed", 1)
               .get(0)
               .getStartDateStoreClosed();
 
       long endDateStoreClosed =
-          SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(), "/select", "endDateStoreClosed", 1)
+          SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "endDateStoreClosed", 1)
               .get(0)
               .getEndDateStoreClosed();
 
@@ -121,7 +124,7 @@ public class BusinessPartnerEventSteps {
 
     try {
 
-      int isDelayShippingActual = SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(), "/select", "isDelayShipping", 1)
+      int isDelayShippingActual = SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "isDelayShipping", 1)
           .get(0)
           .getIsDelayShipping();
 
@@ -139,7 +142,7 @@ public class BusinessPartnerEventSteps {
 
     SolrHelper.addSolrDocument();
     try {
-      assertThat(SolrHelper.getSolrProdCount("id:AAA-60015-00008-00001-PP-3001012","/select"),equalTo(1L));
+      assertThat(SolrHelper.getSolrProdCount("id:AAA-60015-00008-00001-PP-3001012",SELECT_HANDLER),equalTo(1L));
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -152,7 +155,7 @@ public class BusinessPartnerEventSteps {
     kafkaHelper.publishBPprofileFieldUpdateEvent("AAA-60015");
     try {
       Thread.sleep(60000);
-      solrCommit("productCollection4206");
+      solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -162,7 +165,7 @@ public class BusinessPartnerEventSteps {
   @Then("^\\[search-service] cnc true is removed for all products under that merchant$")
   public void checkCncIsRemoved(){
     try {
-      assertThat(SolrHelper.getSolrProdCount("id:AAA-60015-00008-00001-PP-3001012","/select"),equalTo(0L));
+      assertThat(SolrHelper.getSolrProdCount("id:AAA-60015-00008-00001-PP-3001012",SELECT_HANDLER),equalTo(0L));
     } catch (Exception e) {
       e.printStackTrace();
     }

@@ -4,9 +4,9 @@ import redis.clients.jedis.Jedis;
 
 public class RedisHelper {
 
-  public static Jedis jedis;
+  private static Jedis jedis;
 
-  public static void init(String redisHost,String redisPort) {
+  private static void init(String redisHost,String redisPort) {
     jedis = new Jedis(redisHost,Integer.parseInt(redisPort));
     System.out.println("Connection to server sucessfully");
   }

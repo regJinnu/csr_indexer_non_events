@@ -12,6 +12,7 @@ import cucumber.api.java.en.When;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_DEFAULT_COLLECTION;
 import static com.gdn.qa.x_search.api.test.utils.SolrHelper.solrCommit;
 import static com.gdn.qa.x_search.api.test.utils.SolrHelper.updateSolrDataForAutomation;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -44,10 +45,10 @@ public class InventoryEventSteps {
     searchServiceData.setQueryForReindex(searchServiceProperties.get("queryForReindex"));
 
     try {
-
+      
       int status = updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),"/select","id",1,"nonOOS");
       assertThat("Updating isInStock field in SOLR failed",status,equalTo(0));
-      solrCommit("productCollection4206");
+      solrCommit(SOLR_DEFAULT_COLLECTION);
 
       int oosFlag = SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1).get(0).getIsInStock();
       log.warn("-----Product Set non OOS before test---{}",oosFlag);
@@ -66,7 +67,7 @@ public class InventoryEventSteps {
 
     try {
       Thread.sleep(10000);
-      solrCommit("productCollection4206");
+      solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -96,7 +97,7 @@ public class InventoryEventSteps {
 
       int status = updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),"/select","id",1,"oos");
       assertThat("Updating isInStock field in SOLR failed",status,equalTo(0));
-      solrCommit("productCollection4206");
+      solrCommit(SOLR_DEFAULT_COLLECTION);
 
       int oosFlag = SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1).get(0).getIsInStock();
       assertThat("Product OOS",oosFlag,equalTo(0));
@@ -115,7 +116,7 @@ public class InventoryEventSteps {
 
     try {
       Thread.sleep(10000);
-      solrCommit("productCollection4206");
+      solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
     }

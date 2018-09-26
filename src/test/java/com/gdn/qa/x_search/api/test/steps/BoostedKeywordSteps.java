@@ -18,9 +18,7 @@ import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
+import static org.hamcrest.Matchers.*;
 
 @CucumberStepsDefinition
 public class BoostedKeywordSteps {
