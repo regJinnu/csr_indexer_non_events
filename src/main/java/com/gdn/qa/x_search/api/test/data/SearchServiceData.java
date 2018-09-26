@@ -96,17 +96,6 @@ public class SearchServiceData {
   private String campaignFieldInSOLR;
   private String campaignCodeList;
   private String itemSkuForRemove;
-  private int errorMessage;
-  private String unSyncProduct;
-  private String queryForUnsyncProduct;
-  private String campaignName;
-  private String campaignCode;
-  private String campaignProductSku;
-  private String campaignItemSku;
-  private String campaignDiscount;
-  private String campaignFieldInSOLR;
-  private String campaignCodeList;
-  private String itemSkuForRemove;
   private String filterQuery;
   private String sortType;
   private String url;
