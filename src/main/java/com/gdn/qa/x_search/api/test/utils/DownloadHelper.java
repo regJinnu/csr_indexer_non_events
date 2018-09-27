@@ -3,7 +3,6 @@ package com.gdn.qa.x_search.api.test.utils;
 
 import com.jcraft.jsch.*;
 import lombok.extern.slf4j.Slf4j;
-
 import java.io.*;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -182,27 +181,6 @@ public class DownloadHelper {
 
     return stringBuffer.toString();
   }
-
-
-/*  public static void main(String[] args) {
-
-
-    DownloadHelper downloadHelper = new DownloadHelper(SERVER_IP, SERVER_PORT, SERVER_USERNAME, SERVER_PASSWORD);
-
-    Vector<ChannelSftp.LsEntry> files =
-        downloadHelper.checkNumberOfFiles(DOWNLOAD_GEN_FULL_FEED_FOR_FACEBOOK);
-
-    File dir = new File(LOCAL_STORAGE_LOCATION);
-
-    downloadHelper.purgeDirectory(dir);
-
-    for (ChannelSftp.LsEntry lsEntry:files) {
-
-      downloadHelper.download(DOWNLOAD_GEN_FULL_FEED_FOR_FACEBOOK+lsEntry.getFilename(),LOCAL_STORAGE_LOCATION);
-
-    }
-
-  }*/
 
 
 }
