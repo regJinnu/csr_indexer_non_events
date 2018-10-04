@@ -1,4 +1,4 @@
-@PromotionRelatedEvents
+@PromotionRelatedEventsFeature
 
 Feature:Promotion related events
 

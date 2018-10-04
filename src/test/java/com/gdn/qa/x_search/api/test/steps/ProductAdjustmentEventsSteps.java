@@ -8,6 +8,7 @@ import com.gdn.qa.x_search.api.test.utils.SolrHelper;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import net.thucydides.core.steps.ScenarioSteps;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
@@ -20,7 +21,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 
 @CucumberStepsDefinition
-public class ProductAdjustmentEventsSteps {
+public class ProductAdjustmentEventsSteps  extends ScenarioSteps {
   @Autowired
   private SearchServiceProperties searchServiceProperties;
 
@@ -49,7 +50,7 @@ public class ProductAdjustmentEventsSteps {
         Long.valueOf(searchServiceData.getPromoValue()),
         searchServiceData.isPromoActivated());
     try {
-      Thread.sleep(30000);
+      waitABit(30000);
       solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
@@ -87,7 +88,7 @@ public class ProductAdjustmentEventsSteps {
         searchServiceData.getPromoBundlingType(),
         Collections.singletonList(searchServiceData.getComplementaryProducts()));
     try {
-      Thread.sleep(50000);
+      waitABit(50000);
       solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
@@ -117,7 +118,7 @@ public class ProductAdjustmentEventsSteps {
     kafkaHelper.promoBundlingDeactivatedEvent(searchServiceData.getPromoItemSKU(),
         searchServiceData.getPromoBundlingType());
     try {
-      Thread.sleep(50000);
+      waitABit(50000);
       solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
