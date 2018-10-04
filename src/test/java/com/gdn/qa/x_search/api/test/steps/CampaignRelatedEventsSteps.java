@@ -10,7 +10,6 @@ import com.mongodb.client.FindIterable;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import net.thucydides.core.steps.ScenarioSteps;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -26,7 +25,7 @@ import static org.hamcrest.Matchers.equalTo;
  */
 
 @CucumberStepsDefinition
-public class CampaignRelatedEventsSteps extends ScenarioSteps {
+public class CampaignRelatedEventsSteps {
 
   @Autowired
   private SearchServiceProperties searchServiceProperties;
@@ -59,7 +58,7 @@ public class CampaignRelatedEventsSteps extends ScenarioSteps {
         Double.valueOf(searchServiceData.getCampaignDiscount()));
 
     try {
-      waitABit(30000);
+      Thread.sleep(30000);
       solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
@@ -92,7 +91,7 @@ public class CampaignRelatedEventsSteps extends ScenarioSteps {
     kafkaHelper.campaignLiveEvent(searchServiceData.getCampaignCodeList(),
         "CAMP-0001",false,"",false);
     try {
-      waitABit(30000);
+      Thread.sleep(30000);
       solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
@@ -119,7 +118,7 @@ public class CampaignRelatedEventsSteps extends ScenarioSteps {
   public void searchServicePublishTheCampaignStopEvent() {
     kafkaHelper.campaignStopEvent(searchServiceData.getCampaignCode(), false);
     try {
-      waitABit(50000);
+      Thread.sleep(50000);
       solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
@@ -158,7 +157,7 @@ public class CampaignRelatedEventsSteps extends ScenarioSteps {
   public void searchServicePublishTheCampaignEndEvent() {
     kafkaHelper.campaignEndEvent(searchServiceData.getCampaignCodeList(), false);
     try {
-     waitABit(50000);
+     Thread.sleep(50000);
       solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
@@ -195,7 +194,7 @@ public class CampaignRelatedEventsSteps extends ScenarioSteps {
         searchServiceData.getItemSkuForRemove(),
         Double.valueOf(searchServiceData.getCampaignDiscount()));
     try {
-      waitABit(50000);
+      Thread.sleep(50000);
       solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
@@ -241,7 +240,7 @@ public class CampaignRelatedEventsSteps extends ScenarioSteps {
         searchServiceData.getTagLabel(),
         searchServiceData.isExclusive());
     try {
-      waitABit(30000);
+      Thread.sleep(30000);
       solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
@@ -308,7 +307,7 @@ public class CampaignRelatedEventsSteps extends ScenarioSteps {
         searchServiceData.getItemSkuForRemove(),
         Double.valueOf(searchServiceData.getCampaignDiscount()));
     try {
-      waitABit(50000);
+      Thread.sleep(50000);
       solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
@@ -340,7 +339,7 @@ public class CampaignRelatedEventsSteps extends ScenarioSteps {
   public void searchServicePublishTheCampaignEndEventWithExclusiveFlag() throws Throwable {
     kafkaHelper.campaignEndEvent(searchServiceData.getCampaignCodeList(), false);
     try {
-      waitABit(50000);
+      Thread.sleep(50000);
       solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
@@ -378,7 +377,7 @@ public class CampaignRelatedEventsSteps extends ScenarioSteps {
   public void searchServicePublishTheCampaignStopEventWithExclusiveFlag() throws Throwable {
     kafkaHelper.campaignStopEvent(searchServiceData.getCampaignCode(), false);
     try {
-      waitABit(50000);
+      Thread.sleep(50000);
       solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
