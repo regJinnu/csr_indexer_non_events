@@ -51,6 +51,8 @@ public class SolrResults {
   private Double listPrice;
   @Field("campaign_CAMP-0001")
   private String campaignName;
+  @Field
+  private boolean storeClose;
 
   public SolrResults(String brandSearch,
       String description,
@@ -72,7 +74,7 @@ public class SolrResults {
       int isDelayShipping,
       ArrayList<String> logisticOptions,
       Double offerPrice,
-      Double listPrice,String campaignName) {
+      Double listPrice,String campaignName,boolean storeClose) {
     this.brandSearch = brandSearch;
     this.description = description;
     this.level0Id = level0Id;
@@ -95,11 +97,21 @@ public class SolrResults {
     this.offerPrice = offerPrice;
     this.listPrice = listPrice;
     this.campaignName = campaignName;
+    this.storeClose = storeClose;
   }
 
 
   public SolrResults(){
 
+  }
+
+
+  public boolean isStoreClose() {
+    return storeClose;
+  }
+
+  public void setStoreClose(boolean storeClose) {
+    this.storeClose = storeClose;
   }
 
   public String getCampaignName() {
@@ -126,7 +138,6 @@ public class SolrResults {
     this.isInStock = isInStock;
   }
 
-
   public Double getOfferPrice() {
     return offerPrice;
   }
@@ -142,7 +153,6 @@ public class SolrResults {
   public void setListPrice(Double listPrice) {
     this.listPrice = listPrice;
   }
-
 
   public String getNameSearch() {
     return nameSearch;

@@ -5,8 +5,13 @@ package com.gdn.qa.x_search.api.test.data;
  * @project X-search
  */
 
+import lombok.Builder;
+import lombok.Data;
+
 import java.util.List;
 
+@Data
+@Builder
 public class CampaignEndEvent {
   private List<String> campaignCodeList;
   boolean markForDelete;

@@ -1,6 +1,7 @@
 package com.gdn.qa.x_search.api.test.utils;
 
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
@@ -8,8 +9,11 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.MONGO_SERVER_ADDRESS;
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.MONGO_SERVER_PORT;
@@ -50,6 +54,11 @@ public class MongoHelper {
     collection.updateOne(eq(queryField,queryValue),combine(set(updateField,updateValue)));
   }
 
+  public void updateAllMongo(String collectionName,String updateField, Date updateValue){
+    MongoCollection<Document> collection = initializeDatabase(collectionName);
+    collection.updateMany(new BasicDBObject(),combine(set(updateField,updateValue)));
+  }
+
   public void insertInMongo(String collectionName,Document document){
     MongoCollection<Document> collection = initializeDatabase(collectionName);
     collection.insertOne(document);
@@ -63,6 +72,28 @@ public class MongoHelper {
   public void deleteAllFromMongo(String collectionName){
     MongoCollection<Document> collection = initializeDatabase(collectionName);
     collection.deleteMany(new Document());
+  }
+
+
+  public String getSpecificFieldfromMongoDocument(FindIterable<Document> findIterable,String fieldToExtract){
+
+    String result="";
+
+
+    for (Document document:findIterable
+    ) {
+      result = document.toJson();
+    }
+
+    try {
+      JSONParser parser = new JSONParser();
+      JSONObject jsonObject = (JSONObject) parser.parse(result);
+      return (String) jsonObject.get(fieldToExtract);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    return result;
   }
 
   //Example to show update with multiple filter conditions

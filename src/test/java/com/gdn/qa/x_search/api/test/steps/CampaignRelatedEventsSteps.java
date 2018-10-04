@@ -86,7 +86,7 @@ public class CampaignRelatedEventsSteps {
 
   @When("^\\[search-service] publish the campaign live event$")
   public void searchServicePublishTheCampaignLiveEvent() {
-    kafkaHelper.campaignLiveEvent(searchServiceData.getCampaignCodeList(), false);
+    kafkaHelper.campaignLiveEvent(searchServiceData.getCampaignCodeList(), "CAMP-0001",false,"",false);
     try {
       Thread.sleep(30000);
       solrCommit(SOLR_DEFAULT_COLLECTION);
@@ -108,6 +108,7 @@ public class CampaignRelatedEventsSteps {
   @Given("^\\[search-service] set list of campaign codes to stop$")
   public void searchServiceSetListOfCampaignCodesToStop() {
     searchServiceData.setCampaignCode(searchServiceProperties.get("campaignCode"));
+    searchServiceData.setCampaignProductSku(searchServiceProperties.get("campaignProductSku"));
   }
 
   @When("^\\[search-service] publish the campaign stop event$")
@@ -136,7 +137,7 @@ public class CampaignRelatedEventsSteps {
               SELECT_HANDLER,
               "campaign_CAMP-0001:[* TO *]");
 
-      assertThat("SOLR data not updated",countWithFq, equalTo(2L));
+      assertThat("SOLR data not updated",countWithFq, equalTo(1L));
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -151,6 +152,7 @@ public class CampaignRelatedEventsSteps {
 
   @When("^\\[search-service] publish the campaign end event$")
   public void searchServicePublishTheCampaignEndEvent() {
+    kafkaHelper.campaignLiveEvent(searchServiceData.getCampaignCodeList(), "CAMP-0001",false,"",false);
     kafkaHelper.campaignEndEvent(searchServiceData.getCampaignCodeList(), false);
     try {
       Thread.sleep(50000);
@@ -180,7 +182,7 @@ public class CampaignRelatedEventsSteps {
     searchServiceData.setCampaignProductSku(searchServiceProperties.get("campaignProductSku"));
     searchServiceData.setItemSkuForRemove(searchServiceProperties.get("itemSkuForRemove"));
     searchServiceData.setCampaignDiscount(searchServiceProperties.get("campaignDiscount"));
-    searchServiceData.setCampaignFieldInSOLR(searchServiceProperties.get(""));
+    searchServiceData.setCampaignFieldInSOLR(searchServiceProperties.get("campaignFieldInSOLR"));
   }
 
   @When("^\\[search-service] publish the campaign remove event$")
