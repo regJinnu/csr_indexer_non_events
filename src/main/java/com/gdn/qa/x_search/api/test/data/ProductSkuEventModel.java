@@ -14,4 +14,5 @@ public class ProductSkuEventModel {
   private String productSku;
   private String itemSku;
   private Double discount;
+  private int quota;
 }

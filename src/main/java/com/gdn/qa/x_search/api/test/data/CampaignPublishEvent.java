@@ -19,4 +19,6 @@ public class CampaignPublishEvent {
   private Date promotionEndTime;
   private String campaignCode;
   private List<ProductSkuEventModel> skuList;
+  private String tagLabel;
+  private boolean exclusive;
 }
