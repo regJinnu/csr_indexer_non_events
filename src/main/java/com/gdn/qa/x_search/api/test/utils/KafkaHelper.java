@@ -215,8 +215,89 @@ private ApplicationContext applicationContext;
     }
   }
 
-  public void campaignRemoveEvent(
+  public void publishCampaignEventExclusive(String campaignName,
       String campaignCode,
+      String productSku,
+      String itemSku,
+      Double discount,
+      int quota,
+      String tagLabel,
+      boolean exclusive) {
+
+    Date date = new Date();
+    DateTime dtStart = new DateTime(date);
+    DateTime dtEnd = dtStart.plusDays(1);
+
+    String itemSku1 = itemSku.split(",")[0];
+    String itemSku2 = itemSku.split(",")[1];
+
+    ProductSkuEventModel productSkuEventModel1 = ProductSkuEventModel.builder()
+        .productSku(productSku)
+        .itemSku(itemSku1)
+        .discount(discount)
+        .quota(quota)
+        .build();
+
+    ProductSkuEventModel productSkuEventModel2 = ProductSkuEventModel.builder()
+        .productSku(productSku)
+        .itemSku(itemSku2)
+        .discount(discount)
+        .quota(quota)
+        .build();
+
+    List<ProductSkuEventModel> skuList = new ArrayList<>();
+    skuList.add(productSkuEventModel1);
+    skuList.add(productSkuEventModel2);
+
+
+    CampaignPublishEvent campaignPublishEvent = CampaignPublishEvent.builder()
+        .timestamp(System.currentTimeMillis())
+        .campaignName(campaignName)
+        .campaignCode(campaignCode)
+        .skuList(skuList)
+        .promotionStartTime(dtStart.toDate())
+        .promotionEndTime(dtEnd.toDate())
+        .tagLabel(tagLabel)
+        .exclusive(true)
+        .build();
+    try {
+      kafkaSender.send("com.gdn.x.campaign.published",
+          objectMapper.writeValueAsString(campaignPublishEvent));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void campaignLiveEventExclusive(String campaignCode,
+      String campaignName,
+      String tagLabel,
+      boolean exclusive) {
+    Date date = new Date();
+    DateTime dtStart = new DateTime(date);
+    DateTime dtEnd = dtStart.plusDays(1);
+
+    CampaignEventModel campaignEventModel = CampaignEventModel.builder()
+        .campaignCode(campaignCode)
+        .campaignName(campaignName)
+        .promotionEndTime(dtEnd.toDate())
+        .promotionStartTime(dtStart.toDate())
+        .exclusive(true)
+        .tagLabel(tagLabel)
+        .build();
+
+    CampaignLiveExclusive campaignLiveExclusive = CampaignLiveExclusive.builder()
+        .campaigns(Collections.singletonList(campaignEventModel))
+        .build();
+    try {
+      kafkaSender.send("com.gdn.x.campaign.live",
+          objectMapper.writeValueAsString(campaignLiveExclusive));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+
+  }
+
+  public void campaignRemoveEvent(String campaignCode,
       String productSku,
       String itemSkuForRemove,
       Double discount){
@@ -296,6 +377,72 @@ private ApplicationContext applicationContext;
     } catch (JsonProcessingException e) {
       e.printStackTrace();
     }
+  }
+
+  public void productAdjustmentChangeEvent(String adjustmentName,
+      String description,
+      String promoItemSKU,
+      long promoValue,
+      boolean promoActivated) {
+    Date date = new Date();
+    DateTime dtStart = new DateTime(date);
+    DateTime dtEnd = dtStart.plusDays(1);
+    AdjustmentProductChangeModel adjustmentProductChangeModel=AdjustmentProductChangeModel.builder()
+        .timestamp(System.currentTimeMillis())
+        .adjustmentName(adjustmentName)
+        .productSku(promoItemSKU)
+        .description(description)
+        .value(promoValue)
+        .activated(promoActivated)
+        .endDate(dtEnd.toDate())
+        .startDate(dtStart.toDate()).build();
+    try {
+      kafkaSender.send("com.gdn.x.promotion.adjustment.product.change",
+          objectMapper.writeValueAsString(adjustmentProductChangeModel));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void promoBundlingActivateEvent(
+      String promoBundlingId,
+       String promoItemSKU,
+       String promoBundlingType,
+       List<String> complementaryProducts){
+    Date date = new Date();
+    DateTime presentDate = new DateTime(date);
+    DateTime dtStart=presentDate.plusDays(1);
+    DateTime dtEnd = dtStart.plusDays(1);
+    PromoBundlingActivateModel promoBundlingModel= PromoBundlingActivateModel.builder()
+        .promoBundlingId(promoBundlingId)
+        .mainItemSku(promoItemSKU)
+        .promoBundlingType(promoBundlingType)
+        .storeId("10001")
+        .startDate(dtStart.toDate())
+        .endDate(dtEnd.toDate())
+        .complementaryProducts(complementaryProducts).build();
+    try {
+      kafkaSender.send("com.gdn.x.promotion.promo.bundling.activated",
+          objectMapper.writeValueAsString(promoBundlingModel));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void promoBundlingDeactivatedEvent(
+  String promoItemSKU ,
+  String promoBundlingType){
+    PromoBundlingDeactivateModel promoBundlingDeactivateModel=PromoBundlingDeactivateModel.builder()
+        .sku(promoItemSKU)
+        .storeId("10001")
+        .promoBundlingType(promoBundlingType).build();
+    try {
+      kafkaSender.send("com.gdn.x.promotion.promo.bundling.deactivated",
+          objectMapper.writeValueAsString(promoBundlingDeactivateModel));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+
   }
 
 }

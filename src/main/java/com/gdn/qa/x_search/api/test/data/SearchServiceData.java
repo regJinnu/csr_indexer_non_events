@@ -115,6 +115,18 @@ public class SearchServiceData {
   private String trainSearchTerm;
   private String trainMapping;
   private String searchRulSearchTerm;
+  private String tagLabel;
+  private int quota;
+  private boolean exclusive;
+  private String adjustmentName;
+  private String description;
+  private String promoValue;
+  private String promoItemSKU;
+  private String promoItemSKUinSOLR;
+  private boolean promoActivated;
+  private String promoBundlingId;
+  private String promoBundlingType;
+  private String complementaryProducts;
   private ResponseApi<GdnRestListResponse<TrainResponse>> getAllTrain;
   private ResponseApi<GdnRestListResponse<SearchRuleResponse>> getAllSearchRule;
   private ResponseApi<GdnRestListResponse<PlaceholderRuleResponse>> getAllPlaceholder;
