@@ -10,6 +10,7 @@ import lombok.Data;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Component
@@ -127,6 +128,29 @@ public class SearchServiceData {
   private String promoBundlingId;
   private String promoBundlingType;
   private String complementaryProducts;
+  private String productIdforPristine;
+  private String itemCount;
+  private String category;
+  private List<String> blibliCategoryHierarchy;
+  private String productItemId;
+  private enum actionType{};
+  private String pristineAttributesName;
+  private String pristineAttributesValue;
+  private String pristineID;
+  private String productIdforPristineCamera;
+  private String cameraCategory;
+  private String cameraProductItemId;
+  private List<String> cameraBlibliCategoryHierarchy;
+  private String cameraPristineID;
+  private String cameraPristineAttributesName;
+  private String cameraPristineAttributesValue;
+  private String productIdforPristineHandphone;
+  private String handphoneCategory;
+  private String handphoneProductItemId;
+  private List<String> handphoneBlibliCategoryHierarchy;
+  private String handphonePristineID;
+  private String handphonePristineAttributesName;
+  private String handphonePristineAttributesValue;
   private ResponseApi<GdnRestListResponse<TrainResponse>> getAllTrain;
   private ResponseApi<GdnRestListResponse<SearchRuleResponse>> getAllSearchRule;
   private ResponseApi<GdnRestListResponse<PlaceholderRuleResponse>> getAllPlaceholder;

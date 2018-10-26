@@ -60,6 +60,16 @@ public class SolrResults {
   @Field
   private Double salePrice;
 
+  @Field("PRISTINE_COMPUTER_BRAND")
+  private String pristineFacet;
+
+  @Field("PRISTINE_CAMERA_MODEL")
+  private String pristineCameraFacet;
+
+  @Field("PRISTINE_HANDPHONE_OPERATING_SYSTEM")
+  private String pristineHandphoneFacet;
+
+
   public SolrResults(String brandSearch,
       String description,
       String level0Id,
@@ -80,7 +90,9 @@ public class SolrResults {
       int isDelayShipping,
       ArrayList<String> logisticOptions,
       Double offerPrice,
-      Double listPrice,String campaignName,boolean storeClose,String activePromos) {
+      Double listPrice,String campaignName,boolean storeClose,String activePromos,
+      String pristineFacet,String pristineCameraFacet,String pristineHandphoneFacet) {
+    this.pristineFacet=pristineFacet;
      this.brandSearch = brandSearch;
     this.description = description;
     this.level0Id = level0Id;
@@ -106,12 +118,39 @@ public class SolrResults {
     this.storeClose = storeClose;
     this.salePrice=salePrice;
     this.activePromos=activePromos;
+    this.pristineCameraFacet=pristineCameraFacet;
+    this.pristineHandphoneFacet=pristineHandphoneFacet;
   }
 
 
   public SolrResults(){
 
   }
+
+  public String getPristineHandphoneFacet() {
+    return pristineHandphoneFacet ;
+  }
+
+  public void setPristineHandphoneFacet(String pristineHandphoneFacet) {
+    this.pristineHandphoneFacet = pristineHandphoneFacet;
+  }
+
+  public String getPristineFacet() {
+    return pristineFacet ;
+  }
+
+  public void setPristineFacet(String pristineFacet) {
+    this.pristineFacet = pristineFacet;
+  }
+
+  public String getPristineCameraFacet() {
+    return pristineCameraFacet ;
+  }
+
+  public void setPristineCameraFacet(String pristineCameraFacet) {
+    this.pristineFacet = pristineCameraFacet;
+  }
+
 
   public String getActivePromos() {
     return activePromos;

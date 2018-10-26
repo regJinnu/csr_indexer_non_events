@@ -131,7 +131,6 @@
             <artifactId>jsch</artifactId>
             <version>0.1.54</version>
         </dependency>
-
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
@@ -218,7 +217,7 @@
                     </includes>
                     <systemPropertyVariables>
                         <cucumber.options>--junit,--step-notifications</cucumber.options>
-                        <spring.config.location>classpath:/application-UATA.properties
+                        <spring.config.location>classpath:/application.properties
                         </spring.config.location>
                     </systemPropertyVariables>
                 </configuration>

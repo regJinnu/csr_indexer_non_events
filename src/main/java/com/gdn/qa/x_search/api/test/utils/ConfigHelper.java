@@ -33,4 +33,14 @@ public class ConfigHelper {
     RedisHelper.deleteAll(REDIS_HOST,REDIS_PORT);
   }
 
+  public void setPVOFF(String flag) {
+    if (flag.equals(true)) {
+      mongoHelper.updateMongo("config_list", "NAME", "product.level.id", "VALUE", "level1Id");
+      mongoHelper.updateMongo("config_list", "NAME", "service.product.level.id", "VALUE", "level1Id");
+    } else {
+      mongoHelper.updateMongo("config_list", "NAME", "product.level.id", "VALUE", "level0Id");
+      mongoHelper.updateMongo("config_list", "NAME", "service.product.level.id", "VALUE", "level0Id");
+    }
+  }
+
 }
