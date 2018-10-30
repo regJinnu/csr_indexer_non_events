@@ -151,6 +151,10 @@ public class SearchServiceData {
   private String handphonePristineID;
   private String handphonePristineAttributesName;
   private String handphonePristineAttributesValue;
+  private String SOLR_URL;
+  private String SOLR_URL_NO_PARAM;
+  private String mongo;
+  private String redis;
   private ResponseApi<GdnRestListResponse<TrainResponse>> getAllTrain;
   private ResponseApi<GdnRestListResponse<SearchRuleResponse>> getAllSearchRule;
   private ResponseApi<GdnRestListResponse<PlaceholderRuleResponse>> getAllPlaceholder;

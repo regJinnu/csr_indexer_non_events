@@ -48,7 +48,7 @@ public class FacebookSteps {
 
   MongoHelper mongoHelper = new MongoHelper();
 
-  DownloadHelper downloadHelper = new DownloadHelper(SERVER_IP, SERVER_PORT, SERVER_USERNAME, SERVER_PASSWORD);
+  DownloadHelper downloadHelper = new DownloadHelper(searchServiceProperties.get("SERVER_IP"), SERVER_PORT, SERVER_USERNAME, SERVER_PASSWORD);
 
 
   @Given("^\\[search-service] exists api for storing all ids in redis$")

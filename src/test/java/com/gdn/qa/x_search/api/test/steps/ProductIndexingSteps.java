@@ -235,7 +235,7 @@ public class ProductIndexingSteps {
     mongoHelper.updateMongo("config_list","NAME","reindex.status","VALUE","0");
     mongoHelper.updateMongo("config_list","NAME","reindex.status.of.node.1","VALUE","0");
     mongoHelper.updateMongo("config_list","NAME","reindex.triggered","VALUE","false");
-    RedisHelper.deleteAll(REDIS_HOST,REDIS_PORT);
+    RedisHelper.deleteAll(searchServiceProperties.get("REDIS_HOST"),REDIS_PORT);
     try {
       int status = updateSolrDataForAutomation(searchServiceData.getQueryForCategoryReindex(),SELECT_HANDLER,"id",1,"categoryReindex");
       assertThat("Updating solr fields to different values failed",status,equalTo(0));
@@ -370,7 +370,7 @@ public class ProductIndexingSteps {
 
       mongoHelper.updateMongo("config_list","NAME","force.stop.solr.updates","VALUE","true");
       Thread.sleep(20000);
-      RedisHelper.deleteAll(REDIS_HOST,REDIS_PORT);
+      RedisHelper.deleteAll(searchServiceProperties.get("REDIS_HOST"),REDIS_PORT);
       Thread.sleep(20000);
       mongoHelper.deleteAllFromMongo("reindex_entity");
 
@@ -419,7 +419,7 @@ public class ProductIndexingSteps {
 
       mongoHelper.updateMongo("config_list","NAME","reindex.status.of.node.1","VALUE","1");
 
-      RedisHelper.deleteAll(REDIS_HOST,REDIS_PORT);
+      RedisHelper.deleteAll(searchServiceProperties.get("REDIS_HOST"),REDIS_PORT);
 
     } catch (Exception e) {
       e.printStackTrace();

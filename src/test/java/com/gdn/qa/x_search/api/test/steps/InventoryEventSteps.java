@@ -12,7 +12,6 @@ import com.gdn.qa.x_search.api.test.utils.RedisHelper;
 import com.gdn.qa.x_search.api.test.utils.SolrHelper;
 import com.gdn.x.product.rest.web.model.response.SimpleStringResponse;
 import com.mongodb.client.FindIterable;
-import cucumber.api.PendingException;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -21,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.REDIS_HOST;
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.REDIS_PORT;
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_DEFAULT_COLLECTION;
 import static com.gdn.qa.x_search.api.test.utils.SolrHelper.solrCommit;
@@ -159,7 +157,7 @@ public class InventoryEventSteps {
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    RedisHelper.deleteAll(REDIS_HOST,REDIS_PORT);
+    RedisHelper.deleteAll(searchServiceProperties.get("REDIS_HOST"),REDIS_PORT);
 
   }
 
@@ -175,7 +173,7 @@ public class InventoryEventSteps {
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    RedisHelper.deleteAll(REDIS_HOST,REDIS_PORT);
+    RedisHelper.deleteAll(searchServiceProperties.get("REDIS_HOST"),REDIS_PORT);
   }
 
   @And("^\\[search-service] inventory '(.*)' event is not configured as whitelist$")
@@ -186,7 +184,7 @@ public class InventoryEventSteps {
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    RedisHelper.deleteAll(REDIS_HOST,REDIS_PORT);
+    RedisHelper.deleteAll(searchServiceProperties.get("REDIS_HOST"),REDIS_PORT);
   }
 
   @Then("^\\[search-service] product does not becomes oos in SOLR$")
@@ -219,7 +217,7 @@ public class InventoryEventSteps {
 
     mongoHelper.updateMongo("config_list","NAME","force.stop.solr.updates","VALUE","false");
 
-    RedisHelper.deleteAll(REDIS_HOST,REDIS_PORT);
+    RedisHelper.deleteAll(searchServiceProperties.get("REDIS_HOST"),REDIS_PORT);
 
     ResponseApi<GdnRestSingleResponse<SimpleStringResponse>> processingStoredDelta =
         searchServiceController.prepareRequestForProcessingStoredDelta();

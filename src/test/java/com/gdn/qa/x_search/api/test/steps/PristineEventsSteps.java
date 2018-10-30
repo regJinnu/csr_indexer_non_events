@@ -67,7 +67,7 @@ public class PristineEventsSteps {
   public void searchServiceCheckIfTheEventIsConsumedByCheckingTheSolrField() {
     try {
       String pristineFacetInSOLR =
-          SolrHelper.getSolrProd("level0Id:" + searchServiceData.getPristineID(),
+          SolrHelper.getSolrProd("level1Id:" + searchServiceData.getPristineID(),
               SELECT_HANDLER,
               "PRISTINE_COMPUTER_BRAND",
               1).get(0).getPristineFacet();
@@ -118,7 +118,7 @@ public class PristineEventsSteps {
   public void searchServiceCheckIfTheEventIsConsumedByCheckingTheSolrFieldForCameraCategory() {
     try {
       String pristineFacetInSOLR =
-          SolrHelper.getSolrProd("level0Id:" + searchServiceData.getCameraPristineID(),
+          SolrHelper.getSolrProd("level1Id:" + searchServiceData.getCameraPristineID(),
               SELECT_HANDLER,
               "PRISTINE_CAMERA_MODEL",
               1).get(0).getPristineCameraFacet();
@@ -170,7 +170,7 @@ public class PristineEventsSteps {
   public void searchServiceCheckIfTheEventIsConsumedByCheckingTheSolrFieldForHandphoneCategory() {
     try {
       String pristineFacetInSOLR =
-          SolrHelper.getSolrProd("level0Id:" + searchServiceData.getHandphonePristineID(),
+          SolrHelper.getSolrProd("level1Id:" + searchServiceData.getHandphonePristineID(),
               SELECT_HANDLER,
               "PRISTINE_HANDPHONE_OPERATING_SYSTEM",
               1).get(0).getPristineHandphoneFacet();

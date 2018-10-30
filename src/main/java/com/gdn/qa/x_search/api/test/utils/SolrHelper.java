@@ -2,6 +2,7 @@ package com.gdn.qa.x_search.api.test.utils;
 
 import com.gdn.qa.x_search.api.test.api.services.SolrFieldNames;
 import com.gdn.qa.x_search.api.test.models.SolrResults;
+import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.beans.DocumentObjectBinder;
@@ -11,18 +12,20 @@ import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_URL;
-import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_URL_NO_PARAM;
 
 
 public class SolrHelper {
+  @Autowired
+  private static SearchServiceProperties searchServiceProperties;
+
+   private static String SOLR_URL= searchServiceProperties.get("SOLR_URL");
 
   public SolrHelper() {
   }
@@ -33,7 +36,7 @@ public class SolrHelper {
   }
 
   public static int solrCommit(String collectionName) throws Exception{
-    return initializeSolr(SOLR_URL_NO_PARAM).commit(collectionName).getStatus();
+    return initializeSolr(searchServiceProperties.get("SOLR_URL_NO_PARAM")).commit(collectionName).getStatus();
   }
 
   public static SolrQuery initializeSolrQuery(String queryText, String requestHandler,int rows,String fields,String fq){
@@ -64,7 +67,7 @@ public class SolrHelper {
 
 
   public static long getSolrProdCountWithFq(String queryText, String requestHandler,String fq) throws Exception {
-    HttpSolrClient httpSolrClient = initializeSolr(SOLR_URL);
+    HttpSolrClient httpSolrClient = initializeSolr("SOLR_URL");
     SolrQuery solrQuery = initializeSolrQuery(queryText,requestHandler,0,"id",fq);
     QueryResponse queryResponse = httpSolrClient.query(solrQuery);
     return queryResponse.getResults().getNumFound();

@@ -217,7 +217,7 @@
                     </includes>
                     <systemPropertyVariables>
                         <cucumber.options>--junit,--step-notifications</cucumber.options>
-                        <spring.config.location>classpath:/application.properties
+                        <spring.config.location>classpath:/application-UATB.properties
                         </spring.config.location>
                     </systemPropertyVariables>
                 </configuration>
