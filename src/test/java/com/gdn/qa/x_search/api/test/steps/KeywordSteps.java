@@ -36,7 +36,8 @@ public class KeywordSteps {
   @Autowired
  private SearchServiceData searchServiceData;
 
-  MongoHelper mongoHelper = new MongoHelper();
+  @Autowired
+  MongoHelper mongoHelper;
 
   @Given("^\\[search-service] prepare save keyword using properties using properties data$")
   public void searchServicePrepareSaveKeywordUsingPropertiesUsingPropertiesData() {

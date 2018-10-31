@@ -6,9 +6,9 @@ import com.gdn.qa.x_search.api.test.CucumberStepsDefinition;
 import com.gdn.qa.x_search.api.test.api.services.SearchServiceController;
 import com.gdn.qa.x_search.api.test.data.SearchServiceData;
 import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
+import com.gdn.qa.x_search.api.test.utils.ConfigHelper;
 import com.gdn.qa.x_search.api.test.utils.KafkaHelper;
 import com.gdn.qa.x_search.api.test.utils.MongoHelper;
-import com.gdn.qa.x_search.api.test.utils.RedisHelper;
 import com.gdn.qa.x_search.api.test.utils.SolrHelper;
 import com.gdn.x.product.rest.web.model.response.SimpleStringResponse;
 import com.mongodb.client.FindIterable;
@@ -20,10 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.REDIS_PORT;
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_DEFAULT_COLLECTION;
-import static com.gdn.qa.x_search.api.test.utils.SolrHelper.solrCommit;
-import static com.gdn.qa.x_search.api.test.utils.SolrHelper.updateSolrDataForAutomation;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -47,8 +44,15 @@ public class InventoryEventSteps {
 
   @Autowired
   KafkaHelper kafkaHelper ;
+  
+  @Autowired
+  SolrHelper solrHelper;
 
-  MongoHelper mongoHelper = new MongoHelper();
+  @Autowired
+  MongoHelper mongoHelper;
+
+  @Autowired
+  ConfigHelper configHelper;
 
   @Given("^\\[search-service] verify product is in stock in SOLR$")
   public void checkProductIsInStock(){
@@ -57,11 +61,11 @@ public class InventoryEventSteps {
 
     try {
       
-      int status = updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),"/select","id",1,"nonOOS");
+      int status = solrHelper.updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),"/select","id",1,"nonOOS");
       assertThat("Updating isInStock field in SOLR failed",status,equalTo(0));
-      solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
-      int oosFlag = SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1).get(0).getIsInStock();
+      int oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1).get(0).getIsInStock();
       log.warn("-----Product Set non OOS before test---{}",oosFlag);
       assertThat("Product non OOS",oosFlag,equalTo(1));
 
@@ -78,7 +82,7 @@ public class InventoryEventSteps {
 
     try {
       Thread.sleep(10000);
-      solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -90,7 +94,7 @@ public class InventoryEventSteps {
     int oosFlag = 0;
     try {
       oosFlag =
-          SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1).get(0).getIsInStock();
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1).get(0).getIsInStock();
       log.warn("-----IsInStock After reindex by event---{}",oosFlag);
       assertThat("Product not OOS",oosFlag,equalTo(0));
     } catch (Exception e) {
@@ -106,11 +110,11 @@ public class InventoryEventSteps {
 
     try {
 
-      int status = updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),"/select","id",1,"oos");
+      int status = solrHelper.updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),"/select","id",1,"oos");
       assertThat("Updating isInStock field in SOLR failed",status,equalTo(0));
-      solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
-      int oosFlag = SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1).get(0).getIsInStock();
+      int oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1).get(0).getIsInStock();
       assertThat("Product OOS",oosFlag,equalTo(0));
 
       log.warn("-----Product Set OOS before test---{}",oosFlag);
@@ -127,7 +131,7 @@ public class InventoryEventSteps {
 
     try {
       Thread.sleep(10000);
-      solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -139,7 +143,7 @@ public class InventoryEventSteps {
     int oosFlag = 0;
     try {
       oosFlag =
-          SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1).get(0).getIsInStock();
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1).get(0).getIsInStock();
       assertThat("Product not OOS",oosFlag,equalTo(1));
       log.warn("-----IsInStock After reindex by event---{}",oosFlag);
     } catch (Exception e) {
@@ -150,14 +154,16 @@ public class InventoryEventSteps {
 
   @Given("^\\[search-service] force.stop flag is set to '(.*)'$")
   public void searchServiceForceStopFlagIsSetAccordingly(String flag) {
-    mongoHelper.updateMongo("config_list","NAME","force.stop.solr.updates","VALUE",flag);
+    configHelper.findAndUpdateConfig("force.stop.solr.updates",flag);
+    configHelper.findAndUpdateConfig("process.delta.during.reindex","false");
+  /*  mongoHelper.updateMongo("config_list","NAME","force.stop.solr.updates","VALUE",flag);
     mongoHelper.updateMongo("config_list","NAME","process.delta.during.reindex","VALUE","false");
     try {
       Thread.sleep(10000);
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    RedisHelper.deleteAll(searchServiceProperties.get("REDIS_HOST"),REDIS_PORT);
+    RedisHelper.deleteAll(searchServiceProperties.get("REDIS_HOST"),REDIS_PORT);*/
 
   }
 
@@ -165,26 +171,29 @@ public class InventoryEventSteps {
   @Given("^\\[search-service] inventory (.*) event is configured as whitelist$")
   public void searchServiceInventoryOosEventIsConfiguredAsWhitelist(String eventType){
     if(eventType.equals("oos"))
-      mongoHelper.updateMongo("config_list","NAME","whitelist.events","VALUE","ProductOutOfStockEvent");
+      configHelper.findAndUpdateConfig("whitelist.events","ProductOutOfStockEvent");
+   //   mongoHelper.updateMongo("config_list","NAME","whitelist.events","VALUE","ProductOutOfStockEvent");
     else
-      mongoHelper.updateMongo("config_list","NAME","whitelist.events","VALUE","ProductNonOutOfStockEvent");
-    try {
+      configHelper.findAndUpdateConfig("whitelist.events","ProductNonOutOfStockEvent");
+   //   mongoHelper.updateMongo("config_list","NAME","whitelist.events","VALUE","ProductNonOutOfStockEvent");
+/*    try {
       Thread.sleep(10000);
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    RedisHelper.deleteAll(searchServiceProperties.get("REDIS_HOST"),REDIS_PORT);
+    RedisHelper.deleteAll(searchServiceProperties.get("REDIS_HOST"),REDIS_PORT);*/
   }
 
   @And("^\\[search-service] inventory '(.*)' event is not configured as whitelist$")
   public void searchServiceInventoryOosEventIsNotConfiguredAsWhitelist(String event){
-    mongoHelper.updateMongo("config_list","NAME","whitelist.events","VALUE","abc");
+    configHelper.findAndUpdateConfig("whitelist.events","abc");
+/*    mongoHelper.updateMongo("config_list","NAME","whitelist.events","VALUE","abc");
     try {
       Thread.sleep(10000);
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    RedisHelper.deleteAll(searchServiceProperties.get("REDIS_HOST"),REDIS_PORT);
+    RedisHelper.deleteAll(searchServiceProperties.get("REDIS_HOST"),REDIS_PORT);*/
   }
 
   @Then("^\\[search-service] product does not becomes oos in SOLR$")
@@ -192,7 +201,7 @@ public class InventoryEventSteps {
     int oosFlag = 0;
     try {
       oosFlag =
-          SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1).get(0).getIsInStock();
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1).get(0).getIsInStock();
       log.warn("-----Product does not become oos in SOLR---{}",oosFlag);
       assertThat("Product OOS",oosFlag,equalTo(1));
     } catch (Exception e) {
@@ -215,9 +224,11 @@ public class InventoryEventSteps {
 
     assertThat("Entry does not exists in collection",size,equalTo(1));
 
-    mongoHelper.updateMongo("config_list","NAME","force.stop.solr.updates","VALUE","false");
+    configHelper.findAndUpdateConfig("force.stop.solr.updates","false");
 
-    RedisHelper.deleteAll(searchServiceProperties.get("REDIS_HOST"),REDIS_PORT);
+/*    mongoHelper.updateMongo("config_list","NAME","force.stop.solr.updates","VALUE","false");
+
+    RedisHelper.deleteAll(searchServiceProperties.get("REDIS_HOST"),REDIS_PORT);*/
 
     ResponseApi<GdnRestSingleResponse<SimpleStringResponse>> processingStoredDelta =
         searchServiceController.prepareRequestForProcessingStoredDelta();
@@ -236,7 +247,7 @@ public class InventoryEventSteps {
     int oosFlag = 0;
     try {
       oosFlag =
-          SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1).get(0).getIsInStock();
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1).get(0).getIsInStock();
       log.warn("-----Product does not become non oos in SOLR---{}",oosFlag);
       assertThat("Product Non OOS",oosFlag,equalTo(0));
     } catch (Exception e) {

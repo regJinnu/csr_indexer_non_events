@@ -16,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SELECT_HANDLER;
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_DEFAULT_COLLECTION;
-import static com.gdn.qa.x_search.api.test.utils.SolrHelper.solrCommit;
-import static com.gdn.qa.x_search.api.test.utils.SolrHelper.updateSolrDataForAutomation;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -41,6 +39,9 @@ public class LogisticOptionEventSteps {
 
   @Autowired
   KafkaHelper kafkaHelper ;
+  
+  @Autowired
+  SolrHelper solrHelper;
 
   @Given("^\\[search-service] update merchant commission type and logistic option for test product$")
   public void setMerchantCommTypeAndLogOptForTestProd(){
@@ -49,17 +50,17 @@ public class LogisticOptionEventSteps {
 
     try {
 
-      int status = updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),SELECT_HANDLER,"id",1,"logisticOption");
+      int status = solrHelper.updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),SELECT_HANDLER,"id",1,"logisticOption");
       assertThat("Updating Logistic options and commission type fields in SOLR failed",status,equalTo(0));
-      solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
-      String commissionType = SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      String commissionType = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
          SELECT_HANDLER,"merchantCommissionType",1).get(0).getMerchantCommissionType();
 
-      String logisticOption = SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      String logisticOption = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,"logisticOptions",1).get(0).getLogisticOptions().get(0);
 
-      String location = SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      String location = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,"location",1).get(0).getLocation();
 
 
@@ -80,7 +81,7 @@ public class LogisticOptionEventSteps {
     kafkaHelper.publishLogisticOptionChange("TOQ-16110","EXPRESS","CM");
     try {
       Thread.sleep(60000);
-      solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -100,17 +101,17 @@ public class LogisticOptionEventSteps {
 
       try {
         Thread.sleep(60000);
-        solrCommit(SOLR_DEFAULT_COLLECTION);
+        solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
       } catch (Exception e) {
         e.printStackTrace();
       }
-        String commissionType = SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+        String commissionType = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,"merchantCommissionType",1).get(0).getMerchantCommissionType();
 
-      String logisticOption = SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      String logisticOption = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,"logisticOptions",1).get(0).getLogisticOptions().get(0);
 
-      String location = SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      String location = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,"location",1).get(0).getLocation();
 
       log.warn("-----Product merchantCommissionType---{}----LogisticOptions---{}-",commissionType,logisticOption);

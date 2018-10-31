@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collections;
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SELECT_HANDLER;
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_DEFAULT_COLLECTION;
-import static com.gdn.qa.x_search.api.test.utils.SolrHelper.solrCommit;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -28,11 +27,16 @@ public class PristineEventsSteps {
   @Autowired
   KafkaHelper kafkaHelper;
 
-  ConfigHelper configHelper = new ConfigHelper();
+  @Autowired
+  ConfigHelper configHelper;
+
+  @Autowired
+  SolrHelper solrHelper;
 
   @Given("^\\[search-service] set all the values for publishing the pristine event for Computer category$")
   public void searchServiceSetAllTheValuesForPublishingThePristineEvent() {
-    configHelper.setPVOFF("true");
+    configHelper.findAndUpdateConfig("product.level.id","level1Id");
+    configHelper.findAndUpdateConfig("service.product.level.id","level1Id");
     searchServiceData.setProductIdforPristine(searchServiceProperties.get("productIdforPristine"));
     searchServiceData.setItemCount(searchServiceProperties.get("itemCount"));
     searchServiceData.setCategory(searchServiceProperties.get("category"));
@@ -57,7 +61,7 @@ public class PristineEventsSteps {
         searchServiceData.getItemCount());
     try {
       Thread.sleep(30000);
-      solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -67,20 +71,20 @@ public class PristineEventsSteps {
   public void searchServiceCheckIfTheEventIsConsumedByCheckingTheSolrField() {
     try {
       String pristineFacetInSOLR =
-          SolrHelper.getSolrProd("level1Id:" + searchServiceData.getPristineID(),
+          solrHelper.getSolrProd("level1Id:" + searchServiceData.getPristineID(),
               SELECT_HANDLER,
               "PRISTINE_COMPUTER_BRAND",
               1).get(0).getPristineFacet();
       assertThat(pristineFacetInSOLR, equalTo("hp"));
-      configHelper.setPVOFF("false");
-    } catch (Exception e) {
+         } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
   @Given("^\\[search-service] set all the values for publishing the pristine event for camera category$")
   public void searchServiceSetAllTheValuesForPublishingThePristineEventForCameraCategory() {
-    configHelper.setPVOFF("true");
+    configHelper.findAndUpdateConfig("product.level.id","level1Id");
+    configHelper.findAndUpdateConfig("service.product.level.id","level1Id");
     searchServiceData.setProductIdforPristineCamera(searchServiceProperties.get(
         "productIdforPristineCamera"));
     searchServiceData.setCameraCategory(searchServiceProperties.get("cameraCategory"));
@@ -107,7 +111,7 @@ public class PristineEventsSteps {
         searchServiceData.getItemCount());
     try {
       Thread.sleep(30000);
-      solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -118,12 +122,11 @@ public class PristineEventsSteps {
   public void searchServiceCheckIfTheEventIsConsumedByCheckingTheSolrFieldForCameraCategory() {
     try {
       String pristineFacetInSOLR =
-          SolrHelper.getSolrProd("level1Id:" + searchServiceData.getCameraPristineID(),
+          solrHelper.getSolrProd("level1Id:" + searchServiceData.getCameraPristineID(),
               SELECT_HANDLER,
               "PRISTINE_CAMERA_MODEL",
               1).get(0).getPristineCameraFacet();
       assertThat(pristineFacetInSOLR, equalTo("x5"));
-      configHelper.setPVOFF("false");
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -133,7 +136,8 @@ public class PristineEventsSteps {
 
   @Given("^\\[search-service] set all the values for publishing the pristine event for handphone category$")
   public void searchServiceSetAllTheValuesForPublishingThePristineEventForHandphoneCategory() {
-    configHelper.setPVOFF("true");
+    configHelper.findAndUpdateConfig("product.level.id","level1Id");
+    configHelper.findAndUpdateConfig("service.product.level.id","level1Id");
     searchServiceData.setProductIdforPristineHandphone(searchServiceProperties.get(
         "productIdforPristineHandphone"));
     searchServiceData.setHandphoneProductItemId(searchServiceProperties.get("handphoneProductItemId"));
@@ -148,7 +152,7 @@ public class PristineEventsSteps {
     searchServiceData.setItemCount(searchServiceProperties.get("itemCount"));
     try {
       Thread.sleep(30000);
-      solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -170,12 +174,11 @@ public class PristineEventsSteps {
   public void searchServiceCheckIfTheEventIsConsumedByCheckingTheSolrFieldForHandphoneCategory() {
     try {
       String pristineFacetInSOLR =
-          SolrHelper.getSolrProd("level1Id:" + searchServiceData.getHandphonePristineID(),
+          solrHelper.getSolrProd("level1Id:" + searchServiceData.getHandphonePristineID(),
               SELECT_HANDLER,
               "PRISTINE_HANDPHONE_OPERATING_SYSTEM",
               1).get(0).getPristineHandphoneFacet();
       assertThat(pristineFacetInSOLR, equalTo("ANDROID"));
-      configHelper.setPVOFF("false");
     } catch (Exception e) {
       e.printStackTrace();
     }

@@ -5,6 +5,7 @@ import com.gdn.qa.x_search.api.test.utils.MongoHelper;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import org.bson.Document;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -13,7 +14,9 @@ import java.util.Date;
 @CucumberStepsDefinition
 public class CucumberHooks {
 
-  MongoHelper mongoHelper = new MongoHelper();
+  @Autowired
+  MongoHelper mongoHelper;
+
   SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
   @After

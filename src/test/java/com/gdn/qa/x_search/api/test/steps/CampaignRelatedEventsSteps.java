@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SELECT_HANDLER;
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_DEFAULT_COLLECTION;
-import static com.gdn.qa.x_search.api.test.utils.SolrHelper.solrCommit;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -35,8 +34,12 @@ public class CampaignRelatedEventsSteps {
 
   @Autowired
   KafkaHelper kafkaHelper;
+  
+  @Autowired
+   SolrHelper solrHelper;   
 
-  MongoHelper mongoHelper = new MongoHelper();
+  @Autowired
+  MongoHelper mongoHelper;
 
 
   @Given("^\\[search-service] set all the values for publishing the campaign event$")
@@ -59,7 +62,7 @@ public class CampaignRelatedEventsSteps {
 
     try {
       Thread.sleep(30000);
-      solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -69,7 +72,7 @@ public class CampaignRelatedEventsSteps {
   @Then("^\\[search-service] check if the event is consumed and check in solr$")
   public void searchServiceCheckIfTheEventIsConsumedAndCheckInSolr() throws Throwable {
     try {
-      String campaignFacet = SolrHelper.getSolrProd(searchServiceData.getCampaignFieldInSOLR(),
+      String campaignFacet = solrHelper.getSolrProd(searchServiceData.getCampaignFieldInSOLR(),
           SELECT_HANDLER,
           "campaign_CAMP-0001",
           1).get(0).getCampaignName();
@@ -92,7 +95,7 @@ public class CampaignRelatedEventsSteps {
         "CAMP-0001",false,"",false);
     try {
       Thread.sleep(30000);
-      solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -119,7 +122,7 @@ public class CampaignRelatedEventsSteps {
     kafkaHelper.campaignStopEvent(searchServiceData.getCampaignCode(), false);
     try {
       Thread.sleep(50000);
-      solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -136,7 +139,7 @@ public class CampaignRelatedEventsSteps {
       }
 
       long countWithFq =
-          SolrHelper.getSolrProdCountWithFq("sku:"+searchServiceData.getCampaignProductSku(),
+          solrHelper.getSolrProdCountWithFq("sku:"+searchServiceData.getCampaignProductSku(),
               SELECT_HANDLER,
               "campaign_CAMP-0001:[* TO *]");
 
@@ -158,7 +161,7 @@ public class CampaignRelatedEventsSteps {
     kafkaHelper.campaignEndEvent(searchServiceData.getCampaignCodeList(), false);
     try {
      Thread.sleep(50000);
-      solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -168,7 +171,7 @@ public class CampaignRelatedEventsSteps {
   public void searchServiceCheckIfTheEventIsConsumedByCheckingForTheFieldInSolrAndMongoDb() {
     try {
       long countWithFq =
-          SolrHelper.getSolrProdCountWithFq("sku:"+searchServiceData.getCampaignProductSku(),
+          solrHelper.getSolrProdCountWithFq("sku:"+searchServiceData.getCampaignProductSku(),
               SELECT_HANDLER,
               "campaign_CAMP-0001:[* TO *]");
 
@@ -195,7 +198,7 @@ public class CampaignRelatedEventsSteps {
         Double.valueOf(searchServiceData.getCampaignDiscount()));
     try {
       Thread.sleep(50000);
-      solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -206,7 +209,7 @@ public class CampaignRelatedEventsSteps {
     try {
 
       long countWithFq =
-          SolrHelper.getSolrProdCountWithFq("sku:"+searchServiceData.getCampaignProductSku(),
+          solrHelper.getSolrProdCountWithFq("sku:"+searchServiceData.getCampaignProductSku(),
               SELECT_HANDLER,
               "campaign_CAMP-0001:[* TO *]");
 
@@ -241,7 +244,7 @@ public class CampaignRelatedEventsSteps {
         searchServiceData.isExclusive());
     try {
       Thread.sleep(30000);
-      solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -250,7 +253,7 @@ public class CampaignRelatedEventsSteps {
   @Then("^\\[search-service] check if exclusive campaign publish event is consumed and check in solr$")
   public void searchServiceCheckIfExclusiveCampaignPublishEventIsConsumedAndCheckInSolr() {
     try {
-      String campaignFacet = SolrHelper.getSolrProd(searchServiceData.getCampaignFieldInSOLR(),
+      String campaignFacet = solrHelper.getSolrProd(searchServiceData.getCampaignFieldInSOLR(),
           SELECT_HANDLER,
           "campaign_CAMP-0001",
           1).get(0).getCampaignName();
@@ -308,7 +311,7 @@ public class CampaignRelatedEventsSteps {
         Double.valueOf(searchServiceData.getCampaignDiscount()));
     try {
       Thread.sleep(50000);
-      solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -319,7 +322,7 @@ public class CampaignRelatedEventsSteps {
        {
     try {
       long countWithFq =
-          SolrHelper.getSolrProdCountWithFq("sku:" + searchServiceData.getCampaignProductSku(),
+          solrHelper.getSolrProdCountWithFq("sku:" + searchServiceData.getCampaignProductSku(),
               SELECT_HANDLER,
               "campaign_CAMP-0001:[* TO *]");
 
@@ -340,7 +343,7 @@ public class CampaignRelatedEventsSteps {
     kafkaHelper.campaignEndEvent(searchServiceData.getCampaignCodeList(), false);
     try {
       Thread.sleep(50000);
-      solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -351,7 +354,7 @@ public class CampaignRelatedEventsSteps {
   {
     long countWithFq = 0;
     try {
-      countWithFq = SolrHelper.getSolrProdCountWithFq("sku:" + searchServiceData.getCampaignProductSku(),
+      countWithFq = solrHelper.getSolrProdCountWithFq("sku:" + searchServiceData.getCampaignProductSku(),
           SELECT_HANDLER,
           "campaign_CAMP-0001:[* TO *]");
     } catch (Exception e) {
@@ -378,7 +381,7 @@ public class CampaignRelatedEventsSteps {
     kafkaHelper.campaignStopEvent(searchServiceData.getCampaignCode(), false);
     try {
       Thread.sleep(50000);
-      solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -388,7 +391,7 @@ public class CampaignRelatedEventsSteps {
   public void searchServiceCheckIfTheEventIsConsumedByCheckingForTheFieldInSolrInCaseOfExclusiveFlag()
       throws Throwable {
     long countWithFq =
-        SolrHelper.getSolrProdCountWithFq("sku:" + searchServiceData.getCampaignProductSku(),
+        solrHelper.getSolrProdCountWithFq("sku:" + searchServiceData.getCampaignProductSku(),
             SELECT_HANDLER,
             "campaign_CAMP-0001:[* TO *]");
 

@@ -28,7 +28,7 @@ import static com.mongodb.client.model.Updates.set;
 public class MongoHelper {
 
   @Autowired
-  private SearchServiceProperties searchServiceProperties;
+  SearchServiceProperties searchServiceProperties;
 
   public MongoCollection<Document> initializeDatabase(String collectionName){
     String MONGO_SERVER_ADDRESS = searchServiceProperties.get("mongo");

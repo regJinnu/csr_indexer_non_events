@@ -46,7 +46,11 @@ public class FacebookSteps {
   @Autowired
   private SearchServiceData searchServiceData;
 
-  MongoHelper mongoHelper = new MongoHelper();
+  @Autowired
+  SolrHelper solrHelper;
+
+  @Autowired
+  MongoHelper mongoHelper;
 
   DownloadHelper downloadHelper = new DownloadHelper(searchServiceProperties.get("SERVER_IP"), SERVER_PORT, SERVER_USERNAME, SERVER_PASSWORD);
 
@@ -228,7 +232,7 @@ public class FacebookSteps {
       searchServiceData.setProductCodeForReindex(searchServiceProperties.get("productCodeForReindex"));
 
       boolean isSynchronised =
-          SolrHelper.getSolrProd(searchServiceData.getQueryForProductCode(), SELECT_HANDLER,
+          solrHelper.getSolrProd(searchServiceData.getQueryForProductCode(), SELECT_HANDLER,
               "isSynchronised", 1).get(0).getIsSynchronised();
 
       assertThat("Product is not synchronised",isSynchronised,equalTo(true));
@@ -255,7 +259,7 @@ public class FacebookSteps {
       searchServiceData.setQueryForUnsyncProduct(searchServiceProperties.get("queryForUnsyncProduct"));
 
       boolean isSynchronised =
-          SolrHelper.getSolrProd(searchServiceData.getQueryForUnsyncProduct(), SELECT_HANDLER,
+          solrHelper.getSolrProd(searchServiceData.getQueryForUnsyncProduct(), SELECT_HANDLER,
               "isSynchronised", 1).get(0).getIsSynchronised();
 
       assertThat("Product is not unsync",isSynchronised,equalTo(false));

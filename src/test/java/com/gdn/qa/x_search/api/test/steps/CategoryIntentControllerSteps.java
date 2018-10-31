@@ -29,7 +29,8 @@ public class CategoryIntentControllerSteps {
   @Autowired
   private SearchServiceData searchServiceData;
 
-  MongoHelper mongoHelper = new MongoHelper();
+  @Autowired
+  MongoHelper mongoHelper;
 
   @Given("^\\[search-service] prepare request for deleting the searchTerm which has intent mining$")
   public void searchServicePrepareRequestForDeletingTheSearchTermWhichHasIntentMining() {

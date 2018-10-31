@@ -31,7 +31,8 @@ public class BoostedKeywordSteps {
   @Autowired
   private SearchServiceData searchServiceData;
 
-  MongoHelper mongoHelper = new MongoHelper();
+  @Autowired
+  MongoHelper mongoHelper;
 
   @Given("^\\[search-service] prepare request to find boosted keyword using properties using properties data$")
   public void searchServicePrepareRequestToFindBoostedKeywordUsingPropertiesUsingPropertiesData() {

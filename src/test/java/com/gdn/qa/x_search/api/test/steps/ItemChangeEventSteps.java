@@ -17,8 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SELECT_HANDLER;
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_DEFAULT_COLLECTION;
-import static com.gdn.qa.x_search.api.test.utils.SolrHelper.solrCommit;
-import static com.gdn.qa.x_search.api.test.utils.SolrHelper.updateSolrDataForAutomation;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
@@ -44,6 +42,12 @@ public class ItemChangeEventSteps {
   @Autowired
   KafkaHelper kafkaHelper ;
 
+  @Autowired
+  SolrHelper solrHelper;
+
+  @Autowired
+  MongoHelper mongoHelper;
+
   @Given("^\\[search-service] change the price of the sku in SOLR$")
   public void updateTestDataToSolr(){
 
@@ -53,21 +57,21 @@ public class ItemChangeEventSteps {
     searchServiceData.setProductCodeForReindex(searchServiceProperties.get("productCodeForReindex"));
     try {
 
-      int status = updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),
+      int status = solrHelper.updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
           "id",
           1,
           "price");
       assertThat("Updating SOLR fields for test failed", status, equalTo(0));
-      solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
       double offerPrice =
-          SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "offerPrice", 1)
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "offerPrice", 1)
               .get(0)
               .getOfferPrice();
 
       double listPrice  =
-          SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "listPrice", 1)
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "listPrice", 1)
               .get(0)
               .getListPrice();
 
@@ -89,7 +93,7 @@ public class ItemChangeEventSteps {
 
     try {
       Thread.sleep(30000);
-      solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -102,12 +106,12 @@ public class ItemChangeEventSteps {
 
     try {
 
-      double offerPrice = SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "offerPrice", 1)
+      double offerPrice = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "offerPrice", 1)
           .get(0)
           .getOfferPrice();
 
       double listPrice  =
-          SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "listPrice", 1)
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "listPrice", 1)
               .get(0)
               .getListPrice();
 
@@ -124,14 +128,14 @@ public class ItemChangeEventSteps {
 
   @Given("^\\[search-service] test product is added in SOLR for '(.*)'$")
   public void addTestDataToSolrBeforeItemChangeEvent(String eventType){
-        SolrHelper.addSolrDocumentForItemChangeEvent("AAA-60015-00008-00001","AAA-60015-00008","MTA-66666",eventType);
-        SolrHelper.addSolrDocumentForItemChangeEvent("AAA-60015-00008-00002","AAA-60015-00008","MTA-66666",eventType);
+        solrHelper.addSolrDocumentForItemChangeEvent("AAA-60015-00008-00001","AAA-60015-00008","MTA-66666",eventType);
+        solrHelper.addSolrDocumentForItemChangeEvent("AAA-60015-00008-00002","AAA-60015-00008","MTA-66666",eventType);
     try {
       assertThat("Test Data Not inserted in SOLR",
-          SolrHelper.getSolrProdCount("id:AAA-60015-00008-00001",SELECT_HANDLER),
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001",SELECT_HANDLER),
           equalTo(1L));
       assertThat("Test Data Not inserted in SOLR",
-          SolrHelper.getSolrProdCount("id:AAA-60015-00008-00002",SELECT_HANDLER),
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00002",SELECT_HANDLER),
           equalTo(1L));
     } catch (Exception e) {
       e.printStackTrace();
@@ -146,7 +150,7 @@ public class ItemChangeEventSteps {
 
     try {
       Thread.sleep(30000);
-      solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -162,7 +166,7 @@ public class ItemChangeEventSteps {
 
     try {
       Thread.sleep(30000);
-      solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -176,7 +180,7 @@ public class ItemChangeEventSteps {
 
     try {
       Thread.sleep(30000);
-      solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -186,10 +190,10 @@ public class ItemChangeEventSteps {
   public void checkItemChangeOnlyDeletesItemSku(){
     try {
       assertThat("Test Data Not deleted from SOLR",
-          SolrHelper.getSolrProdCount("id:AAA-60015-00008-00001",SELECT_HANDLER),
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001",SELECT_HANDLER),
           equalTo(0L));
       assertThat("Test Data deleted from SOLR",
-          SolrHelper.getSolrProdCount("id:AAA-60015-00008-00002",SELECT_HANDLER),
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00002",SELECT_HANDLER),
           equalTo(1L));
     } catch (Exception e) {
       e.printStackTrace();
@@ -200,10 +204,10 @@ public class ItemChangeEventSteps {
   public void checkTestProdIsDeleted(){
     try {
       assertThat("Test Data Not deleted from SOLR",
-          SolrHelper.getSolrProdCount("id:AAA-60015-00008-00001",SELECT_HANDLER),
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001",SELECT_HANDLER),
           equalTo(0L));
       assertThat("Test Data deleted from SOLR",
-          SolrHelper.getSolrProdCount("id:AAA-60015-00008-00002",SELECT_HANDLER),
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00002",SELECT_HANDLER),
           equalTo(0L));
     } catch (Exception e) {
       e.printStackTrace();
@@ -215,7 +219,7 @@ public class ItemChangeEventSteps {
   public void checkDBEntryCreatedForSkuInDeletedProductCollection(){
 
     int count=0;
-    MongoHelper mongoHelper = new MongoHelper();
+
     FindIterable<Document> mongoDocumentByQuery =
         mongoHelper.getMongoDocumentByQuery("deleted_products", "_id", "AAA-60015-00008");
     for (Document doc : mongoDocumentByQuery){
@@ -229,7 +233,7 @@ public class ItemChangeEventSteps {
   public void checkDBEntryCreatedForProdCodeInDeletedProductCollection(){
 
     int count=0;
-    MongoHelper mongoHelper = new MongoHelper();
+
     FindIterable<Document> mongoDocumentByQuery =
         mongoHelper.getMongoDocumentByQuery("deleted_products", "_id", "MTA-66666");
     for (Document doc : mongoDocumentByQuery){
