@@ -1,4 +1,4 @@
-@ContextualSearchFeature
+@ContextualSearchFeature @TestSuiteID=10140144
 Feature: contextual search related api's
 
   @Regression @AddFlight @Flight

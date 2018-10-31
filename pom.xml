@@ -28,8 +28,8 @@
         <serenity.testlink.integration.version>3.4.3</serenity.testlink.integration.version>
         <testlink.devkey>b0f60503e7aab68af1e6072faf5124d6</testlink.devkey>
         <testlink.project>X-Search</testlink.project>
-        <testlink.plan>Minor_Deployment_2018-09-24_X-SEARCH_1</testlink.plan>
-        <testlink.build>4.4.0-16_QA-1-SearchService</testlink.build>
+        <testlink.plan>Minor_Deployment_2018-10-24_SEARCH</testlink.plan>
+        <testlink.build>4.5.0-9_QA-2_SEARCH-SERVICE</testlink.build>
     </properties>
 
     <dependencies>
@@ -238,7 +238,7 @@
                 </executions>
             </plugin>
             <!--Uncomment this to Integrate with testlink-->
-     <!--  <plugin>
+      <plugin>
                 <groupId>com.gdn.qa.util</groupId>
                 <artifactId>serenity-testlink-integration</artifactId>
                 <version>${serenity.testlink.integration.version}</version>
@@ -258,7 +258,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin> -->
+            </plugin>
         </plugins>
     </build>
 

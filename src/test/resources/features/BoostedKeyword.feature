@@ -1,4 +1,4 @@
-@BoostedKeywordFeature @TestSuiteID=9677376
+@BoostedKeywordFeature @TestSuiteID=10140144
 Feature: Boosted keyword related api's
 
   @Regression @FindBoostedKeyword
