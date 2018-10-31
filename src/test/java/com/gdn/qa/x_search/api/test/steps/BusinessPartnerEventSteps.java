@@ -56,6 +56,9 @@ public class BusinessPartnerEventSteps {
   @Autowired
   KafkaHelper kafkaHelper ;
 
+  @Autowired
+  ConfigHelper configHelper;
+
   MongoHelper mongoHelper = new MongoHelper();
 
   @Given("^\\[search-service] verify store closed start and end timestamp fields in SOLR for the product$")
@@ -275,8 +278,8 @@ public class BusinessPartnerEventSteps {
 
   @Given("^\\[search-service] business partner is set as whitelist$")
   public void searchServiceBusinessPartnerIsSetAsWhitelist(){
-    ConfigHelper configHelper = new ConfigHelper();
-    configHelper.addToWhitelist("STORE_CLOSE_SERVICE");
+
+    configHelper.findAndUpdateConfig("whitelist.events","STORE_CLOSE_SERVICE");
   }
 
   @Then("^\\[search-service] storeClose field is not set for delayShipping true$")

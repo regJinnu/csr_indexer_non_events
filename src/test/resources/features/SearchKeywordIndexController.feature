@@ -1,4 +1,4 @@
-@SuggestionIndexFeature @TestSuiteID=9677376
+@SuggestionIndexFeature @TestSuiteID=10140144
 Feature: Suggestion Indexing Api
 
   Scenario: Verify suggestion delta reindex api
