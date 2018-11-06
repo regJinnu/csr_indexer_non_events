@@ -4,6 +4,7 @@ import com.gdn.qa.x_search.api.test.CucumberStepsDefinition;
 import com.gdn.qa.x_search.api.test.api.services.SearchServiceController;
 import com.gdn.qa.x_search.api.test.data.SearchServiceData;
 import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
+import com.gdn.qa.x_search.api.test.utils.ConfigHelper;
 import com.gdn.qa.x_search.api.test.utils.KafkaHelper;
 import com.gdn.qa.x_search.api.test.utils.MongoHelper;
 import com.gdn.qa.x_search.api.test.utils.SolrHelper;
@@ -48,6 +49,9 @@ public class ItemChangeEventSteps {
   @Autowired
   MongoHelper mongoHelper;
 
+  @Autowired
+  ConfigHelper configHelper;
+
   @Given("^\\[search-service] change the price of the sku in SOLR$")
   public void updateTestDataToSolr(){
 
@@ -55,6 +59,9 @@ public class ItemChangeEventSteps {
     searchServiceData.setSkuForReindex(searchServiceProperties.get("skuForReindex"));
     searchServiceData.setQueryForReindex(searchServiceProperties.get("queryForReindex"));
     searchServiceData.setProductCodeForReindex(searchServiceProperties.get("productCodeForReindex"));
+
+    configHelper.findAndUpdateConfig("force.stop.solr.updates","false");
+
     try {
 
       int status = solrHelper.updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),
@@ -128,6 +135,9 @@ public class ItemChangeEventSteps {
 
   @Given("^\\[search-service] test product is added in SOLR for '(.*)'$")
   public void addTestDataToSolrBeforeItemChangeEvent(String eventType){
+
+    configHelper.findAndUpdateConfig("force.stop.solr.updates","false");
+
         solrHelper.addSolrDocumentForItemChangeEvent("AAA-60015-00008-00001","AAA-60015-00008","MTA-66666",eventType);
         solrHelper.addSolrDocumentForItemChangeEvent("AAA-60015-00008-00002","AAA-60015-00008","MTA-66666",eventType);
     try {

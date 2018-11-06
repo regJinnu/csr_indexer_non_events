@@ -58,7 +58,7 @@ public class InventoryEventSteps {
   public void checkProductIsInStock(){
 
     searchServiceData.setQueryForReindex(searchServiceProperties.get("queryForReindex"));
-
+    searchServiceData.setItemSkuForReindex(searchServiceProperties.get("itemSkuForReindex"));
     try {
       
       int status = solrHelper.updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),"/select","id",1,"nonOOS");
@@ -66,7 +66,7 @@ public class InventoryEventSteps {
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
       int oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1).get(0).getIsInStock();
-      log.warn("-----Product Set non OOS before test---{}",oosFlag);
+      log.warn("-----Product {} Set non OOS before test---{}",searchServiceData.getQueryForReindex(),oosFlag);
       assertThat("Product non OOS",oosFlag,equalTo(1));
 
     } catch (Exception e) {
@@ -156,44 +156,21 @@ public class InventoryEventSteps {
   public void searchServiceForceStopFlagIsSetAccordingly(String flag) {
     configHelper.findAndUpdateConfig("force.stop.solr.updates",flag);
     configHelper.findAndUpdateConfig("process.delta.during.reindex","false");
-  /*  mongoHelper.updateMongo("config_list","NAME","force.stop.solr.updates","VALUE",flag);
-    mongoHelper.updateMongo("config_list","NAME","process.delta.during.reindex","VALUE","false");
-    try {
-      Thread.sleep(10000);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-    RedisHelper.deleteAll(searchServiceProperties.get("REDIS_HOST"),REDIS_PORT);*/
-
   }
 
 
-  @Given("^\\[search-service] inventory (.*) event is configured as whitelist$")
+  @Given("^\\[search-service] inventory '(.*)' event is configured as whitelist$")
   public void searchServiceInventoryOosEventIsConfiguredAsWhitelist(String eventType){
     if(eventType.equals("oos"))
       configHelper.findAndUpdateConfig("whitelist.events","ProductOutOfStockEvent");
-   //   mongoHelper.updateMongo("config_list","NAME","whitelist.events","VALUE","ProductOutOfStockEvent");
     else
       configHelper.findAndUpdateConfig("whitelist.events","ProductNonOutOfStockEvent");
-   //   mongoHelper.updateMongo("config_list","NAME","whitelist.events","VALUE","ProductNonOutOfStockEvent");
-/*    try {
-      Thread.sleep(10000);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-    RedisHelper.deleteAll(searchServiceProperties.get("REDIS_HOST"),REDIS_PORT);*/
+
   }
 
   @And("^\\[search-service] inventory '(.*)' event is not configured as whitelist$")
   public void searchServiceInventoryOosEventIsNotConfiguredAsWhitelist(String event){
     configHelper.findAndUpdateConfig("whitelist.events","abc");
-/*    mongoHelper.updateMongo("config_list","NAME","whitelist.events","VALUE","abc");
-    try {
-      Thread.sleep(10000);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-    RedisHelper.deleteAll(searchServiceProperties.get("REDIS_HOST"),REDIS_PORT);*/
   }
 
   @Then("^\\[search-service] product does not becomes oos in SOLR$")
@@ -212,7 +189,7 @@ public class InventoryEventSteps {
   @Then("^\\[search-service] events are stored in indexing_list_new collection and processed when job is run after turning off the flag$")
   public void searchServiceEventsAreStoredInIndexing_list_newCollectionAndProcessedWhenJobIsRun() {
     FindIterable<Document> indexing_list_new =
-        mongoHelper.getMongoDocumentByQuery("indexing_list_new", "code", "TH7-15791-00075-00001");
+        mongoHelper.getMongoDocumentByQuery("indexing_list_new", "code", searchServiceData.getItemSkuForReindex());
 
     int size = 0;
     for (Document doc:indexing_list_new
@@ -225,10 +202,6 @@ public class InventoryEventSteps {
     assertThat("Entry does not exists in collection",size,equalTo(1));
 
     configHelper.findAndUpdateConfig("force.stop.solr.updates","false");
-
-/*    mongoHelper.updateMongo("config_list","NAME","force.stop.solr.updates","VALUE","false");
-
-    RedisHelper.deleteAll(searchServiceProperties.get("REDIS_HOST"),REDIS_PORT);*/
 
     ResponseApi<GdnRestSingleResponse<SimpleStringResponse>> processingStoredDelta =
         searchServiceController.prepareRequestForProcessingStoredDelta();

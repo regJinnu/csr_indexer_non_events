@@ -70,8 +70,8 @@ public class SolrHelper {
   }
 
 
-  public static long getSolrProdCountWithFq(String queryText, String requestHandler,String fq) throws Exception {
-    HttpSolrClient httpSolrClient = initializeSolr("SOLR_URL");
+  public long getSolrProdCountWithFq(String queryText, String requestHandler,String fq) throws Exception {
+    HttpSolrClient httpSolrClient = initializeSolr(searchServiceProperties.get("SOLR_URL"));
     SolrQuery solrQuery = initializeSolrQuery(queryText,requestHandler,0,"id",fq);
     QueryResponse queryResponse = httpSolrClient.query(solrQuery);
     return queryResponse.getResults().getNumFound();
@@ -177,10 +177,14 @@ public class SolrHelper {
     solrInputDocument.addField("id",itemSku);
     solrInputDocument.addField("sku",sku);
     solrInputDocument.addField("productCode",productCode);
-    if(eventType.equals("itemChangeEvent"))
+    if(eventType.equals("itemChangeEvent")){
       solrInputDocument.addField("level0Id",sku);
-    else
+      solrInputDocument.addField("level1Id",sku);
+    }
+    else{
       solrInputDocument.addField("level0Id",productCode);
+      solrInputDocument.addField("level1Id",productCode);
+    }
     try {
       UpdateResponse updateResponse = httpSolrClient.add(solrInputDocument);
       httpSolrClient.commit();
