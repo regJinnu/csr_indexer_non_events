@@ -2,17 +2,11 @@ package com.gdn.qa.x_search.api.test.Constants;
 
 public interface UrlConstants {
 
-  String SOLR_URL = "http://seoulsolr6-01.uatb.lokal:8983/solr/productCollectionNew";
   String SOLR_DEFAULT_COLLECTION = "productCollectionNew";
   String SELECT_HANDLER = "/select";
-  String SOLR_URL_NO_PARAM = "http://seoulsolr6-01.uatb.lokal:8983/solr";
-  String MONGO_SERVER_ADDRESS = "mongodb-01.uatb.lokal";
   int MONGO_SERVER_PORT = 27017;
-  String REDIS_HOST="xsearchapp-01.uatb.lokal";
-  String REDIS_PORT="6379";
   String DOWNLOAD_GEN_FULL_FEED_FOR_FACEBOOK="/opt/output/facebook/1/";
   String LOCAL_STORAGE_LOCATION="/tmp/FacebookDownloadedFiles/";
-  String SERVER_IP="xsearchapp-01.uatb.lokal";
   int SERVER_PORT=2209;
   String SERVER_USERNAME="linux1-user";
   String SERVER_PASSWORD="blibliqaisthebest";

@@ -52,9 +52,6 @@ public class FacebookSteps {
   @Autowired
   MongoHelper mongoHelper;
 
-  DownloadHelper downloadHelper = new DownloadHelper(searchServiceProperties.get("SERVER_IP"), SERVER_PORT, SERVER_USERNAME, SERVER_PASSWORD);
-
-
   @Given("^\\[search-service] exists api for storing all ids in redis$")
   public void searchServiceExistsApiForStoringAllIdsInRedis() {
 
@@ -153,6 +150,10 @@ public class FacebookSteps {
       e.printStackTrace();
     }
 
+     String SERVER_IP = searchServiceProperties.get("SERVER_IP");
+
+    DownloadHelper downloadHelper = new DownloadHelper(SERVER_IP, SERVER_PORT, SERVER_USERNAME, SERVER_PASSWORD);
+
     Vector<ChannelSftp.LsEntry> files =
         downloadHelper.checkNumberOfFiles(DOWNLOAD_GEN_FULL_FEED_FOR_FACEBOOK);
 
@@ -162,6 +163,10 @@ public class FacebookSteps {
 
   @Then("^\\[search-service] count of records written is equal to ids stored in redis$")
   public void searchServiceCountOfRecordsWrittenIsEqualToIdsStoredInRedis(){
+
+    String SERVER_IP = searchServiceProperties.get("SERVER_IP");
+
+    DownloadHelper downloadHelper = new DownloadHelper(SERVER_IP, SERVER_PORT, SERVER_USERNAME, SERVER_PASSWORD);
 
     Vector<ChannelSftp.LsEntry> files =
         downloadHelper.checkNumberOfFiles(DOWNLOAD_GEN_FULL_FEED_FOR_FACEBOOK);
@@ -216,6 +221,9 @@ public class FacebookSteps {
 
   private Integer getFileCount(String filename) {
     try {
+
+       String SERVER_IP = searchServiceProperties.get("SERVER_IP");
+       DownloadHelper downloadHelper = new DownloadHelper(SERVER_IP, SERVER_PORT, SERVER_USERNAME, SERVER_PASSWORD);
       return downloadHelper.count(filename);
     } catch (IOException e) {
       log.error("Error occurred while getting count", e);
