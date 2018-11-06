@@ -55,7 +55,7 @@ public class SolrResults {
   private boolean storeClose;
 
   @Field
-  private String activePromos;
+  private ArrayList<String> activePromos;
 
   @Field
   private Double salePrice;
@@ -90,7 +90,7 @@ public class SolrResults {
       int isDelayShipping,
       ArrayList<String> logisticOptions,
       Double offerPrice,
-      Double listPrice,String campaignName,boolean storeClose,String activePromos,
+      Double listPrice,String campaignName,boolean storeClose,ArrayList<String> activePromos,
       String pristineFacet,String pristineCameraFacet,String pristineHandphoneFacet) {
     this.pristineFacet=pristineFacet;
      this.brandSearch = brandSearch;
@@ -116,7 +116,7 @@ public class SolrResults {
     this.listPrice = listPrice;
     this.campaignName = campaignName;
     this.storeClose = storeClose;
-    this.salePrice=salePrice;
+    this.salePrice = salePrice;
     this.activePromos=activePromos;
     this.pristineCameraFacet=pristineCameraFacet;
     this.pristineHandphoneFacet=pristineHandphoneFacet;
@@ -152,11 +152,11 @@ public class SolrResults {
   }
 
 
-  public String getActivePromos() {
+  public ArrayList<String> getActivePromos() {
     return activePromos;
   }
 
-  public void setActivePromos(String activePromos) {
+  public void setActivePromos(ArrayList<String> activePromos) {
     this.activePromos = activePromos;
   }
 

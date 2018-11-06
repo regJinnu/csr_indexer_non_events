@@ -237,7 +237,7 @@
                 </executions>
             </plugin>
             <!--Uncomment this to Integrate with testlink-->
-      <plugin>
+    <plugin>
                 <groupId>com.gdn.qa.util</groupId>
                 <artifactId>serenity-testlink-integration</artifactId>
                 <version>${serenity.testlink.integration.version}</version>
@@ -258,6 +258,7 @@
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
 

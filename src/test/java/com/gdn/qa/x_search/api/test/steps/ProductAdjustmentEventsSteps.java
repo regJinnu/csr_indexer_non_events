@@ -101,7 +101,7 @@ public class ProductAdjustmentEventsSteps  {
     String promoOffer= null;
     try {
       promoOffer=solrHelper.getSolrProd(searchServiceData.getPromoItemSKUinSOLR(),SELECT_HANDLER,"activePromos",1)
-          .get(0).getActivePromos();
+          .get(0).getActivePromos().get(0);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -132,7 +132,7 @@ public class ProductAdjustmentEventsSteps  {
     String promoOffer= null;
     try {
       promoOffer = solrHelper.getSolrProd(searchServiceData.getPromoItemSKUinSOLR(),SELECT_HANDLER,"activePromos",1)
-          .get(0).getActivePromos();
+          .get(0).getActivePromos().get(0);
     } catch (Exception e) {
       e.printStackTrace();
     }

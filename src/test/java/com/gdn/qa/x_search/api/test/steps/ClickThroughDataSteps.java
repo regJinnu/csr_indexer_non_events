@@ -87,11 +87,13 @@ public class ClickThroughDataSteps {
     ResponseApi<GdnRestSingleResponse<SearchTermCategoryClickThroughResponse>> response =
         searchServiceData.getCategoryClickThroughResponse();
     assertThat(response.getResponseBody().getErrorCode(), equalTo("200"));
+
     assertThat(response.getResponseBody()
         .getValue()
         .getSearchTermCategoryClickThroughMap()
         .get("testingapi")
         .getSearchTerm(), equalTo("testingapi"));
+
     assertThat(response.getResponseBody()
         .getValue()
         .getSearchTermCategoryClickThroughMap()

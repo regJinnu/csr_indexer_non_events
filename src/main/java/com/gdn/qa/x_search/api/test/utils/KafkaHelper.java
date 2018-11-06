@@ -551,9 +551,10 @@ private ApplicationContext applicationContext;
        List<String> complementaryProducts){
     Date date = new Date();
     DateTime presentDate = new DateTime(date);
-    DateTime dtStart=presentDate.plusDays(1);
+    DateTime dtStart=presentDate.withTimeAtStartOfDay() ;
     DateTime dtEnd = dtStart.plusDays(1);
     PromoBundlingActivateModel promoBundlingModel= PromoBundlingActivateModel.builder()
+        .timestamp(System.currentTimeMillis())
         .promoBundlingId(promoBundlingId)
         .mainItemSku(promoItemSKU)
         .promoBundlingType(promoBundlingType)

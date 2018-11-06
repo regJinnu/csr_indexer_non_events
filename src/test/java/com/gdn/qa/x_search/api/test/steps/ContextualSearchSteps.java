@@ -27,10 +27,6 @@ public class ContextualSearchSteps {
 
 
   public long valid;
-  String autoFlightId = "";
-  String autoPlaceholderId = "";
-  String autoSearchId = "";
-  String autoTrainid = "";
   public long count= 0L;
 
   @Autowired
