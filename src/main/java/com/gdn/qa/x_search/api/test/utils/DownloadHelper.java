@@ -3,6 +3,8 @@ package com.gdn.qa.x_search.api.test.utils;
 
 import com.jcraft.jsch.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
 import java.io.*;
 import java.util.Vector;
 import java.util.regex.Matcher;
