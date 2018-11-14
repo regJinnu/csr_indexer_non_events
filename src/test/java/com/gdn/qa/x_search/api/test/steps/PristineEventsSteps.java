@@ -33,10 +33,13 @@ public class PristineEventsSteps {
   @Autowired
   SolrHelper solrHelper;
 
+  String PVOFF= "level1Id";
+  String PVON="level0Id";
+
   @Given("^\\[search-service] set all the values for publishing the pristine event for Computer category$")
   public void searchServiceSetAllTheValuesForPublishingThePristineEvent() {
-    configHelper.findAndUpdateConfig("product.level.id","level1Id");
-    configHelper.findAndUpdateConfig("service.product.level.id","level1Id");
+    configHelper.findAndUpdateConfig("product.level.id",PVOFF);
+    configHelper.findAndUpdateConfig("service.product.level.id",PVOFF);
     searchServiceData.setProductIdforPristine(searchServiceProperties.get("productIdforPristine"));
     searchServiceData.setItemCount(searchServiceProperties.get("itemCount"));
     searchServiceData.setCategory(searchServiceProperties.get("category"));
@@ -83,8 +86,8 @@ public class PristineEventsSteps {
 
   @Given("^\\[search-service] set all the values for publishing the pristine event for camera category$")
   public void searchServiceSetAllTheValuesForPublishingThePristineEventForCameraCategory() {
-    configHelper.findAndUpdateConfig("product.level.id","level1Id");
-    configHelper.findAndUpdateConfig("service.product.level.id","level1Id");
+    configHelper.findAndUpdateConfig("product.level.id",PVOFF);
+    configHelper.findAndUpdateConfig("service.product.level.id",PVOFF);
     searchServiceData.setProductIdforPristineCamera(searchServiceProperties.get(
         "productIdforPristineCamera"));
     searchServiceData.setCameraCategory(searchServiceProperties.get("cameraCategory"));
@@ -136,8 +139,8 @@ public class PristineEventsSteps {
 
   @Given("^\\[search-service] set all the values for publishing the pristine event for handphone category$")
   public void searchServiceSetAllTheValuesForPublishingThePristineEventForHandphoneCategory() {
-    configHelper.findAndUpdateConfig("product.level.id","level1Id");
-    configHelper.findAndUpdateConfig("service.product.level.id","level1Id");
+    configHelper.findAndUpdateConfig("product.level.id",PVOFF);
+    configHelper.findAndUpdateConfig("service.product.level.id",PVOFF);
     searchServiceData.setProductIdforPristineHandphone(searchServiceProperties.get(
         "productIdforPristineHandphone"));
     searchServiceData.setHandphoneProductItemId(searchServiceProperties.get("handphoneProductItemId"));
@@ -150,12 +153,6 @@ public class PristineEventsSteps {
     searchServiceData.setHandphoneCategory(searchServiceProperties.get("handphoneCategory"));
     searchServiceData.setHandphonePristineID(searchServiceProperties.get("handphonePristineID"));
     searchServiceData.setItemCount(searchServiceProperties.get("itemCount"));
-    try {
-      Thread.sleep(30000);
-      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
   }
 
   @When("^\\[search-service] publish the pristine event for handphone category$")
@@ -168,11 +165,19 @@ public class PristineEventsSteps {
         searchServiceData.getHandphoneCategory(),
         searchServiceData.getHandphonePristineID(),
         searchServiceData.getItemCount());
+    try {
+      Thread.sleep(30000);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   @Then("^\\[search-service] check if the event is consumed by checking the solr field for handphone category$")
   public void searchServiceCheckIfTheEventIsConsumedByCheckingTheSolrFieldForHandphoneCategory() {
     try {
+      configHelper.findAndUpdateConfig("product.level.id",PVON);
+      configHelper.findAndUpdateConfig("service.product.level.id",PVON);
       String pristineFacetInSOLR =
           solrHelper.getSolrProd("level1Id:" + searchServiceData.getHandphonePristineID(),
               SELECT_HANDLER,
