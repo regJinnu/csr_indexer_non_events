@@ -1,4 +1,4 @@
-@KeywordIndexFeature @TestSuiteID=10140144
+@KeywordIndexFeature @TestSuiteID=10257932
 Feature: Keyword index controller related api's
 
   @Regression @CleanUp

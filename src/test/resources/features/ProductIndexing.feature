@@ -1,4 +1,4 @@
-@ProductIndexFeature @TestSuiteID=10140144
+@ProductIndexFeature @TestSuiteID=10257932
 Feature: Product Indexing Api
 
   @ProcessFailedIds

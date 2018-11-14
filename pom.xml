@@ -28,8 +28,8 @@
         <serenity.testlink.integration.version>3.4.3</serenity.testlink.integration.version>
         <testlink.devkey>b0f60503e7aab68af1e6072faf5124d6</testlink.devkey>
         <testlink.project>X-Search</testlink.project>
-        <testlink.plan>Minor_Deployment_2018-10-24_SEARCH</testlink.plan>
-        <testlink.build>4.5.0-9_QA-2_SEARCH-SERVICE</testlink.build>
+        <testlink.plan>TrainDeployment_22-11-2018_X_SEARCH</testlink.plan>
+        <testlink.build>4.6.0-2_QA-1_SEARCH-SERVICE</testlink.build>
     </properties>
 
     <dependencies>
