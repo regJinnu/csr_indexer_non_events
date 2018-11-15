@@ -1,20 +1,14 @@
 @PristineEventsAutomationFeature @TestSuiteID=10257932
 Feature: Automation of pristine related events
 
-  @ComputerCategoryPristineEvents @Regression
-  Scenario: Verify pristine events for Computer category
-    Given [search-service] set all the values for publishing the pristine event for Computer category
-    When [search-service] publish the pristine event for Computer category
-    Then [search-service] check if the event is consumed by checking the solr field
+  @PristineEvents @Regression
+  Scenario Outline: Verify pristine events for pristine categories
+    Given [search-service] set all the values for publishing the pristine event for '<pristine>' category
+    When [search-service] publish the pristine event for '<pristine>' by providing '<category>' '<PristineAttributesName>' '<PristineAttributesValue>' values for each category
+    Then [search-service] verify if the '<PristineAttributesName>' is updated for that particular ID with '<PristineAttributesValue>' for '<pristine>' category in SOLR
 
-  @CameraCategoryPristineEvents @Regression
-  Scenario: Verify pristine events for camera category
-    Given [search-service] set all the values for publishing the pristine event for camera category
-    When [search-service] publish the pristine event for camera category
-    Then [search-service] check if the event is consumed by checking the solr field for camera category
-
-  @HandphonePristineEvents @Regression
-  Scenario: Verify pristine events for handphone category
-    Given [search-service] set all the values for publishing the pristine event for handphone category
-    When [search-service] publish the pristine event for handphone category
-    Then [search-service] check if the event is consumed by checking the solr field for handphone category
+    Examples:
+    | pristine  | category        |   PristineAttributesName   | PristineAttributesValue |
+    | handphone | HANDPHONE       | HANDPHONE_OPERATING_SYSTEM | ANDROID                 |
+    | camera    | KAMERA          |  CAMERA_MODEL              |  x5                     |
+    | computer  | Komputer&Laptop | COMPUTER_BRAND             |  hp                     |

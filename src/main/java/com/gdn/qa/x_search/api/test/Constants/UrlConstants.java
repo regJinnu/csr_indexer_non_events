@@ -14,6 +14,8 @@ public interface UrlConstants {
   String FB_SYNC="FBT-0000001,Facebook test multi merchant prod,facebook test multi merchant prod,new,http://www.blibli.com/p/facebook-test-multi-merchant-prod/pc--FBT-0000001,http://www.static-src.com/wcsstore/Indraprastha/images/catalog/medium/samsung_samsung-galaxy-note-5-gold-smartphone_full04.jpg,in stock,250000,150000,FB Brand 1,blibli://product/FBT-0000001,blibli://product/FBT-0000001,Handphone & Tablet,Handphone,Android,Facebook test multi merchant prod,1034231507,Blibli App - iOS,blibli.mobile.commerce,Blibli App - Android";
   String FILE_PATH = "/api/search/";
   String X_SEARCH_SERVICE="searchservice";
+  String PRODUCT_LEVEL0ID= "level0Id";
+  String PRODUCT_LEVEL1ID="level1Id";
 }
 
 

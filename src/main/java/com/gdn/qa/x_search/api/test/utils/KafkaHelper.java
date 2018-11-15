@@ -215,147 +215,6 @@ private ApplicationContext applicationContext;
     }
   }
 
-  public void pristineEventForComputer(String productIdforPristine,
-      String productItemId,
-      String pristineAttributesName,
-      String pristineAttributesValue,
-      List<String> blibliCategoryHierarchy,
-      String category,
-      String pristineID,
-      String itemCount) {
-    MergedProductAttributeDetail mergedProductAttributeDetail = MergedProductAttributeDetail.builder()
-            .name(pristineAttributesName)
-            .value(pristineAttributesValue)
-            .build();
-
-    Set<MergedProductAttributeDetail> attributes = new HashSet<>();
-    attributes.add(mergedProductAttributeDetail);
-    MergedProductItemDetail mergedProductItemDetail = MergedProductItemDetail.builder()
-        .productItemId(productItemId)
-        .actionType(ActionType.ADD)
-        .attributes(attributes)
-        .build();
-
-    List<MergedProductItemDetail> productItemDetails = new ArrayList<>();
-    productItemDetails.add(mergedProductItemDetail);
-
-    MergedProductDetailNew mergedProductDetailNew = MergedProductDetailNew.builder()
-        .productId(productIdforPristine)
-        .productItemDetails(productItemDetails)
-        .blibliCategoryHierarchy(blibliCategoryHierarchy)
-        .category(category)
-        .id(pristineID)
-        .build();
-
-    PristineEventsModel pristineEventsModel = PristineEventsModel.builder()
-        .eventDateTime(System.currentTimeMillis())
-        .itemCount(Integer.parseInt(itemCount))
-        .productDetail(mergedProductDetailNew)
-        .productId(productIdforPristine)
-        .timestamp(System.currentTimeMillis())
-        .build();
-    try {
-      kafkaSender.send("com.gdn.ext.catalog.approved.product.change",
-          objectMapper.writeValueAsString(pristineEventsModel));
-    } catch (JsonProcessingException e) {
-      e.printStackTrace();
-    }
-  }
-
-  public void pristineEventForCamera(String productIdforPristineCamera,
-      String cameraProductItemId,
-      String cameraPristineAttributesName,
-      String cameraPristineAttributesValue,
-      List<String> cameraBlibliCategoryHierarchy,
-      String cameraCategory,
-      String cameraPristineID,
-      String itemCount) {
-    MergedProductAttributeDetail mergedProductAttributeDetail = MergedProductAttributeDetail.builder()
-        .name(cameraPristineAttributesName)
-        .value(cameraPristineAttributesValue)
-        .build();
-
-    Set<MergedProductAttributeDetail> attributes = new HashSet<>();
-    attributes.add(mergedProductAttributeDetail);
-    MergedProductItemDetail mergedProductItemDetail = MergedProductItemDetail.builder()
-        .productItemId(cameraProductItemId)
-        .actionType(ActionType.ADD)
-        .attributes(attributes)
-        .build();
-
-    List<MergedProductItemDetail> productItemDetails = new ArrayList<>();
-    productItemDetails.add(mergedProductItemDetail);
-
-    MergedProductDetailNew mergedProductDetailNew = MergedProductDetailNew.builder()
-        .productId(productIdforPristineCamera)
-        .productItemDetails(productItemDetails)
-        .blibliCategoryHierarchy(cameraBlibliCategoryHierarchy)
-        .category(cameraCategory)
-        .id(cameraPristineID)
-        .build();
-
-    PristineEventsModel pristineEventsModel = PristineEventsModel.builder()
-        .eventDateTime(System.currentTimeMillis())
-        .itemCount(Integer.parseInt(itemCount))
-        .productDetail(mergedProductDetailNew)
-        .productId(productIdforPristineCamera)
-        .timestamp(System.currentTimeMillis())
-        .build();
-    try {
-      kafkaSender.send("com.gdn.ext.catalog.approved.product.change",
-          objectMapper.writeValueAsString(pristineEventsModel));
-    } catch (JsonProcessingException e) {
-      e.printStackTrace();
-    }
-  }
-
-  public void pristineEventForHandphone(String productIdforPristineHandphone,
-      String handphoneProductItemId,
-      String handphonePristineAttributesName,
-      String handphonePristineAttributesValue,
-      List<String> handphoneBlibliCategoryHierarchy,
-      String handphoneCategory,
-      String handphonePristineID,
-      String itemCount) {
-    MergedProductAttributeDetail mergedProductAttributeDetail = MergedProductAttributeDetail.builder()
-        .name(handphonePristineAttributesName)
-        .value(handphonePristineAttributesValue)
-        .build();
-
-    Set<MergedProductAttributeDetail> attributes = new HashSet<>();
-    attributes.add(mergedProductAttributeDetail);
-    MergedProductItemDetail mergedProductItemDetail = MergedProductItemDetail.builder()
-        .productItemId(handphoneProductItemId)
-        .actionType(ActionType.ADD)
-        .attributes(attributes)
-        .build();
-
-    List<MergedProductItemDetail> productItemDetails = new ArrayList<>();
-    productItemDetails.add(mergedProductItemDetail);
-
-    MergedProductDetailNew mergedProductDetailNew = MergedProductDetailNew.builder()
-        .productId(productIdforPristineHandphone)
-        .productItemDetails(productItemDetails)
-        .blibliCategoryHierarchy(handphoneBlibliCategoryHierarchy)
-        .category(handphoneCategory)
-        .id(handphonePristineID)
-        .build();
-
-    PristineEventsModel pristineEventsModel = PristineEventsModel.builder()
-        .eventDateTime(System.currentTimeMillis())
-        .itemCount(Integer.parseInt(itemCount))
-        .productDetail(mergedProductDetailNew)
-        .productId(productIdforPristineHandphone)
-        .timestamp(System.currentTimeMillis())
-        .build();
-    try {
-      kafkaSender.send("com.gdn.ext.catalog.approved.product.change",
-          objectMapper.writeValueAsString(pristineEventsModel));
-    } catch (JsonProcessingException e) {
-      e.printStackTrace();
-    }
-  }
-
   public void publishCampaignEventExclusive(String campaignName,
       String campaignCode,
       String productSku,
@@ -584,6 +443,53 @@ private ApplicationContext applicationContext;
       e.printStackTrace();
     }
 
+  }
+
+  public void pristineEvent(String productIdforPristine,
+      String ProductItemId,
+      String PristineAttributesName,
+      String PristineAttributesValue,
+      List<String> BlibliCategoryHierarchy,
+      String Category,
+      String PristineID,
+      String itemCount) {
+    MergedProductAttributeDetail mergedProductAttributeDetail = MergedProductAttributeDetail.builder()
+        .name(PristineAttributesName)
+        .value(PristineAttributesValue)
+        .build();
+
+    Set<MergedProductAttributeDetail> attributes = new HashSet<>();
+    attributes.add(mergedProductAttributeDetail);
+    MergedProductItemDetail mergedProductItemDetail = MergedProductItemDetail.builder()
+        .productItemId(ProductItemId)
+        .actionType(ActionType.ADD)
+        .attributes(attributes)
+        .build();
+
+    List<MergedProductItemDetail> productItemDetails = new ArrayList<>();
+    productItemDetails.add(mergedProductItemDetail);
+
+    MergedProductDetailNew mergedProductDetailNew = MergedProductDetailNew.builder()
+        .productId(productIdforPristine)
+        .productItemDetails(productItemDetails)
+        .blibliCategoryHierarchy(BlibliCategoryHierarchy)
+        .category(Category)
+        .id(PristineID)
+        .build();
+
+    PristineEventsModel pristineEventsModel = PristineEventsModel.builder()
+        .eventDateTime(System.currentTimeMillis())
+        .itemCount(Integer.parseInt(itemCount))
+        .productDetail(mergedProductDetailNew)
+        .productId(productIdforPristine)
+        .timestamp(System.currentTimeMillis())
+        .build();
+    try {
+      kafkaSender.send("com.gdn.ext.catalog.approved.product.change",
+          objectMapper.writeValueAsString(pristineEventsModel));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
   }
 
 }
