@@ -10,6 +10,7 @@ import com.mongodb.client.FindIterable;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,7 +23,7 @@ import static org.hamcrest.Matchers.equalTo;
  * @author kumar on 12/09/18
  * @project X-search
  */
-
+@Slf4j
 @CucumberStepsDefinition
 public class CampaignRelatedEventsSteps {
 
@@ -119,6 +120,7 @@ public class CampaignRelatedEventsSteps {
 
   @When("^\\[search-service] publish the campaign stop event$")
   public void searchServicePublishTheCampaignStopEvent() {
+    log.debug("-----------------------------------CAMPAIGN CODE FOR STOP EVENT-----------------------------------"+searchServiceData.getCampaignCode());
     kafkaHelper.campaignStopEvent(searchServiceData.getCampaignCode(), false);
     try {
       Thread.sleep(50000);
@@ -158,6 +160,7 @@ public class CampaignRelatedEventsSteps {
 
   @When("^\\[search-service] publish the campaign end event$")
   public void searchServicePublishTheCampaignEndEvent() {
+    log.debug("-----------------------------------CAMPAIGN CODE FOR END EVENT-----------------------------------"+searchServiceData.getCampaignCode());
     kafkaHelper.campaignEndEvent(searchServiceData.getCampaignCodeList(), false);
     try {
      Thread.sleep(50000);
@@ -395,6 +398,6 @@ public class CampaignRelatedEventsSteps {
             SELECT_HANDLER,
             "campaign_CAMP-0001:[* TO *]");
 
-    assertThat("SOLR data not updated", countWithFq, equalTo(2L));
+    assertThat("SOLR data not updated", countWithFq, equalTo(1L));
   }
 }

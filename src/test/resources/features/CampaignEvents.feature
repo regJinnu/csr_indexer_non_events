@@ -49,13 +49,13 @@ Feature: Campaign Related Events
     When [search-service] publish the campaign remove event with exclusive flag
     Then [search-service] check if the campaign remove event is consumed with exclusive flag
 
-  @CampaignStopExclusive @Regression
+  @CampaignStopExclusive @Regression @Exclusive
   Scenario: Verify Campaign Stop events with exclusive flag
     Given [search-service] set list of campaign codes to stop with exclusive flag
     When [search-service] publish the campaign stop event with exclusive flag
     Then [search-service] check if the event is consumed by checking for the field in solr in case of exclusive flag
 
-  @CampaignEndExclusive @Regression
+  @CampaignEndExclusive @Regression @Exclusive
   Scenario: Verify Campaign end events with exclusive flag
     Given [search-service] set list of campaign codes to end with exclusive flag
     When [search-service] publish the campaign end event with exclusive flag
