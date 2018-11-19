@@ -6,10 +6,7 @@ import com.gdn.qa.x_search.api.test.CucumberStepsDefinition;
 import com.gdn.qa.x_search.api.test.api.services.FeedController;
 import com.gdn.qa.x_search.api.test.data.SearchServiceData;
 import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
-import com.gdn.qa.x_search.api.test.utils.DownloadHelper;
-import com.gdn.qa.x_search.api.test.utils.MongoHelper;
-import com.gdn.qa.x_search.api.test.utils.ProcessShellCommands;
-import com.gdn.qa.x_search.api.test.utils.SolrHelper;
+import com.gdn.qa.x_search.api.test.utils.*;
 import com.jcraft.jsch.ChannelSftp;
 import com.mongodb.client.FindIterable;
 import cucumber.api.java.en.Given;
@@ -51,6 +48,9 @@ public class FacebookSteps {
 
   @Autowired
   MongoHelper mongoHelper;
+
+  @Autowired
+  KafkaHelper kafkaHelper ;
 
   @Given("^\\[search-service] exists api for storing all ids in redis$")
   public void searchServiceExistsApiForStoringAllIdsInRedis() {
@@ -396,6 +396,24 @@ public class FacebookSteps {
   @Given("^\\[search-service] data is updated in SOLR$")
   public void searchServiceDataIsUpdatedInSOLR() {
 
+    searchServiceData.setItemSkuForReindex(searchServiceProperties.get("itemSkuForReindex"));
+    searchServiceData.setSkuForReindex(searchServiceProperties.get("skuForReindex"));
+    searchServiceData.setQueryForReindex(searchServiceProperties.get("queryForReindex"));
+    searchServiceData.setProductCodeForReindex(searchServiceProperties.get("productCodeForReindex"));
+
+    kafkaHelper.publishItemChangeEvent(searchServiceData.getItemSkuForReindex(),
+        searchServiceData.getSkuForReindex(),false,false);
+
+    String itemSku = searchServiceData.getQueryForReindex().split(":")[1];
+    kafkaHelper.publishOOSEvent(itemSku,"TH7-15791","nonOOS");
+
+    try {
+      Thread.sleep(30000);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
   }
 
 
@@ -406,20 +424,63 @@ public class FacebookSteps {
         feedController.prepareFacebookDeltaFeedRequest();
     searchServiceData.setSearchServiceResponse(gdnBaseRestResponseResponseApi);
 
+    assertThat("Response code not 200",searchServiceData.getSearchServiceResponse().getResponse(),equalTo(200));
   }
 
 
   @Then("^\\[search-service] new delta directory with files are created in specified location$")
   public void searchServiceNewDeltaDirectoryWithFilesAreCreatedInSpecifiedLocation() {
 
-    ResponseApi<GdnBaseRestResponse> searchServiceResponse = searchServiceData.getSearchServiceResponse();
+    String SERVER_IP = searchServiceProperties.get("SERVER_IP");
 
-    assertThat("Response code not 200",searchServiceResponse.getResponse().getStatusCode(),equalTo(200));
+    DownloadHelper downloadHelper = new DownloadHelper(SERVER_IP, SERVER_PORT, SERVER_USERNAME, SERVER_PASSWORD);
+
+   String deltaPath = DOWNLOAD_GEN_FULL_FEED_FOR_FACEBOOK + downloadHelper.getDeltaDirName(DOWNLOAD_GEN_FULL_FEED_FOR_FACEBOOK);
+
+   log.error("-----Delta Path---{}",deltaPath);
+
+    Vector<ChannelSftp.LsEntry> files =
+        downloadHelper.checkNumberOfFiles(deltaPath);
+
+    log.error("----Number of files in deltaPath---{}",files.size());
+
+    assertThat("No files generated",files.size(),greaterThan(0));
+
+    File dir = new File(LOCAL_STORAGE_LOCATION);
+
+    try {
+      FileUtils.cleanDirectory(dir);
+    } catch (IOException e) {
+      log.error("Failed to delete files in local directory");
+    }
+
+    for (ChannelSftp.LsEntry lsEntry:files) {
+      log.error("------Trying to download file-----{}:",deltaPath +"/" +lsEntry.getFilename());
+      downloadHelper.download(deltaPath +"/" +lsEntry.getFilename(),LOCAL_STORAGE_LOCATION);
+
+    }
+
   }
 
 
   @Then("^\\[search-service] products which are updated are written in files$")
   public void searchServiceProductsWhichAreUpdatedAreWrittenInFiles(){
+
+    searchServiceData.setProductCodeForReindex(searchServiceProperties.get("productCodeForReindex"));
+
+    log.error("-----value to search---{}:",searchServiceData.getProductCodeForReindex());
+
+    String output = null;
+    try {
+      output = ProcessShellCommands.getShellScriptActualOutput(
+          "verifyFacebookRecords.sh",
+          searchServiceData.getProductCodeForReindex());
+     log.error("----Output---{}",output);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    assertThat("Updated prod not found in delta",output.trim(),equalTo("1"));
 
   }
 }

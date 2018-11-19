@@ -11,6 +11,7 @@ import com.gdn.qa.x_search.api.test.utils.KafkaHelper;
 import com.gdn.qa.x_search.api.test.utils.MongoHelper;
 import com.gdn.qa.x_search.api.test.utils.SolrHelper;
 import com.mongodb.client.FindIterable;
+import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -103,7 +104,6 @@ public class BusinessPartnerEventSteps {
   public void checkStoreEventIsConsumed(boolean isDelayShipping){
 
       kafkaHelper.publishStoreClosedEvent(searchServiceData.getBusinessPartnerCode(),isDelayShipping);
-
     try {
       Thread.sleep(60000);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
@@ -114,7 +114,6 @@ public class BusinessPartnerEventSteps {
 
   @Then("^\\[search-service] store closed information is updated in SOLR$")
   public void checkStoreClosedInfoIsUpdated(){
-
     try {
       long startDateStoreClosed =
           solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "startDateStoreClosed", 1)
@@ -189,8 +188,8 @@ public class BusinessPartnerEventSteps {
 
   @Then("^\\[search-service] storeClose field is set to true$")
   public void searchServiceStoreCloseFieldIsSetToTrue(){
-
     try {
+
       boolean storeClose = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
           "storeClose",
@@ -293,6 +292,21 @@ public class BusinessPartnerEventSteps {
       e.printStackTrace();
     }
 
+
+  }
+
+  @When("^\\[search-service] runs the scheduled events job$")
+  public void searchServiceRunsTheScheduledEventsJob(){
+
+    searchServiceController.fetchTheListOfUnpublishedProducts();
+    try {
+      Thread.sleep(10000);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
   }
 }

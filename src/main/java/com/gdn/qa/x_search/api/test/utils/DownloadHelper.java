@@ -135,6 +135,32 @@ public class DownloadHelper {
     return null;
   }
 
+
+  public String getDeltaDirName(String directory){
+    connect();
+    String deltaPath="";
+    try {
+
+      Vector<ChannelSftp.LsEntry> fileList = sftpChannel.ls(directory);
+
+      for (ChannelSftp.LsEntry lsEntry:fileList) {
+        if(lsEntry.getFilename().contains("delta_")){
+        deltaPath = lsEntry.getFilename();
+        break;
+        }
+      }
+      disconnect();
+      return deltaPath;
+    }
+
+    catch (Exception e){
+      e.printStackTrace();
+    }
+    disconnect();
+    return deltaPath;
+  }
+
+
   public boolean purgeDirectory(File dir) {
    return dir.delete();
   }

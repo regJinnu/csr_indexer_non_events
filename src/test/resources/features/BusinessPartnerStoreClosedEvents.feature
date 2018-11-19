@@ -5,6 +5,7 @@ Feature: Verify indexing by business partner store closed events
   Scenario: Verify store closed events with delay shipping off
     Given [search-service] verify store closed start and end timestamp fields in SOLR for the product
     When [search-service] consumes store closed event with delay shipping as 'false'
+    When [search-service] runs the scheduled events job
     Then [search-service] store closed information is updated in SOLR
     And [search-service] delay shipping is set as '0'
     And [search-service] storeClose field is set to true
@@ -34,6 +35,6 @@ Feature: Verify indexing by business partner store closed events
  @BPProfileUpdateFields
   Scenario: Verify Business Partner Profile update field event
     Given [search-service] cnc is set as true in products for merchant
-   And [search-service] force.stop flag is set to 'false'
+    And [search-service] force.stop flag is set to 'false'
     When [search-service] consumes com.gdn.x.businesspartner.profile.update.fields event
     Then [search-service] cnc true is removed for all products under that merchant

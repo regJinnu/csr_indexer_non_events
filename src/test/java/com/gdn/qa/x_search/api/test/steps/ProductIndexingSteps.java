@@ -442,7 +442,7 @@ public class ProductIndexingSteps {
 
       Document indexDoc1 = new Document("_class", "com.gdn.x.search.entity.ReIndexEntity").append(
           "productId",
-          "MTA-0309046")
+          "MTA-0406061")
           .append("hostNumber", 1)
           .append("isFailed", 0)
           .append("idType", "productCode")
@@ -451,7 +451,7 @@ public class ProductIndexingSteps {
 
       Document indexDoc2 = new Document("_class", "com.gdn.x.search.entity.ReIndexEntity").append(
           "productId",
-          "TH7-15791-00118")
+          "TOQ-15126-00352")
           .append("hostNumber", 1)
           .append("isFailed", 0)
           .append("idType", "productSku")

@@ -157,7 +157,7 @@ public class CucumberHooks {
       date = dateFormat.parse("2018-07-30T11:45:39.235Z");
 
       Document storedDeltaDoc1 = new Document("_class" , "com.gdn.x.search.entity.EventIndexingEntity")
-          .append("code" , "MTA-0309046")
+          .append("code" , "MTA-0305736")
           .append("type" , "productCode")
           .append("processHost", "1")
           .append("isFailed", "0")
@@ -170,7 +170,7 @@ public class CucumberHooks {
           .append("MARK_FOR_DELETE" , false);
 
       Document storedDeltaDoc2 = new Document("_class" , "com.gdn.x.search.entity.EventIndexingEntity")
-          .append("code" , "TH7-15791-00118-00001")
+          .append("code" , "TH7-15791-00161-00001")
           .append("type" , "id")
           .append("processHost", "1")
           .append("isFailed", "0")
