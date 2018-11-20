@@ -1,4 +1,4 @@
-@FacebookFeed @TestSuiteID=9677376
+@FacebookFeed @TestSuiteID=10257932
 Feature: Verification of Facebook Feed
 
   @PopulateFacebookIdsInRedis

@@ -31,7 +31,8 @@ public class SynonymSteps {
   @Autowired
  private SearchServiceData searchServiceData;
 
-  MongoHelper mongoHelper = new MongoHelper();
+  @Autowired
+  MongoHelper mongoHelper;
 
   @Given("^\\[search-service] prepare create synonym using properties using properties data$")
   public void searchServicePrepareCreateSynonymUsingPropertiesUsingPropertiesData() {

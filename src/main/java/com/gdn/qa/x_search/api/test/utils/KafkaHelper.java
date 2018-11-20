@@ -317,7 +317,6 @@ private ApplicationContext applicationContext;
     }
   }
 
-
   public void campaignLiveEvent( String campaignCode, String campaignName, boolean isExclusive,
       String tagLabel, boolean markForDelete){
 
@@ -411,9 +410,10 @@ private ApplicationContext applicationContext;
        List<String> complementaryProducts){
     Date date = new Date();
     DateTime presentDate = new DateTime(date);
-    DateTime dtStart=presentDate.plusDays(1);
+    DateTime dtStart=presentDate.withTimeAtStartOfDay() ;
     DateTime dtEnd = dtStart.plusDays(1);
     PromoBundlingActivateModel promoBundlingModel= PromoBundlingActivateModel.builder()
+        .timestamp(System.currentTimeMillis())
         .promoBundlingId(promoBundlingId)
         .mainItemSku(promoItemSKU)
         .promoBundlingType(promoBundlingType)
@@ -443,6 +443,53 @@ private ApplicationContext applicationContext;
       e.printStackTrace();
     }
 
+  }
+
+  public void pristineEvent(String productIdforPristine,
+      String ProductItemId,
+      String PristineAttributesName,
+      String PristineAttributesValue,
+      List<String> BlibliCategoryHierarchy,
+      String Category,
+      String PristineID,
+      String itemCount) {
+    MergedProductAttributeDetail mergedProductAttributeDetail = MergedProductAttributeDetail.builder()
+        .name(PristineAttributesName)
+        .value(PristineAttributesValue)
+        .build();
+
+    Set<MergedProductAttributeDetail> attributes = new HashSet<>();
+    attributes.add(mergedProductAttributeDetail);
+    MergedProductItemDetail mergedProductItemDetail = MergedProductItemDetail.builder()
+        .productItemId(ProductItemId)
+        .actionType(ActionType.ADD)
+        .attributes(attributes)
+        .build();
+
+    List<MergedProductItemDetail> productItemDetails = new ArrayList<>();
+    productItemDetails.add(mergedProductItemDetail);
+
+    MergedProductDetailNew mergedProductDetailNew = MergedProductDetailNew.builder()
+        .productId(productIdforPristine)
+        .productItemDetails(productItemDetails)
+        .blibliCategoryHierarchy(BlibliCategoryHierarchy)
+        .category(Category)
+        .id(PristineID)
+        .build();
+
+    PristineEventsModel pristineEventsModel = PristineEventsModel.builder()
+        .eventDateTime(System.currentTimeMillis())
+        .itemCount(Integer.parseInt(itemCount))
+        .productDetail(mergedProductDetailNew)
+        .productId(productIdforPristine)
+        .timestamp(System.currentTimeMillis())
+        .build();
+    try {
+      kafkaSender.send("com.gdn.ext.catalog.approved.product.change",
+          objectMapper.writeValueAsString(pristineEventsModel));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
   }
 
 }

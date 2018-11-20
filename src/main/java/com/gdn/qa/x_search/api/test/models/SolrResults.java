@@ -55,10 +55,20 @@ public class SolrResults {
   private boolean storeClose;
 
   @Field
-  private String activePromos;
+  private ArrayList<String> activePromos;
 
   @Field
   private Double salePrice;
+
+  @Field("PRISTINE_COMPUTER_BRAND")
+  private String pristineFacet;
+
+  @Field("PRISTINE_CAMERA_MODEL")
+  private String pristineCameraFacet;
+
+  @Field("PRISTINE_HANDPHONE_OPERATING_SYSTEM")
+  private String pristineHandphoneFacet;
+
 
   public SolrResults(String brandSearch,
       String description,
@@ -80,7 +90,9 @@ public class SolrResults {
       int isDelayShipping,
       ArrayList<String> logisticOptions,
       Double offerPrice,
-      Double listPrice,String campaignName,boolean storeClose,String activePromos) {
+      Double listPrice,String campaignName,boolean storeClose,ArrayList<String> activePromos,
+      String pristineFacet,String pristineCameraFacet,String pristineHandphoneFacet) {
+    this.pristineFacet=pristineFacet;
      this.brandSearch = brandSearch;
     this.description = description;
     this.level0Id = level0Id;
@@ -104,8 +116,10 @@ public class SolrResults {
     this.listPrice = listPrice;
     this.campaignName = campaignName;
     this.storeClose = storeClose;
-    this.salePrice=salePrice;
+    this.salePrice = salePrice;
     this.activePromos=activePromos;
+    this.pristineCameraFacet=pristineCameraFacet;
+    this.pristineHandphoneFacet=pristineHandphoneFacet;
   }
 
 
@@ -113,11 +127,36 @@ public class SolrResults {
 
   }
 
-  public String getActivePromos() {
+  public String getPristineHandphoneFacet() {
+    return pristineHandphoneFacet ;
+  }
+
+  public void setPristineHandphoneFacet(String pristineHandphoneFacet) {
+    this.pristineHandphoneFacet = pristineHandphoneFacet;
+  }
+
+  public String getPristineFacet() {
+    return pristineFacet ;
+  }
+
+  public void setPristineFacet(String pristineFacet) {
+    this.pristineFacet = pristineFacet;
+  }
+
+  public String getPristineCameraFacet() {
+    return pristineCameraFacet ;
+  }
+
+  public void setPristineCameraFacet(String pristineCameraFacet) {
+    this.pristineFacet = pristineCameraFacet;
+  }
+
+
+  public ArrayList<String> getActivePromos() {
     return activePromos;
   }
 
-  public void setActivePromos(String activePromos) {
+  public void setActivePromos(ArrayList<String> activePromos) {
     this.activePromos = activePromos;
   }
 

@@ -1,4 +1,4 @@
-@InventoryEventsTestFeature @TestSuiteID=9677376
+@InventoryEventsTestFeature @TestSuiteID=10257932
 Feature: Verify indexing by Inventory OOS and Non OOS events
 
   @OOSEvent
@@ -33,7 +33,6 @@ Feature: Verify indexing by Inventory OOS and Non OOS events
     Then [search-service] product does not becomes non oos in SOLR
     And [search-service] events are stored in indexing_list_new collection and processed when job is run after turning off the flag
     And [search-service] product becomes in stock in SOLR
-
 
   @WhitelistOOSEvent
   Scenario: Verify inventory oos event are processed when force stop is true and event is added in whitelist config

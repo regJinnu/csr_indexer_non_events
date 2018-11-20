@@ -32,7 +32,8 @@ public class ConfigSteps {
   @Autowired
   private SearchServiceData searchServiceData;
 
-  MongoHelper mongoHelper = new MongoHelper();
+  @Autowired
+  MongoHelper mongoHelper;
 
   @Given("^\\[search-service] prepare delete existing config request using properties using properties data$")
   public void searchServicePrepareDeleteExistingConfigRequestUsingPropertiesUsingPropertiesData() {

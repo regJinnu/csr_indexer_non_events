@@ -2,6 +2,7 @@ package com.gdn.qa.x_search.api.test.utils;
 
 import com.gdn.qa.x_search.api.test.api.services.SolrFieldNames;
 import com.gdn.qa.x_search.api.test.models.SolrResults;
+import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.beans.DocumentObjectBinder;
@@ -11,6 +12,8 @@ import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -18,11 +21,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_URL;
-import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_URL_NO_PARAM;
 
-
+@Component
 public class SolrHelper {
+
+
+  @Autowired
+  private SearchServiceProperties searchServiceProperties;
+
 
   public SolrHelper() {
   }
@@ -32,11 +38,13 @@ public class SolrHelper {
     return httpSolrClient;
   }
 
-  public static int solrCommit(String collectionName) throws Exception{
-    return initializeSolr(SOLR_URL_NO_PARAM).commit(collectionName).getStatus();
+ public int solrCommit(String collectionName) throws Exception{
+    return initializeSolr(searchServiceProperties.get("SOLR_URL_NO_PARAM")).commit(collectionName).getStatus();
   }
 
-  public static SolrQuery initializeSolrQuery(String queryText, String requestHandler,int rows,String fields,String fq){
+
+
+ public static SolrQuery initializeSolrQuery(String queryText, String requestHandler,int rows,String fields,String fq){
     SolrQuery solrQuery = new SolrQuery();
     solrQuery.setQuery(queryText);
     solrQuery.setRequestHandler(requestHandler);
@@ -54,24 +62,23 @@ public class SolrHelper {
     return solrQuery;
   }
 
-
-  public static long getSolrProdCount(String queryText, String requestHandler) throws Exception {
-    HttpSolrClient httpSolrClient = initializeSolr(SOLR_URL);
+  public long getSolrProdCount(String queryText, String requestHandler) throws Exception {
+    HttpSolrClient httpSolrClient = initializeSolr(searchServiceProperties.get("SOLR_URL"));
     SolrQuery solrQuery = initializeSolrQuery(queryText,requestHandler,0,"id","");
     QueryResponse queryResponse = httpSolrClient.query(solrQuery);
     return queryResponse.getResults().getNumFound();
   }
 
 
-  public static long getSolrProdCountWithFq(String queryText, String requestHandler,String fq) throws Exception {
-    HttpSolrClient httpSolrClient = initializeSolr(SOLR_URL);
+  public long getSolrProdCountWithFq(String queryText, String requestHandler,String fq) throws Exception {
+    HttpSolrClient httpSolrClient = initializeSolr(searchServiceProperties.get("SOLR_URL"));
     SolrQuery solrQuery = initializeSolrQuery(queryText,requestHandler,0,"id",fq);
     QueryResponse queryResponse = httpSolrClient.query(solrQuery);
     return queryResponse.getResults().getNumFound();
   }
 
-  public static List<SolrResults>  getSolrProd(String queryText, String requestHandler,String field,int rows) throws Exception {
-    HttpSolrClient httpSolrClient = initializeSolr(SOLR_URL);
+  public List<SolrResults>  getSolrProd(String queryText, String requestHandler,String field,int rows) throws Exception {
+    HttpSolrClient httpSolrClient = initializeSolr(searchServiceProperties.get("SOLR_URL"));
     SolrQuery solrQuery = initializeSolrQuery(queryText,requestHandler,rows,field,"");
     QueryResponse queryResponse = httpSolrClient.query(solrQuery);
     SolrDocumentList solrDocuments = queryResponse.getResults();
@@ -79,11 +86,10 @@ public class SolrHelper {
     List<SolrResults> dataList = binder.getBeans(SolrResults.class, solrDocuments);
     return dataList;
   }
-
-  public static int updateSolrDataForAutomation(String queryText, String requestHandler,String field, int rows,String caseToBeUpdated)
+  public int updateSolrDataForAutomation(String queryText, String requestHandler,String field, int rows,String caseToBeUpdated)
       throws IOException, SolrServerException {
 
-    HttpSolrClient httpSolrClient = initializeSolr(SOLR_URL);
+    HttpSolrClient httpSolrClient = initializeSolr(searchServiceProperties.get("SOLR_URL"));
     SolrQuery solrQuery = initializeSolrQuery(queryText,requestHandler,rows,field,"");
     QueryResponse queryResponse = httpSolrClient.query(solrQuery);
     SolrDocument solrDocument = queryResponse.getResults().get(0);
@@ -131,15 +137,15 @@ public class SolrHelper {
     SolrInputDocument solrInputDocument = new SolrInputDocument();
     solrInputDocument.addField(SolrFieldNames.ID,solrUpdate.remove(SolrFieldNames.ID));
     for(Map.Entry<String, Object> entry : solrUpdate.entrySet())
-    solrInputDocument.addField(entry.getKey(),Collections.singletonMap("set",entry.getValue()));
+    solrInputDocument.addField(entry.getKey(), Collections.singletonMap("set",entry.getValue()));
 
     UpdateResponse updateResponse = httpSolrClient.add(solrInputDocument);
 
     return updateResponse.getStatus();
   }
 
-  public static void deleteSolrDocByQuery(String solrQuery){
-    HttpSolrClient httpSolrClient = initializeSolr(SOLR_URL);
+  public void deleteSolrDocByQuery(String solrQuery){
+    HttpSolrClient httpSolrClient = initializeSolr(searchServiceProperties.get("SOLR_URL"));
     try {
       httpSolrClient.deleteByQuery(solrQuery);
     } catch (SolrServerException e) {
@@ -149,8 +155,8 @@ public class SolrHelper {
     }
   }
 
-  public static void addSolrDocument(){
-    HttpSolrClient httpSolrClient = initializeSolr(SOLR_URL);
+  public void addSolrDocument(){
+    HttpSolrClient httpSolrClient = initializeSolr(searchServiceProperties.get("SOLR_URL"));
     SolrInputDocument solrInputDocument = new SolrInputDocument();
     solrInputDocument.addField("id","AAA-60015-00008-00001-PP-3001012");
     solrInputDocument.addField("merchantCode","AAA-60015");
@@ -165,16 +171,20 @@ public class SolrHelper {
     }
   }
 
-  public static void addSolrDocumentForItemChangeEvent(String itemSku,String sku,String productCode,String eventType){
-    HttpSolrClient httpSolrClient = initializeSolr(SOLR_URL);
+  public void addSolrDocumentForItemChangeEvent(String itemSku,String sku,String productCode,String eventType){
+    HttpSolrClient httpSolrClient = initializeSolr(searchServiceProperties.get("SOLR_URL"));
     SolrInputDocument solrInputDocument = new SolrInputDocument();
     solrInputDocument.addField("id",itemSku);
     solrInputDocument.addField("sku",sku);
     solrInputDocument.addField("productCode",productCode);
-    if(eventType.equals("itemChangeEvent"))
+    if(eventType.equals("itemChangeEvent")){
       solrInputDocument.addField("level0Id",sku);
-    else
+      solrInputDocument.addField("level1Id",sku);
+    }
+    else{
       solrInputDocument.addField("level0Id",productCode);
+      solrInputDocument.addField("level1Id",productCode);
+    }
     try {
       UpdateResponse updateResponse = httpSolrClient.add(solrInputDocument);
       httpSolrClient.commit();

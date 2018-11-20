@@ -27,16 +27,17 @@ public class ContextualSearchSteps {
 
 
   public long valid;
-  String autoFlightId = "";
-  String autoPlaceholderId = "";
-  String autoSearchId = "";
-  String autoTrainid = "";
   public long count= 0L;
-  MongoHelper mongoHelper = new MongoHelper();
+
+  @Autowired
+  MongoHelper mongoHelper;
+
   @Autowired
   private SearchServiceController searchServiceController;
+
   @Autowired
   private SearchServiceProperties searchServiceProperties;
+
   @Autowired
   private SearchServiceData searchServiceData;
 

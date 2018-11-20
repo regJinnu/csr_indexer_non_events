@@ -1,7 +1,6 @@
 package com.gdn.qa.x_search.api.test.steps;
 
 import com.gdn.common.web.wrapper.response.GdnBaseRestResponse;
-import com.gdn.common.web.wrapper.response.GdnRestSingleResponse;
 import com.gdn.qa.automation.core.restassured.ResponseApi;
 import com.gdn.qa.x_search.api.test.CucumberStepsDefinition;
 import com.gdn.qa.x_search.api.test.api.services.SearchServiceController;
@@ -11,10 +10,8 @@ import com.gdn.qa.x_search.api.test.utils.ConfigHelper;
 import com.gdn.qa.x_search.api.test.utils.KafkaHelper;
 import com.gdn.qa.x_search.api.test.utils.MongoHelper;
 import com.gdn.qa.x_search.api.test.utils.SolrHelper;
-import com.gdn.x.product.rest.web.model.response.SimpleStringResponse;
 import com.mongodb.client.FindIterable;
 import cucumber.api.PendingException;
-import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -28,12 +25,8 @@ import java.util.TimeZone;
 
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SELECT_HANDLER;
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_DEFAULT_COLLECTION;
-import static com.gdn.qa.x_search.api.test.utils.SolrHelper.solrCommit;
-import static com.gdn.qa.x_search.api.test.utils.SolrHelper.updateSolrDataForAutomation;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 
 /**
  * @author kumar on 02/08/18
@@ -56,7 +49,14 @@ public class BusinessPartnerEventSteps {
   @Autowired
   KafkaHelper kafkaHelper ;
 
-  MongoHelper mongoHelper = new MongoHelper();
+  @Autowired
+  ConfigHelper configHelper;
+  
+  @Autowired
+  SolrHelper solrHelper;    
+
+  @Autowired
+  MongoHelper mongoHelper;
 
   @Given("^\\[search-service] verify store closed start and end timestamp fields in SOLR for the product$")
   public void verifyStoreClosedInfoInSolr() {
@@ -66,27 +66,27 @@ public class BusinessPartnerEventSteps {
 
     try {
 
-      int status = updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),
+      int status = solrHelper.updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
           "id",
           1,
           "closedStore");
       assertThat("Updating SOLR fields for test failed", status, equalTo(0));
-      solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
       
 
       int isDelayShipping =
-          SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "isDelayShipping", 1)
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "isDelayShipping", 1)
               .get(0)
               .getIsDelayShipping();
 
       long startDateStoreClosed =
-          SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "startDateStoreClosed", 1)
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "startDateStoreClosed", 1)
               .get(0)
               .getStartDateStoreClosed();
 
       long endDateStoreClosed =
-          SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "endDateStoreClosed", 1)
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "endDateStoreClosed", 1)
               .get(0)
               .getEndDateStoreClosed();
 
@@ -104,10 +104,9 @@ public class BusinessPartnerEventSteps {
   public void checkStoreEventIsConsumed(boolean isDelayShipping){
 
       kafkaHelper.publishStoreClosedEvent(searchServiceData.getBusinessPartnerCode(),isDelayShipping);
-
     try {
       Thread.sleep(60000);
-      solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -115,15 +114,14 @@ public class BusinessPartnerEventSteps {
 
   @Then("^\\[search-service] store closed information is updated in SOLR$")
   public void checkStoreClosedInfoIsUpdated(){
-
     try {
       long startDateStoreClosed =
-          SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "startDateStoreClosed", 1)
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "startDateStoreClosed", 1)
               .get(0)
               .getStartDateStoreClosed();
 
       long endDateStoreClosed =
-          SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "endDateStoreClosed", 1)
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "endDateStoreClosed", 1)
               .get(0)
               .getEndDateStoreClosed();
 
@@ -141,7 +139,7 @@ public class BusinessPartnerEventSteps {
 
     try {
 
-      int isDelayShippingActual = SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "isDelayShipping", 1)
+      int isDelayShippingActual = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "isDelayShipping", 1)
           .get(0)
           .getIsDelayShipping();
 
@@ -157,9 +155,9 @@ public class BusinessPartnerEventSteps {
   @Given("^\\[search-service] cnc is set as true in products for merchant$")
   public void setCncTrueForTestProduct(){
 
-    SolrHelper.addSolrDocument();
+    solrHelper.addSolrDocument();
     try {
-      assertThat(SolrHelper.getSolrProdCount("id:AAA-60015-00008-00001-PP-3001012",SELECT_HANDLER),equalTo(1L));
+      assertThat(solrHelper.getSolrProdCount("id:AAA-60015-00008-00001-PP-3001012",SELECT_HANDLER),equalTo(1L));
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -172,7 +170,7 @@ public class BusinessPartnerEventSteps {
     kafkaHelper.publishBPprofileFieldUpdateEvent("AAA-60015");
     try {
       Thread.sleep(60000);
-      solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -182,7 +180,7 @@ public class BusinessPartnerEventSteps {
   @Then("^\\[search-service] cnc true is removed for all products under that merchant$")
   public void checkCncIsRemoved(){
     try {
-      assertThat(SolrHelper.getSolrProdCount("id:AAA-60015-00008-00001-PP-3001012",SELECT_HANDLER),equalTo(0L));
+      assertThat(solrHelper.getSolrProdCount("id:AAA-60015-00008-00001-PP-3001012",SELECT_HANDLER),equalTo(0L));
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -190,9 +188,9 @@ public class BusinessPartnerEventSteps {
 
   @Then("^\\[search-service] storeClose field is set to true$")
   public void searchServiceStoreCloseFieldIsSetToTrue(){
-
     try {
-      boolean storeClose = SolrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+
+      boolean storeClose = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
           "storeClose",
           1).get(0).isStoreClose();
@@ -243,7 +241,7 @@ public class BusinessPartnerEventSteps {
       Thread.sleep(40000);
 
       long count =
-          SolrHelper.getSolrProdCountWithFq(searchServiceData.getQueryForReindex(),
+          solrHelper.getSolrProdCountWithFq(searchServiceData.getQueryForReindex(),
               SELECT_HANDLER,
               "published:[0 TO *] AND storeClose:*");
 
@@ -275,8 +273,8 @@ public class BusinessPartnerEventSteps {
 
   @Given("^\\[search-service] business partner is set as whitelist$")
   public void searchServiceBusinessPartnerIsSetAsWhitelist(){
-    ConfigHelper configHelper = new ConfigHelper();
-    configHelper.addToWhitelist("STORE_CLOSE_SERVICE");
+
+    configHelper.findAndUpdateConfig("whitelist.events","STORE_CLOSE_SERVICE");
   }
 
   @Then("^\\[search-service] storeClose field is not set for delayShipping true$")
@@ -284,7 +282,7 @@ public class BusinessPartnerEventSteps {
 
     try {
 
-    long count = SolrHelper.getSolrProdCountWithFq("id:"+searchServiceProperties.get("businessPartnerCode")+"*",
+    long count = solrHelper.getSolrProdCountWithFq("id:"+searchServiceProperties.get("businessPartnerCode")+"*",
           SELECT_HANDLER,
           "published:[0 TO *] AND storeClose:*");
 
@@ -294,6 +292,21 @@ public class BusinessPartnerEventSteps {
       e.printStackTrace();
     }
 
+
+  }
+
+  @When("^\\[search-service] runs the scheduled events job$")
+  public void searchServiceRunsTheScheduledEventsJob(){
+
+    searchServiceController.fetchTheListOfUnpublishedProducts();
+    try {
+      Thread.sleep(10000);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
   }
 }

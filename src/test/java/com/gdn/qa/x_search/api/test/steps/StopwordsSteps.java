@@ -33,7 +33,9 @@ public class StopwordsSteps {
   @Autowired
   private SearchServiceData searchServiceData;
 
-  MongoHelper mongoHelper = new MongoHelper();
+  @Autowired
+  MongoHelper mongoHelper;
+
   @Given("^\\[search-service] prepare save stopword using properties using properties data$")
   public void searchServicePrepareSaveStopwordUsingPropertiesUsingPropertiesData()
       {

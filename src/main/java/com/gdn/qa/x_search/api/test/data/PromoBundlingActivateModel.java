@@ -15,4 +15,5 @@ public class PromoBundlingActivateModel {
   private List<String> complementaryProducts;
   private Date startDate;
   private Date endDate;
+  private long timestamp;
 }

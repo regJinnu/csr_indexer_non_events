@@ -1,4 +1,4 @@
-@SynonymIntegrationAPIFeature @TestSuiteID=9677376
+@SynonymIntegrationAPIFeature @TestSuiteID=10257932
 Feature: Synonym Integration API's
 
   @Regression @DeleteIntegrationSynonymsSOLR
