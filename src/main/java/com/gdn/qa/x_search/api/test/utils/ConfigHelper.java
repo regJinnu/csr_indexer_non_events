@@ -36,4 +36,15 @@ public class ConfigHelper {
 
   }
 
+  public String findConfigValue(String configName){
+
+    ResponseApi<GdnRestSingleResponse<ConfigResponse>> configByName =
+        configController.findConfigByName(configName);
+
+    String value = configByName.getResponseBody().getValue().getValue();
+
+    return value;
+
+  }
+
 }

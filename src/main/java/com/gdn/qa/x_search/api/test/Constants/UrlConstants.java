@@ -16,6 +16,13 @@ public interface UrlConstants {
   String X_SEARCH_SERVICE="searchservice";
   String PRODUCT_LEVEL0ID= "level0Id";
   String PRODUCT_LEVEL1ID="level1Id";
+  String REMOTE_PDF_FILE_LOCATION = "/data/siva/asset/nginx/html/seoul-uata/sitemap/";
+  String PDF_FILE_NAME = "products-1.zip";
+  String PDF_SERVER_IP = "172.18.69.33";
+  int PDF_PORT = 21;
+  String PDF_USERNAME = "jenkins";
+  String PDF_PASSWORD = "jenkins";
+  String PDF_EXTRACTION_PASSWORD = "Passw0rd";
 }
 
 

@@ -24,7 +24,7 @@
         <selenium.version>3.11.0</selenium.version>
         <member.version>1.19.0-3</member.version>
         <badak.core>1.3.10</badak.core>
-        <xsearch.version>4.2.0-6</xsearch.version>
+        <xsearch.version>4.6.0-2</xsearch.version>
         <serenity.testlink.integration.version>3.4.3</serenity.testlink.integration.version>
         <testlink.devkey>b0f60503e7aab68af1e6072faf5124d6</testlink.devkey>
         <testlink.project>X-Search</testlink.project>
@@ -125,7 +125,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>com.jcraft</groupId>
             <artifactId>jsch</artifactId>
@@ -136,7 +135,18 @@
             <artifactId>json-simple</artifactId>
             <version>1.1.1</version>
         </dependency>
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>3.6</version>
+        </dependency>
+        <dependency>
+            <groupId>net.lingala.zip4j</groupId>
+            <artifactId>zip4j</artifactId>
+            <version>1.3.2</version>
+        </dependency>
     </dependencies>
+
 
     <repositories>
         <repository>
@@ -217,7 +227,7 @@
                     </includes>
                     <systemPropertyVariables>
                         <cucumber.options>--junit,--step-notifications</cucumber.options>
-                        <spring.config.location>classpath:/application-UATA.properties
+                        <spring.config.location>classpath:/application-UATB.properties
                         </spring.config.location>
                     </systemPropertyVariables>
                 </configuration>
@@ -237,7 +247,7 @@
                 </executions>
             </plugin>
             <!--Uncomment this to Integrate with testlink-->
-    <plugin>
+   <!-- <plugin>
                 <groupId>com.gdn.qa.util</groupId>
                 <artifactId>serenity-testlink-integration</artifactId>
                 <version>${serenity.testlink.integration.version}</version>
@@ -257,7 +267,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin> -->
 
         </plugins>
     </build>

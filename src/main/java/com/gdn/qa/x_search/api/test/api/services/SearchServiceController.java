@@ -1304,12 +1304,11 @@ public class SearchServiceController extends ServiceApi {
         });
   }
 
-  public ResponseApi<GdnBaseRestResponse> addTrainMapping(
-      String trainSearchTerm,
+  public ResponseApi<GdnBaseRestResponse> addTrainMapping(String trainSearchTerm,
       String trainMapping) {
     String BodyTemplate =
-        "{\n" +"  \"searchTerm\": \"" + trainSearchTerm + "\",\n"
-            + "  \"effectiveValue\": \"" + trainMapping + "\"\n" + "}";
+        "{\n" + "  \"searchTerm\": \"" + trainSearchTerm + "\",\n" + "  \"effectiveValue\": \""
+            + trainMapping + "\"\n" + "}";
     Map<String, String> data = new HashMap<>();
     data.put("searchTerm", trainSearchTerm);
     data.put("effectiveValue", trainMapping);
@@ -1390,12 +1389,10 @@ public class SearchServiceController extends ServiceApi {
     });
   }
 
-  public ResponseApi<GdnBaseRestResponse> saveFlight(
-      String trainSearchTerm,
-      String trainMapping) {
+  public ResponseApi<GdnBaseRestResponse> saveFlight(String trainSearchTerm, String trainMapping) {
     String BodyTemplate =
-        "{\n"+ " \"searchTerm\": \"" + trainSearchTerm + "\",\n"
-            + "  \"effectiveValue\": \"" + trainMapping + "\"\n" + "}";
+        "{\n" + " \"searchTerm\": \"" + trainSearchTerm + "\",\n" + "  \"effectiveValue\": \""
+            + trainMapping + "\"\n" + "}";
     Map<String, String> data = new HashMap<>();
     data.put("searchTerm", trainSearchTerm);
     data.put("effectiveValue", trainMapping);
@@ -1407,14 +1404,14 @@ public class SearchServiceController extends ServiceApi {
     });
   }
 
-  public ResponseApi<GdnBaseRestResponse> addPlaceholderRules(
-      String name,
+  public ResponseApi<GdnBaseRestResponse> addPlaceholderRules(String name,
       String searchTerm,
       String effectiveSearchPattern,
       String type) {
-    String BodyTemplate = "{\n" + "  \"name\": \"" + name + "\",\n"
-        + "  \"searchTerm\": \"" + searchTerm + "\",\n" + "  \"effectiveSearchPattern\": \""
-        + effectiveSearchPattern + "\",\n" + "  \"type\": \"" + type + "\"\n" + "}";
+    String BodyTemplate =
+        "{\n" + "  \"name\": \"" + name + "\",\n" + "  \"searchTerm\": \"" + searchTerm + "\",\n"
+            + "  \"effectiveSearchPattern\": \"" + effectiveSearchPattern + "\",\n"
+            + "  \"type\": \"" + type + "\"\n" + "}";
     Map<String, String> data = new HashMap<>();
     data.put("name", name);
     data.put("searchTerm", searchTerm);
@@ -1467,14 +1464,13 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnBaseRestResponse> addSearchRule() {
-    String BodyTemplate =
-        "{\n" + "  \"searchTerm\": \"{{searchTerm}}\",\n"
-            + "  \"filterQuery\": \"{{filterQuery}}\",\n" + "  \"sortType\": \"{{sortType}}\",\n"
-            + "  \"effectiveSearchPattern\": \"{{effectiveSearchPattern}}\",\n"
-            + "  \"defaultLogic\": {\n" + "    \"filterQuery\": \"{{filterQuery}}\",\n"
-            + "    \"sortType\": \"{{sortType}}\"\n" + "  },\n" + "  \"url\": \"{{url}}\",\n"
-            + "  \"type\": \"{{type}}\",\n" + "  \"rank\": {{rank}},\n"
-            + "  \"spel\": \"{{spel}}\"\n" + "}";
+    String BodyTemplate = "{\n" + "  \"searchTerm\": \"{{searchTerm}}\",\n"
+        + "  \"filterQuery\": \"{{filterQuery}}\",\n" + "  \"sortType\": \"{{sortType}}\",\n"
+        + "  \"effectiveSearchPattern\": \"{{effectiveSearchPattern}}\",\n"
+        + "  \"defaultLogic\": {\n" + "    \"filterQuery\": \"{{filterQuery}}\",\n"
+        + "    \"sortType\": \"{{sortType}}\"\n" + "  },\n" + "  \"url\": \"{{url}}\",\n"
+        + "  \"type\": \"{{type}}\",\n" + "  \"rank\": {{rank}},\n" + "  \"spel\": \"{{spel}}\"\n"
+        + "}";
     Map<String, String> data = new HashMap<>();
     data.put("searchTerm", searchServiceData.getSearchRulSearchTerm());
     data.put("filterQuery", searchServiceData.getFilterQuery());
@@ -1580,6 +1576,40 @@ public class SearchServiceController extends ServiceApi {
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
+  }
+
+  public ResponseApi<GdnRestSingleResponse<SimpleStringResponse>> runProductDataFeed() {
+    Response response = service("searchservice").get(BASEPATH + "index/product-data-feed");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response,
+        new TypeReference<GdnRestSingleResponse<SimpleStringResponse>>() {
+        });
+  }
+
+  public ResponseApi<GdnBaseRestResponse> saveFeedExclusion(String feedType,
+      String key,
+      String value,
+      boolean positiveFilter) {
+    String requestBody = "{\n" + "  \"feedType\": \""+feedType+"\",\n" + "  \"key\": \""+key+"\",\n"
+        + "  \"positiveFilter\":"+positiveFilter+",\n"
+        + "  \"value\": \""+value+"\"}";
+    Response response =
+        service("searchservice").body(requestBody).post(BASEPATH + "feed-exclusion-entity/save");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+
+  public ResponseApi<GdnRestListResponse<FeedExclusionEntityResponse>> findFeedByWord(String searchString) {
+    Response response =
+        service("searchservice").queryParam("word", searchString)
+            .queryParam("page", searchServiceData.getPage())
+            .queryParam("size", searchServiceData.getSize())
+            .get(BASEPATH + "feed-exclusion-entity/find");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response,
+        new TypeReference<GdnRestListResponse<FeedExclusionEntityResponse>>() {
+        });
   }
 
 }

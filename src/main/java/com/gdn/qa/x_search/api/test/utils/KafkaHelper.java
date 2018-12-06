@@ -19,16 +19,16 @@ import java.util.*;
 @Service
 public class KafkaHelper {
 
-@Autowired
+  @Autowired
   private KafkaSender kafkaSender;
 
-@Autowired
-private ApplicationContext applicationContext;
+  @Autowired
+  private ApplicationContext applicationContext;
 
 
   private ObjectMapper objectMapper = new ObjectMapper();
 
-  public void publishOOSEvent(String level2Id,String level2MerchantCode,String type){
+  public void publishOOSEvent(String level2Id, String level2MerchantCode, String type) {
 
     OOSEvent oosEvent = OOSEvent.builder().
         level2Id(level2Id).
@@ -39,7 +39,7 @@ private ApplicationContext applicationContext;
 
     try {
 
-      if(type.equals("oos"))
+      if (type.equals("oos"))
         kafkaSender.send("com.gdn.x.inventory.stock.oos.event",
             objectMapper.writeValueAsString(oosEvent));
       else if (type.equals("nonOOS"))
@@ -52,7 +52,7 @@ private ApplicationContext applicationContext;
 
   }
 
-  public void publishStoreClosedEvent(String businessPartnerCode,boolean isDelayShipping) {
+  public void publishStoreClosedEvent(String businessPartnerCode, boolean isDelayShipping) {
 
     Date date = new Date();
     DateTime dtStartWithBuffer = new DateTime(date);
@@ -69,14 +69,15 @@ private ApplicationContext applicationContext;
         delayShipping(isDelayShipping).build();
 
     try {
-      kafkaSender.send("com.gdn.x.bpservice.store.closing.publish",objectMapper.writeValueAsString(bpStoreClosedEvent));
+      kafkaSender.send("com.gdn.x.bpservice.store.closing.publish",
+          objectMapper.writeValueAsString(bpStoreClosedEvent));
     } catch (JsonProcessingException e) {
       e.printStackTrace();
     }
 
   }
 
-  public void publishBPprofileFieldUpdateEvent(String businessPartnerCode){
+  public void publishBPprofileFieldUpdateEvent(String businessPartnerCode) {
 
     CompanyV0 companyV0 = CompanyV0.builder().
         changedFields(Collections.singleton(CompanyChangeFields.CNC_ACTIVATED)).
@@ -97,23 +98,41 @@ private ApplicationContext applicationContext;
     }
   }
 
-  public void publishLogisticOptionChange(String merchant,String logisticOption,String commType){
+  public void publishLogisticOptionChange(String merchant,
+      String logisticOption,
+      String commType,
+      String logisticProductCodeList) {
 
-    ArrayList<String> commissionType = new ArrayList<>();
-    commissionType.add(commType);
+    ArrayList<String> commissionTypeList = new ArrayList<>();
+    if (commType.contains(",")) {
+      commissionTypeList.addAll(Arrays.asList(commType.split(",")));
+    } else {
+      commissionTypeList.add(commType);
+    }
 
     ArrayList<String> merchantList = new ArrayList<>();
-    merchantList.add(merchant);
+    if (merchant.contains(",")) {
+      merchantList.addAll(Arrays.asList(merchant.split(",")));
+    } else {
+      merchantList.add(merchant);
+    }
+
 
     ArrayList<String> logisticProdCodeList = new ArrayList<>();
-    logisticProdCodeList.add(logisticOption);
+    if (logisticProductCodeList.contains(",")) {
+      logisticProdCodeList.addAll(Arrays.asList(logisticProductCodeList.split(",")));
+    } else {
+      logisticProdCodeList.add(logisticOption);
+    }
 
     LogisticOptionChange logisticOptionChange = LogisticOptionChange.builder().
         timestamp(System.currentTimeMillis()).
-        commissionTypeList(commissionType).
+        commissionTypeList(commissionTypeList).
         merchantIdList(merchantList).
         logisticProductCodeList(logisticProdCodeList).
-        logisticOptionCode("EXPRESS").
+        logisticOptionCode(logisticOption).
+        markForDelete(false).
+        activeStatus(true).
         build();
 
     try {
@@ -125,21 +144,128 @@ private ApplicationContext applicationContext;
 
   }
 
-  public void publishLogisticProductOriginsChangeEvent(){
-    List<String> originList = new ArrayList<>(Arrays.asList("Origin-Jakarta","Origin-Karawang","Origin-Bekasi","Origin-Depok",
-        "Origin-Bandung","Origin-Bogor","Origin-Tangerang","Origin-Semarang","Origin-Surabaya","Origin-Medan",
-        "Origin-Denpasar","Origin-Kuta","Origin-Makasar","Origin-Yogyakarta","Origin-Warungku Angke",
-        "Origin-Solo","Origin-Sidoardjo","Origin-Malang","Origin-Padang","Origin-Palembang"));
+  public void publishLogisticProductOriginsChangeEvent(String logisticProductCode) {
+    List<String> originList = new ArrayList<>(Arrays.asList("Origin-Jakarta",
+        "Origin-Bekasi",
+        "Origin-Depok",
+        "Origin-Bogor",
+        "Origin-Tangerang",
+        "Origin-Surabaya",
+        "Origin-Manado",
+        "Origin-Gianyar",
+        "Origin-Makasar",
+        "Origin-Yogyakarta",
+        "Origin-Gresik",
+        "Origin-Karawang",
+        "Origin-Solo",
+        "Origin-Pandeglang",
+        "Origin-Maros",
+        "Origin-Banda Aceh",
+        "Origin-Wonogiri",
+        "Origin-Bandung",
+        "Origin-Serang",
+        "Origin-Malang",
+        "Origin-Probolinggo",
+        "Origin-Mojokerto",
+        "Origin-Palembang",
+        "Origin-Jepara",
+        "Origin-Demak",
+        "Origin-Balikpapan",
+        "Origin-Semarang",
+        "Origin-Boyolali",
+        "Origin-Pamekasan",
+        "Origin-Cilacap",
+        "Origin-Bukit Tinggi",
+        "Origin-Brebes",
+        "Origin-Sukoharjo",
+        "Origin-Kuta",
+        "Origin-Batam",
+        "Origin-Pemalang",
+        "Origin-Magetan",
+        "Origin-Badung Menguwi",
+        "Origin-Purwokerto",
+        "Origin-Pekalongan",
+        "Origin-Samarinda",
+        "Origin-Salatiga",
+        "Origin-Kediri",
+        "Origin-Palu",
+        "Origin-Pekanbaru",
+        "Origin-Pangkal Pinang",
+        "Origin-Magelang",
+        "Origin-Sumedang",
+        "Origin-Ciamis",
+        "Origin-Medan",
+        "Origin-Karang Asem",
+        "Origin-Sukabumi",
+        "Origin-Sleman",
+        "Origin-Purbalingga",
+        "Origin-Bandar Lampung",
+        "Origin-Cirebon",
+        "Origin-Temanggung",
+        "Origin-Mataram",
+        "Origin-Kebumen",
+        "Origin-Kudus",
+        "Origin-Klaten",
+        "Origin-Deli Serdang",
+        "Origin-Subang",
+        "Origin-Purworejo",
+        "Origin-Jambi",
+        "Origin-Sidoardjo",
+        "Origin-Ngawi",
+        "Origin-Tomohon",
+        "Origin-Banjarmasin",
+        "Origin-BanjarBaru",
+        "Origin-Padang",
+        "Origin-Pati",
+        "Origin-Sabang",
+        "Origin-Ponorogo",
+        "Origin-Madiun",
+        "Origin-Klungkung",
+        "Origin-Tabanan",
+        "Origin-Pematang Siantar",
+        "Origin-Bangli",
+        "Origin-Purwakarta",
+        "Origin-Kuningan",
+        "Origin-Batu",
+        "Origin-Tanjung Pinang",
+        "Origin-Tegal",
+        "Origin-Garut",
+        "Origin-Denpasar",
+        "Origin-Bengkalis",
+        "Origin-Batang",
+        "Origin-Banyuwangi",
+        "Origin-Tasikmalaya",
+        "Origin-Sragen",
+        "Origin-Payakumbuh",
+        "Origin-Cilegon",
+        "Origin-Gorontalo",
+        "Origin-Binjai",
+        "Origin-Pontianak",
+        "Origin-Bantul",
+        "Origin-Sumenep",
+        "Origin-Wonosobo",
+        "Origin-Jember",
+        "Origin-Cimahi"));
 
-    LogisticProductOriginChangeEvent logisticProductOriginChangeEvent = LogisticProductOriginChangeEvent.builder().
-        originList(originList).
-        logisticProductCode("").
-        build();
+    LogisticProductOriginChangeEvent logisticProductOriginChangeEvent =
+        LogisticProductOriginChangeEvent.builder().
+            originList(originList).
+            logisticProductCode(logisticProductCode).
+            build();
 
+    try {
+      kafkaSender.send("com.gdn.x.shipping.domain.origin.change.event",
+          objectMapper.writeValueAsString(logisticProductOriginChangeEvent));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
 
   }
 
-  public void publishItemChangeEvent(String itemSku,String productSku,boolean isArchived,boolean isSynchronised){
+  public void publishItemChangeEvent(String itemSku,
+      String productSku,
+      boolean isArchived,
+      boolean isSynchronised) {
 
     ItemChangeEvent itemChangeEvent = ItemChangeEvent.builder().
         timestamp(System.currentTimeMillis()).
@@ -151,13 +277,17 @@ private ApplicationContext applicationContext;
         build();
 
     try {
-      kafkaSender.send("com.gdn.x.product.item.change",objectMapper.writeValueAsString(itemChangeEvent));
+      kafkaSender.send("com.gdn.x.product.item.change",
+          objectMapper.writeValueAsString(itemChangeEvent));
     } catch (JsonProcessingException e) {
       e.printStackTrace();
     }
   }
 
-  public void publishProductChangeEvent(String productCode,String productSku,boolean markForDelete,boolean isSynchronised){
+  public void publishProductChangeEvent(String productCode,
+      String productSku,
+      boolean markForDelete,
+      boolean isSynchronised) {
 
     ProductChangeEvent productChangeEvent = ProductChangeEvent.builder().
         timestamp(System.currentTimeMillis()).
@@ -168,7 +298,8 @@ private ApplicationContext applicationContext;
         build();
 
     try {
-      kafkaSender.send("com.gdn.x.product.product.change",objectMapper.writeValueAsString(productChangeEvent));
+      kafkaSender.send("com.gdn.x.product.product.change",
+          objectMapper.writeValueAsString(productChangeEvent));
     } catch (JsonProcessingException e) {
       e.printStackTrace();
     }
@@ -188,11 +319,17 @@ private ApplicationContext applicationContext;
     String itemSku1 = itemSku.split(",")[0];
     String itemSku2 = itemSku.split(",")[1];
 
-    ProductSkuEventModel productSkuEventModel1=ProductSkuEventModel.builder()
-        .productSku(productSku).itemSku(itemSku1).discount(discount).build();
+    ProductSkuEventModel productSkuEventModel1 = ProductSkuEventModel.builder()
+        .productSku(productSku)
+        .itemSku(itemSku1)
+        .discount(discount)
+        .build();
 
-    ProductSkuEventModel productSkuEventModel2=ProductSkuEventModel.builder()
-        .productSku(productSku).itemSku(itemSku2).discount(discount).build();
+    ProductSkuEventModel productSkuEventModel2 = ProductSkuEventModel.builder()
+        .productSku(productSku)
+        .itemSku(itemSku2)
+        .discount(discount)
+        .build();
 
     List<ProductSkuEventModel> skuList = new ArrayList<>();
     skuList.add(productSkuEventModel1);
@@ -300,15 +437,19 @@ private ApplicationContext applicationContext;
   public void campaignRemoveEvent(String campaignCode,
       String productSku,
       String itemSkuForRemove,
-      Double discount){
+      Double discount) {
 
-    ProductSkuEventModel productSkuEventModel=ProductSkuEventModel.builder()
-        .productSku(productSku).itemSku(itemSkuForRemove).discount(discount).build();
+    ProductSkuEventModel productSkuEventModel = ProductSkuEventModel.builder()
+        .productSku(productSku)
+        .itemSku(itemSkuForRemove)
+        .discount(discount)
+        .build();
 
-    CampaignRemoveEvent campaignRemoveEvent= CampaignRemoveEvent.builder()
+    CampaignRemoveEvent campaignRemoveEvent = CampaignRemoveEvent.builder()
         .campaignCode(campaignCode)
         .skuList(Collections.singletonList(productSkuEventModel))
-        .timestamp(System.currentTimeMillis()).build();
+        .timestamp(System.currentTimeMillis())
+        .build();
     try {
       kafkaSender.send("com.gdn.x.campaign.product.removed",
           objectMapper.writeValueAsString(campaignRemoveEvent));
@@ -317,8 +458,11 @@ private ApplicationContext applicationContext;
     }
   }
 
-  public void campaignLiveEvent( String campaignCode, String campaignName, boolean isExclusive,
-      String tagLabel, boolean markForDelete){
+  public void campaignLiveEvent(String campaignCode,
+      String campaignName,
+      boolean isExclusive,
+      String tagLabel,
+      boolean markForDelete) {
 
     Date dtStart = new Date();
     Date dtEnd = new Date(dtStart.getTime() + (1000 * 60 * 60 * 24));
@@ -337,7 +481,7 @@ private ApplicationContext applicationContext;
 
     campaignEventModelList.add(campaignEventModel);
 
-    CampaignLiveEvents campaignLiveEvents=CampaignLiveEvents.builder()
+    CampaignLiveEvents campaignLiveEvents = CampaignLiveEvents.builder()
         .campaigns(campaignEventModelList)
         .timestamp(System.currentTimeMillis())
         .storeId("10001")
@@ -351,10 +495,14 @@ private ApplicationContext applicationContext;
     }
   }
 
-  public void campaignStopEvent( String campaignCode, boolean markForDelete){
+  public void campaignStopEvent(String campaignCode, boolean markForDelete) {
 
-    CampaignStopEvent campaignStopEvent= CampaignStopEvent.builder().campaignCode(campaignCode)
-        .timestamp(System.currentTimeMillis()).storeId("10001").markForDelete(markForDelete).build();
+    CampaignStopEvent campaignStopEvent = CampaignStopEvent.builder()
+        .campaignCode(campaignCode)
+        .timestamp(System.currentTimeMillis())
+        .storeId("10001")
+        .markForDelete(markForDelete)
+        .build();
     try {
       kafkaSender.send("com.gdn.x.campaign.stopped",
           objectMapper.writeValueAsString(campaignStopEvent));
@@ -363,14 +511,13 @@ private ApplicationContext applicationContext;
     }
   }
 
-  public void campaignEndEvent(String campaignCodeList, boolean markForDelete){
+  public void campaignEndEvent(String campaignCodeList, boolean markForDelete) {
     List<String> campaignList = new ArrayList<>();
     campaignList.add(String.valueOf(campaignCodeList));
     CampaignEndEvent campaignEndEvent = CampaignEndEvent.builder().
         campaignCodeList(campaignList).
-        markForDelete(false)
-        .build();
-      try {
+        markForDelete(false).build();
+    try {
       kafkaSender.send("com.gdn.x.campaign.ended",
           objectMapper.writeValueAsString(campaignEndEvent));
     } catch (JsonProcessingException e) {
@@ -386,15 +533,17 @@ private ApplicationContext applicationContext;
     Date date = new Date();
     DateTime dtStart = new DateTime(date);
     DateTime dtEnd = dtStart.plusDays(1);
-    AdjustmentProductChangeModel adjustmentProductChangeModel=AdjustmentProductChangeModel.builder()
-        .timestamp(System.currentTimeMillis())
-        .adjustmentName(adjustmentName)
-        .productSku(promoItemSKU)
-        .description(description)
-        .value(promoValue)
-        .activated(promoActivated)
-        .endDate(dtEnd.toDate())
-        .startDate(dtStart.toDate()).build();
+    AdjustmentProductChangeModel adjustmentProductChangeModel =
+        AdjustmentProductChangeModel.builder()
+            .timestamp(System.currentTimeMillis())
+            .adjustmentName(adjustmentName)
+            .productSku(promoItemSKU)
+            .description(description)
+            .value(promoValue)
+            .activated(promoActivated)
+            .endDate(dtEnd.toDate())
+            .startDate(dtStart.toDate())
+            .build();
     try {
       kafkaSender.send("com.gdn.x.promotion.adjustment.product.change",
           objectMapper.writeValueAsString(adjustmentProductChangeModel));
@@ -403,16 +552,15 @@ private ApplicationContext applicationContext;
     }
   }
 
-  public void promoBundlingActivateEvent(
-      String promoBundlingId,
-       String promoItemSKU,
-       String promoBundlingType,
-       List<String> complementaryProducts){
+  public void promoBundlingActivateEvent(String promoBundlingId,
+      String promoItemSKU,
+      String promoBundlingType,
+      List<String> complementaryProducts) {
     Date date = new Date();
     DateTime presentDate = new DateTime(date);
-    DateTime dtStart=presentDate.withTimeAtStartOfDay() ;
+    DateTime dtStart = presentDate.withTimeAtStartOfDay();
     DateTime dtEnd = dtStart.plusDays(1);
-    PromoBundlingActivateModel promoBundlingModel= PromoBundlingActivateModel.builder()
+    PromoBundlingActivateModel promoBundlingModel = PromoBundlingActivateModel.builder()
         .timestamp(System.currentTimeMillis())
         .promoBundlingId(promoBundlingId)
         .mainItemSku(promoItemSKU)
@@ -420,7 +568,8 @@ private ApplicationContext applicationContext;
         .storeId("10001")
         .startDate(dtStart.toDate())
         .endDate(dtEnd.toDate())
-        .complementaryProducts(complementaryProducts).build();
+        .complementaryProducts(complementaryProducts)
+        .build();
     try {
       kafkaSender.send("com.gdn.x.promotion.promo.bundling.activated",
           objectMapper.writeValueAsString(promoBundlingModel));
@@ -429,13 +578,13 @@ private ApplicationContext applicationContext;
     }
   }
 
-  public void promoBundlingDeactivatedEvent(
-  String promoItemSKU ,
-  String promoBundlingType){
-    PromoBundlingDeactivateModel promoBundlingDeactivateModel=PromoBundlingDeactivateModel.builder()
-        .sku(promoItemSKU)
-        .storeId("10001")
-        .promoBundlingType(promoBundlingType).build();
+  public void promoBundlingDeactivatedEvent(String promoItemSKU, String promoBundlingType) {
+    PromoBundlingDeactivateModel promoBundlingDeactivateModel =
+        PromoBundlingDeactivateModel.builder()
+            .sku(promoItemSKU)
+            .storeId("10001")
+            .promoBundlingType(promoBundlingType)
+            .build();
     try {
       kafkaSender.send("com.gdn.x.promotion.promo.bundling.deactivated",
           objectMapper.writeValueAsString(promoBundlingDeactivateModel));
@@ -453,10 +602,11 @@ private ApplicationContext applicationContext;
       String Category,
       String PristineID,
       String itemCount) {
-    MergedProductAttributeDetail mergedProductAttributeDetail = MergedProductAttributeDetail.builder()
-        .name(PristineAttributesName)
-        .value(PristineAttributesValue)
-        .build();
+    MergedProductAttributeDetail mergedProductAttributeDetail =
+        MergedProductAttributeDetail.builder()
+            .name(PristineAttributesName)
+            .value(PristineAttributesValue)
+            .build();
 
     Set<MergedProductAttributeDetail> attributes = new HashSet<>();
     attributes.add(mergedProductAttributeDetail);
@@ -490,6 +640,52 @@ private ApplicationContext applicationContext;
     } catch (JsonProcessingException e) {
       e.printStackTrace();
     }
+  }
+
+  public void publishLogisticProductChange(String merchant,
+      String logisticOption,
+      String commType,
+      String logisticProductCode) {
+
+    ArrayList<String> commissionTypeList = new ArrayList<>();
+    if (commType.contains(",")) {
+      commissionTypeList.addAll(Arrays.asList(commType.split(",")));
+    } else {
+      commissionTypeList.add(commType);
+    }
+
+    ArrayList<String> merchantList = new ArrayList<>();
+    if (merchant.contains(",")) {
+      merchantList.addAll(Arrays.asList(merchant.split(",")));
+    } else {
+      merchantList.add(merchant);
+    }
+
+
+    ArrayList<String> logisticOptionCodeList = new ArrayList<>();
+    if (logisticOption.contains(",")) {
+      logisticOptionCodeList.addAll(Arrays.asList(logisticOption.split(",")));
+    } else {
+      logisticOptionCodeList.add(logisticOption);
+    }
+
+    LogisticProductChangeEvent logisticProductChangeEvent = LogisticProductChangeEvent.builder().
+        timestamp(System.currentTimeMillis()).
+        commissionTypeList(commissionTypeList).
+        merchantIdList(merchantList).
+        logisticProductCode(logisticProductCode).
+        logisticOptionCodeList(logisticOptionCodeList).
+        markForDelete(false).
+        activeStatus(true).
+        build();
+
+    try {
+      kafkaSender.send("com.gdn.x.shipping.domain.logistic.product.change.event",
+          objectMapper.writeValueAsString(logisticProductChangeEvent));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+
   }
 
 }

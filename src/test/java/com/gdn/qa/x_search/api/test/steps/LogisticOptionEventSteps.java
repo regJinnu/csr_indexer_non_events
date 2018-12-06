@@ -6,8 +6,10 @@ import com.gdn.qa.x_search.api.test.CucumberStepsDefinition;
 import com.gdn.qa.x_search.api.test.api.services.SearchServiceController;
 import com.gdn.qa.x_search.api.test.data.SearchServiceData;
 import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
+import com.gdn.qa.x_search.api.test.utils.ConfigHelper;
 import com.gdn.qa.x_search.api.test.utils.KafkaHelper;
 import com.gdn.qa.x_search.api.test.utils.SolrHelper;
+import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -17,7 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SELECT_HANDLER;
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_DEFAULT_COLLECTION;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
 
 /**
  * @author kumar on 14/08/18
@@ -43,10 +47,21 @@ public class LogisticOptionEventSteps {
   @Autowired
   SolrHelper solrHelper;
 
+  @Autowired
+  ConfigHelper configHelper;
+
   @Given("^\\[search-service] update merchant commission type and logistic option for test product$")
   public void setMerchantCommTypeAndLogOptForTestProd(){
 
     searchServiceData.setQueryForReindex(searchServiceProperties.get("queryForReindex"));
+    searchServiceData.setListOfMerchants(searchServiceProperties.get("listOfMerchantIds"));
+    searchServiceData.setBusinessPartnerCode(searchServiceProperties.get("businessPartnerCode"));
+    searchServiceData.setCommissionType(searchServiceProperties.get("commissionType"));
+    searchServiceData.setLogisticOption(searchServiceProperties.get("logisticOption"));
+    searchServiceData.setLogisticOptionIncorrect(searchServiceProperties.get("logisticOptionIncorrect"));
+    searchServiceData.setLogisticProductCode(searchServiceProperties.get("logisticProductCode"));
+    searchServiceData.setLogisticProductCodeForEvent(searchServiceProperties.get("logisticProductCodeForEvent"));
+    searchServiceData.setLogisticOptionList(searchServiceProperties.get("logisticOptionList"));
 
     try {
 
@@ -76,9 +91,30 @@ public class LogisticOptionEventSteps {
 
   }
 
-  @When("^\\[search-service] consumes logistic option event for a merchant containing test product$")
-  public void searchConsumesLogisticOptionChangeEvent(){
-    kafkaHelper.publishLogisticOptionChange("TOQ-16110","EXPRESS","CM");
+  @When("^\\[search-service] consumes logistic '(.*)' event for a merchant containing test product when merchant count is '(.*)' than 10$")
+  public void searchConsumesLogisticOptionChangeEvent(String eventType,String caseType){
+    if (caseType.toLowerCase().contains("less") && eventType.toLowerCase().equals("option"))
+    kafkaHelper.publishLogisticOptionChange(searchServiceData.getBusinessPartnerCode(),
+        searchServiceData.getLogisticOption(),
+        searchServiceData.getCommissionType(),
+        searchServiceData.getLogisticProductCode());
+    else if (caseType.toLowerCase().contains("more") && eventType.toLowerCase().equals("option")){
+      kafkaHelper.publishLogisticOptionChange(searchServiceData.getListOfMerchants(),
+          searchServiceData.getLogisticOption(),
+          searchServiceData.getCommissionType(),
+          searchServiceData.getLogisticProductCode());
+    }
+    else if (caseType.toLowerCase().contains("less") && eventType.toLowerCase().equals("product"))
+      kafkaHelper.publishLogisticProductChange(searchServiceData.getBusinessPartnerCode(),
+          searchServiceData.getLogisticOptionList(),
+          searchServiceData.getCommissionType(),
+          searchServiceData.getLogisticProductCodeForEvent());
+    else if (caseType.toLowerCase().contains("more") && eventType.toLowerCase().equals("product")){
+      kafkaHelper.publishLogisticOptionChange(searchServiceData.getListOfMerchants(),
+          searchServiceData.getLogisticOptionList(),
+          searchServiceData.getCommissionType(),
+          searchServiceData.getLogisticProductCodeForEvent());
+    }
     try {
       Thread.sleep(60000);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
@@ -92,6 +128,12 @@ public class LogisticOptionEventSteps {
     ResponseApi<GdnBaseRestResponse> responseApi =
         searchServiceController.prepareRequestForAtomicReindexQueue();
     searchServiceData.setSearchServiceResponse(responseApi);
+    try {
+      Thread.sleep(60000);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   @Then("^\\[search-service] merchant commission type and logistic option for test product is updated$")
@@ -100,7 +142,7 @@ public class LogisticOptionEventSteps {
     try {
 
       try {
-        Thread.sleep(60000);
+        Thread.sleep(120000);
         solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
       } catch (Exception e) {
         e.printStackTrace();
@@ -116,9 +158,8 @@ public class LogisticOptionEventSteps {
 
       log.warn("-----Product merchantCommissionType---{}----LogisticOptions---{}-",commissionType,logisticOption);
       assertThat("Location is not changed after reindex",location,equalTo("Origin-Jakarta"));
-      assertThat("Test logistic option not set",logisticOption,equalTo("EXPRESS"));
       assertThat("Test commission type not set",commissionType,equalTo("CM"));
-
+      assertThat("Test logistic option not set",logisticOption,not(containsString("TEST_LOCATION")));
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -126,18 +167,55 @@ public class LogisticOptionEventSteps {
 
   }
 
-  @Given("^\\[search-service] remove all entries from Product Reindex Atomic Queue and Product Atomic Reindex Data Candidate$")
-  public void removeAllEntriesFromConcernedTables(){
+  @When("^\\[search-service] consumes logistic '(.*)' event with data not present in config$")
+  public void consumesEventWithUnConfiguredLogisticOption(String eventType){
+    switch (eventType) {
+      case "option":
+        kafkaHelper.publishLogisticOptionChange(searchServiceData.getBusinessPartnerCode(),
+            searchServiceData.getLogisticOptionIncorrect(),
+            searchServiceData.getCommissionType(),
+            searchServiceData.getLogisticProductCode());
+        break;
+      case "product":
+        kafkaHelper.publishLogisticProductChange(searchServiceData.getBusinessPartnerCode(),
+            searchServiceData.getLogisticOptionIncorrect(),
+            searchServiceData.getCommissionType(),
+            searchServiceData.getLogisticProductCodeForEvent());
+        break;
+      case "origin":
+        kafkaHelper.publishLogisticProductOriginsChangeEvent("BLIBLI_EXPRESS");
+        break;
+    }
 
+    try {
+      Thread.sleep(60000);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
-  @When("^\\[search-service] receives ORIGIN CHANGE event$")
-  public void searchConsumesOriginChangeEvent(){
-    kafkaHelper.publishLogisticProductOriginsChangeEvent();
-  }
+  @Then("^\\[search-service] merchant commission type,location and logistic option for test product is not updated$")
+  public void testProductIsNotUpdated(){
+    try {
 
-  @When("^\\[search-service] run api to convert High to Low")
-  public void runApiToConvertHighToLow()
-  {}
+      String commissionType = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+          SELECT_HANDLER,"merchantCommissionType",1).get(0).getMerchantCommissionType();
+
+      String logisticOption = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+          SELECT_HANDLER,"logisticOptions",1).get(0).getLogisticOptions().get(0);
+
+      String location = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+          SELECT_HANDLER,"location",1).get(0).getLocation();
+
+      log.warn("-----Product merchantCommissionType---{}----LogisticOptions---{}-",commissionType,logisticOption);
+      assertThat("Test commission type not set",commissionType,equalTo("TEST_COMM_TYPE"));
+      assertThat("Test logistic option not set",logisticOption,equalTo("TEST_LOGISTIC_OPTION"));
+      assertThat("Tes location not set",location,equalTo("TEST_LOCATION"));
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 
 }
