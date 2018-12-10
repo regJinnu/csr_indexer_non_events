@@ -433,6 +433,7 @@ private ApplicationContext applicationContext;
   String promoItemSKU ,
   String promoBundlingType){
     PromoBundlingDeactivateModel promoBundlingDeactivateModel=PromoBundlingDeactivateModel.builder()
+        .timestamp(System.currentTimeMillis())
         .sku(promoItemSKU)
         .storeId("10001")
         .promoBundlingType(promoBundlingType).build();

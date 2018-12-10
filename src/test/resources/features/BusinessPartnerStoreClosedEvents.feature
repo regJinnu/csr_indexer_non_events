@@ -1,4 +1,4 @@
-@BusinessPartnerStoreClosedEvent @TestSuiteID=10257932
+@BusinessPartnerStoreClosedEvent @TestSuiteID=10352299
 Feature: Verify indexing by business partner store closed events
 
   @StoreClosedWithDelayShippingFalse
