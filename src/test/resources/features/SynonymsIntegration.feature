@@ -3,7 +3,7 @@ Feature: Synonym Integration API's
 
   @Regression @DeleteIntegrationSynonymsSOLR
   Scenario: User wants to integrate delete synonyms to SOLR
-    Givcen [search-service] prepare delete synonyms using properties using properties data
+    Given [search-service] prepare delete synonyms using properties using properties data
     When  [search-service] send delete synonym request
     Then [search-service] create delete synonym request response success should be 'true'
 
