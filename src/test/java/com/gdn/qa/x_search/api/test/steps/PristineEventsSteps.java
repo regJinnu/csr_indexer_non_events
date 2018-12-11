@@ -156,9 +156,6 @@ public class PristineEventsSteps {
       String pristineAttributesValue,
       String pristine) {
 
-    configHelper.findAndUpdateConfig("product.level.id", PRODUCT_LEVEL0ID);
-    configHelper.findAndUpdateConfig("service.product.level.id", PRODUCT_LEVEL0ID);
-
     if(pristine.equals("handphone")){
       log.debug("------------------HANDPHONE CATEGORY------------------");
       String pristineFacetInSOLR = null;
