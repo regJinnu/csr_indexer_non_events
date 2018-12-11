@@ -1,4 +1,4 @@
-@SuggestionIndexFeature @TestSuiteID=10257932
+@SuggestionIndexFeature @TestSuiteID=10352299
 Feature: Suggestion Indexing Api
 
   @Regression

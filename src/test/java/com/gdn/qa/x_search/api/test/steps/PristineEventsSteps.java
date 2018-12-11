@@ -38,8 +38,8 @@ public class PristineEventsSteps {
   @Given("^\\[search-service] set all the values for publishing the pristine event for '(.*)' category$")
   public void searchServiceSetAllTheValuesForPublishingThePristineEventForPristineCategory(String pristine) {
 
-    configHelper.findAndUpdateConfig("product.level.id", PRODUCT_LEVEL1ID);
-    configHelper.findAndUpdateConfig("service.product.level.id", PRODUCT_LEVEL1ID);
+    configHelper.findAndUpdateConfig("product.level.id", PRODUCT_LEVEL0ID);
+    configHelper.findAndUpdateConfig("service.product.level.id", PRODUCT_LEVEL0ID);
 
     if (pristine.equals("handphone")) {
 
@@ -156,14 +156,11 @@ public class PristineEventsSteps {
       String pristineAttributesValue,
       String pristine) {
 
-    configHelper.findAndUpdateConfig("product.level.id", PRODUCT_LEVEL0ID);
-    configHelper.findAndUpdateConfig("service.product.level.id", PRODUCT_LEVEL0ID);
-
     if(pristine.equals("handphone")){
       log.debug("------------------HANDPHONE CATEGORY------------------");
       String pristineFacetInSOLR = null;
       try {
-        pristineFacetInSOLR = solrHelper.getSolrProd(PRODUCT_LEVEL1ID+":" + searchServiceData.getHandphonePristineID(),
+        pristineFacetInSOLR = solrHelper.getSolrProd(PRODUCT_LEVEL0ID+":" + searchServiceData.getHandphonePristineID(),
             SELECT_HANDLER,
             "PRISTINE_"+pristineAttributesName,
             1).get(0).getPristineHandphoneFacet();
@@ -176,7 +173,7 @@ public class PristineEventsSteps {
       log.debug("------------------CAMERA CATEGORY------------------");
       try {
         String pristineFacetInSOLR =
-            solrHelper.getSolrProd(PRODUCT_LEVEL1ID+":" +searchServiceData.getCameraPristineID(),
+            solrHelper.getSolrProd(PRODUCT_LEVEL0ID+":" +searchServiceData.getCameraPristineID(),
                 SELECT_HANDLER,
                 "PRISTINE_"+pristineAttributesName,
                 1).get(0).getPristineCameraFacet();
@@ -190,7 +187,7 @@ public class PristineEventsSteps {
       try {
         log.debug("------------------COMPUTER CATEGORY------------------");
         String pristineFacetInSOLR =
-            solrHelper.getSolrProd(PRODUCT_LEVEL1ID+":" + searchServiceData.getPristineID(),
+            solrHelper.getSolrProd(PRODUCT_LEVEL0ID+":" + searchServiceData.getPristineID(),
                 SELECT_HANDLER,
                 "PRISTINE_"+pristineAttributesName,
                 1).get(0).getPristineFacet();

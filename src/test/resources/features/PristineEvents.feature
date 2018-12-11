@@ -1,4 +1,4 @@
-@PristineEventsAutomationFeature @TestSuiteID=10257932
+@PristineEventsAutomationFeature @TestSuiteID=10352299
 Feature: Automation of pristine related events
 
   @PristineEvents @Regression
