@@ -1,4 +1,4 @@
-@LogisticOptionsEvent @TestSuiteID=10257932
+@LogisticOptionsEvent @TestSuiteID=10566407
 
 Feature: Verify indexing by logistic option events
 
@@ -47,13 +47,13 @@ Feature: Verify indexing by logistic option events
     Then [search-service] merchant commission type,location and logistic option for test product is not updated
 
   @LogisticOriginChangeEvent
-  Scenario: Verify Logistic product change event when merchant count is less than 10
+  Scenario: Verify Logistic origin change event when merchant count is less than 10
     Given [search-service] update merchant commission type and logistic option for test product
     When [search-service] consumes logistic 'origin' event for a merchant containing test product when merchant count is 'less' than 10
     Then [search-service] merchant commission type and logistic option for test product is updated
 
   @LogisticOriginChangeEvent
-  Scenario: Verify Logistic product change event when merchant count is greater than 10
+  Scenario: Verify Logistic origin change event when merchant count is greater than 10
     Given [search-service] update merchant commission type and logistic option for test product
     When [search-service] consumes logistic 'origin' event for a merchant containing test product when merchant count is 'more' than 10
     And [search-service] run api to reindex products in product atomic reindex queue

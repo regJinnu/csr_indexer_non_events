@@ -162,6 +162,8 @@ public class SearchServiceData {
   private String logisticProductCode;
   private String logisticProductCodeForEvent;
   private String logisticOptionList;
+  private String logisticProductCodeForOrigin;
+  private String originLocation;
   private ResponseApi<GdnRestListResponse<TrainResponse>> getAllTrain;
   private ResponseApi<GdnRestListResponse<SearchRuleResponse>> getAllSearchRule;
   private ResponseApi<GdnRestListResponse<PlaceholderRuleResponse>> getAllPlaceholder;

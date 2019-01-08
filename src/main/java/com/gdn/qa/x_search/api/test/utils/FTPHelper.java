@@ -48,7 +48,7 @@ public class FTPHelper {
     } catch (IOException e1) {
       e1.printStackTrace();
     }
-    return flag;
+       return flag;
     }
 
     public void getFileUsingFtp (String directory, String fileName) {

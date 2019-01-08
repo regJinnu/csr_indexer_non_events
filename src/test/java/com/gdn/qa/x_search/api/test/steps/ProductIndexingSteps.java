@@ -17,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.*;
@@ -575,6 +577,49 @@ public class ProductIndexingSteps {
     searchServiceData.setQueryForProductCode(searchServiceProperties.get("queryForProductCode"));
     searchServiceData.setQueryForReindexOfDeletedProd(searchServiceProperties.get(
         "queryForReindexOfDeletedProd"));
+    configHelper.findAndUpdateConfig("force.stop.solr.updates","true");
+    try {
+      Thread.sleep(10000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    Date date = null;
+    try {
+      date = dateFormat.parse("2018-07-30T11:45:39.235Z");
+
+      Document storedDeltaDoc1 = new Document("_class" , "com.gdn.x.search.entity.EventIndexingEntity")
+          .append("code" , "MTA-0305736")
+          .append("type" , "productCode")
+          .append("processHost", "1")
+          .append("isFailed", "0")
+          .append("eventType" , "ALL")
+          .append("version" , 0)
+          .append("CREATED_DATE" , date)
+          .append("CREATED_BY" , "user-dev-src")
+          .append("UPDATED_DATE" , date)
+          .append("UPDATED_BY" , "user-dev-src")
+          .append("MARK_FOR_DELETE" , false);
+
+      Document storedDeltaDoc2 = new Document("_class" , "com.gdn.x.search.entity.EventIndexingEntity")
+          .append("code" , "TH7-15791-00161-00001")
+          .append("type" , "id")
+          .append("processHost", "1")
+          .append("isFailed", "0")
+          .append("eventType" , "LOCATION_AND_INVENTORY_SERVICE")
+          .append("version" , 0)
+          .append("CREATED_DATE" , date)
+          .append("CREATED_BY" , "user-dev-src")
+          .append("UPDATED_DATE" , date)
+          .append("UPDATED_BY" , "user-dev-src")
+          .append("MARK_FOR_DELETE" , false);
+
+      mongoHelper.insertInMongo("indexing_list_new",storedDeltaDoc1);
+      mongoHelper.insertInMongo("indexing_list_new",storedDeltaDoc2);
+
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
 
     long countOfStoredEvents = mongoHelper.countOfRecordsInCollection("indexing_list_new");
     assertThat("No Stored events exists in Mongo", countOfStoredEvents, greaterThanOrEqualTo(0L));
@@ -590,6 +635,8 @@ public class ProductIndexingSteps {
       int reviewCount =
           solrHelper.getSolrProd(query, SELECT_HANDLER, "reviewCount", 1).get(0).getReviewCount();
       String rating = solrHelper.getSolrProd(query, SELECT_HANDLER, "rating", 1).get(0).getRating();
+
+      log.error("----reviewCount---{}---rating---{}",reviewCount,rating);
 
       assertThat("Product review count not set", reviewCount, equalTo(100));
       assertThat("Product rating not set", rating, equalTo("23"));
@@ -617,6 +664,8 @@ public class ProductIndexingSteps {
 
   @When("^\\[search-service] sends request for processing stored delta$")
   public void sendRequestToProcessStoredDelta() {
+
+    configHelper.findAndUpdateConfig("force.stop.solr.updates","false");
 
     ResponseApi<GdnRestSingleResponse<SimpleStringResponse>> processingStoredDelta =
         searchServiceController.prepareRequestForProcessingStoredDelta();

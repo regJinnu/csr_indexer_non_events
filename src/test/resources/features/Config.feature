@@ -1,4 +1,4 @@
-@ConfigFeature @TestSuiteID=10257932
+@ConfigFeature @TestSuiteID=10566407
 Feature:Config controller related API's
 
   @Regression @FindByName

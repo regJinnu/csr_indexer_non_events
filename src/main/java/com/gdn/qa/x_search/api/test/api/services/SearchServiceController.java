@@ -1239,10 +1239,11 @@ public class SearchServiceController extends ServiceApi {
 
   public ResponseApi<GdnBaseRestResponse> prepareRequestForCategoryReindex(String categoryCode) {
 
-    String requestJson = "{\n" + "\"categoryCodes\": [ \"" + categoryCode + "\"]\n" + "}";
+    String requestJson = "{\n" + "  \"codes\": [\""+categoryCode+"\"],\n"
+        + "  \"field\": \"salesCatalogCategoryIds\"\n" + "}";
 
     Response response =
-        service("searchservice").body(requestJson).post(BASEPATH + "index/category");
+        service("searchservice").body(requestJson).post(BASEPATH + "index/solr-field");
 
     response.getBody().prettyPrint();
 

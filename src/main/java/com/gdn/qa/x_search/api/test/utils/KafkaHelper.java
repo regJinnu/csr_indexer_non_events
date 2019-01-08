@@ -145,107 +145,13 @@ public class KafkaHelper {
   }
 
   public void publishLogisticProductOriginsChangeEvent(String logisticProductCode) {
-    List<String> originList = new ArrayList<>(Arrays.asList("Origin-Jakarta",
-        "Origin-Bekasi",
-        "Origin-Depok",
-        "Origin-Bogor",
-        "Origin-Tangerang",
+
+    List<String> originList = new ArrayList<>(Arrays.asList(
+        "Origin-Jakarta",
         "Origin-Surabaya",
-        "Origin-Manado",
-        "Origin-Gianyar",
-        "Origin-Makasar",
-        "Origin-Yogyakarta",
-        "Origin-Gresik",
-        "Origin-Karawang",
-        "Origin-Solo",
-        "Origin-Pandeglang",
-        "Origin-Maros",
-        "Origin-Banda Aceh",
-        "Origin-Wonogiri",
         "Origin-Bandung",
-        "Origin-Serang",
-        "Origin-Malang",
-        "Origin-Probolinggo",
-        "Origin-Mojokerto",
-        "Origin-Palembang",
-        "Origin-Jepara",
-        "Origin-Demak",
-        "Origin-Balikpapan",
-        "Origin-Semarang",
-        "Origin-Boyolali",
-        "Origin-Pamekasan",
-        "Origin-Cilacap",
-        "Origin-Bukit Tinggi",
-        "Origin-Brebes",
-        "Origin-Sukoharjo",
-        "Origin-Kuta",
-        "Origin-Batam",
-        "Origin-Pemalang",
-        "Origin-Magetan",
-        "Origin-Badung Menguwi",
-        "Origin-Purwokerto",
-        "Origin-Pekalongan",
-        "Origin-Samarinda",
-        "Origin-Salatiga",
-        "Origin-Kediri",
-        "Origin-Palu",
-        "Origin-Pekanbaru",
-        "Origin-Pangkal Pinang",
-        "Origin-Magelang",
-        "Origin-Sumedang",
-        "Origin-Ciamis",
-        "Origin-Medan",
-        "Origin-Karang Asem",
-        "Origin-Sukabumi",
-        "Origin-Sleman",
-        "Origin-Purbalingga",
-        "Origin-Bandar Lampung",
-        "Origin-Cirebon",
-        "Origin-Temanggung",
-        "Origin-Mataram",
-        "Origin-Kebumen",
-        "Origin-Kudus",
-        "Origin-Klaten",
-        "Origin-Deli Serdang",
-        "Origin-Subang",
-        "Origin-Purworejo",
-        "Origin-Jambi",
-        "Origin-Sidoardjo",
-        "Origin-Ngawi",
-        "Origin-Tomohon",
-        "Origin-Banjarmasin",
-        "Origin-BanjarBaru",
-        "Origin-Padang",
-        "Origin-Pati",
-        "Origin-Sabang",
-        "Origin-Ponorogo",
-        "Origin-Madiun",
-        "Origin-Klungkung",
-        "Origin-Tabanan",
-        "Origin-Pematang Siantar",
-        "Origin-Bangli",
-        "Origin-Purwakarta",
-        "Origin-Kuningan",
-        "Origin-Batu",
-        "Origin-Tanjung Pinang",
-        "Origin-Tegal",
-        "Origin-Garut",
-        "Origin-Denpasar",
-        "Origin-Bengkalis",
-        "Origin-Batang",
-        "Origin-Banyuwangi",
-        "Origin-Tasikmalaya",
-        "Origin-Sragen",
-        "Origin-Payakumbuh",
-        "Origin-Cilegon",
-        "Origin-Gorontalo",
-        "Origin-Binjai",
-        "Origin-Pontianak",
-        "Origin-Bantul",
-        "Origin-Sumenep",
-        "Origin-Wonosobo",
-        "Origin-Jember",
-        "Origin-Cimahi"));
+        "Origin-Denpasar"
+));
 
     LogisticProductOriginChangeEvent logisticProductOriginChangeEvent =
         LogisticProductOriginChangeEvent.builder().
@@ -682,6 +588,27 @@ public class KafkaHelper {
     try {
       kafkaSender.send("com.gdn.x.shipping.domain.logistic.product.change.event",
           objectMapper.writeValueAsString(logisticProductChangeEvent));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+
+  }
+
+  public void publishLogisticProductOriginsChangeEvent(String logisticProductCode,String location) {
+
+    List<String> originList = new ArrayList<>();
+    originList.add(location);
+
+    LogisticProductOriginChangeEvent logisticProductOriginChangeEvent =
+        LogisticProductOriginChangeEvent.builder().
+            timestamp(System.currentTimeMillis()).
+            originList(originList).
+            logisticProductCode(logisticProductCode).
+            build();
+
+    try {
+      kafkaSender.send("com.gdn.x.shipping.domain.origin.change.event",
+          objectMapper.writeValueAsString(logisticProductOriginChangeEvent));
     } catch (JsonProcessingException e) {
       e.printStackTrace();
     }

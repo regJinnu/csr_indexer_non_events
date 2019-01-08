@@ -62,6 +62,8 @@ public class LogisticOptionEventSteps {
     searchServiceData.setLogisticProductCode(searchServiceProperties.get("logisticProductCode"));
     searchServiceData.setLogisticProductCodeForEvent(searchServiceProperties.get("logisticProductCodeForEvent"));
     searchServiceData.setLogisticOptionList(searchServiceProperties.get("logisticOptionList"));
+    searchServiceData.setLogisticProductCodeForOrigin(searchServiceProperties.get("logisticProductCodeForOrigin"));
+    searchServiceData.setOriginLocation(searchServiceProperties.get("originLocation"));
 
     try {
 
@@ -115,6 +117,13 @@ public class LogisticOptionEventSteps {
           searchServiceData.getCommissionType(),
           searchServiceData.getLogisticProductCodeForEvent());
     }
+    else if(caseType.toLowerCase().contains("more") && eventType.toLowerCase().equals("origin")){
+      kafkaHelper.publishLogisticProductOriginsChangeEvent(searchServiceData.getLogisticProductCodeForOrigin());
+    }
+    else if(caseType.toLowerCase().contains("less") && eventType.toLowerCase().equals("origin")){
+      kafkaHelper.publishLogisticProductOriginsChangeEvent(searchServiceData.getLogisticProductCodeForOrigin(),
+          searchServiceData.getOriginLocation());
+    }
     try {
       Thread.sleep(60000);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
@@ -159,7 +168,7 @@ public class LogisticOptionEventSteps {
       log.warn("-----Product merchantCommissionType---{}----LogisticOptions---{}-",commissionType,logisticOption);
       assertThat("Location is not changed after reindex",location,equalTo("Origin-Jakarta"));
       assertThat("Test commission type not set",commissionType,equalTo("CM"));
-      assertThat("Test logistic option not set",logisticOption,not(containsString("TEST_LOCATION")));
+      assertThat("Test logistic option not set",logisticOption,not(containsString("TEST_LOGISTIC_OPTION")));
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -183,7 +192,7 @@ public class LogisticOptionEventSteps {
             searchServiceData.getLogisticProductCodeForEvent());
         break;
       case "origin":
-        kafkaHelper.publishLogisticProductOriginsChangeEvent("BLIBLI_EXPRESS");
+        kafkaHelper.publishLogisticProductOriginsChangeEvent(searchServiceData.getLogisticProductCodeForOrigin(),"BLIBLI_EXPRESS");
         break;
     }
 
@@ -211,7 +220,7 @@ public class LogisticOptionEventSteps {
       log.warn("-----Product merchantCommissionType---{}----LogisticOptions---{}-",commissionType,logisticOption);
       assertThat("Test commission type not set",commissionType,equalTo("TEST_COMM_TYPE"));
       assertThat("Test logistic option not set",logisticOption,equalTo("TEST_LOGISTIC_OPTION"));
-      assertThat("Tes location not set",location,equalTo("TEST_LOCATION"));
+      assertThat("Test location not set",location,equalTo("TEST_LOCATION"));
 
     } catch (Exception e) {
       e.printStackTrace();

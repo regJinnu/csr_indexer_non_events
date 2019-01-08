@@ -6,7 +6,7 @@ public interface UrlConstants {
   String SELECT_HANDLER = "/select";
   int MONGO_SERVER_PORT = 27017;
   String DOWNLOAD_GEN_FULL_FEED_FOR_FACEBOOK="/opt/output/facebook/1/";
-  String LOCAL_STORAGE_LOCATION="/tmp/FacebookDownloadedFiles/";
+  String LOCAL_STORAGE_LOCATION="src/test/resources/FacebookDownloadedFiles";
   int SERVER_PORT=2209;
   String SERVER_USERNAME="linux1-user";
   String SERVER_PASSWORD="blibliqaisthebest";
