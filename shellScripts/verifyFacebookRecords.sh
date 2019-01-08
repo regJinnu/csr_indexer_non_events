@@ -1,5 +1,5 @@
 #!/bin/sh
 
-cd /Users/kumar/Desktop/Coviam/Test/SEARCH/csr_xsearch_api/src/test/resources/FacebookDownloadedFiles/
+cd $1
 
-cat facebook*txt | grep -i $1 | wc -l
+cat facebook*txt | grep -i $2 | wc -l

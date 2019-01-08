@@ -376,6 +376,8 @@ public class FacebookSteps {
 
       assertThat("Unsync Prod Details not as expected",output.trim(),equalTo(FB_UNSYNC));
 
+      searchServiceData.setDefaultProd(searchServiceProperties.get("defaultProd"));
+
       String outputSync = ProcessShellCommands.getShellScriptActualOutput(
           "getFacebookRecords.sh",
           searchServiceData.getDefaultProd());
