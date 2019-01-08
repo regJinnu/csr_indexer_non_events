@@ -9,4 +9,5 @@ public class PromoBundlingDeactivateModel {
   private String storeId;
   private String sku;
   private String promoBundlingType;
+  private long timestamp;
 }

@@ -484,13 +484,14 @@ public class KafkaHelper {
     }
   }
 
-  public void promoBundlingDeactivatedEvent(String promoItemSKU, String promoBundlingType) {
-    PromoBundlingDeactivateModel promoBundlingDeactivateModel =
-        PromoBundlingDeactivateModel.builder()
-            .sku(promoItemSKU)
-            .storeId("10001")
-            .promoBundlingType(promoBundlingType)
-            .build();
+  public void promoBundlingDeactivatedEvent(
+  String promoItemSKU ,
+  String promoBundlingType){
+    PromoBundlingDeactivateModel promoBundlingDeactivateModel=PromoBundlingDeactivateModel.builder()
+        .timestamp(System.currentTimeMillis())
+        .sku(promoItemSKU)
+        .storeId("10001")
+        .promoBundlingType(promoBundlingType).build();
     try {
       kafkaSender.send("com.gdn.x.promotion.promo.bundling.deactivated",
           objectMapper.writeValueAsString(promoBundlingDeactivateModel));
