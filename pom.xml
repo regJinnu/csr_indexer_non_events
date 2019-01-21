@@ -28,8 +28,8 @@
         <serenity.testlink.integration.version>3.4.3</serenity.testlink.integration.version>
         <testlink.devkey>b0f60503e7aab68af1e6072faf5124d6</testlink.devkey>
         <testlink.project>X-Search</testlink.project>
-        <testlink.plan>TrainDeployment_2018-12-07_SEARCH</testlink.plan>
-        <testlink.build>4.7.0-9_SEARCH-SERVICE</testlink.build>
+        <testlink.plan>Major_Deployment_2019-01-22_SEARCH</testlink.plan>
+        <testlink.build>5.0.0-16_QA-1_SEARCHSERVICE</testlink.build>
     </properties>
 
     <dependencies>
@@ -245,7 +245,7 @@
                     </includes>
                     <systemPropertyVariables>
                         <cucumber.options>--junit,--step-notifications</cucumber.options>
-                        <spring.config.location>classpath:/application-UATB.properties
+                        <spring.config.location>classpath:/application-UATA.properties
                         </spring.config.location>
                     </systemPropertyVariables>
                 </configuration>

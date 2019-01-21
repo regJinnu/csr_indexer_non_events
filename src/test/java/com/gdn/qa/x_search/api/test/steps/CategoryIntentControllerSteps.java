@@ -16,6 +16,7 @@ import cucumber.api.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 
 @CucumberStepsDefinition
@@ -199,7 +200,7 @@ public class CategoryIntentControllerSteps {
     ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
     assertThat(response.getResponseBody().getErrorMessage(),
         equalTo("Can not find data :for CategoryIntent with searchTerm : waterbottle"));
-    assertThat(response.getResponseBody().getErrorCode(), equalTo("500"));
+    assertThat(response.getResponseBody().getErrorCode(), containsString("500"));
   }
 
   @Given("^\\[search-service] prepare request for saving existing searchTerm$")
@@ -221,7 +222,7 @@ public class CategoryIntentControllerSteps {
   public void searchServiceCheckTheResponseForSavingExistingSearchTermAgain() {
     ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
     assertThat(response.getResponseBody().getErrorMessage(), equalTo("Intent already exists"));
-    assertThat(response.getResponseBody().getErrorCode(), equalTo("200"));
+    assertThat(response.getResponseBody().getErrorCode(), containsString("200"));
   }
 
   @Given("^\\[search-service] prepare request for finding category by search term which does not have intent mining$")
