@@ -24,26 +24,6 @@ public class SynonymsIntegrationSteps {
 
   @Autowired
   private SearchServiceData searchServiceData;
-  @Given("^\\[search-service] prepare delete synonyms using properties using properties data$")
-  public void searchServicePrepareDeleteSynonymsUsingPropertiesUsingPropertiesData()
-    {
-      searchServiceData.setSearchTerm(searchServiceProperties.get("searchTerm"));
-  }
-
-  @When("^\\[search-service] send delete synonym request$")
-  public void searchServiceSendDeleteSynonymRequest()  {
-    ResponseApi<GdnBaseRestResponse> response =
-        searchServiceController.deleteSynonymFromSolr();
-    searchServiceData.setSearchServiceResponse(response);
-  }
-
-  @Then("^\\[search-service] create delete synonym request response success should be '(.*)'$")
-  public void searchServiceCreateDeleteSynonymRequestResponseSuccessShouldBeTrue(Boolean isSuccess)
-     {
-       ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
-       boolean result = response.getResponseBody().isSuccess();
-       assertThat("is Success is wrong", result, equalTo(isSuccess));
-  }
 
   @Given("^\\[search-service] prepare update synonyms to solr using properties using properties data$")
   public void searchServicePrepareUpdateSynonymsToSolrUsingPropertiesUsingPropertiesData()

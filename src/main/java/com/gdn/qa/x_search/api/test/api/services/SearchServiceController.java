@@ -813,14 +813,6 @@ public class SearchServiceController extends ServiceApi {
     });
   }
 
-  public ResponseApi<GdnBaseRestResponse> deleteSynonymFromSolr() {
-    Response response =
-        service("searchservice").queryParam("key", searchServiceData.getSearchTerm())
-            .delete(BASEPATH + "integration/delete");
-    response.getBody().prettyPrint();
-    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
-    });
-  }
 
   public ResponseApi<GdnBaseRestResponse> updateSynonymFromSolr() {
     Response response =
