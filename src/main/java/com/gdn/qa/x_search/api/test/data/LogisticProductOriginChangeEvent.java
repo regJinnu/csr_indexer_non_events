@@ -15,6 +15,7 @@ import java.util.List;
 
 public class LogisticProductOriginChangeEvent {
 
+  private long timestamp;
   private List<String> originList;
   private String logisticProductCode;
 

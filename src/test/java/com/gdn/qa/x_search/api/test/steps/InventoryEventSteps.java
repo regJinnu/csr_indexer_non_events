@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_DEFAULT_COLLECTION;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 
 /**
  * @author kumar on 01/08/18
@@ -139,9 +140,9 @@ public class InventoryEventSteps {
 
   @Then("^\\[search-service] product becomes in stock in SOLR$")
   public void checkProductIsNotOOSAfterEvent(){
-
     int oosFlag = 0;
     try {
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
       oosFlag =
           solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1).get(0).getIsInStock();
       assertThat("Product not OOS",oosFlag,equalTo(1));
@@ -188,6 +189,7 @@ public class InventoryEventSteps {
 
   @Then("^\\[search-service] events are stored in indexing_list_new collection and processed when job is run after turning off the flag$")
   public void searchServiceEventsAreStoredInIndexing_list_newCollectionAndProcessedWhenJobIsRun() {
+    searchServiceData.setItemSkuForReindex(searchServiceProperties.get("itemSkuForReindex"));
     FindIterable<Document> indexing_list_new =
         mongoHelper.getMongoDocumentByQuery("indexing_list_new", "code", searchServiceData.getItemSkuForReindex());
 
@@ -199,7 +201,7 @@ public class InventoryEventSteps {
 
     log.error("Size of indexing_list_new--{}",size);
 
-    assertThat("Entry does not exists in collection",size,equalTo(1));
+    assertThat("Entry does not exists in collection",size,greaterThan(0));
 
     configHelper.findAndUpdateConfig("force.stop.solr.updates","false");
 
@@ -209,7 +211,7 @@ public class InventoryEventSteps {
     assertThat("Status Code Not 200", processingStoredDelta.getResponse().getStatusCode(), equalTo(200));
 
     try {
-      Thread.sleep(40000);
+      Thread.sleep(60000);
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
@@ -219,6 +221,7 @@ public class InventoryEventSteps {
   public void searchServiceProductDoesNotBecomesNonOosInSOLR(){
     int oosFlag = 0;
     try {
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
       oosFlag =
           solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1).get(0).getIsInStock();
       log.warn("-----Product does not become non oos in SOLR---{}",oosFlag);

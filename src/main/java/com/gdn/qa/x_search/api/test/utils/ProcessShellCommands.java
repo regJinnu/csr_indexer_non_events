@@ -2,7 +2,11 @@ package com.gdn.qa.x_search.api.test.utils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
+
+import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.LOCAL_STORAGE_LOCATION;
+import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.LOCAL_STORAGE_PATH;
 
 /**
  * @author kumar on 04/09/18
@@ -14,7 +18,7 @@ public class ProcessShellCommands {
   private static final String SCRIPT_PATH = "shellScripts/";
 
   public static String getShellScriptActualOutput(String Filename,String prodType) throws Exception{
-    ProcessBuilder processBuilder=new ProcessBuilder(SCRIPT_PATH+Filename,prodType);
+    ProcessBuilder processBuilder=new ProcessBuilder(SCRIPT_PATH+Filename,LOCAL_STORAGE_PATH,prodType);
     Process process=processBuilder.start();
     int exitValue=process.waitFor();
     String line;
@@ -28,18 +32,6 @@ public class ProcessShellCommands {
         return line;
     }
     return "abcd";
-  }
-
-  public static void main(String[] args) {
-    try {
-      String output = ProcessShellCommands.getShellScriptActualOutput(
-          "verifyFacebookRecords.sh", "MTA-0309046");
-
-      System.out.println("Output:"+output);
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
   }
 
 }

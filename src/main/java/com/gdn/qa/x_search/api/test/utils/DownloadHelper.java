@@ -45,7 +45,6 @@ public class DownloadHelper {
       session.setConfig("StrictHostKeyChecking", "no");
       session.setPassword(password);
       session.connect();
-
       channel = session.openChannel("sftp");
       channel.connect();
       sftpChannel = (ChannelSftp) channel;
@@ -166,7 +165,7 @@ public class DownloadHelper {
   }
 
 
-  public int count(String filename) throws IOException {
+  public static int count(String filename) throws IOException {
     try (InputStream is = new BufferedInputStream(new FileInputStream(filename))) {
       byte[] c = new byte[1024];
       int count = 0;
@@ -210,5 +209,22 @@ public class DownloadHelper {
     return stringBuffer.toString();
   }
 
+
+  public int checkNumberOfFilesInRemoteServer(String directory,String filename){
+    connect();
+    int count = 0;
+    try {
+      sftpChannel.cd(directory);
+      Vector<ChannelSftp.LsEntry> fileList = sftpChannel.ls(filename);
+      log.error("--Number of files---"+fileList.size());
+      disconnect();
+      return count;
+    }
+    catch (Exception e){
+      e.printStackTrace();
+    }
+    disconnect();
+    return count;
+  }
 
 }

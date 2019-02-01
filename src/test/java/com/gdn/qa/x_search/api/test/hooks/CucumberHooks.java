@@ -151,7 +151,7 @@ public class CucumberHooks {
 
   @Before("@ProcessDeltaStoredEvents")
   public void beforeProcessingStoredEvents(){
-
+/*
     Date date = null;
     try {
       date = dateFormat.parse("2018-07-30T11:45:39.235Z");
@@ -187,7 +187,7 @@ public class CucumberHooks {
 
     } catch (ParseException e) {
       e.printStackTrace();
-    }
+    }*/
 
   }
 

@@ -85,6 +85,7 @@ public class SearchServiceData {
   private String queryForReindexOfDeletedProd;
   private String queryForReviewAndRatingIndex;
   private String queryForProductCode;
+  private String itemSkuForStoredDelta;
   private String businessPartnerCode;
   private int errorMessage;
   private String unSyncProduct;
@@ -155,6 +156,15 @@ public class SearchServiceData {
   private String SOLR_URL_NO_PARAM;
   private String mongo;
   private String redis;
+  private String listOfMerchants;
+  private String commissionType;
+  private String logisticOption;
+  private String logisticOptionIncorrect;
+  private String logisticProductCode;
+  private String logisticProductCodeForEvent;
+  private String logisticOptionList;
+  private String logisticProductCodeForOrigin;
+  private String originLocation;
   private ResponseApi<GdnRestListResponse<TrainResponse>> getAllTrain;
   private ResponseApi<GdnRestListResponse<SearchRuleResponse>> getAllSearchRule;
   private ResponseApi<GdnRestListResponse<PlaceholderRuleResponse>> getAllPlaceholder;
@@ -183,5 +193,6 @@ public class SearchServiceData {
   private ResponseApi<GdnRestSingleResponse> processFailedIds;
   private ResponseApi<GdnRestSingleResponse<SimpleStringResponse>> listReindexServices;
   private ResponseApi<GdnRestSingleResponse<StatusReIndexResponse>> reindexStatus;
+  private ResponseApi<GdnRestSingleResponse<SimpleStringResponse>> productDataFeed;
 }
 

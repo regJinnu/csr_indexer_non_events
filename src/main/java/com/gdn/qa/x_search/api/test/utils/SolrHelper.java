@@ -48,7 +48,6 @@ public class SolrHelper {
     SolrQuery solrQuery = new SolrQuery();
     solrQuery.setQuery(queryText);
     solrQuery.setRequestHandler(requestHandler);
-
     if(requestHandler.equals("/browse")){
     solrQuery.addFilterQuery("{!collapse field=level0Id sort='merchantScore desc'}");
     solrQuery.addFilterQuery("published:1 AND salesCatalogCategoryCount:[1 TO *]");
@@ -73,6 +72,7 @@ public class SolrHelper {
   public long getSolrProdCountWithFq(String queryText, String requestHandler,String fq) throws Exception {
     HttpSolrClient httpSolrClient = initializeSolr(searchServiceProperties.get("SOLR_URL"));
     SolrQuery solrQuery = initializeSolrQuery(queryText,requestHandler,0,"id",fq);
+    System.out.println("----SolrQuery---"+solrQuery.toString());
     QueryResponse queryResponse = httpSolrClient.query(solrQuery);
     return queryResponse.getResults().getNumFound();
   }
@@ -86,6 +86,17 @@ public class SolrHelper {
     List<SolrResults> dataList = binder.getBeans(SolrResults.class, solrDocuments);
     return dataList;
   }
+
+  public List<SolrResults>  getSolrProd(String queryText, String requestHandler,String field,int rows,String fq) throws Exception {
+    HttpSolrClient httpSolrClient = initializeSolr(searchServiceProperties.get("SOLR_URL"));
+    SolrQuery solrQuery = initializeSolrQuery(queryText,requestHandler,rows,field,fq);
+    QueryResponse queryResponse = httpSolrClient.query(solrQuery);
+    SolrDocumentList solrDocuments = queryResponse.getResults();
+    DocumentObjectBinder binder = new DocumentObjectBinder();
+    List<SolrResults> dataList = binder.getBeans(SolrResults.class, solrDocuments);
+    return dataList;
+  }
+
   public int updateSolrDataForAutomation(String queryText, String requestHandler,String field, int rows,String caseToBeUpdated)
       throws IOException, SolrServerException {
 
