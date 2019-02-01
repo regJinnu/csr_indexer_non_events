@@ -85,6 +85,7 @@ public class SearchServiceData {
   private String queryForReindexOfDeletedProd;
   private String queryForReviewAndRatingIndex;
   private String queryForProductCode;
+  private String itemSkuForStoredDelta;
   private String businessPartnerCode;
   private int errorMessage;
   private String unSyncProduct;

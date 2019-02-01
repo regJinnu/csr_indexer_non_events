@@ -1,4 +1,4 @@
-@ProductControllerFeature @TestSuiteID=10566407
+@ProductControllerFeature @TestSuiteID=10541665
   Feature: Product Controller feature related api's
 
     @Regression @GetProductRawDataByProductID

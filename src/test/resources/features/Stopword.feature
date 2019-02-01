@@ -1,4 +1,4 @@
-@StopWordFeature @TestSuiteID=10566407
+@StopWordFeature @TestSuiteID=10541665
 Feature: Stopword related API's
 
   @Regression @SaveStopword

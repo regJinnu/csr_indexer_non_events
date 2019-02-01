@@ -1,4 +1,4 @@
-@ScheduledEventsApi @TestSuiteID=10566407
+@ScheduledEventsApi @TestSuiteID=10541665
 Feature: Scheduled events related api's
 
   @Regression @DeleteUnpublishedProducts

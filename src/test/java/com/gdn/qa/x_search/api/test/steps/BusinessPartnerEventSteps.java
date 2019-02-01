@@ -238,8 +238,8 @@ public class BusinessPartnerEventSteps {
     assertThat("Status Code Not 200", responseApi.getResponse().getStatusCode(), equalTo(200));
 
     try {
-      Thread.sleep(40000);
-
+      Thread.sleep(60000);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
       long count =
           solrHelper.getSolrProdCountWithFq(searchServiceData.getQueryForReindex(),
               SELECT_HANDLER,

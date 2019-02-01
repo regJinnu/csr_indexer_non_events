@@ -1,4 +1,4 @@
-@LogisticOptionsEvent @TestSuiteID=10566407
+@LogisticOptionsEvent @TestSuiteID=10541665
 
 Feature: Verify indexing by logistic option events
 
@@ -8,7 +8,7 @@ Feature: Verify indexing by logistic option events
     When [search-service] consumes logistic 'option' event with data not present in config
     Then [search-service] merchant commission type,location and logistic option for test product is not updated
 
-  @LogisticOptionChangeEvent
+  @LogisticOptionChangeEvent1
   Scenario: Verify Logistic option change event when merchant count is less than 10
     Given [search-service] update merchant commission type and logistic option for test product
     When [search-service] consumes logistic 'option' event for a merchant containing test product when merchant count is 'less' than 10
@@ -27,13 +27,13 @@ Feature: Verify indexing by logistic option events
     When [search-service] consumes logistic 'product' event with data not present in config
     Then [search-service] merchant commission type,location and logistic option for test product is not updated
 
-  @LogisticProductChangeEvent
+  @LogisticProductChangeEvent2
   Scenario: Verify Logistic product change event when merchant count is less than 10
     Given [search-service] update merchant commission type and logistic option for test product
     When [search-service] consumes logistic 'product' event for a merchant containing test product when merchant count is 'less' than 10
     Then [search-service] merchant commission type and logistic option for test product is updated
 
-  @LogisticProductChangeEvent
+  @LogisticProductChangeEvent3
   Scenario: Verify Logistic product change event when merchant count is greater than 10
     Given [search-service] update merchant commission type and logistic option for test product
     When [search-service] consumes logistic 'product' event for a merchant containing test product when merchant count is 'more' than 10

@@ -278,7 +278,7 @@ public class ProductIndexingSteps {
   }
 
   @Given("^\\[search-service] data is different in Solr and Xproduct for products in category$")
-  public void checkCategoryDataIsDifferentInXprodAndSolr() {
+  public void xcheckCategoryDataIsDifferentInXprodAndSolr() {
     searchServiceData.setQueryForCategoryReindex(searchServiceProperties.get(
         "queryForCategoryReindex"));
     searchServiceData.setCategoryForReindex(searchServiceProperties.get("categoryForReindex"));
@@ -443,27 +443,24 @@ public class ProductIndexingSteps {
           equalTo(0L));
 
       Document indexDoc1 = new Document("_class", "com.gdn.x.search.entity.ReIndexEntity").append(
-          "productId",
-          "MTA-0406061")
-          .append("hostNumber", 1)
+          "productId", "MTA-0406061")
+          .append("status", 0)
           .append("isFailed", 0)
           .append("idType", "productCode")
           .append("version", 1)
           .append("MARK_FOR_DELETE", false);
 
       Document indexDoc2 = new Document("_class", "com.gdn.x.search.entity.ReIndexEntity").append(
-          "productId",
-          "TOQ-15126-00352")
-          .append("hostNumber", 1)
+          "productId", "TOQ-15126-00352")
+          .append("status", 0)
           .append("isFailed", 0)
           .append("idType", "productSku")
           .append("version", 1)
           .append("MARK_FOR_DELETE", false);
 
       Document indexDoc3 = new Document("_class", "com.gdn.x.search.entity.ReIndexEntity").append(
-          "productId",
-          "TH7-15791-00136")
-          .append("hostNumber", 1)
+          "productId", "TH7-15791-00136")
+          .append("status", 1)
           .append("isFailed", 0)
           .append("idType", "productSku")
           .append("version", 1)
@@ -575,6 +572,7 @@ public class ProductIndexingSteps {
   public void checkEntriesAreExistingInIndexingListNewCollection() {
 
     searchServiceData.setQueryForProductCode(searchServiceProperties.get("queryForProductCode"));
+    searchServiceData.setItemSkuForStoredDelta(searchServiceProperties.get("itemSkuForStoredDelta"));
     searchServiceData.setQueryForReindexOfDeletedProd(searchServiceProperties.get(
         "queryForReindexOfDeletedProd"));
     configHelper.findAndUpdateConfig("force.stop.solr.updates","true");
@@ -591,9 +589,9 @@ public class ProductIndexingSteps {
       Document storedDeltaDoc1 = new Document("_class" , "com.gdn.x.search.entity.EventIndexingEntity")
           .append("code" , "MTA-0305736")
           .append("type" , "productCode")
-          .append("processHost", "1")
           .append("isFailed", "0")
           .append("eventType" , "ALL")
+          .append("eventName" , "productChangeEventListener")
           .append("version" , 0)
           .append("CREATED_DATE" , date)
           .append("CREATED_BY" , "user-dev-src")
@@ -604,9 +602,9 @@ public class ProductIndexingSteps {
       Document storedDeltaDoc2 = new Document("_class" , "com.gdn.x.search.entity.EventIndexingEntity")
           .append("code" , "TH7-15791-00161-00001")
           .append("type" , "id")
-          .append("processHost", "1")
           .append("isFailed", "0")
           .append("eventType" , "LOCATION_AND_INVENTORY_SERVICE")
+          .append("eventName" , "productNonOutOfStockEventListener")
           .append("version" , 0)
           .append("CREATED_DATE" , date)
           .append("CREATED_BY" , "user-dev-src")
@@ -626,7 +624,7 @@ public class ProductIndexingSteps {
 
     try {
 
-      String query = searchServiceData.getQueryForProductCode();
+      String query = searchServiceData.getItemSkuForStoredDelta();
 
       int status = solrHelper.updateSolrDataForAutomation(query, SELECT_HANDLER, "id", 1, "reviewAndRating");
       assertThat("Updating review and rating in SOLR doc failed", status, equalTo(0));

@@ -125,7 +125,7 @@ public class LogisticOptionEventSteps {
           searchServiceData.getOriginLocation());
     }
     try {
-      Thread.sleep(60000);
+      Thread.sleep(120000);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();

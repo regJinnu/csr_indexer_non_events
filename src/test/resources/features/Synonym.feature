@@ -1,4 +1,4 @@
-@SynonymFeature @TestSuiteID=10566407
+@SynonymFeature @TestSuiteID=10541665
 Feature: Synonyms related api's
 
   @CreateSynonyms @Regression
