@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /tmp/FacebookDownloadedFiles/
+cd $1
 
-cat facebook*txt | grep -i $1
+cat facebook*txt | grep -i $2
 

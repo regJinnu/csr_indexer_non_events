@@ -17,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.*;
@@ -276,7 +278,7 @@ public class ProductIndexingSteps {
   }
 
   @Given("^\\[search-service] data is different in Solr and Xproduct for products in category$")
-  public void checkCategoryDataIsDifferentInXprodAndSolr() {
+  public void xcheckCategoryDataIsDifferentInXprodAndSolr() {
     searchServiceData.setQueryForCategoryReindex(searchServiceProperties.get(
         "queryForCategoryReindex"));
     searchServiceData.setCategoryForReindex(searchServiceProperties.get("categoryForReindex"));
@@ -441,27 +443,24 @@ public class ProductIndexingSteps {
           equalTo(0L));
 
       Document indexDoc1 = new Document("_class", "com.gdn.x.search.entity.ReIndexEntity").append(
-          "productId",
-          "MTA-0406061")
-          .append("hostNumber", 1)
+          "productId", "MTA-0406061")
+          .append("status", 0)
           .append("isFailed", 0)
           .append("idType", "productCode")
           .append("version", 1)
           .append("MARK_FOR_DELETE", false);
 
       Document indexDoc2 = new Document("_class", "com.gdn.x.search.entity.ReIndexEntity").append(
-          "productId",
-          "TOQ-15126-00352")
-          .append("hostNumber", 1)
+          "productId", "TOQ-15126-00352")
+          .append("status", 0)
           .append("isFailed", 0)
           .append("idType", "productSku")
           .append("version", 1)
           .append("MARK_FOR_DELETE", false);
 
       Document indexDoc3 = new Document("_class", "com.gdn.x.search.entity.ReIndexEntity").append(
-          "productId",
-          "TH7-15791-00136")
-          .append("hostNumber", 1)
+          "productId", "TH7-15791-00136")
+          .append("status", 1)
           .append("isFailed", 0)
           .append("idType", "productSku")
           .append("version", 1)
@@ -573,15 +572,59 @@ public class ProductIndexingSteps {
   public void checkEntriesAreExistingInIndexingListNewCollection() {
 
     searchServiceData.setQueryForProductCode(searchServiceProperties.get("queryForProductCode"));
+    searchServiceData.setItemSkuForStoredDelta(searchServiceProperties.get("itemSkuForStoredDelta"));
     searchServiceData.setQueryForReindexOfDeletedProd(searchServiceProperties.get(
         "queryForReindexOfDeletedProd"));
+    configHelper.findAndUpdateConfig("force.stop.solr.updates","true");
+    try {
+      Thread.sleep(10000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    Date date = null;
+    try {
+      date = dateFormat.parse("2018-07-30T11:45:39.235Z");
+
+      Document storedDeltaDoc1 = new Document("_class" , "com.gdn.x.search.entity.EventIndexingEntity")
+          .append("code" , "MTA-0305736")
+          .append("type" , "productCode")
+          .append("isFailed", "0")
+          .append("eventType" , "ALL")
+          .append("eventName" , "productChangeEventListener")
+          .append("version" , 0)
+          .append("CREATED_DATE" , date)
+          .append("CREATED_BY" , "user-dev-src")
+          .append("UPDATED_DATE" , date)
+          .append("UPDATED_BY" , "user-dev-src")
+          .append("MARK_FOR_DELETE" , false);
+
+      Document storedDeltaDoc2 = new Document("_class" , "com.gdn.x.search.entity.EventIndexingEntity")
+          .append("code" , "TH7-15791-00161-00001")
+          .append("type" , "id")
+          .append("isFailed", "0")
+          .append("eventType" , "LOCATION_AND_INVENTORY_SERVICE")
+          .append("eventName" , "productNonOutOfStockEventListener")
+          .append("version" , 0)
+          .append("CREATED_DATE" , date)
+          .append("CREATED_BY" , "user-dev-src")
+          .append("UPDATED_DATE" , date)
+          .append("UPDATED_BY" , "user-dev-src")
+          .append("MARK_FOR_DELETE" , false);
+
+      mongoHelper.insertInMongo("indexing_list_new",storedDeltaDoc1);
+      mongoHelper.insertInMongo("indexing_list_new",storedDeltaDoc2);
+
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
 
     long countOfStoredEvents = mongoHelper.countOfRecordsInCollection("indexing_list_new");
     assertThat("No Stored events exists in Mongo", countOfStoredEvents, greaterThanOrEqualTo(0L));
 
     try {
 
-      String query = searchServiceData.getQueryForProductCode();
+      String query = searchServiceData.getItemSkuForStoredDelta();
 
       int status = solrHelper.updateSolrDataForAutomation(query, SELECT_HANDLER, "id", 1, "reviewAndRating");
       assertThat("Updating review and rating in SOLR doc failed", status, equalTo(0));
@@ -590,6 +633,8 @@ public class ProductIndexingSteps {
       int reviewCount =
           solrHelper.getSolrProd(query, SELECT_HANDLER, "reviewCount", 1).get(0).getReviewCount();
       String rating = solrHelper.getSolrProd(query, SELECT_HANDLER, "rating", 1).get(0).getRating();
+
+      log.error("----reviewCount---{}---rating---{}",reviewCount,rating);
 
       assertThat("Product review count not set", reviewCount, equalTo(100));
       assertThat("Product rating not set", rating, equalTo("23"));
@@ -617,6 +662,8 @@ public class ProductIndexingSteps {
 
   @When("^\\[search-service] sends request for processing stored delta$")
   public void sendRequestToProcessStoredDelta() {
+
+    configHelper.findAndUpdateConfig("force.stop.solr.updates","false");
 
     ResponseApi<GdnRestSingleResponse<SimpleStringResponse>> processingStoredDelta =
         searchServiceController.prepareRequestForProcessingStoredDelta();

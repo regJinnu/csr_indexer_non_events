@@ -1,4 +1,4 @@
-@XproductEventHandlingFeature @TestSuiteID=10352299
+@XproductEventHandlingFeature @TestSuiteID=10541665
 Feature:Verifying item and product change event listeners
 
   @ItemChangeEvent
