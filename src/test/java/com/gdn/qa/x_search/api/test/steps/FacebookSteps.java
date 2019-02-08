@@ -7,6 +7,8 @@ import com.gdn.qa.x_search.api.test.api.services.FeedController;
 import com.gdn.qa.x_search.api.test.data.SearchServiceData;
 import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
 import com.gdn.qa.x_search.api.test.utils.*;
+import com.gdn.x.product.domain.event.model.ItemViewConfig;
+import com.gdn.x.product.domain.event.model.PristineDataItemEventModel;
 import com.jcraft.jsch.ChannelSftp;
 import com.mongodb.client.FindIterable;
 import cucumber.api.java.en.Given;
@@ -19,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Vector;
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -411,7 +414,9 @@ public class FacebookSteps {
     searchServiceData.setProductCodeForReindex(searchServiceProperties.get("productCodeForReindex"));
 
     kafkaHelper.publishItemChangeEvent(searchServiceData.getItemSkuForReindex(),
-        searchServiceData.getSkuForReindex(),false,false);
+        searchServiceData.getSkuForReindex(),false,false,
+        Collections.EMPTY_LIST,Collections.EMPTY_SET,false,
+        new PristineDataItemEventModel(),Collections.EMPTY_SET);
 
     String itemSku = searchServiceData.getQueryForReindex().split(":")[1];
     kafkaHelper.publishOOSEvent(itemSku,"TH7-15791","nonOOS");
