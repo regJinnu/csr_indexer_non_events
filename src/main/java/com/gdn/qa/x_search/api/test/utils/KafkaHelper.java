@@ -3,6 +3,10 @@ package com.gdn.qa.x_search.api.test.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gdn.qa.x_search.api.test.data.*;
+import com.gdn.x.product.domain.event.enums.ItemChangeEventType;
+import com.gdn.x.product.domain.event.model.ItemViewConfig;
+import com.gdn.x.product.domain.event.model.Price;
+import com.gdn.x.product.domain.event.model.PristineDataItemEventModel;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -171,7 +175,11 @@ public class KafkaHelper {
   public void publishItemChangeEvent(String itemSku,
       String productSku,
       boolean isArchived,
-      boolean isSynchronised) {
+      boolean isSynchronised,
+      List<ItemChangeEventType> itemChangeEventTypes,
+      Set<Price> price,
+      boolean off2OnChannelActive,
+      PristineDataItemEventModel pristineDataItemEventModel,Set<ItemViewConfig> itemViewConfigs) {
 
     ItemChangeEvent itemChangeEvent = ItemChangeEvent.builder().
         timestamp(System.currentTimeMillis()).
@@ -180,6 +188,11 @@ public class KafkaHelper {
         isArchived(isArchived).
         isSynchronized(isSynchronised).
         uniqueId(itemSku).
+        itemChangeEventTypes(itemChangeEventTypes).
+        price(price).
+        off2OnChannelActive(off2OnChannelActive).
+        pristineDataItem(pristineDataItemEventModel).
+        itemViewConfigs(itemViewConfigs).
         build();
 
     try {

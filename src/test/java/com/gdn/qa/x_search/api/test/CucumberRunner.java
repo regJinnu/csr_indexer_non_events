@@ -9,5 +9,3 @@ import org.junit.runner.RunWith;
     "json:target/destination/cucumber.json"}, tags = {})
 public class CucumberRunner {
 }
-
-

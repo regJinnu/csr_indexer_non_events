@@ -15,6 +15,7 @@ import cucumber.api.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 
 @CucumberStepsDefinition
@@ -86,7 +87,7 @@ public class ClickThroughDataSteps {
   public void searchServiceFetchClickThroughDataAndDetectedCategoryFromRedisRequestResponseSuccessShouldBeTrue() {
     ResponseApi<GdnRestSingleResponse<SearchTermCategoryClickThroughResponse>> response =
         searchServiceData.getCategoryClickThroughResponse();
-    assertThat(response.getResponseBody().getErrorCode(), equalTo("200"));
+    assertThat(response.getResponseBody().getErrorCode(), containsString("200"));
 
     assertThat(response.getResponseBody()
         .getValue()

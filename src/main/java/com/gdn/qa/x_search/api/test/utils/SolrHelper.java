@@ -121,10 +121,10 @@ public class SolrHelper {
         break;
       case "categoryReindex":
         solrUpdate.put(SolrFieldNames.IS_IN_STOCK, "0" );
-        solrUpdate.put(SolrFieldNames.RATING, "4" );
+        solrUpdate.put(SolrFieldNames.RATING, "40" );
         solrUpdate.put(SolrFieldNames.REVIEW_COUNT,10);
         solrUpdate.put(SolrFieldNames.MERCHANT_COMMISSION_TYPE,"CC");
-        solrUpdate.put(SolrFieldNames.MERCHANT_RATING,3.0);
+        solrUpdate.put(SolrFieldNames.MERCHANT_RATING,30.0);
         solrUpdate.put(SolrFieldNames.LOCATION,"Origin-ABC");
         break;
       case "closedStore":
@@ -140,6 +140,13 @@ public class SolrHelper {
       case "price":
         solrUpdate.put(SolrFieldNames.OFFER_PRICE,4545455.45);
         solrUpdate.put(SolrFieldNames.LIST_PRICE,4545455.50);
+        break;
+      case "offToOn":
+        solrUpdate.put(SolrFieldNames.OFF_2_ON,4);
+        break;
+      case "buyableAndPublished":
+        solrUpdate.put(SolrFieldNames.BUYABLE,4);
+        solrUpdate.put(SolrFieldNames.PUBLISHED,4);
         break;
       default:
           break;

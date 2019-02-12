@@ -231,4 +231,8 @@ public class CucumberHooks {
     mongoHelper.deleteFromMongo("train_dictionary","_id", "5b0649b782ce7044d664bcc6");
   }
 
+  @Before("@ItemChangeItemDataChange")
+  public void beforeItemDataChange(){
+    mongoHelper.deleteAllFromMongo("scheduled_events");
+  }
 }

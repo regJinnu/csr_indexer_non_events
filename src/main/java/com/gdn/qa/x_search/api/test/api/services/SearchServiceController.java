@@ -813,14 +813,6 @@ public class SearchServiceController extends ServiceApi {
     });
   }
 
-  public ResponseApi<GdnBaseRestResponse> deleteSynonymFromSolr() {
-    Response response =
-        service("searchservice").queryParam("key", searchServiceData.getSearchTerm())
-            .delete(BASEPATH + "integration/delete");
-    response.getBody().prettyPrint();
-    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
-    });
-  }
 
   public ResponseApi<GdnBaseRestResponse> updateSynonymFromSolr() {
     Response response =
@@ -1465,13 +1457,14 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnBaseRestResponse> addSearchRule() {
-    String BodyTemplate = "{\n" + "  \"searchTerm\": \"{{searchTerm}}\",\n"
-        + "  \"filterQuery\": \"{{filterQuery}}\",\n" + "  \"sortType\": \"{{sortType}}\",\n"
-        + "  \"effectiveSearchPattern\": \"{{effectiveSearchPattern}}\",\n"
-        + "  \"defaultLogic\": {\n" + "    \"filterQuery\": \"{{filterQuery}}\",\n"
-        + "    \"sortType\": \"{{sortType}}\"\n" + "  },\n" + "  \"url\": \"{{url}}\",\n"
-        + "  \"type\": \"{{type}}\",\n" + "  \"rank\": {{rank}},\n" + "  \"spel\": \"{{spel}}\"\n"
-        + "}";
+    String BodyTemplate =
+        "{\n" + "  \"searchTerm\": \"{{searchTerm}}\",\n"
+            + "  \"filterQuery\": \"{{filterQuery}}\",\n" + "  \"sortType\": \"{{sortType}}\",\n"
+            + "  \"effectiveSearchPattern\": \"{{effectiveSearchPattern}}\",\n"
+            + "  \"defaultLogic\": {\n" + "    \"filterQuery\": \"{{filterQuery}}\",\n"
+            + "    \"sortType\": \"{{sortType}}\"\n" + "  },\n" + "  \"url\": \"{{url}}\",\n"
+            + "  \"type\": \"{{type}}\",\n" + "  \n"
+            + "  \"spel\": \"{{spel}}\"\n" + "}";
     Map<String, String> data = new HashMap<>();
     data.put("searchTerm", searchServiceData.getSearchRulSearchTerm());
     data.put("filterQuery", searchServiceData.getFilterQuery());
