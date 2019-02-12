@@ -69,6 +69,26 @@ public class SolrResults {
   @Field("PRISTINE_HANDPHONE_OPERATING_SYSTEM")
   private String pristineHandphoneFacet;
 
+  @Field("discount")
+  private Double discount;
+
+  @Field("discountString")
+  private String discountString;
+
+  @Field("off2On")
+  private int off2On;
+
+  @Field("salesCatalogCategoryIdDescHierarchy")
+  private ArrayList<String> salesCatalogCategoryIdDescHierarchy;
+
+  @Field("categorySequenceTE-100003")
+  private int categorySequenceTE;
+
+  @Field("published")
+  private int published;
+
+  @Field("buyable")
+  private int buyable;
 
   public SolrResults(String brandSearch,
       String description,
@@ -90,8 +110,19 @@ public class SolrResults {
       int isDelayShipping,
       ArrayList<String> logisticOptions,
       Double offerPrice,
-      Double listPrice,String campaignName,boolean storeClose,ArrayList<String> activePromos,
-      String pristineFacet,String pristineCameraFacet,String pristineHandphoneFacet) {
+      Double listPrice,String campaignName,
+      boolean storeClose,
+      ArrayList<String> activePromos,
+      String pristineFacet,
+      String pristineCameraFacet,
+      String pristineHandphoneFacet,
+      Double discount,
+      String discountString,
+      int off2On,
+      ArrayList<String> salesCatalogCategoryIdDescHierarchy,
+      int categorySequenceTE,
+      int published,
+      int buyable) {
     this.pristineFacet=pristineFacet;
      this.brandSearch = brandSearch;
     this.description = description;
@@ -120,6 +151,13 @@ public class SolrResults {
     this.activePromos=activePromos;
     this.pristineCameraFacet=pristineCameraFacet;
     this.pristineHandphoneFacet=pristineHandphoneFacet;
+    this.discount=discount;
+    this.discountString=discountString;
+    this.off2On=off2On;
+    this.salesCatalogCategoryIdDescHierarchy=salesCatalogCategoryIdDescHierarchy;
+    this.categorySequenceTE = categorySequenceTE;
+    this.published=published;
+    this.buyable=buyable;
   }
 
 
@@ -359,7 +397,61 @@ public class SolrResults {
     this.logisticOptions = logisticOptions;
   }
 
+  public ArrayList<String> getSalesCatalogCategoryIdDescHierarchy() {
+    return salesCatalogCategoryIdDescHierarchy;
+  }
 
+  public void setSalesCatalogCategoryIdDescHierarchy(ArrayList<String> salesCatalogCategoryIdDescHierarchy) {
+    this.salesCatalogCategoryIdDescHierarchy = salesCatalogCategoryIdDescHierarchy;
+  }
+
+  public Double getDiscount() {
+    return discount;
+  }
+
+  public void setDiscount(Double discount) {
+    this.discount = discount;
+  }
+
+  public String getDiscountString() {
+    return discountString;
+  }
+
+  public void setDiscountString(String discountString) {
+    this.discountString = discountString;
+  }
+
+  public int getOff2On() {
+    return off2On;
+  }
+
+  public void setOff2On(int off2On) {
+    this.off2On = off2On;
+  }
+
+  public int getCategorySequenceTE() {
+    return categorySequenceTE;
+  }
+
+  public void setCategorySequenceTE(int categorySequenceTE) {
+    this.categorySequenceTE = categorySequenceTE;
+  }
+
+  public int getPublished() {
+    return published;
+  }
+
+  public void setPublished(int published) {
+    this.published = published;
+  }
+
+  public int getBuyable() {
+    return buyable;
+  }
+
+  public void setBuyable(int buyable) {
+    this.buyable = buyable;
+  }
 
 
   @Override
