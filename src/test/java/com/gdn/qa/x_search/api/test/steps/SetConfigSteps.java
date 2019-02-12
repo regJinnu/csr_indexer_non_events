@@ -85,8 +85,6 @@ public class SetConfigSteps {
   public void searchServiceUpdateNonExistingFieldCacheRequestResponseSuccessShouldBeFalse()
   {
     ResponseApi<GdnBaseRestResponse> response=searchServiceData.getSearchServiceResponse();
-    assertThat("Status Code Not 200", response.getResponse().getStatusCode(), equalTo(500));
-  //  assertThat(response.getResponseBody().getErrorMessage(),containsString("undefined field"));
-   // assertThat(response.getResponseBody().getErrorCode(),equalTo("UNSPECIFIED"));
+    assertThat(response.getResponseBody().getErrorCode(),equalTo(500));
   }
 }
