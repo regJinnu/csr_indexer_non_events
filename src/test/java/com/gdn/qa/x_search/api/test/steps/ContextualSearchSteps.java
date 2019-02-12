@@ -323,7 +323,6 @@ public class ContextualSearchSteps {
     searchServiceData.setEffectiveSearchPattern(searchServiceProperties.get("effectiveSearchPattern"));
     searchServiceData.setUrl(searchServiceProperties.get("url"));
     searchServiceData.setType(searchServiceProperties.get("type"));
-    searchServiceData.setRank(Integer.valueOf(searchServiceProperties.get("rank")));
     searchServiceData.setSpel(searchServiceProperties.get("spel"));
     valid = mongoHelper.countOfRecordsInCollection("search_rule");
   }
@@ -400,7 +399,6 @@ public class ContextualSearchSteps {
     searchServiceData.setEffectiveSearchPattern(searchServiceProperties.get("effectiveSearchPattern"));
     searchServiceData.setUrl(searchServiceProperties.get("url"));
     searchServiceData.setType(searchServiceProperties.get("type"));
-    searchServiceData.setRank(Integer.valueOf(searchServiceProperties.get("rank")));
     searchServiceData.setSpel(searchServiceProperties.get("spel"));
   }
 
@@ -425,7 +423,6 @@ public class ContextualSearchSteps {
     searchServiceData.setEffectiveSearchPattern(searchServiceProperties.get("effectiveSearchPattern"));
     searchServiceData.setUrl(searchServiceProperties.get("url"));
     searchServiceData.setType(searchServiceProperties.get("type"));
-    searchServiceData.setRank(Integer.valueOf(searchServiceProperties.get("rank")));
     searchServiceData.setSpel(searchServiceProperties.get("spel"));
   }
 
