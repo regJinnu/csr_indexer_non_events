@@ -7,7 +7,6 @@ import com.gdn.x.product.domain.event.model.Price;
 import com.gdn.x.product.domain.event.model.PristineDataItemEventModel;
 import lombok.Builder;
 import lombok.Data;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

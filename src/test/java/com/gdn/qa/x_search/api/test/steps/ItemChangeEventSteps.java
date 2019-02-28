@@ -685,7 +685,7 @@ public class ItemChangeEventSteps {
           equalTo("TE-100001;Test Category C1/TE-100002;Test Category C2/TE-100003;Test Category C3"));
       assertThat("Sales Catalog sequence is not set",categorySeq,equalTo(10));
 
-     // unInitialize();
+      unInitialize();
 
     } catch (Exception e) {
       e.printStackTrace();
