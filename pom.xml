@@ -27,8 +27,8 @@
         <serenity.testlink.integration.version>3.4.3</serenity.testlink.integration.version>
         <testlink.devkey>b0f60503e7aab68af1e6072faf5124d6</testlink.devkey>
         <testlink.project>X-Search</testlink.project>
-        <testlink.plan>Hotfix_Deployment_2019-02-12_SEARCH</testlink.plan>
-        <testlink.build>5.0.0-16_QA-1_SEARCHSERVICE</testlink.build>
+        <testlink.plan>Automation Usage</testlink.plan>
+        <testlink.build>automation</testlink.build>
     </properties>
 
     <dependencies>
