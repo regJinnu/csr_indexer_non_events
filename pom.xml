@@ -27,7 +27,7 @@
         <serenity.testlink.integration.version>3.4.3</serenity.testlink.integration.version>
         <testlink.devkey>b0f60503e7aab68af1e6072faf5124d6</testlink.devkey>
         <testlink.project>X-Search</testlink.project>
-        <testlink.plan>Major_Deployment_2019-01-22_SEARCH</testlink.plan>
+        <testlink.plan>Hotfix_Deployment_2019-02-12_SEARCH</testlink.plan>
         <testlink.build>5.0.0-16_QA-1_SEARCHSERVICE</testlink.build>
     </properties>
 
@@ -144,7 +144,7 @@
         <dependency>
             <groupId>com.gdn.x.product</groupId>
             <artifactId>product-rest-web-model</artifactId>
-            <version>2.25.3-1</version>
+            <version>2.25.4-1</version>
             <exclusions>
                 <exclusion>
                     <artifactId>guava</artifactId>
@@ -175,7 +175,7 @@
         <dependency>
             <groupId>com.gdn.x.product</groupId>
             <artifactId>product-domain-event</artifactId>
-            <version>2.25.3-1</version>
+            <version>2.25.4-1</version>
         </dependency>
     </dependencies>
 

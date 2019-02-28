@@ -13,6 +13,7 @@ import com.gdn.qa.x_search.api.test.utils.SolrHelper;
 import com.gdn.x.product.domain.event.enums.ItemChangeEventType;
 import com.gdn.x.product.domain.event.model.*;
 import com.mongodb.client.FindIterable;
+import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -568,6 +569,24 @@ public class ItemChangeEventSteps {
     List<SalesCategorySequence> salesCategorySequences = new ArrayList<>();
     salesCategorySequences.add(salesCategorySequence);
 
+
+    SalesCategorySequence salesCategorySequenceOldC1 = new SalesCategorySequence();
+    salesCategorySequenceOldC1.setCategoryCode("54912");
+    salesCategorySequenceOldC1.setSequence(0);
+
+    SalesCategorySequence salesCategorySequenceOldC2 = new SalesCategorySequence();
+    salesCategorySequenceOldC2.setCategoryCode("54913");
+    salesCategorySequenceOldC2.setSequence(0);
+
+    SalesCategorySequence salesCategorySequenceOldC3 = new SalesCategorySequence();
+    salesCategorySequenceOldC3.setCategoryCode("54914");
+    salesCategorySequenceOldC3.setSequence(0);
+
+    List<SalesCategorySequence> oldSalesCategorySequences = new ArrayList<>();
+    oldSalesCategorySequences.add(salesCategorySequenceOldC1);
+    oldSalesCategorySequences.add(salesCategorySequenceOldC2);
+    oldSalesCategorySequences.add(salesCategorySequenceOldC3);
+
     List<ItemCategoryVO> itemCategories = new ArrayList<>();
 
     ItemCategoryVO c1 = new ItemCategoryVO();
@@ -575,14 +594,14 @@ public class ItemChangeEventSteps {
     c1.setCategory("Test Category C1");
     c1.setLevel(1);
 
-    itemCategories.add(c1);
+   // itemCategories.add(c1); This is commented to handle bug SEARCH-2143 which will be fixed in future sprint
 
     ItemCategoryVO c2 = new ItemCategoryVO();
     c2.setProductCategoryCode("TE-100002");
     c2.setCategory("Test Category C2");
     c2.setLevel(2);
 
-    itemCategories.add(c2);
+    //itemCategories.add(c2); This is commented to handle bug SEARCH-2143 which will be fixed in future sprint
 
     ItemCategoryVO c3 = new ItemCategoryVO();
     c3.setProductCategoryCode("TE-100003");
@@ -590,6 +609,8 @@ public class ItemChangeEventSteps {
     c3.setLevel(3);
 
     itemCategories.add(c3);
+    itemCategories.add(c2);
+    itemCategories.add(c1);
 
     ItemCatalogVO itemCatalogVO = new ItemCatalogVO();
     itemCatalogVO.setCatalogId("12051");
@@ -603,11 +624,22 @@ public class ItemChangeEventSteps {
     pristineDataItemModel.setPristineProductName("Pristine Product Testing");
     pristineDataItemModel.setSalesCategorySequences(salesCategorySequences);
     pristineDataItemModel.setPristineCategoriesHierarchy(pristineCategoriesHierarchy);
+    pristineDataItemModel.setOldSalesCategorySequences(oldSalesCategorySequences);
 
     kafkaHelper.publishItemChangeEvent(searchServiceData.getItemSkuForReindex(),
         searchServiceData.getSkuForReindex(),false,false,
         itemChangeEventStepsList,Collections.EMPTY_SET,false,
         pristineDataItemModel,Collections.EMPTY_SET);
+
+    try {
+      Thread.sleep(30000);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
   }
 
   @Then("^\\[search-service] pristine name,id and sales catalog is updated accordingly$")
@@ -624,7 +656,7 @@ public class ItemChangeEventSteps {
           solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER,
               "level0Id", 1)
               .get(0)
-              .getNameSearch();
+              .getlevel0Id();
 
       String salesCatalogHierarchy =
           solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER,
@@ -635,10 +667,17 @@ public class ItemChangeEventSteps {
 
       int categorySeq =
           solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER,
-              "categorySequenceTE",1)
+              "categorySequenceTE-100003",1)
               .get(0)
               .getCategorySequenceTE();
 
+      String description =
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER,
+              "description",1)
+              .get(0)
+              .getDescription();
+
+      log.error("----name--{}-description-{}---query-{}",name,description,searchServiceData.getQueryForReindex());
 
       assertThat("Name is not set", name, equalTo("Pristine Product Testing"));
       assertThat("Level0Id is not set to Pristine Id", level0Id, equalTo("PRI-0000-0001"));
@@ -646,16 +685,7 @@ public class ItemChangeEventSteps {
           equalTo("TE-100001;Test Category C1/TE-100002;Test Category C2/TE-100003;Test Category C3"));
       assertThat("Sales Catalog sequence is not set",categorySeq,equalTo(10));
 
-      ResponseApi<GdnBaseRestResponse> responseApi = searchServiceController.prepareRequestForIndexing(
-          "skus",
-          searchServiceData.getSkuForReindex());
-
-      assertThat("response is not 200",responseApi.getResponse().getStatusCode(),equalTo(200));
-
-      Thread.sleep(10000);
-      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
-
-      unInitialize();
+     // unInitialize();
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -1084,4 +1114,61 @@ public class ItemChangeEventSteps {
 
   }
 
+  @Given("^\\[search-service] remove the SOLR doc from SOLR$")
+  public void removeTheSOLRDocFromSOLR() {
+      resetConfigs();
+      searchServiceData.setItemSkuForReindex(searchServiceProperties.get("itemSkuForReindex"));
+      searchServiceData.setSkuForReindex(searchServiceProperties.get("skuForReindex"));
+      searchServiceData.setQueryForReindex(searchServiceProperties.get("queryForReindex"));
+      searchServiceData.setProductCodeForReindex(searchServiceProperties.get("productCodeForReindex"));
+      solrHelper.deleteSolrDocByQuery(searchServiceData.getQueryForReindex());
+  }
+
+  @When("^\\[search-service] consumes item change event with itemChangeEventType as ITEM_DATA_CHANGE and published as '(.*)'$")
+  public void searchConsumesItemChangeWithPublishedAsTrue(boolean publishedFlag) {
+
+    List<ItemChangeEventType> itemChangeEventStepsList = new ArrayList<>();
+    itemChangeEventStepsList.add(ITEM_DATA_CHANGE);
+
+    Set<ItemViewConfig> itemViewConfigs = new HashSet<>();
+
+    ItemViewConfig itemViewConfig = new ItemViewConfig();
+    itemViewConfig.setBuyable(true);
+    itemViewConfig.setDiscoverable(publishedFlag);
+
+    itemViewConfigs.add(itemViewConfig);
+
+    kafkaHelper.publishItemChangeEvent(searchServiceData.getItemSkuForReindex(),
+        searchServiceData.getSkuForReindex(),false,false,
+        itemChangeEventStepsList,Collections.EMPTY_SET,false,
+        new PristineDataItemEventModel(),
+        itemViewConfigs);
+
+    try {
+      Thread.sleep(30000);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+  }
+
+  @When("^\\[search-service] consumes item change event with itemChangeEventType as PRISTINE_MAPPING_CHANGE and no PristineDataItem$")
+  public void itemChangeWithPristineMapChangeAndNoPristineData() {
+    List<ItemChangeEventType> itemChangeEventStepsList = new ArrayList<>();
+    itemChangeEventStepsList.add(PRISTINE_MAPPING_CHANGE);
+
+    kafkaHelper.publishItemChangeEvent(searchServiceData.getItemSkuForReindex(),
+        searchServiceData.getSkuForReindex(),false,false,
+        itemChangeEventStepsList,Collections.EMPTY_SET,false,
+        null,Collections.EMPTY_SET);
+
+    try {
+      Thread.sleep(30000);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+  }
 }

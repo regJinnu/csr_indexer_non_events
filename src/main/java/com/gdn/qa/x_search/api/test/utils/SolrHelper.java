@@ -3,6 +3,7 @@ package com.gdn.qa.x_search.api.test.utils;
 import com.gdn.qa.x_search.api.test.api.services.SolrFieldNames;
 import com.gdn.qa.x_search.api.test.models.SolrResults;
 import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.beans.DocumentObjectBinder;
@@ -21,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+@Slf4j
 @Component
 public class SolrHelper {
 
@@ -212,5 +213,4 @@ public class SolrHelper {
       e.printStackTrace();
     }
   }
-
 }
