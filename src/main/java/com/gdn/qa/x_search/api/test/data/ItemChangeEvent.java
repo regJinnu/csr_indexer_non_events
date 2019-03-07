@@ -3,10 +3,10 @@ package com.gdn.qa.x_search.api.test.data;
 import com.gdn.x.product.domain.event.enums.ItemChangeEventType;
 import com.gdn.x.product.domain.event.model.ItemViewConfig;
 import com.gdn.x.product.domain.event.model.Price;
+
 import com.gdn.x.product.domain.event.model.PristineDataItemEventModel;
 import lombok.Builder;
 import lombok.Data;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
