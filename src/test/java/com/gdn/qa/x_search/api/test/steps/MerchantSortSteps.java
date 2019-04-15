@@ -49,11 +49,13 @@ public class MerchantSortSteps {
     searchServiceData.setSearchServiceResponse(response);
   }
 
-  @Then("^\\[search-service] add new merchant sort mapping request response success should be '(.*)'$")
-  public void addNewMerchantSortMappingRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
+  @Then("^\\[search-service] new merchant sort mapping must be added$")
+  public void newMerchantSortMappingMustBeAdded() {
     ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
-    boolean result = response.getResponseBody().isSuccess();
-    assertThat("is Success is wrong", result, equalTo(isSuccess));
+    assertThat(response.getResponse().getStatusCode(), equalTo(200));
+    Document searchDoc = new Document("merchantId", "TH7-15791");
+    long docCount = mongoHelper.countByMongoquery("merchant_sort", searchDoc);
+    assertThat(docCount, equalTo(1L));
   }
 
   @Given("^\\[search-service] prepare request to add new merchant sort mapping with incorrect merchant info$")
@@ -89,12 +91,11 @@ public class MerchantSortSteps {
     searchServiceData.setMerchantSortList(response);
   }
 
-  @Then("^\\[search-service] search merchant sort mapping request response success should be '(.*)'$")
-  public void searchMerchantSortMappingRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
+  @Then("^\\[search-service] search merchant sort mapping request response should contain requested document$")
+  public void searchMerchantSortMappingRequestResponseShouldContainRequestedDocument() {
     ResponseApi<GdnRestListResponse<MerchantSortResponseDto>> response =
         searchServiceData.getMerchantSortList();
-    boolean result = response.getResponseBody().isSuccess();
-    assertThat("is Success is wrong", result, equalTo(isSuccess));
+    assertThat(response.getResponse().getStatusCode(), equalTo(200));
     assertThat(response.getResponseBody().getContent().get(0).getMerchantId(),
         equalTo(searchServiceProperties.get("merchantId")));
     assertThat(response.getResponseBody().getContent().get(0).getMerchantName(),
@@ -115,12 +116,11 @@ public class MerchantSortSteps {
     searchServiceData.setMerchantSortFindByMerchantId(response);
   }
 
-  @Then("^\\[search-service] search merchant sort mapping by merchant id request response success should be '(.*)'$")
-  public void searchMerchantSortMappingByMerchantIdRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
+  @Then("^\\[search-service] search merchant sort mapping by merchant id request response should contain requested document$")
+  public void searchMerchantSortMappingByMerchantIdRequestResponseShouldContainRequestedDocument() {
     ResponseApi<GdnRestSingleResponse<MerchantSortResponseDto>> response =
         searchServiceData.getMerchantSortFindByMerchantId();
-    boolean result = response.getResponseBody().isSuccess();
-    assertThat("is Success is wrong", result, equalTo(isSuccess));
+    assertThat(response.getResponse().getStatusCode(), equalTo(200));
     assertThat(response.getResponseBody().getValue().getMerchantId(),
         equalTo(searchServiceProperties.get("merchantId")));
     assertThat(response.getResponseBody().getValue().getMerchantName(),
@@ -160,12 +160,11 @@ public class MerchantSortSteps {
     searchServiceData.setMerchantSortList(response);
   }
 
-  @Then("^\\[search-service] list all merchant sort mapping request response success should be '(.*)'$")
-  public void listAllMerchantSortMappingRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
+  @Then("^\\[search-service] list all merchant sort mapping request response should have all documents$")
+  public void listAllMerchantSortMappingRequestResponseShouldHaveAllDocuments() {
     ResponseApi<GdnRestListResponse<MerchantSortResponseDto>> response =
         searchServiceData.getMerchantSortList();
-    boolean result = response.getResponseBody().isSuccess();
-    assertThat("is Success is wrong", result, equalTo(isSuccess));
+    assertThat(response.getResponse().getStatusCode(), equalTo(200));
     MongoCollection<Document> collection = mongoHelper.initializeDatabase("merchant_sort");
     BasicDBObject whereQuery = new BasicDBObject();
     whereQuery.put("_class", "com.gdn.x.search.entity.MerchantSortEntity");
@@ -187,11 +186,14 @@ public class MerchantSortSteps {
     searchServiceData.setSearchServiceResponse(response);
   }
 
-  @Then("^\\[search-service] update merchant sort mapping request response success should be '(.*)'$")
-  public void updateMerchantSortMappingRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
+  @Then("^\\[search-service] merchant sort mapping must get updated$")
+  public void merchantSortMappingMustGetUpdated() {
     ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
-    boolean result = response.getResponseBody().isSuccess();
-    assertThat("is Success is wrong", result, equalTo(isSuccess));
+    assertThat(response.getResponse().getStatusCode(), equalTo(200));
+    Document searchDoc = new Document("merchantId", "TH7-15791").append("sortType",
+        Integer.parseInt(searchServiceProperties.get("updateMerchantSortType")));
+    long docCount = mongoHelper.countByMongoquery("merchant_sort", searchDoc);
+    assertThat(docCount, equalTo(1L));
   }
 
   @Given("^\\[search-service] prepare fetch list of all the merchants request$")
@@ -204,11 +206,10 @@ public class MerchantSortSteps {
     searchServiceData.setSearchServiceResponse(response);
   }
 
-  @Then("^\\[search-service] fetch list of all the merchants request response success should be '(.*)'$")
-  public void searchServiceFetchListOfAllTheMerchantsRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
+  @Then("^\\[search-service] fetch list of all the merchants request response should contain all merchant list$")
+  public void fetchListOfAllTheMerchantsRequestResponseShouldContainAllMerchantList() {
     ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
-    boolean result = response.getResponseBody().isSuccess();
-    assertThat("is Success is wrong", result, equalTo(isSuccess));
+    assertThat(response.getResponse().getStatusCode(), equalTo(200));
     String Response = response.getResponseBody().getErrorMessage();
     assertThat(Response.contains("Thunder167"), equalTo(true));
   }
@@ -224,11 +225,13 @@ public class MerchantSortSteps {
     searchServiceData.setSearchServiceResponse(response);
   }
 
-  @Then("^\\[search-service] delete merchant sort mapping request response success should be '(.*)'$")
-  public void deleteMerchantSortMappingRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
+  @Then("^\\[search-service] requested mapping must get deleted$")
+  public void requestedMappingMustGetDeleted() {
     ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
-    boolean result = response.getResponseBody().isSuccess();
-    assertThat("is Success is wrong", result, equalTo(isSuccess));
+    assertThat(response.getResponse().getStatusCode(), equalTo(200));
+    Document searchDoc = new Document("merchantid", "TH7-15791");
+    long docCount = mongoHelper.countByMongoquery("merchant_sort", searchDoc);
+    assertThat(docCount, equalTo(0L));
   }
 
   @Given("^\\[search-service] prepare delete merchant sort mapping with incorrect id request$")

@@ -103,6 +103,11 @@ public class MongoHelper {
     return result;
   }
 
+  public long countByMongoquery(String collectionName, Document searchDoc) {
+    MongoCollection<Document> collection = initializeDatabase(collectionName);
+    return collection.count(searchDoc);
+  }
+
   //Example to show update with multiple filter conditions
 
 /*  public void updateMongoWithMultipleFilterConditions(String collectionName){
