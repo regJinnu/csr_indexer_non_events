@@ -165,6 +165,9 @@ public class SearchServiceData {
   private String logisticOptionList;
   private String logisticProductCodeForOrigin;
   private String originLocation;
+  private String merchantId;
+  private String merchantName;
+  private String searchKeyword;
   private ResponseApi<GdnRestListResponse<TrainResponse>> getAllTrain;
   private ResponseApi<GdnRestListResponse<SearchRuleResponse>> getAllSearchRule;
   private ResponseApi<GdnRestListResponse<PlaceholderRuleResponse>> getAllPlaceholder;
@@ -194,5 +197,6 @@ public class SearchServiceData {
   private ResponseApi<GdnRestSingleResponse<SimpleStringResponse>> listReindexServices;
   private ResponseApi<GdnRestSingleResponse<StatusReIndexResponse>> reindexStatus;
   private ResponseApi<GdnRestSingleResponse<SimpleStringResponse>> productDataFeed;
+  private ResponseApi<GdnRestListResponse<MerchantSortResponseDto>> merchantSortList;
+  private ResponseApi<GdnRestSingleResponse<MerchantSortResponseDto>> merchantSortFindByMerchantId;
 }
-
