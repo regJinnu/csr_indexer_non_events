@@ -134,7 +134,7 @@ public class SearchServiceData {
   private String category;
   private List<String> blibliCategoryHierarchy;
   private String productItemId;
-  private enum actionType{};
+  private enum actionType{}
   private String pristineAttributesName;
   private String pristineAttributesValue;
   private String pristineID;
