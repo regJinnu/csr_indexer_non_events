@@ -55,7 +55,7 @@ public class MerchantSortSteps {
     assertThat("Request failed", response.getResponse().getStatusCode(), equalTo(200));
     Document searchDoc = new Document("merchantId", "TH7-15791");
     long docCount = mongoHelper.countByMongoquery("merchant_sort", searchDoc);
-    assertThat("Added document not found in database",docCount, equalTo(1L));
+    assertThat("Added document not found in database", docCount, equalTo(1L));
   }
 
   @Given("^\\[search-service] prepare request to add new merchant sort mapping with incorrect merchant info$")
@@ -96,11 +96,14 @@ public class MerchantSortSteps {
     ResponseApi<GdnRestListResponse<MerchantSortResponseDto>> response =
         searchServiceData.getMerchantSortList();
     assertThat("Request failed", response.getResponse().getStatusCode(), equalTo(200));
-    assertThat("MerchantId Mismatch", response.getResponseBody().getContent().get(0).getMerchantId(),
+    assertThat("MerchantId Mismatch",
+        response.getResponseBody().getContent().get(0).getMerchantId(),
         equalTo(searchServiceProperties.get("merchantId")));
-    assertThat("MerchantName Mismatch", response.getResponseBody().getContent().get(0).getMerchantName(),
+    assertThat("MerchantName Mismatch",
+        response.getResponseBody().getContent().get(0).getMerchantName(),
         equalTo(searchServiceProperties.get("merchantName")));
-    assertThat("SortType Mismatch", response.getResponseBody().getContent().get(0).getSortType(),
+    assertThat("SortType Mismatch",
+        response.getResponseBody().getContent().get(0).getSortType(),
         equalTo(Integer.parseInt(searchServiceProperties.get("merchantSortType"))));
   }
 
@@ -121,11 +124,14 @@ public class MerchantSortSteps {
     ResponseApi<GdnRestSingleResponse<MerchantSortResponseDto>> response =
         searchServiceData.getMerchantSortFindByMerchantId();
     assertThat("Request failed", response.getResponse().getStatusCode(), equalTo(200));
-    assertThat("MerchantId Mismatch", response.getResponseBody().getValue().getMerchantId(),
+    assertThat("MerchantId Mismatch",
+        response.getResponseBody().getValue().getMerchantId(),
         equalTo(searchServiceProperties.get("merchantId")));
-    assertThat("MerchantName Mismatch", response.getResponseBody().getValue().getMerchantName(),
+    assertThat("MerchantName Mismatch",
+        response.getResponseBody().getValue().getMerchantName(),
         equalTo(searchServiceProperties.get("merchantName")));
-    assertThat("SortType Mismatch", response.getResponseBody().getValue().getSortType(),
+    assertThat("SortType Mismatch",
+        response.getResponseBody().getValue().getSortType(),
         equalTo(Integer.parseInt(searchServiceProperties.get("merchantSortType"))));
   }
 
@@ -169,7 +175,9 @@ public class MerchantSortSteps {
     BasicDBObject whereQuery = new BasicDBObject();
     whereQuery.put("_class", "com.gdn.x.search.entity.MerchantSortEntity");
     long totalCount = collection.count(whereQuery);
-    assertThat("Response didn't match with database", response.getResponseBody().getPageMetaData().getTotalRecords(), equalTo(totalCount));
+    assertThat("Response didn't match with database",
+        response.getResponseBody().getPageMetaData().getTotalRecords(),
+        equalTo(totalCount));
   }
 
   @Given("^\\[search-service] prepare update merchant sort mapping request$")
@@ -211,7 +219,9 @@ public class MerchantSortSteps {
     ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
     assertThat("Request failed", response.getResponse().getStatusCode(), equalTo(200));
     String Response = response.getResponseBody().getErrorMessage();
-    assertThat("Response not having known merchant", Response.contains("Thunder167"), equalTo(true));
+    assertThat("Response not having known merchant",
+        Response.contains("Thunder167"),
+        equalTo(true));
   }
 
   @Given("^\\[search-service] prepare delete merchant sort mapping request$")
@@ -248,7 +258,8 @@ public class MerchantSortSteps {
   @Then("^\\[search-service] check the response for delete merchant sort mapping with incorrect id$")
   public void checkTheResponseForDeleteMerchantSortMappingWithIncorrectId() {
     ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
-    assertThat(response.getResponseBody().getErrorMessage(),
+    assertThat("Merchant sort mapping found",
+        response.getResponseBody().getErrorMessage(),
         equalTo("GIVEN MERCHANT SORT MAPPING NOT FOUND"));
   }
 }
