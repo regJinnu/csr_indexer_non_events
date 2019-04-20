@@ -52,10 +52,10 @@ public class MerchantSortSteps {
   @Then("^\\[search-service] new merchant sort mapping must be added$")
   public void newMerchantSortMappingMustBeAdded() {
     ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
-    assertThat(response.getResponse().getStatusCode(), equalTo(200));
+    assertThat("Request failed", response.getResponse().getStatusCode(), equalTo(200));
     Document searchDoc = new Document("merchantId", "TH7-15791");
     long docCount = mongoHelper.countByMongoquery("merchant_sort", searchDoc);
-    assertThat(docCount, equalTo(1L));
+    assertThat("Added document not found in database",docCount, equalTo(1L));
   }
 
   @Given("^\\[search-service] prepare request to add new merchant sort mapping with incorrect merchant info$")
@@ -95,12 +95,12 @@ public class MerchantSortSteps {
   public void searchMerchantSortMappingRequestResponseShouldContainRequestedDocument() {
     ResponseApi<GdnRestListResponse<MerchantSortResponseDto>> response =
         searchServiceData.getMerchantSortList();
-    assertThat(response.getResponse().getStatusCode(), equalTo(200));
-    assertThat(response.getResponseBody().getContent().get(0).getMerchantId(),
+    assertThat("Request failed", response.getResponse().getStatusCode(), equalTo(200));
+    assertThat("MerchantId Mismatch", response.getResponseBody().getContent().get(0).getMerchantId(),
         equalTo(searchServiceProperties.get("merchantId")));
-    assertThat(response.getResponseBody().getContent().get(0).getMerchantName(),
+    assertThat("MerchantName Mismatch", response.getResponseBody().getContent().get(0).getMerchantName(),
         equalTo(searchServiceProperties.get("merchantName")));
-    assertThat(response.getResponseBody().getContent().get(0).getSortType(),
+    assertThat("SortType Mismatch", response.getResponseBody().getContent().get(0).getSortType(),
         equalTo(Integer.parseInt(searchServiceProperties.get("merchantSortType"))));
   }
 
@@ -120,12 +120,12 @@ public class MerchantSortSteps {
   public void searchMerchantSortMappingByMerchantIdRequestResponseShouldContainRequestedDocument() {
     ResponseApi<GdnRestSingleResponse<MerchantSortResponseDto>> response =
         searchServiceData.getMerchantSortFindByMerchantId();
-    assertThat(response.getResponse().getStatusCode(), equalTo(200));
-    assertThat(response.getResponseBody().getValue().getMerchantId(),
+    assertThat("Request failed", response.getResponse().getStatusCode(), equalTo(200));
+    assertThat("MerchantId Mismatch", response.getResponseBody().getValue().getMerchantId(),
         equalTo(searchServiceProperties.get("merchantId")));
-    assertThat(response.getResponseBody().getValue().getMerchantName(),
+    assertThat("MerchantName Mismatch", response.getResponseBody().getValue().getMerchantName(),
         equalTo(searchServiceProperties.get("merchantName")));
-    assertThat(response.getResponseBody().getValue().getSortType(),
+    assertThat("SortType Mismatch", response.getResponseBody().getValue().getSortType(),
         equalTo(Integer.parseInt(searchServiceProperties.get("merchantSortType"))));
   }
 
@@ -164,12 +164,12 @@ public class MerchantSortSteps {
   public void listAllMerchantSortMappingRequestResponseShouldHaveAllDocuments() {
     ResponseApi<GdnRestListResponse<MerchantSortResponseDto>> response =
         searchServiceData.getMerchantSortList();
-    assertThat(response.getResponse().getStatusCode(), equalTo(200));
+    assertThat("Request failed", response.getResponse().getStatusCode(), equalTo(200));
     MongoCollection<Document> collection = mongoHelper.initializeDatabase("merchant_sort");
     BasicDBObject whereQuery = new BasicDBObject();
     whereQuery.put("_class", "com.gdn.x.search.entity.MerchantSortEntity");
     long totalCount = collection.count(whereQuery);
-    assertThat(response.getResponseBody().getPageMetaData().getTotalRecords(), equalTo(totalCount));
+    assertThat("Response didn't match with database", response.getResponseBody().getPageMetaData().getTotalRecords(), equalTo(totalCount));
   }
 
   @Given("^\\[search-service] prepare update merchant sort mapping request$")
@@ -189,11 +189,11 @@ public class MerchantSortSteps {
   @Then("^\\[search-service] merchant sort mapping must get updated$")
   public void merchantSortMappingMustGetUpdated() {
     ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
-    assertThat(response.getResponse().getStatusCode(), equalTo(200));
+    assertThat("Request failed", response.getResponse().getStatusCode(), equalTo(200));
     Document searchDoc = new Document("merchantId", "TH7-15791").append("sortType",
         Integer.parseInt(searchServiceProperties.get("updateMerchantSortType")));
     long docCount = mongoHelper.countByMongoquery("merchant_sort", searchDoc);
-    assertThat(docCount, equalTo(1L));
+    assertThat("Updated document not found", docCount, equalTo(1L));
   }
 
   @Given("^\\[search-service] prepare fetch list of all the merchants request$")
@@ -209,9 +209,9 @@ public class MerchantSortSteps {
   @Then("^\\[search-service] fetch list of all the merchants request response should contain all merchant list$")
   public void fetchListOfAllTheMerchantsRequestResponseShouldContainAllMerchantList() {
     ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
-    assertThat(response.getResponse().getStatusCode(), equalTo(200));
+    assertThat("Request failed", response.getResponse().getStatusCode(), equalTo(200));
     String Response = response.getResponseBody().getErrorMessage();
-    assertThat(Response.contains("Thunder167"), equalTo(true));
+    assertThat("Response not having known merchant", Response.contains("Thunder167"), equalTo(true));
   }
 
   @Given("^\\[search-service] prepare delete merchant sort mapping request$")
@@ -228,10 +228,10 @@ public class MerchantSortSteps {
   @Then("^\\[search-service] requested mapping must get deleted$")
   public void requestedMappingMustGetDeleted() {
     ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
-    assertThat(response.getResponse().getStatusCode(), equalTo(200));
+    assertThat("Request failed", response.getResponse().getStatusCode(), equalTo(200));
     Document searchDoc = new Document("merchantid", "TH7-15791");
     long docCount = mongoHelper.countByMongoquery("merchant_sort", searchDoc);
-    assertThat(docCount, equalTo(0L));
+    assertThat("Document not deleted", docCount, equalTo(0L));
   }
 
   @Given("^\\[search-service] prepare delete merchant sort mapping with incorrect id request$")
