@@ -1231,7 +1231,7 @@ public class SearchServiceController extends ServiceApi {
 
   public ResponseApi<GdnBaseRestResponse> prepareRequestForCategoryReindex(String categoryCode) {
 
-    String requestJson = "{\n" + "  \"codes\": [\""+categoryCode+"\"],\n"
+    String requestJson = "{\n" + "  \"codes\": [\"" + categoryCode + "\"],\n"
         + "  \"field\": \"salesCatalogCategoryIds\"\n" + "}";
 
     Response response =
@@ -1457,14 +1457,12 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnBaseRestResponse> addSearchRule() {
-    String BodyTemplate =
-        "{\n" + "  \"searchTerm\": \"{{searchTerm}}\",\n"
-            + "  \"filterQuery\": \"{{filterQuery}}\",\n" + "  \"sortType\": \"{{sortType}}\",\n"
-            + "  \"effectiveSearchPattern\": \"{{effectiveSearchPattern}}\",\n"
-            + "  \"defaultLogic\": {\n" + "    \"filterQuery\": \"{{filterQuery}}\",\n"
-            + "    \"sortType\": \"{{sortType}}\"\n" + "  },\n" + "  \"url\": \"{{url}}\",\n"
-            + "  \"type\": \"{{type}}\",\n" + "  \n"
-            + "  \"spel\": \"{{spel}}\"\n" + "}";
+    String BodyTemplate = "{\n" + "  \"searchTerm\": \"{{searchTerm}}\",\n"
+        + "  \"filterQuery\": \"{{filterQuery}}\",\n" + "  \"sortType\": \"{{sortType}}\",\n"
+        + "  \"effectiveSearchPattern\": \"{{effectiveSearchPattern}}\",\n"
+        + "  \"defaultLogic\": {\n" + "    \"filterQuery\": \"{{filterQuery}}\",\n"
+        + "    \"sortType\": \"{{sortType}}\"\n" + "  },\n" + "  \"url\": \"{{url}}\",\n"
+        + "  \"type\": \"{{type}}\",\n" + "  \n" + "  \"spel\": \"{{spel}}\"\n" + "}";
     Map<String, String> data = new HashMap<>();
     data.put("searchTerm", searchServiceData.getSearchRulSearchTerm());
     data.put("filterQuery", searchServiceData.getFilterQuery());
@@ -1584,9 +1582,9 @@ public class SearchServiceController extends ServiceApi {
       String key,
       String value,
       boolean positiveFilter) {
-    String requestBody = "{\n" + "  \"feedType\": \""+feedType+"\",\n" + "  \"key\": \""+key+"\",\n"
-        + "  \"positiveFilter\":"+positiveFilter+",\n"
-        + "  \"value\": \""+value+"\"}";
+    String requestBody =
+        "{\n" + "  \"feedType\": \"" + feedType + "\",\n" + "  \"key\": \"" + key + "\",\n"
+            + "  \"positiveFilter\":" + positiveFilter + ",\n" + "  \"value\": \"" + value + "\"}";
     Response response =
         service("searchservice").body(requestBody).post(BASEPATH + "feed-exclusion-entity/save");
     response.getBody().prettyPrint();
@@ -1595,15 +1593,95 @@ public class SearchServiceController extends ServiceApi {
   }
 
   public ResponseApi<GdnRestListResponse<FeedExclusionEntityResponse>> findFeedByWord(String searchString) {
-    Response response =
-        service("searchservice").queryParam("word", searchString)
-            .queryParam("page", searchServiceData.getPage())
-            .queryParam("size", searchServiceData.getSize())
-            .get(BASEPATH + "feed-exclusion-entity/find");
+    Response response = service("searchservice").queryParam("word", searchString)
+        .queryParam("page", searchServiceData.getPage())
+        .queryParam("size", searchServiceData.getSize())
+        .get(BASEPATH + "feed-exclusion-entity/find");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,
         new TypeReference<GdnRestListResponse<FeedExclusionEntityResponse>>() {
         });
   }
 
+  public ResponseApi<GdnBaseRestResponse> bodyOfRequestOfAddMerchantSort() {
+    String Bodytemplate = "{\n" + "  \"merchantId\": \"{{merchantId}}\",\n"
+        + "  \"merchantName\": \"{{merchantName}}\",\n" + "  \"sortType\": {{sortType}}\n" + "}";
+
+    Map<String, String> data = new HashMap<>();
+    data.put("merchantId", searchServiceData.getMerchantId());
+    data.put("merchantName", searchServiceData.getMerchantName());
+    data.put("sortType", searchServiceData.getSortType());
+
+    String bodyRequest = templateAPI.createFromString(Bodytemplate, data);
+    Response response =
+        service("searchservice").body(bodyRequest).post(BASEPATH + "merchantsort/add");
+    response.getBody().prettyPrint();
+
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+
+  }
+
+  public ResponseApi<GdnRestListResponse<MerchantSortResponseDto>> findMerchantSortMappingResponse() {
+    Response response =
+        service("searchservice").queryParam("searchKeyword", searchServiceData.getSearchKeyword())
+            .get(BASEPATH + "merchantsort/find");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response,
+        new TypeReference<GdnRestListResponse<MerchantSortResponseDto>>() {
+        });
+  }
+
+  public ResponseApi<GdnRestSingleResponse<MerchantSortResponseDto>> findMerchantSortMappingByIdResponse() {
+    Response response =
+        service("searchservice").queryParam("merchantId", searchServiceData.getMerchantId())
+            .get(BASEPATH + "merchantsort/select/id");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response,
+        new TypeReference<GdnRestSingleResponse<MerchantSortResponseDto>>() {
+        });
+  }
+
+  public ResponseApi<GdnRestListResponse<MerchantSortResponseDto>> merchantSortListResponse() {
+    Response response = service("searchservice").queryParam("size", searchServiceData.getSize())
+        .get(BASEPATH + "merchantsort/select/all");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response,
+        new TypeReference<GdnRestListResponse<MerchantSortResponseDto>>() {
+        });
+  }
+
+  public ResponseApi<GdnBaseRestResponse> bodyOfRequestOfUpdateMerchantSort() {
+    String Bodytemplate = "{\n" + "  \"merchantId\": \"{{merchantId}}\",\n"
+        + "  \"merchantName\": \"{{merchantName}}\",\n" + "  \"sortType\": {{sortType}}\n" + "}";
+
+    Map<String, String> data = new HashMap<>();
+    data.put("merchantId", searchServiceData.getMerchantId());
+    data.put("merchantName", searchServiceData.getMerchantName());
+    data.put("sortType", searchServiceData.getSortType());
+
+    String bodyRequest = templateAPI.createFromString(Bodytemplate, data);
+    Response response =
+        service("searchservice").body(bodyRequest).post(BASEPATH + "merchantsort/update");
+    response.getBody().prettyPrint();
+
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+
+  public ResponseApi<GdnBaseRestResponse> listAllMerchants() {
+    Response response = service("searchservice").get(BASEPATH + "merchantsort/merchants/list");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+
+  public ResponseApi<GdnBaseRestResponse> deleteMerchantSortMapping() {
+    Response response =
+        service("searchservice").queryParam("merchantId", searchServiceData.getMerchantId())
+            .delete(BASEPATH + "merchantsort/delete");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
 }
