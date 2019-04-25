@@ -1,4 +1,4 @@
-@ClickThroughDataFeature @TestSuiteID=10541665
+@ClickThroughDataFeature @TestSuiteID=11050177
 Feature:Fetch click-through data from BRS and index to solr and Redis
 
 
