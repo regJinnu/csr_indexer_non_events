@@ -338,9 +338,9 @@ public class ProductIndexingSteps {
           location);
 
       assertThat("Test Product not set in SOLR", reviewCount, equalTo(10));
-      assertThat("Test Product not set in SOLR", rating, equalTo("4"));
+      assertThat("Test Product not set in SOLR", rating, equalTo("40"));
       assertThat("Test Product not set in SOLR", oosFlag, equalTo(0));
-      assertThat("Test Product not set in SOLR", merchantRating, equalTo(3.0));
+      assertThat("Test Product not set in SOLR", merchantRating, equalTo(30.0));
       assertThat("Test Product not set in SOLR", merchantCommissionType, equalTo("CC"));
       assertThat("Test Product not set in SOLR", location, equalTo("Origin-ABC"));
 
@@ -586,8 +586,11 @@ public class ProductIndexingSteps {
     try {
       date = dateFormat.parse("2018-07-30T11:45:39.235Z");
 
+      log.error("----PC---{}",searchServiceData.getQueryForProductCode().split(":")[1]);
+      log.error("----iSku---{}",searchServiceData.getItemSkuForStoredDelta().split(":")[1]);
+
       Document storedDeltaDoc1 = new Document("_class" , "com.gdn.x.search.entity.EventIndexingEntity")
-          .append("code" , "MTA-0305736")
+          .append("code" , searchServiceData.getQueryForProductCode().split(":")[1])
           .append("type" , "productCode")
           .append("isFailed", "0")
           .append("eventType" , "ALL")
@@ -600,7 +603,20 @@ public class ProductIndexingSteps {
           .append("MARK_FOR_DELETE" , false);
 
       Document storedDeltaDoc2 = new Document("_class" , "com.gdn.x.search.entity.EventIndexingEntity")
-          .append("code" , "TH7-15791-00161-00001")
+          .append("code" , searchServiceData.getItemSkuForStoredDelta().split(":")[1])
+          .append("type" , "id")
+          .append("isFailed", "0")
+          .append("eventType" , "LOCATION_AND_INVENTORY_SERVICE")
+          .append("eventName" , "productNonOutOfStockEventListener")
+          .append("version" , 0)
+          .append("CREATED_DATE" , date)
+          .append("CREATED_BY" , "user-dev-src")
+          .append("UPDATED_DATE" , date)
+          .append("UPDATED_BY" , "user-dev-src")
+          .append("MARK_FOR_DELETE" , false);
+
+      Document storedDeltaDoc3 = new Document("_class" , "com.gdn.x.search.entity.EventIndexingEntity")
+          .append("code" , searchServiceData.getQueryForReindexOfDeletedProd().split(":")[1])
           .append("type" , "id")
           .append("isFailed", "0")
           .append("eventType" , "LOCATION_AND_INVENTORY_SERVICE")
@@ -614,6 +630,7 @@ public class ProductIndexingSteps {
 
       mongoHelper.insertInMongo("indexing_list_new",storedDeltaDoc1);
       mongoHelper.insertInMongo("indexing_list_new",storedDeltaDoc2);
+      mongoHelper.insertInMongo("indexing_list_new",storedDeltaDoc3);
 
     } catch (ParseException e) {
       e.printStackTrace();

@@ -548,7 +548,7 @@ public class ItemChangeEventSteps {
               .get(0)
               .getlevel0Id();
 
-      assertThat("Name is not set", name, equalTo("Product Testing"));
+      assertThat("Name is not set", name, not(equalTo("Pristine Product Testing")));
       assertThat("Level0Id is not set", level0Id, equalTo(
           searchServiceData.getProductCodeForReindex()));
 
@@ -608,9 +608,9 @@ public class ItemChangeEventSteps {
     c3.setCategory("Test Category C3");
     c3.setLevel(3);
 
-    itemCategories.add(c3);
-    itemCategories.add(c2);
     itemCategories.add(c1);
+    itemCategories.add(c2);
+    itemCategories.add(c3);
 
     ItemCatalogVO itemCatalogVO = new ItemCatalogVO();
     itemCatalogVO.setCatalogId("12051");
