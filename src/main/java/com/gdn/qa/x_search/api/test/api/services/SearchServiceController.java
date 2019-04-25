@@ -1300,8 +1300,7 @@ public class SearchServiceController extends ServiceApi {
   public ResponseApi<GdnBaseRestResponse> addTrainMapping(String trainSearchTerm,
       String trainMapping) {
     String BodyTemplate =
-        "{\n" + "  \"searchTerm\": \"" + trainSearchTerm + "\",\n" + "  \"effectiveValue\": \""
-            + trainMapping + "\"\n" + "}";
+        "{\n" + "  \"searchTerm\": \"{{searchTerm}}\",\n" + "  \"effectiveValue\": \"{{effectiveValue}}\"\n" + "}";
     Map<String, String> data = new HashMap<>();
     data.put("searchTerm", trainSearchTerm);
     data.put("effectiveValue", trainMapping);
@@ -1382,13 +1381,12 @@ public class SearchServiceController extends ServiceApi {
     });
   }
 
-  public ResponseApi<GdnBaseRestResponse> saveFlight(String trainSearchTerm, String trainMapping) {
+  public ResponseApi<GdnBaseRestResponse> saveFlight(String searchTerm, String effectiveValue) {
     String BodyTemplate =
-        "{\n" + " \"searchTerm\": \"" + trainSearchTerm + "\",\n" + "  \"effectiveValue\": \""
-            + trainMapping + "\"\n" + "}";
+        "{\n" + " \"searchTerm\": \"{{searchTerm}}\",\n" + "  \"effectiveValue\": \"{{effectiveValue}}\"\n" + "}";
     Map<String, String> data = new HashMap<>();
-    data.put("searchTerm", trainSearchTerm);
-    data.put("effectiveValue", trainMapping);
+    data.put("searchTerm", searchTerm);
+    data.put("effectiveValue", effectiveValue);
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
     Response response =
         service("searchservice").body(bodyRequest).post(BASEPATH + "intent-rules/flight/add");
@@ -1402,9 +1400,9 @@ public class SearchServiceController extends ServiceApi {
       String effectiveSearchPattern,
       String type) {
     String BodyTemplate =
-        "{\n" + "  \"name\": \"" + name + "\",\n" + "  \"searchTerm\": \"" + searchTerm + "\",\n"
-            + "  \"effectiveSearchPattern\": \"" + effectiveSearchPattern + "\",\n"
-            + "  \"type\": \"" + type + "\"\n" + "}";
+        "{\n" + "  \"name\": \"{{name}}\",\n" + "  \"searchTerm\": \"{{searchTerm}}\",\n"
+            + "  \"effectiveSearchPattern\": \"{{effectiveSearchPattern}}\",\n"
+            + "  \"type\": \"{{type}}\"\n" + "}";
     Map<String, String> data = new HashMap<>();
     data.put("name", name);
     data.put("searchTerm", searchTerm);
@@ -1462,7 +1460,7 @@ public class SearchServiceController extends ServiceApi {
         + "  \"effectiveSearchPattern\": \"{{effectiveSearchPattern}}\",\n"
         + "  \"defaultLogic\": {\n" + "    \"filterQuery\": \"{{filterQuery}}\",\n"
         + "    \"sortType\": \"{{sortType}}\"\n" + "  },\n" + "  \"url\": \"{{url}}\",\n"
-        + "  \"type\": \"{{type}}\",\n" + "  \n" + "  \"spel\": \"{{spel}}\"\n" + "}";
+        + "  \"type\": \"{{type}}\",\n" + "  \"rank\": \"{{rank}}\",\n" + "  \"spel\": \"{{spel}}\"\n" + "}";
     Map<String, String> data = new HashMap<>();
     data.put("searchTerm", searchServiceData.getSearchRulSearchTerm());
     data.put("filterQuery", searchServiceData.getFilterQuery());
@@ -1502,7 +1500,7 @@ public class SearchServiceController extends ServiceApi {
     data.put("defaultLogic.sortType", searchServiceData.getSortType());
     data.put("url", searchServiceData.getUrl());
     data.put("type", searchServiceData.getType());
-    data.put("rank", String.valueOf(searchServiceData.getRank()));
+    data.put("rank", "7");
     data.put("spel", searchServiceData.getSpel());
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
     Response response = service("searchservice").body(bodyRequest)

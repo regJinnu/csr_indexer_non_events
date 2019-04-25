@@ -68,15 +68,15 @@ public class ContextualSearchSteps {
 
   @Given("^\\[search-service] prepare request to add a flight$")
   public void searchServicePrepareRequestToAddAFlight() {
-    searchServiceData.setTrainSearchTerm(searchServiceProperties.get("trainSearchTerm"));
-    searchServiceData.setTrainMapping(searchServiceProperties.get("trainMapping"));
+    searchServiceData.setSearchTerm(searchServiceProperties.get("searchTerm"));
+    searchServiceData.setEffectiveValue(searchServiceProperties.get("effectiveValue"));
     valid = mongoHelper.countOfRecordsInCollection("flight_dictionary");
   }
 
   @When("^\\[search-service] send add flight mapping request$")
   public void searchServiceSendAddFlightMappingRequest() {
     ResponseApi<GdnBaseRestResponse> response =
-        searchServiceController.saveFlight( "testingapi", "2");
+        searchServiceController.saveFlight(searchServiceData.getSearchTerm(), searchServiceData.getEffectiveValue());
     searchServiceData.setSearchServiceResponse(response);
   }
 
@@ -123,10 +123,10 @@ public class ContextualSearchSteps {
   @When("^\\[search-service] send add placeholder rules request$")
   public void searchServiceSendAddPlaceholderRulesRequest() {
     ResponseApi<GdnBaseRestResponse> response = searchServiceController.addPlaceholderRules(
-        "testapi",
-        "testingapi",
-        "cheap",
-        "MASTER_PRODUCT");
+        searchServiceData.getName(),
+        searchServiceData.getSearchTerm(),
+        searchServiceData.getEffectiveSearchPattern(),
+        searchServiceData.getType());
     searchServiceData.setSearchServiceResponse(response);
   }
 
@@ -244,7 +244,7 @@ public class ContextualSearchSteps {
   @When("^\\[search-service] send add flight request without mandatory$")
   public void searchServiceSendAddFlightRequestWithoutMandatory() {
     ResponseApi<GdnBaseRestResponse> response =
-        searchServiceController.saveFlight( null, null);
+        searchServiceController.saveFlight("", "");
     searchServiceData.setSearchServiceResponse(response);
   }
 
@@ -262,7 +262,7 @@ public class ContextualSearchSteps {
   @When("^\\[search-service] send add placeholder request without mandatory$")
   public void searchServiceSendAddPlaceholderRequestWithoutMandatory() {
     ResponseApi<GdnBaseRestResponse> response =
-        searchServiceController.addPlaceholderRules(null, null, null, null);
+        searchServiceController.addPlaceholderRules("", "", "", "");
     searchServiceData.setSearchServiceResponse(response);
   }
 
@@ -323,6 +323,7 @@ public class ContextualSearchSteps {
     searchServiceData.setEffectiveSearchPattern(searchServiceProperties.get("effectiveSearchPattern"));
     searchServiceData.setUrl(searchServiceProperties.get("url"));
     searchServiceData.setType(searchServiceProperties.get("type"));
+    searchServiceData.setRank(8);
     searchServiceData.setSpel(searchServiceProperties.get("spel"));
     valid = mongoHelper.countOfRecordsInCollection("search_rule");
   }
