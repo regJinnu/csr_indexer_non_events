@@ -974,33 +974,33 @@ public class SearchServiceController extends ServiceApi {
     });
   }
 
-  public ResponseApi<GdnRestListResponse<KeywordBoostProductResponse>> findBoostedKeyword() {
+  public ResponseApi<GdnRestListResponse<BoostedKeywordResponse>> findBoostedKeyword() {
     Response response =
         service("searchservice").queryParam("word", searchServiceData.getSearchTerm())
             .queryParam("size", searchServiceData.getSize())
             .get(BASEPATH + "keywordBoost/find");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,
-        new TypeReference<GdnRestListResponse<KeywordBoostProductResponse>>() {
+        new TypeReference<GdnRestListResponse<BoostedKeywordResponse>>() {
         });
   }
 
-  public ResponseApi<GdnRestSingleResponse<KeywordBoostProductResponse>> findBoostedKeywordByID() {
+  public ResponseApi<GdnRestSingleResponse<BoostedKeywordResponse>> findBoostedKeywordByID() {
     Response response =
         service("searchservice").queryParam("id", searchServiceData.getAutoBoostedKeywordID())
             .get(BASEPATH + "keywordBoost/findById");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,
-        new TypeReference<GdnRestSingleResponse<KeywordBoostProductResponse>>() {
+        new TypeReference<GdnRestSingleResponse<BoostedKeywordResponse>>() {
         });
   }
 
-  public ResponseApi<GdnRestListResponse<KeywordBoostProductResponse>> listBoostedKeyword() {
+  public ResponseApi<GdnRestListResponse<BoostedKeywordResponse>> listBoostedKeyword() {
     Response response = service("searchservice").queryParam("size", searchServiceData.getSize())
         .get(BASEPATH + "keywordBoost/list");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,
-        new TypeReference<GdnRestListResponse<KeywordBoostProductResponse>>() {
+        new TypeReference<GdnRestListResponse<BoostedKeywordResponse>>() {
         });
   }
 
@@ -1022,11 +1022,11 @@ public class SearchServiceController extends ServiceApi {
     });
   }
 
-  public ResponseApi<GdnRestListResponse<KeywordBoostProductResponse>> listAllBoostedKeyword() {
+  public ResponseApi<GdnRestListResponse<BoostedKeywordResponse>> listAllBoostedKeyword() {
     Response response = service("searchservice").get(BASEPATH + "keywordBoost/getAll");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,
-        new TypeReference<GdnRestListResponse<KeywordBoostProductResponse>>() {
+        new TypeReference<GdnRestListResponse<BoostedKeywordResponse>>() {
         });
   }
 
@@ -1079,23 +1079,23 @@ public class SearchServiceController extends ServiceApi {
     });
   }
 
-  public ResponseApi<GdnRestListResponse<KeywordBoostProductResponse>> findWrongBoostedKeyword() {
+  public ResponseApi<GdnRestListResponse<BoostedKeywordResponse>> findWrongBoostedKeyword() {
     Response response =
         service("searchservice").queryParam("word", searchServiceData.getWrongname())
             .queryParam("size", searchServiceData.getSize())
             .get(BASEPATH + "keywordBoost/find");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,
-        new TypeReference<GdnRestListResponse<KeywordBoostProductResponse>>() {
+        new TypeReference<GdnRestListResponse<BoostedKeywordResponse>>() {
         });
   }
 
-  public ResponseApi<GdnRestSingleResponse<KeywordBoostProductResponse>> findBoostedKeywordByWrongID() {
+  public ResponseApi<GdnRestSingleResponse<BoostedKeywordResponse>> findBoostedKeywordByWrongID() {
     Response response = service("searchservice").queryParam("id", searchServiceData.getWrongid())
         .get(BASEPATH + "keywordBoost/findById");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response,
-        new TypeReference<GdnRestSingleResponse<KeywordBoostProductResponse>>() {
+        new TypeReference<GdnRestSingleResponse<BoostedKeywordResponse>>() {
         });
   }
 

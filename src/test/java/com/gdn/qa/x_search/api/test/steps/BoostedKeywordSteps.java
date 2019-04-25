@@ -9,7 +9,8 @@ import com.gdn.qa.x_search.api.test.api.services.SearchServiceController;
 import com.gdn.qa.x_search.api.test.data.SearchServiceData;
 import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
 import com.gdn.qa.x_search.api.test.utils.MongoHelper;
-import com.gdn.x.search.rest.web.model.KeywordBoostProductResponse;
+
+import com.gdn.x.search.rest.web.model.BoostedKeywordResponse;
 import com.mongodb.client.FindIterable;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -42,14 +43,14 @@ public class BoostedKeywordSteps {
 
   @When("^\\[search-service] send request to find boosted keyword$")
   public void searchServiceSendRequestToFindBoostedKeyword() {
-    ResponseApi<GdnRestListResponse<KeywordBoostProductResponse>> response =
+    ResponseApi<GdnRestListResponse<BoostedKeywordResponse>> response =
         searchServiceController.findBoostedKeyword();
     searchServiceData.setFindBoostedKeyword(response);
   }
 
   @Then("^\\[search-service] find boosted keyword request response success should be '(.*)'$")
   public void searchServiceFindBoostedKeywordRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
-    ResponseApi<GdnRestListResponse<KeywordBoostProductResponse>> response =
+    ResponseApi<GdnRestListResponse<BoostedKeywordResponse>> response =
         searchServiceData.getFindBoostedKeyword();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
@@ -70,14 +71,14 @@ public class BoostedKeywordSteps {
 
   @When("^\\[search-service] send request to find boosted keyword by ID$")
   public void searchServiceSendRequestToFindBoostedKeywordByID() {
-    ResponseApi<GdnRestSingleResponse<KeywordBoostProductResponse>> response =
+    ResponseApi<GdnRestSingleResponse<BoostedKeywordResponse>> response =
         searchServiceController.findBoostedKeywordByID();
     searchServiceData.setFindBoostedKeywordByID(response);
   }
 
   @Then("^\\[search-service] find boosted keyword by ID request response success should be '(.*)'$")
   public void searchServiceFindBoostedKeywordByIDRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
-    ResponseApi<GdnRestSingleResponse<KeywordBoostProductResponse>> response =
+    ResponseApi<GdnRestSingleResponse<BoostedKeywordResponse>> response =
         searchServiceData.getFindBoostedKeywordByID();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
@@ -93,14 +94,14 @@ public class BoostedKeywordSteps {
 
   @When("^\\[search-service] send request to list boosted keyword$")
   public void searchServiceSendRequestToListBoostedKeyword() {
-    ResponseApi<GdnRestListResponse<KeywordBoostProductResponse>> response =
+    ResponseApi<GdnRestListResponse<BoostedKeywordResponse>> response =
         searchServiceController.listBoostedKeyword();
     searchServiceData.setFindBoostedKeyword(response);
   }
 
   @Then("^\\[search-service] list boosted keyword request response success should be '(.*)'$")
   public void searchServiceListBoostedKeywordRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
-    ResponseApi<GdnRestListResponse<KeywordBoostProductResponse>> response =
+    ResponseApi<GdnRestListResponse<BoostedKeywordResponse>> response =
         searchServiceData.getFindBoostedKeyword();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
@@ -137,14 +138,14 @@ public class BoostedKeywordSteps {
 
   @When("^\\[search-service] send request to list all the boosted keywords$")
   public void searchServiceSendRequestToListAllTheBoostedKeywords() {
-    ResponseApi<GdnRestListResponse<KeywordBoostProductResponse>> response =
+    ResponseApi<GdnRestListResponse<BoostedKeywordResponse>> response =
         searchServiceController.listAllBoostedKeyword();
     searchServiceData.setFindBoostedKeyword(response);
   }
 
   @Then("^\\[search-service] list all the boosted keywords request response success should be '(.*)'$")
   public void searchServiceListAllTheBoostedKeywordsRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
-    ResponseApi<GdnRestListResponse<KeywordBoostProductResponse>> response =
+    ResponseApi<GdnRestListResponse<BoostedKeywordResponse>> response =
         searchServiceData.getFindBoostedKeyword();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
@@ -254,14 +255,14 @@ public class BoostedKeywordSteps {
 
   @When("^\\[search-service] send request to find boosted keyword which is not present$")
   public void searchServiceSendRequestToFindBoostedKeywordWhichIsNotPresent()  {
-    ResponseApi<GdnRestListResponse<KeywordBoostProductResponse>> response =
+    ResponseApi<GdnRestListResponse<BoostedKeywordResponse>> response =
         searchServiceController.findWrongBoostedKeyword();
     searchServiceData.setFindBoostedKeyword(response);
   }
 
   @Then("^\\[search-service] find boosted keyword which is not present request response$")
   public void searchServiceFindBoostedKeywordWhichIsNotPresentRequestResponse()  {
-    ResponseApi<GdnRestListResponse<KeywordBoostProductResponse>> response =
+    ResponseApi<GdnRestListResponse<BoostedKeywordResponse>> response =
         searchServiceData.getFindBoostedKeyword();
     assertThat(response.getResponseBody().getErrorMessage(),equalTo(null));
   }
@@ -274,14 +275,14 @@ public class BoostedKeywordSteps {
 
   @When("^\\[search-service] send request to find boosted keyword by wrong ID$")
   public void searchServiceSendRequestToFindBoostedKeywordByWrongID()  {
-    ResponseApi<GdnRestSingleResponse<KeywordBoostProductResponse>> response =
+    ResponseApi<GdnRestSingleResponse<BoostedKeywordResponse>> response =
         searchServiceController.findBoostedKeywordByWrongID();
     searchServiceData.setFindBoostedKeywordByID(response);
   }
 
   @Then("^\\[search-service] find boosted keyword by wrong ID request response$")
   public void searchServiceFindBoostedKeywordByWrongIDRequestResponse()  {
-    ResponseApi<GdnRestSingleResponse<KeywordBoostProductResponse>> response =
+    ResponseApi<GdnRestSingleResponse<BoostedKeywordResponse>> response =
         searchServiceData.getFindBoostedKeywordByID();
     assertThat(response.getResponseBody().getErrorMessage(),equalTo("UNSPECIFIED"));
     assertThat(response.getResponseBody().getErrorCode(),equalTo(null));
@@ -305,7 +306,7 @@ public class BoostedKeywordSteps {
   @Then("^\\[search-service] check update boosted keyword request with wrong id response$")
   public void searchServiceCheckUpdateBoostedKeywordRequestWithWrongIdResponse()  {
     ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
-    assertThat(response.getResponseBody().getErrorMessage(),equalTo(null));
+    assertThat(response.getResponseBody().getErrorMessage(),equalTo("NONE"));
 
   }
 
