@@ -190,8 +190,8 @@ public class SearchServiceData {
   private ResponseApi<GdnRestListResponse<StopWordResponse>> findStopword;
   private ResponseApi<GdnRestSingleResponse<StopWordResponse>> findStopWordByID;
   private ResponseApi<GdnRestSingleResponse<SetConfigResponse>> setConfigResponse;
-  private ResponseApi<GdnRestListResponse<KeywordBoostProductResponse>> findBoostedKeyword;
-  private ResponseApi<GdnRestSingleResponse<KeywordBoostProductResponse>> findBoostedKeywordByID;
+  private ResponseApi<GdnRestListResponse<BoostedKeywordResponse>> findBoostedKeyword;
+  private ResponseApi<GdnRestSingleResponse<BoostedKeywordResponse>> findBoostedKeywordByID;
   private ResponseApi<GdnRestSingleResponse<ProductResponse>> findDataByProductID;
   private ResponseApi<GdnRestSingleResponse> processFailedIds;
   private ResponseApi<GdnRestSingleResponse<SimpleStringResponse>> listReindexServices;
