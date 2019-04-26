@@ -117,21 +117,4 @@ public class MongoHelper {
     collection.updateOne(filter,updateOperationDocument);
 
   }*/
-
-  public DBObject getDocumentSortedDescByFieldValue(String collectionName, String fieldName) {
-    String MONGO_SERVER_ADDRESS = searchServiceProperties.get("mongo");
-    log.debug("-----------Mongo Server host ------------" + MONGO_SERVER_ADDRESS);
-    ServerAddress serverAddress = new ServerAddress(MONGO_SERVER_ADDRESS, MONGO_SERVER_PORT);
-    MongoCredential mongoCredential =
-        MongoCredential.createCredential("search", "x_search", "search".toCharArray());
-    MongoClient mongoClient = new MongoClient(serverAddress, new ArrayList<MongoCredential>() {{
-      add(mongoCredential);
-    }});
-    DB mongoDatabase = mongoClient.getDB("x_search");
-    DBCollection collection = mongoDatabase.getCollection(collectionName);
-    DBCursor docs = collection.find();
-    docs.sort(new BasicDBObject(fieldName, -1));
-    return docs.one();
-  }
-
 }
