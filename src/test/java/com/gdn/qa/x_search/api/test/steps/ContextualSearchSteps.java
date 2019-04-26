@@ -12,6 +12,7 @@ import com.gdn.x.search.rest.web.model.FlightResponse;
 import com.gdn.x.search.rest.web.model.PlaceholderRuleResponse;
 import com.gdn.x.search.rest.web.model.SearchRuleResponse;
 import com.gdn.x.search.rest.web.model.TrainResponse;
+import com.mongodb.DBObject;
 import com.mongodb.client.FindIterable;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -323,14 +324,16 @@ public class ContextualSearchSteps {
     searchServiceData.setEffectiveSearchPattern(searchServiceProperties.get("effectiveSearchPattern"));
     searchServiceData.setUrl(searchServiceProperties.get("url"));
     searchServiceData.setType(searchServiceProperties.get("type"));
-    searchServiceData.setRank(8);
     searchServiceData.setSpel(searchServiceProperties.get("spel"));
     valid = mongoHelper.countOfRecordsInCollection("search_rule");
   }
 
   @When("^\\[search-service] send add search rule request$")
   public void searchServiceSendAddSearchRuleRequest() {
-    ResponseApi<GdnBaseRestResponse> response = searchServiceController.addSearchRule();
+    DBObject sortedDoc = mongoHelper.getDocumentSortedDescByFieldValue("search_rule", "rank");
+    int rankExtracted = (int) sortedDoc.get("rank");
+    String rank = (String.valueOf(rankExtracted + 1));
+    ResponseApi<GdnBaseRestResponse> response = searchServiceController.addSearchRule(rank);
     searchServiceData.setSearchServiceResponse(response);
   }
 
@@ -405,7 +408,10 @@ public class ContextualSearchSteps {
 
   @When("^\\[search-service] send rerank search rule request$")
   public void searchServiceSendRerankSearchRuleRequest() {
-    ResponseApi<GdnBaseRestResponse> response = searchServiceController.rerankSearchRule();
+    DBObject sortedDoc = mongoHelper.getDocumentSortedDescByFieldValue("search_rule", "rank");
+    int rankExtracted = (int) sortedDoc.get("rank");
+    String rank = (String.valueOf(rankExtracted + 1));
+    ResponseApi<GdnBaseRestResponse> response = searchServiceController.rerankSearchRule(rank);
     searchServiceData.setSearchServiceResponse(response);
   }
 
@@ -429,7 +435,10 @@ public class ContextualSearchSteps {
 
   @When("^\\[search-service] send update search rule request$")
   public void searchServiceSendUpdateSearchRuleRequest() {
-    ResponseApi<GdnBaseRestResponse> response = searchServiceController.updateSearchRule();
+    DBObject sortedDoc = mongoHelper.getDocumentSortedDescByFieldValue("search_rule", "rank");
+    int rankExtracted = (int) sortedDoc.get("rank");
+    String rank = (String.valueOf(rankExtracted));
+    ResponseApi<GdnBaseRestResponse> response = searchServiceController.updateSearchRule(rank);
     searchServiceData.setSearchServiceResponse(response);
   }
 

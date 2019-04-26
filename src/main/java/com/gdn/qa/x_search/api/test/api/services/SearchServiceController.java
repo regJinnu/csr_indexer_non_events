@@ -1454,7 +1454,7 @@ public class SearchServiceController extends ServiceApi {
     });
   }
 
-  public ResponseApi<GdnBaseRestResponse> addSearchRule() {
+  public ResponseApi<GdnBaseRestResponse> addSearchRule(String rank) {
     String BodyTemplate = "{\n" + "  \"searchTerm\": \"{{searchTerm}}\",\n"
         + "  \"filterQuery\": \"{{filterQuery}}\",\n" + "  \"sortType\": \"{{sortType}}\",\n"
         + "  \"effectiveSearchPattern\": \"{{effectiveSearchPattern}}\",\n"
@@ -1470,7 +1470,7 @@ public class SearchServiceController extends ServiceApi {
     data.put("defaultLogic.sortType", searchServiceData.getSortType());
     data.put("url", searchServiceData.getUrl());
     data.put("type", searchServiceData.getType());
-    data.put("rank", String.valueOf(searchServiceData.getRank()));
+    data.put("rank", rank);
     data.put("spel", searchServiceData.getSpel());
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
     Response response =
@@ -1480,7 +1480,7 @@ public class SearchServiceController extends ServiceApi {
     });
   }
 
-  public ResponseApi<GdnBaseRestResponse> rerankSearchRule() {
+  public ResponseApi<GdnBaseRestResponse> rerankSearchRule(String rank) {
     String BodyTemplate =
         "[\n" + "  {\n" + "    \"id\": \"{{id}}\",\n" + "    \"searchTerm\": \"{{searchTerm}}\",\n"
             + "    \"filterQuery\": \"{{filterQuery}}\",\n"
@@ -1500,7 +1500,7 @@ public class SearchServiceController extends ServiceApi {
     data.put("defaultLogic.sortType", searchServiceData.getSortType());
     data.put("url", searchServiceData.getUrl());
     data.put("type", searchServiceData.getType());
-    data.put("rank", "7");
+    data.put("rank", rank);
     data.put("spel", searchServiceData.getSpel());
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
     Response response = service("searchservice").body(bodyRequest)
@@ -1510,7 +1510,7 @@ public class SearchServiceController extends ServiceApi {
     });
   }
 
-  public ResponseApi<GdnBaseRestResponse> updateSearchRule() {
+  public ResponseApi<GdnBaseRestResponse> updateSearchRule(String rank) {
     String BodyTemplate =
         "{\n" + "  \"id\": \"{{id}}\",\n" + "  \"searchTerm\": \"{{searchTerm}}\",\n"
             + "  \"filterQuery\": \"{{filterQuery}}\",\n" + "  \"sortType\": \"{{sortType}}\",\n"
@@ -1529,7 +1529,7 @@ public class SearchServiceController extends ServiceApi {
     data.put("defaultLogic.sortType", searchServiceData.getSortType());
     data.put("url", searchServiceData.getUrl());
     data.put("type", searchServiceData.getType());
-    data.put("rank", String.valueOf(searchServiceData.getRank()));
+    data.put("rank", rank);
     data.put("spel", searchServiceData.getSpel());
     String bodyRequest = templateAPI.createFromString(BodyTemplate, data);
     Response response = service("searchservice").body(bodyRequest)
