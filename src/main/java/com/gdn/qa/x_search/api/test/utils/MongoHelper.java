@@ -1,10 +1,7 @@
 package com.gdn.qa.x_search.api.test.utils;
 
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
+import com.mongodb.*;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -120,5 +117,4 @@ public class MongoHelper {
     collection.updateOne(filter,updateOperationDocument);
 
   }*/
-
 }

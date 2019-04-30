@@ -12,6 +12,7 @@ import com.gdn.x.search.rest.web.model.FlightResponse;
 import com.gdn.x.search.rest.web.model.PlaceholderRuleResponse;
 import com.gdn.x.search.rest.web.model.SearchRuleResponse;
 import com.gdn.x.search.rest.web.model.TrainResponse;
+import com.mongodb.BasicDBObject;
 import com.mongodb.client.FindIterable;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -68,15 +69,15 @@ public class ContextualSearchSteps {
 
   @Given("^\\[search-service] prepare request to add a flight$")
   public void searchServicePrepareRequestToAddAFlight() {
-    searchServiceData.setTrainSearchTerm(searchServiceProperties.get("trainSearchTerm"));
-    searchServiceData.setTrainMapping(searchServiceProperties.get("trainMapping"));
+    searchServiceData.setSearchTerm(searchServiceProperties.get("searchTerm"));
+    searchServiceData.setEffectiveValue(searchServiceProperties.get("effectiveValue"));
     valid = mongoHelper.countOfRecordsInCollection("flight_dictionary");
   }
 
   @When("^\\[search-service] send add flight mapping request$")
   public void searchServiceSendAddFlightMappingRequest() {
     ResponseApi<GdnBaseRestResponse> response =
-        searchServiceController.saveFlight( "testingapi", "2");
+        searchServiceController.saveFlight(searchServiceData.getSearchTerm(), searchServiceData.getEffectiveValue());
     searchServiceData.setSearchServiceResponse(response);
   }
 
@@ -123,10 +124,10 @@ public class ContextualSearchSteps {
   @When("^\\[search-service] send add placeholder rules request$")
   public void searchServiceSendAddPlaceholderRulesRequest() {
     ResponseApi<GdnBaseRestResponse> response = searchServiceController.addPlaceholderRules(
-        "testapi",
-        "testingapi",
-        "cheap",
-        "MASTER_PRODUCT");
+        searchServiceData.getName(),
+        searchServiceData.getSearchTerm(),
+        searchServiceData.getEffectiveSearchPattern(),
+        searchServiceData.getType());
     searchServiceData.setSearchServiceResponse(response);
   }
 
@@ -244,7 +245,7 @@ public class ContextualSearchSteps {
   @When("^\\[search-service] send add flight request without mandatory$")
   public void searchServiceSendAddFlightRequestWithoutMandatory() {
     ResponseApi<GdnBaseRestResponse> response =
-        searchServiceController.saveFlight( null, null);
+        searchServiceController.saveFlight("", "");
     searchServiceData.setSearchServiceResponse(response);
   }
 
@@ -262,7 +263,7 @@ public class ContextualSearchSteps {
   @When("^\\[search-service] send add placeholder request without mandatory$")
   public void searchServiceSendAddPlaceholderRequestWithoutMandatory() {
     ResponseApi<GdnBaseRestResponse> response =
-        searchServiceController.addPlaceholderRules(null, null, null, null);
+        searchServiceController.addPlaceholderRules("", "", "", "");
     searchServiceData.setSearchServiceResponse(response);
   }
 
@@ -329,7 +330,13 @@ public class ContextualSearchSteps {
 
   @When("^\\[search-service] send add search rule request$")
   public void searchServiceSendAddSearchRuleRequest() {
-    ResponseApi<GdnBaseRestResponse> response = searchServiceController.addSearchRule();
+    FindIterable<Document> allDocuments =
+        mongoHelper.getMongoDocumentByQuery("search_rule", "type", "SEARCH");
+    allDocuments.sort(new BasicDBObject("rank", -1));
+    Document rankedHigh = allDocuments.first();
+    int rankExtracted = (int) rankedHigh.get("rank");
+    String rank = (String.valueOf(rankExtracted + 1));
+    ResponseApi<GdnBaseRestResponse> response = searchServiceController.addSearchRule(rank);
     searchServiceData.setSearchServiceResponse(response);
   }
 
@@ -404,7 +411,13 @@ public class ContextualSearchSteps {
 
   @When("^\\[search-service] send rerank search rule request$")
   public void searchServiceSendRerankSearchRuleRequest() {
-    ResponseApi<GdnBaseRestResponse> response = searchServiceController.rerankSearchRule();
+    FindIterable<Document> allDocuments =
+        mongoHelper.getMongoDocumentByQuery("search_rule", "type", "SEARCH");
+    allDocuments.sort(new BasicDBObject("rank", -1));
+    Document rankedHigh = allDocuments.first();
+    int rankExtracted = (int) rankedHigh.get("rank");
+    String rank = (String.valueOf(rankExtracted + 1));
+    ResponseApi<GdnBaseRestResponse> response = searchServiceController.rerankSearchRule(rank);
     searchServiceData.setSearchServiceResponse(response);
   }
 
@@ -428,7 +441,13 @@ public class ContextualSearchSteps {
 
   @When("^\\[search-service] send update search rule request$")
   public void searchServiceSendUpdateSearchRuleRequest() {
-    ResponseApi<GdnBaseRestResponse> response = searchServiceController.updateSearchRule();
+    FindIterable<Document> allDocuments =
+        mongoHelper.getMongoDocumentByQuery("search_rule", "type", "SEARCH");
+    allDocuments.sort(new BasicDBObject("rank", -1));
+    Document rankedHigh = allDocuments.first();
+    int rankExtracted = (int) rankedHigh.get("rank");
+    String rank = (String.valueOf(rankExtracted));
+    ResponseApi<GdnBaseRestResponse> response = searchServiceController.updateSearchRule(rank);
     searchServiceData.setSearchServiceResponse(response);
   }
 
