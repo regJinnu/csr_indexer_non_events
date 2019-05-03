@@ -90,6 +90,9 @@ public class SolrResults {
   @Field("buyable")
   private int buyable;
 
+  @Field("id")
+  private String id;
+
   public SolrResults(String brandSearch,
       String description,
       String level0Id,
@@ -122,7 +125,8 @@ public class SolrResults {
       ArrayList<String> salesCatalogCategoryIdDescHierarchy,
       int categorySequenceTE,
       int published,
-      int buyable) {
+      int buyable,
+      String id) {
     this.pristineFacet=pristineFacet;
      this.brandSearch = brandSearch;
     this.description = description;
@@ -158,6 +162,7 @@ public class SolrResults {
     this.categorySequenceTE = categorySequenceTE;
     this.published=published;
     this.buyable=buyable;
+    this.id = id;
   }
 
 
@@ -451,6 +456,14 @@ public class SolrResults {
 
   public void setBuyable(int buyable) {
     this.buyable = buyable;
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
   }
 
 
