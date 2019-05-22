@@ -629,4 +629,25 @@ public class KafkaHelper {
 
   }
 
+
+  public void publishOfflineItemChangeEvent(Map<String,String> params) {
+
+    OfflineItemChange offlineItemChange =
+        OfflineItemChange.builder().
+            timestamp(System.currentTimeMillis()).
+            uniqueId(params.get("uniqueId")).
+            merchantCode(params.get("merchantCode")).
+            itemSku(params.get("itemSku")).
+            pickupPointCode(params.get("pickupPointCode")).
+            productSku(params.get("productSku")).
+            build();
+
+    try {
+      kafkaSender.send("com.gdn.x.product.offlineitem.change",
+          objectMapper.writeValueAsString(offlineItemChange));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+
+  }
 }

@@ -168,6 +168,8 @@ public class SearchServiceData {
   private String merchantId;
   private String merchantName;
   private String searchKeyword;
+  private String itemSkuForOffline;
+  private String pickupPointCode;
   private ResponseApi<GdnRestListResponse<TrainResponse>> getAllTrain;
   private ResponseApi<GdnRestListResponse<SearchRuleResponse>> getAllSearchRule;
   private ResponseApi<GdnRestListResponse<PlaceholderRuleResponse>> getAllPlaceholder;
