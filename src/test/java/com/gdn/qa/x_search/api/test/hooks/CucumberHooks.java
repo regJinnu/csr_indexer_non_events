@@ -23,8 +23,8 @@ public class CucumberHooks {
   public void afterRun() {
     //it will executed after scenario run
 
- //   mongoHelper.deleteFromMongo("synonyms_list","KEY","testingapi");
- //   mongoHelper.deleteFromMongo("keyword_boost_keyword_list","keyword","testingapi");
+    //   mongoHelper.deleteFromMongo("synonyms_list","KEY","testingapi");
+    //   mongoHelper.deleteFromMongo("keyword_boost_keyword_list","keyword","testingapi");
   }
 
   @Before("@FindSynonymnByKey")
@@ -33,20 +33,21 @@ public class CucumberHooks {
     try {
       Date date = dateFormat.parse("2017-09-19T05:19:45.468Z");
 
-      Document synDoc = new Document("_class","com.gdn.x.search.entity.SynonymsEntity")
-          .append("KEY" , "testingapi")
-          .append("SYNONYMS" , "test1,test2")
-          .append("GROUP_NAME" , "synonyms_gdn")
-          .append("SYNC" , "1")
-          .append("version" ,8)
-          .append("CREATED_DATE" , date)
-          .append("CREATED_BY" , "user-dev-src")
-          .append("UPDATED_DATE" , date)
-          .append("UPDATED_BY" , "user-dev-src")
-          .append("STORE_ID" , "10001")
-          .append("MARK_FOR_DELETE" , false);
+      Document synDoc = new Document("_class", "com.gdn.x.search.entity.SynonymsEntity").append(
+          "KEY",
+          "testingapi")
+          .append("SYNONYMS", "test1,test2")
+          .append("GROUP_NAME", "synonyms_gdn")
+          .append("SYNC", "1")
+          .append("version", 8)
+          .append("CREATED_DATE", date)
+          .append("CREATED_BY", "user-dev-src")
+          .append("UPDATED_DATE", date)
+          .append("UPDATED_BY", "user-dev-src")
+          .append("STORE_ID", "10001")
+          .append("MARK_FOR_DELETE", false);
 
-      mongoHelper.insertInMongo("synonyms_list",synDoc);
+      mongoHelper.insertInMongo("synonyms_list", synDoc);
 
     } catch (ParseException e) {
       e.printStackTrace();
@@ -55,31 +56,34 @@ public class CucumberHooks {
 
 
   @Before("@LogisticOriginChangeEvent")
-  public void beforeLogisticOriginChangeEvent(){
+  public void beforeLogisticOriginChangeEvent() {
     mongoHelper.deleteAllFromMongo("product_atomic_reindex_queue");
-    mongoHelper.deleteFromMongo("product_atomic_reindex_data_candidate","solrfieldName" , "location");
+    mongoHelper.deleteFromMongo("product_atomic_reindex_data_candidate",
+        "solrfieldName",
+        "location");
   }
 
 
   @Before("@FindBoostedKeyword")
-  public void beforeBoostedKeyword(){
+  public void beforeBoostedKeyword() {
 
     Date date = null;
     try {
       date = dateFormat.parse("2017-09-19T05:19:45.468Z");
 
-      Document keywordBoostDoc = new Document("_class" , "com.gdn.x.search.entity.KeywordBoostProduct")
-          .append("keyword" , "testingapi")
-          .append("products" , "MTA-0309256")
-          .append("version" , 0)
-          .append("CREATED_DATE" , date)
-          .append("CREATED_BY" , "user-dev-src")
-          .append("UPDATED_DATE" , date)
-          .append("UPDATED_BY" , "user-dev-src")
-          .append("STORE_ID" , "10001")
-          .append("MARK_FOR_DELETE" , false);
+      Document keywordBoostDoc =
+          new Document("_class", "com.gdn.x.search.entity.KeywordBoostProduct").append("keyword",
+              "testingapi")
+              .append("products", "MTA-0309256")
+              .append("version", 0)
+              .append("CREATED_DATE", date)
+              .append("CREATED_BY", "user-dev-src")
+              .append("UPDATED_DATE", date)
+              .append("UPDATED_BY", "user-dev-src")
+              .append("STORE_ID", "10001")
+              .append("MARK_FOR_DELETE", false);
 
-      mongoHelper.insertInMongo("keyword_boost_keyword_list",keywordBoostDoc);
+      mongoHelper.insertInMongo("keyword_boost_keyword_list", keywordBoostDoc);
 
     } catch (ParseException e) {
       e.printStackTrace();
@@ -88,22 +92,23 @@ public class CucumberHooks {
   }
 
   @Before("@ProcessFailedIds")
-  public void beforeProcessFailedIds(){
+  public void beforeProcessFailedIds() {
 
     Date date = null;
     try {
       date = dateFormat.parse("2017-09-19T05:19:45.468Z");
-      Document failedIdsDoc = new Document("_class" , "com.gdn.x.search.entity.SolrFailedIds")
-          .append("product_id" , "MTA-0309046")
-          .append("id_type" , "PRODUCT_CODE")
-          .append("version" , 0)
-          .append("CREATED_DATE" , date)
-          .append("CREATED_BY" , "user-dev-src")
-          .append("UPDATED_DATE" , date)
-          .append("UPDATED_BY" , "user-dev-src")
-          .append("MARK_FOR_DELETE" , false);
+      Document failedIdsDoc =
+          new Document("_class", "com.gdn.x.search.entity.SolrFailedIds").append("product_id",
+              "MTA-0309046")
+              .append("id_type", "PRODUCT_CODE")
+              .append("version", 0)
+              .append("CREATED_DATE", date)
+              .append("CREATED_BY", "user-dev-src")
+              .append("UPDATED_DATE", date)
+              .append("UPDATED_BY", "user-dev-src")
+              .append("MARK_FOR_DELETE", false);
 
-      mongoHelper.insertInMongo("solr_failed_ids",failedIdsDoc);
+      mongoHelper.insertInMongo("solr_failed_ids", failedIdsDoc);
 
     } catch (ParseException e) {
       e.printStackTrace();
@@ -111,38 +116,40 @@ public class CucumberHooks {
   }
 
   @Before("@Multidelete")
-  public void beforeMultiDelete(){
+  public void beforeMultiDelete() {
 
     Date date = null;
     try {
       date = dateFormat.parse("2017-09-19T05:19:45.468Z");
-      Document multiDeleteKeywordBoostDoc1 = new Document("_class" , "com.gdn.x.search.entity.KeywordBoostProduct")
-          .append("_id","98765")
-          .append("keyword" , "automation")
-          .append("products" , "MTA-0309256,MTA-0306144")
-          .append("version" , 0)
-          .append("CREATED_DATE" , date)
-          .append("CREATED_BY" , "user-dev-src")
-          .append("UPDATED_DATE" , date)
-          .append("UPDATED_BY" , "user-dev-src")
-          .append("STORE_ID" , "10001")
-          .append("MARK_FOR_DELETE" , false);
+      Document multiDeleteKeywordBoostDoc1 =
+          new Document("_class", "com.gdn.x.search.entity.KeywordBoostProduct").append("_id",
+              "98765")
+              .append("keyword", "automation")
+              .append("products", "MTA-0309256,MTA-0306144")
+              .append("version", 0)
+              .append("CREATED_DATE", date)
+              .append("CREATED_BY", "user-dev-src")
+              .append("UPDATED_DATE", date)
+              .append("UPDATED_BY", "user-dev-src")
+              .append("STORE_ID", "10001")
+              .append("MARK_FOR_DELETE", false);
 
-      mongoHelper.insertInMongo("keyword_boost_keyword_list",multiDeleteKeywordBoostDoc1);
+      mongoHelper.insertInMongo("keyword_boost_keyword_list", multiDeleteKeywordBoostDoc1);
 
-      Document multiDeleteKeywordBoostDoc2 = new Document("_class" , "com.gdn.x.search.entity.KeywordBoostProduct")
-          .append("_id","43210")
-          .append("keyword" , "testing")
-          .append("products" , "MTA-0309256,MTA-0306144")
-          .append("version" , 0)
-          .append("CREATED_DATE" , date)
-          .append("CREATED_BY" , "user-dev-src")
-          .append("UPDATED_DATE" , date)
-          .append("UPDATED_BY" , "user-dev-src")
-          .append("STORE_ID" , "10001")
-          .append("MARK_FOR_DELETE" , false);
+      Document multiDeleteKeywordBoostDoc2 =
+          new Document("_class", "com.gdn.x.search.entity.KeywordBoostProduct").append("_id",
+              "43210")
+              .append("keyword", "testing")
+              .append("products", "MTA-0309256,MTA-0306144")
+              .append("version", 0)
+              .append("CREATED_DATE", date)
+              .append("CREATED_BY", "user-dev-src")
+              .append("UPDATED_DATE", date)
+              .append("UPDATED_BY", "user-dev-src")
+              .append("STORE_ID", "10001")
+              .append("MARK_FOR_DELETE", false);
 
-      mongoHelper.insertInMongo("keyword_boost_keyword_list",multiDeleteKeywordBoostDoc2);
+      mongoHelper.insertInMongo("keyword_boost_keyword_list", multiDeleteKeywordBoostDoc2);
 
     } catch (ParseException e) {
       e.printStackTrace();
@@ -150,7 +157,7 @@ public class CucumberHooks {
   }
 
   @Before("@ProcessDeltaStoredEvents")
-  public void beforeProcessingStoredEvents(){
+  public void beforeProcessingStoredEvents() {
 /*
     Date date = null;
     try {
@@ -192,47 +199,52 @@ public class CucumberHooks {
   }
 
   @Before("@ItemChangeDeleteEvent")
-  public void beforeItemChangeDeleteEvent(){
-    mongoHelper.deleteFromMongo("deleted_products","_id","AAA-60015-00008");
+  public void beforeItemChangeDeleteEvent() {
+    mongoHelper.deleteFromMongo("deleted_products", "_id", "AAA-60015-00008");
   }
 
   @Before("@ProductChangeDeleteEvent")
-  public void beforeProductChangeDeleteEvent(){
-    mongoHelper.deleteFromMongo("deleted_products","_id","MTA-66666");
+  public void beforeProductChangeDeleteEvent() {
+    mongoHelper.deleteFromMongo("deleted_products", "_id", "MTA-66666");
   }
 
   @Before("@StoreClosedWithDelayShippingFalse")
-  public void beforeStoreClosedWithDelayShippingFalse(){
+  public void beforeStoreClosedWithDelayShippingFalse() {
     mongoHelper.deleteAllFromMongo("scheduled_events");
   }
 
   @Before("@StoreClosedDelayShipping")
-  public void beforeStoreClosedWithDelayShipping(){
+  public void beforeStoreClosedWithDelayShipping() {
     mongoHelper.deleteAllFromMongo("scheduled_events");
   }
 
   @Before("@AddPlaceholderRules")
-  public void beforeAddingDeleteDuplicatePlaceholder(){
-    mongoHelper.deleteFromMongo("placeholder_im_rule","_id", "5b0649b782ce7044d664bcc6");
+  public void beforeAddingDeleteDuplicatePlaceholder() {
+    mongoHelper.deleteFromMongo("placeholder_im_rule", "_id", "5b0649b782ce7044d664bcc6");
   }
 
   @Before("@AddFlight")
-  public void beforeAddingDeleteDuplicateFlight(){
-    mongoHelper.deleteFromMongo("flight_dictionary","_id","5b0649b782ce7044d664bcc6");
+  public void beforeAddingDeleteDuplicateFlight() {
+    mongoHelper.deleteFromMongo("flight_dictionary", "_id", "5b0649b782ce7044d664bcc6");
   }
 
   @Before("@AddSearchRule")
-  public void beforeAddingDeleteDuplicateSearchRule(){
-    mongoHelper.deleteFromMongo("search_rule","_id", "5b0649b782ce7044d664bcc6");
+  public void beforeAddingDeleteDuplicateSearchRule() {
+    mongoHelper.deleteFromMongo("search_rule", "_id", "5b0649b782ce7044d664bcc6");
   }
 
   @Before("@AddTrainMapping")
-  public void beforeAddingDeleteDuplicateTrainMapping(){
-    mongoHelper.deleteFromMongo("train_dictionary","_id", "5b0649b782ce7044d664bcc6");
+  public void beforeAddingDeleteDuplicateTrainMapping() {
+    mongoHelper.deleteFromMongo("train_dictionary", "_id", "5b0649b782ce7044d664bcc6");
   }
 
   @Before("@ItemChangeItemDataChange")
-  public void beforeItemDataChange(){
+  public void beforeItemDataChange() {
     mongoHelper.deleteAllFromMongo("scheduled_events");
+  }
+
+  @Before("@AddMerchantSort")
+  public void beforeAddMerchantSort() {
+    mongoHelper.deleteFromMongo("merchant_sort", "merchantId", "TH7-15791");
   }
 }

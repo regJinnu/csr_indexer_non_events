@@ -3,6 +3,7 @@ package com.gdn.qa.x_search.api.test.utils;
 import com.gdn.qa.x_search.api.test.api.services.SolrFieldNames;
 import com.gdn.qa.x_search.api.test.models.SolrResults;
 import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.beans.DocumentObjectBinder;
@@ -21,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+@Slf4j
 @Component
 public class SolrHelper {
 
@@ -103,61 +104,64 @@ public class SolrHelper {
     HttpSolrClient httpSolrClient = initializeSolr(searchServiceProperties.get("SOLR_URL"));
     SolrQuery solrQuery = initializeSolrQuery(queryText,requestHandler,rows,field,"");
     QueryResponse queryResponse = httpSolrClient.query(solrQuery);
-    SolrDocument solrDocument = queryResponse.getResults().get(0);
+    SolrDocumentList results = queryResponse.getResults();
+    UpdateResponse updateResponse = null;
+    for (SolrDocument solrDocument:results
+         ) {
+      Map<String, Object> solrUpdate = new HashMap<>();
+      solrUpdate.put(SolrFieldNames.ID, solrDocument.getFieldValue("id"));
 
-    Map<String, Object> solrUpdate = new HashMap<>();
-    solrUpdate.put(SolrFieldNames.ID, solrDocument.getFieldValue("id"));
-
-    switch (caseToBeUpdated){
-      case "oos":
-        solrUpdate.put(SolrFieldNames.IS_IN_STOCK, "0" );
-        break;
-      case "nonOOS":
-        solrUpdate.put(SolrFieldNames.IS_IN_STOCK, "1" );
-        break;
-      case "reviewAndRating":
-        solrUpdate.put(SolrFieldNames.RATING, "23" );
-        solrUpdate.put(SolrFieldNames.REVIEW_COUNT,100);
-        break;
-      case "categoryReindex":
-        solrUpdate.put(SolrFieldNames.IS_IN_STOCK, "0" );
-        solrUpdate.put(SolrFieldNames.RATING, "40" );
-        solrUpdate.put(SolrFieldNames.REVIEW_COUNT,10);
-        solrUpdate.put(SolrFieldNames.MERCHANT_COMMISSION_TYPE,"CC");
-        solrUpdate.put(SolrFieldNames.MERCHANT_RATING,30.0);
-        solrUpdate.put(SolrFieldNames.LOCATION,"Origin-ABC");
-        break;
-      case "closedStore":
-        solrUpdate.put(SolrFieldNames.START_DATE_STORE_CLOSED,1111111111L);
-        solrUpdate.put(SolrFieldNames.END_DATE_STORE_CLOSED,22222222L);
-        solrUpdate.put(SolrFieldNames.IS_DELAY_SHIPPING,3);
-        break;
-      case "logisticOption":
-        solrUpdate.put(SolrFieldNames.MERCHANT_COMMISSION_TYPE,"TEST_COMM_TYPE");
-        solrUpdate.put(SolrFieldNames.LOGISTIC_OPTIONS,"TEST_LOGISTIC_OPTION");
-        solrUpdate.put(SolrFieldNames.LOCATION,"TEST_LOCATION");
-        break;
-      case "price":
-        solrUpdate.put(SolrFieldNames.OFFER_PRICE,4545455.45);
-        solrUpdate.put(SolrFieldNames.LIST_PRICE,4545455.50);
-        break;
-      case "offToOn":
-        solrUpdate.put(SolrFieldNames.OFF_2_ON,4);
-        break;
-      case "buyableAndPublished":
-        solrUpdate.put(SolrFieldNames.BUYABLE,4);
-        solrUpdate.put(SolrFieldNames.PUBLISHED,4);
-        break;
-      default:
+      switch (caseToBeUpdated){
+        case "oos":
+          solrUpdate.put(SolrFieldNames.IS_IN_STOCK, "0" );
           break;
+        case "nonOOS":
+          solrUpdate.put(SolrFieldNames.IS_IN_STOCK, "1" );
+          break;
+        case "reviewAndRating":
+          solrUpdate.put(SolrFieldNames.RATING, "23" );
+          solrUpdate.put(SolrFieldNames.REVIEW_COUNT,100);
+          break;
+        case "categoryReindex":
+          solrUpdate.put(SolrFieldNames.IS_IN_STOCK, "0" );
+          solrUpdate.put(SolrFieldNames.RATING, "40" );
+          solrUpdate.put(SolrFieldNames.REVIEW_COUNT,10);
+          solrUpdate.put(SolrFieldNames.MERCHANT_COMMISSION_TYPE,"CC");
+          solrUpdate.put(SolrFieldNames.MERCHANT_RATING,30.0);
+          solrUpdate.put(SolrFieldNames.LOCATION,"Origin-ABC");
+          break;
+        case "closedStore":
+          solrUpdate.put(SolrFieldNames.START_DATE_STORE_CLOSED,1111111111L);
+          solrUpdate.put(SolrFieldNames.END_DATE_STORE_CLOSED,22222222L);
+          solrUpdate.put(SolrFieldNames.IS_DELAY_SHIPPING,3);
+          break;
+        case "logisticOption":
+          solrUpdate.put(SolrFieldNames.MERCHANT_COMMISSION_TYPE,"TEST_COMM_TYPE");
+          solrUpdate.put(SolrFieldNames.LOGISTIC_OPTIONS,"TEST_LOGISTIC_OPTION");
+          solrUpdate.put(SolrFieldNames.LOCATION,"TEST_LOCATION");
+          break;
+        case "price":
+          solrUpdate.put(SolrFieldNames.OFFER_PRICE,4545455.45);
+          solrUpdate.put(SolrFieldNames.LIST_PRICE,4545455.50);
+          break;
+        case "offToOn":
+          solrUpdate.put(SolrFieldNames.OFF_2_ON,4);
+          break;
+        case "buyableAndPublished":
+          solrUpdate.put(SolrFieldNames.BUYABLE,4);
+          solrUpdate.put(SolrFieldNames.PUBLISHED,4);
+          break;
+        default:
+          break;
+      }
+
+      SolrInputDocument solrInputDocument = new SolrInputDocument();
+      solrInputDocument.addField(SolrFieldNames.ID,solrUpdate.remove(SolrFieldNames.ID));
+      for(Map.Entry<String, Object> entry : solrUpdate.entrySet())
+        solrInputDocument.addField(entry.getKey(), Collections.singletonMap("set",entry.getValue()));
+
+       updateResponse = httpSolrClient.add(solrInputDocument);
     }
-
-    SolrInputDocument solrInputDocument = new SolrInputDocument();
-    solrInputDocument.addField(SolrFieldNames.ID,solrUpdate.remove(SolrFieldNames.ID));
-    for(Map.Entry<String, Object> entry : solrUpdate.entrySet())
-    solrInputDocument.addField(entry.getKey(), Collections.singletonMap("set",entry.getValue()));
-
-    UpdateResponse updateResponse = httpSolrClient.add(solrInputDocument);
 
     return updateResponse.getStatus();
   }
@@ -212,5 +216,4 @@ public class SolrHelper {
       e.printStackTrace();
     }
   }
-
 }

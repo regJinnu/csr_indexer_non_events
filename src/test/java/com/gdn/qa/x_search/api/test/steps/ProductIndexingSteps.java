@@ -338,9 +338,9 @@ public class ProductIndexingSteps {
           location);
 
       assertThat("Test Product not set in SOLR", reviewCount, equalTo(10));
-      assertThat("Test Product not set in SOLR", rating, equalTo("4"));
+      assertThat("Test Product not set in SOLR", rating, equalTo("40"));
       assertThat("Test Product not set in SOLR", oosFlag, equalTo(0));
-      assertThat("Test Product not set in SOLR", merchantRating, equalTo(3.0));
+      assertThat("Test Product not set in SOLR", merchantRating, equalTo(30.0));
       assertThat("Test Product not set in SOLR", merchantCommissionType, equalTo("CC"));
       assertThat("Test Product not set in SOLR", location, equalTo("Origin-ABC"));
 
@@ -450,6 +450,14 @@ public class ProductIndexingSteps {
           .append("version", 1)
           .append("MARK_FOR_DELETE", false);
 
+      Document indexDoc4 = new Document("_class", "com.gdn.x.search.entity.ReIndexEntity").append(
+          "productId", "MTA-0406229")
+          .append("status", 0)
+          .append("isFailed", 0)
+          .append("idType", "productCode")
+          .append("version", 1)
+          .append("MARK_FOR_DELETE", false);
+
       Document indexDoc2 = new Document("_class", "com.gdn.x.search.entity.ReIndexEntity").append(
           "productId", "TOQ-15126-00352")
           .append("status", 0)
@@ -469,10 +477,11 @@ public class ProductIndexingSteps {
       mongoHelper.insertInMongo("reindex_entity", indexDoc1);
       mongoHelper.insertInMongo("reindex_entity", indexDoc2);
       mongoHelper.insertInMongo("reindex_entity", indexDoc3);
+      mongoHelper.insertInMongo("reindex_entity", indexDoc4);
 
       assertThat("Test data insertion in Mongo failed",
           mongoHelper.countOfRecordsInCollection("reindex_entity"),
-          equalTo(3L));
+          equalTo(4L));
 
       solrHelper.deleteSolrDocByQuery(searchServiceData.getQueryForReindexOfDeletedProd());
 
@@ -484,8 +493,11 @@ public class ProductIndexingSteps {
           equalTo(0L));
 
       configHelper.findAndUpdateConfig("force.stop.solr.updates", "false");
-      configHelper.findAndUpdateConfig("reindex.status.of.node.1", "1");
-      configHelper.findAndUpdateConfig("reindex.status", "1");
+/*      configHelper.findAndUpdateConfig("reindex.status.of.node.1", "1");
+      configHelper.findAndUpdateConfig("reindex.status", "1");*/
+
+      ResponseApi<GdnBaseRestResponse> responsePubEvent = searchServiceController.publishReindexEvents();
+      assertThat("Status Code Not 200", responsePubEvent.getResponse().getStatusCode(), equalTo(200));
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -515,7 +527,7 @@ public class ProductIndexingSteps {
 
       String queryForCatReindex = searchServiceData.getQueryForCategoryReindex();
 
-      log.warn("--searchServiceData.getQueryForCategoryReindex()--" + queryForCatReindex);
+      log.warn("--searchServiceData.getQueryForCategoryReindex()--{}-" , queryForCatReindex);
 
       int reviewCount = solrHelper.getSolrProd(queryForCatReindex, SELECT_HANDLER, "reviewCount", 1)
           .get(0)
@@ -586,8 +598,11 @@ public class ProductIndexingSteps {
     try {
       date = dateFormat.parse("2018-07-30T11:45:39.235Z");
 
+      log.error("----PC---{}",searchServiceData.getQueryForProductCode().split(":")[1]);
+      log.error("----iSku---{}",searchServiceData.getItemSkuForStoredDelta().split(":")[1]);
+
       Document storedDeltaDoc1 = new Document("_class" , "com.gdn.x.search.entity.EventIndexingEntity")
-          .append("code" , "MTA-0305736")
+          .append("code" , searchServiceData.getQueryForProductCode().split(":")[1])
           .append("type" , "productCode")
           .append("isFailed", "0")
           .append("eventType" , "ALL")
@@ -600,7 +615,20 @@ public class ProductIndexingSteps {
           .append("MARK_FOR_DELETE" , false);
 
       Document storedDeltaDoc2 = new Document("_class" , "com.gdn.x.search.entity.EventIndexingEntity")
-          .append("code" , "TH7-15791-00161-00001")
+          .append("code" , searchServiceData.getItemSkuForStoredDelta().split(":")[1])
+          .append("type" , "id")
+          .append("isFailed", "0")
+          .append("eventType" , "LOCATION_AND_INVENTORY_SERVICE")
+          .append("eventName" , "productNonOutOfStockEventListener")
+          .append("version" , 0)
+          .append("CREATED_DATE" , date)
+          .append("CREATED_BY" , "user-dev-src")
+          .append("UPDATED_DATE" , date)
+          .append("UPDATED_BY" , "user-dev-src")
+          .append("MARK_FOR_DELETE" , false);
+
+      Document storedDeltaDoc3 = new Document("_class" , "com.gdn.x.search.entity.EventIndexingEntity")
+          .append("code" , searchServiceData.getQueryForReindexOfDeletedProd().split(":")[1])
           .append("type" , "id")
           .append("isFailed", "0")
           .append("eventType" , "LOCATION_AND_INVENTORY_SERVICE")
@@ -614,6 +642,7 @@ public class ProductIndexingSteps {
 
       mongoHelper.insertInMongo("indexing_list_new",storedDeltaDoc1);
       mongoHelper.insertInMongo("indexing_list_new",storedDeltaDoc2);
+      mongoHelper.insertInMongo("indexing_list_new",storedDeltaDoc3);
 
     } catch (ParseException e) {
       e.printStackTrace();

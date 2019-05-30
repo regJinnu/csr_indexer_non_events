@@ -1,4 +1,4 @@
-@XproductEventHandlingFeature @TestSuiteID=10541665
+@XproductEventHandlingFeature @TestSuiteID=11050177
 Feature:Verifying item and product change event listeners
 
   @ItemChangeEvent
@@ -76,6 +76,12 @@ Feature:Verifying item and product change event listeners
     When [search-service] consumes item change event with itemChangeEventType as PRISTINE_MAPPING_CHANGE
     Then [search-service] pristine name,id and sales catalog is updated accordingly
 
+  @ItemChangePristineMappingChange1
+  Scenario: Verify item change event with PRISTINE_MAPPING_CHANGE and no PristineDataItem
+    Given [search-service] update fields in SOLR to test data
+    When [search-service] consumes item change event with itemChangeEventType as PRISTINE_MAPPING_CHANGE and no PristineDataItem
+    Then [search-service] complete SOLR doc is updated instead of atomic update
+
   @ItemChangeItemDataChange
   Scenario: Verify item change event with ITEM_DATA_CHANGE itemChangeEventType
     Given [search-service] check buyable,published field in SOLR for the sku
@@ -119,3 +125,15 @@ Feature:Verifying item and product change event listeners
     When [search-service] consumes item change event with itemChangeEventType with both data and price change
     Then [search-service] buyable,published field are added in SOLR with 'no' schedule in DB
     And [search-service] price information is properly updated for the Sku with itemChangeEventType and 'no' discount schedule
+
+  @ItemChangeDataWithPublished
+  Scenario: Verify item change event with ITEM_DATA_CHANGE with published as true
+    Given [search-service] remove the SOLR doc from SOLR
+    When [search-service] consumes item change event with itemChangeEventType as ITEM_DATA_CHANGE and published as 'true'
+    Then [search-service] complete SOLR doc is updated instead of atomic update
+
+  @ItemChangeDataWithPublished
+  Scenario: Verify item change event with ITEM_DATA_CHANGE with published as false
+    Given [search-service] check buyable,published field in SOLR for the sku
+    When [search-service] consumes item change event with itemChangeEventType as ITEM_DATA_CHANGE and published as 'false'
+    Then [search-service] complete SOLR doc is updated instead of atomic update

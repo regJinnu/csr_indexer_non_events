@@ -134,7 +134,7 @@ public class SearchServiceData {
   private String category;
   private List<String> blibliCategoryHierarchy;
   private String productItemId;
-  private enum actionType{};
+  private enum actionType{}
   private String pristineAttributesName;
   private String pristineAttributesValue;
   private String pristineID;
@@ -165,6 +165,11 @@ public class SearchServiceData {
   private String logisticOptionList;
   private String logisticProductCodeForOrigin;
   private String originLocation;
+  private String merchantId;
+  private String merchantName;
+  private String searchKeyword;
+  private String itemSkuForOffline;
+  private String pickupPointCode;
   private ResponseApi<GdnRestListResponse<TrainResponse>> getAllTrain;
   private ResponseApi<GdnRestListResponse<SearchRuleResponse>> getAllSearchRule;
   private ResponseApi<GdnRestListResponse<PlaceholderRuleResponse>> getAllPlaceholder;
@@ -187,12 +192,13 @@ public class SearchServiceData {
   private ResponseApi<GdnRestListResponse<StopWordResponse>> findStopword;
   private ResponseApi<GdnRestSingleResponse<StopWordResponse>> findStopWordByID;
   private ResponseApi<GdnRestSingleResponse<SetConfigResponse>> setConfigResponse;
-  private ResponseApi<GdnRestListResponse<KeywordBoostProductResponse>> findBoostedKeyword;
-  private ResponseApi<GdnRestSingleResponse<KeywordBoostProductResponse>> findBoostedKeywordByID;
+  private ResponseApi<GdnRestListResponse<BoostedKeywordResponse>> findBoostedKeyword;
+  private ResponseApi<GdnRestSingleResponse<BoostedKeywordResponse>> findBoostedKeywordByID;
   private ResponseApi<GdnRestSingleResponse<ProductResponse>> findDataByProductID;
   private ResponseApi<GdnRestSingleResponse> processFailedIds;
   private ResponseApi<GdnRestSingleResponse<SimpleStringResponse>> listReindexServices;
   private ResponseApi<GdnRestSingleResponse<StatusReIndexResponse>> reindexStatus;
   private ResponseApi<GdnRestSingleResponse<SimpleStringResponse>> productDataFeed;
+  private ResponseApi<GdnRestListResponse<MerchantSortResponseDto>> merchantSortList;
+  private ResponseApi<GdnRestSingleResponse<MerchantSortResponseDto>> merchantSortFindByMerchantId;
 }
-
