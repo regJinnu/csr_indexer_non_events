@@ -1682,4 +1682,14 @@ public class SearchServiceController extends ServiceApi {
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
+
+  public ResponseApi<GdnBaseRestResponse> publishReindexEvents(){
+    Response response =
+        service("searchservice")
+            .queryParam("numHost",1)
+            .post(BASEPATH + "index/publish-reindex-events");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
 }

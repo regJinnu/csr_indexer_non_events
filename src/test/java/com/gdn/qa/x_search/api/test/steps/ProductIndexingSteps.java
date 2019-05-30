@@ -450,6 +450,14 @@ public class ProductIndexingSteps {
           .append("version", 1)
           .append("MARK_FOR_DELETE", false);
 
+      Document indexDoc4 = new Document("_class", "com.gdn.x.search.entity.ReIndexEntity").append(
+          "productId", "MTA-0406229")
+          .append("status", 0)
+          .append("isFailed", 0)
+          .append("idType", "productCode")
+          .append("version", 1)
+          .append("MARK_FOR_DELETE", false);
+
       Document indexDoc2 = new Document("_class", "com.gdn.x.search.entity.ReIndexEntity").append(
           "productId", "TOQ-15126-00352")
           .append("status", 0)
@@ -469,10 +477,11 @@ public class ProductIndexingSteps {
       mongoHelper.insertInMongo("reindex_entity", indexDoc1);
       mongoHelper.insertInMongo("reindex_entity", indexDoc2);
       mongoHelper.insertInMongo("reindex_entity", indexDoc3);
+      mongoHelper.insertInMongo("reindex_entity", indexDoc4);
 
       assertThat("Test data insertion in Mongo failed",
           mongoHelper.countOfRecordsInCollection("reindex_entity"),
-          equalTo(3L));
+          equalTo(4L));
 
       solrHelper.deleteSolrDocByQuery(searchServiceData.getQueryForReindexOfDeletedProd());
 
@@ -484,8 +493,11 @@ public class ProductIndexingSteps {
           equalTo(0L));
 
       configHelper.findAndUpdateConfig("force.stop.solr.updates", "false");
-      configHelper.findAndUpdateConfig("reindex.status.of.node.1", "1");
-      configHelper.findAndUpdateConfig("reindex.status", "1");
+/*      configHelper.findAndUpdateConfig("reindex.status.of.node.1", "1");
+      configHelper.findAndUpdateConfig("reindex.status", "1");*/
+
+      ResponseApi<GdnBaseRestResponse> responsePubEvent = searchServiceController.publishReindexEvents();
+      assertThat("Status Code Not 200", responsePubEvent.getResponse().getStatusCode(), equalTo(200));
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -515,7 +527,7 @@ public class ProductIndexingSteps {
 
       String queryForCatReindex = searchServiceData.getQueryForCategoryReindex();
 
-      log.warn("--searchServiceData.getQueryForCategoryReindex()--" + queryForCatReindex);
+      log.warn("--searchServiceData.getQueryForCategoryReindex()--{}-" , queryForCatReindex);
 
       int reviewCount = solrHelper.getSolrProd(queryForCatReindex, SELECT_HANDLER, "reviewCount", 1)
           .get(0)
