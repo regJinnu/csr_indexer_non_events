@@ -84,7 +84,7 @@ public class ProductAdjustmentEventsSteps  {
 
   @When("^\\[search-service] publish the promo Bundling Activated event$")
   public void searchServicePublishThePromoBundlingActivatedEvent() {
-    kafkaHelper.promoBundlingActivateEvent(searchServiceData.getPromoBundlingId(),
+    kafkaHelper.promoBundlingActivateEvent("1234",
         searchServiceData.getPromoItemSKU(),
         searchServiceData.getPromoBundlingType(),
         Collections.singletonList(searchServiceData.getComplementaryProducts()));

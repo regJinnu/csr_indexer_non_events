@@ -1,7 +1,7 @@
-@BusinessPartnerStoreClosedEvent @TestSuiteID=11050177
+@BusinessPartnerStoreClosedEvent @TestSuiteID=11460962
 Feature: Verify indexing by business partner store closed events
 
-  @StoreClosedWithDelayShippingFalse
+  @StoreClosedWithDelayShippingFalse @Regression
   Scenario: Verify store closed events with delay shipping off
     Given [search-service] verify store closed start and end timestamp fields in SOLR for the product
     When [search-service] consumes store closed event with delay shipping as 'false'
@@ -12,7 +12,7 @@ Feature: Verify indexing by business partner store closed events
     And [search-service] documents are created in mongo collection
     And [search-service] solr documents are updated on running scheduled events job
 
-  @StoreClosedWithDelayShippingTrue
+  @StoreClosedWithDelayShippingTrue @Regression
   Scenario: Verify store closed events with delay shipping on
     Given [search-service] verify store closed start and end timestamp fields in SOLR for the product
     When [search-service] consumes store closed event with delay shipping as 'true'
@@ -21,7 +21,7 @@ Feature: Verify indexing by business partner store closed events
     And [search-service] storeClose field is not set for delayShipping true
     And [search-service] documents are not created in mongo collection
 
-  @StoreClosedDelayShippingWithForceStopTrue
+  @StoreClosedDelayShippingWithForceStopTrue @Regression
   Scenario: Verify store closed events with delay shipping on
     Given [search-service] verify store closed start and end timestamp fields in SOLR for the product
     And [search-service] force.stop flag is set to 'true'
@@ -32,7 +32,7 @@ Feature: Verify indexing by business partner store closed events
     And [search-service] storeClose field is not set for delayShipping true
     And [search-service] documents are not created in mongo collection
 
- @BPProfileUpdateFields
+ @BPProfileUpdateFields @Regression
   Scenario: Verify Business Partner Profile update field event
     Given [search-service] cnc is set as true in products for merchant
     And [search-service] force.stop flag is set to 'false'

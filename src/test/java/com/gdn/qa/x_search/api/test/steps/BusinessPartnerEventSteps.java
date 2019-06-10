@@ -11,7 +11,6 @@ import com.gdn.qa.x_search.api.test.utils.KafkaHelper;
 import com.gdn.qa.x_search.api.test.utils.MongoHelper;
 import com.gdn.qa.x_search.api.test.utils.SolrHelper;
 import com.mongodb.client.FindIterable;
-import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
