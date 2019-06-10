@@ -129,13 +129,15 @@ public class ProductAdjustmentEventsSteps  {
 
   @Then("^\\[search-service] check if the promo Bundling Deactivated event is consumed and check in solr$")
   public void searchServiceCheckIfThePromoBundlingDeactivatedEventIsConsumedAndCheckInSolr() {
-    String promoOffer= null;
+    Boolean promoOffer=false;
     try {
-      promoOffer = solrHelper.getSolrProd(searchServiceData.getPromoItemSKUinSOLR(),SELECT_HANDLER,"activePromos",1)
-          .get(0).getActivePromos().get(0);
+      promoOffer = solrHelper.getSolrProd(searchServiceData.getPromoItemSKUinSOLR(),
+          SELECT_HANDLER,
+          "activePromos",
+          1).isEmpty();
+      assertThat(promoOffer, (equalTo(true)));
     } catch (Exception e) {
       e.printStackTrace();
     }
-    assertThat(promoOffer,equalTo(null));
   }
 }
