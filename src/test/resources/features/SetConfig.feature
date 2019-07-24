@@ -13,7 +13,7 @@ Feature: Set Config related API's
     When  [search-service] send request to update field cache
     Then [search-service] update field cache request response success should be 'true'
 
-  @UpdateNonExistingField
+  @UpdateNonExistingField @Regression
   Scenario:  User wants to update field cache for non existing field
     Given [search-service] prepare request to update the non existing field cache using properties using properties data
     When  [search-service] send request to update non existing field cache

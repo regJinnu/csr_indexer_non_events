@@ -1,6 +1,8 @@
 package com.gdn.qa.x_search.api.test.steps;
 
+import com.gdn.qa.automation.core.restassured.ResponseApi;
 import com.gdn.qa.x_search.api.test.CucumberStepsDefinition;
+import com.gdn.qa.x_search.api.test.api.services.SearchServiceController;
 import com.gdn.qa.x_search.api.test.data.SearchServiceData;
 import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
 import com.gdn.qa.x_search.api.test.utils.ConfigHelper;
@@ -34,9 +36,11 @@ public class PristineEventsSteps {
   private SearchServiceProperties searchServiceProperties;
   @Autowired
   private SearchServiceData searchServiceData;
+  @Autowired
+  private SearchServiceController searchServiceController;
 
   @Given("^\\[search-service] set all the values for publishing the pristine event for '(.*)' category$")
-  public void searchServiceSetAllTheValuesForPublishingThePristineEventForPristineCategory(String pristine) {
+  public void setAllTheValuesForPublishingThePristineEvent(String pristine) {
 
     configHelper.findAndUpdateConfig("product.level.id", PRODUCT_LEVEL0ID);
     configHelper.findAndUpdateConfig("service.product.level.id", PRODUCT_LEVEL0ID);
@@ -52,6 +56,21 @@ public class PristineEventsSteps {
       searchServiceData.setHandphonePristineID(searchServiceProperties.get("handphonePristineID"));
       searchServiceData.setItemCount(searchServiceProperties.get("itemCount"));
 
+      ResponseApi responseApi;
+      responseApi = searchServiceController.prepareRequestForIndexing("productCodes",
+          searchServiceData.getHandphonePristineID());
+      searchServiceData.setSearchServiceResponse(responseApi);
+      responseApi = searchServiceData.getSearchServiceResponse();
+      assertThat("Status Code Not 200", responseApi.getResponse().getStatusCode(), equalTo(200));
+      try {
+        Thread.sleep(20000);
+        solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+
 
     } else if (pristine.equals("camera")) {
 
@@ -63,7 +82,23 @@ public class PristineEventsSteps {
       searchServiceData.setCameraPristineID(searchServiceProperties.get("cameraPristineID"));
       searchServiceData.setItemCount(searchServiceProperties.get("itemCount"));
 
+      ResponseApi responseApi;
+      responseApi = searchServiceController.prepareRequestForIndexing("productCodes",
+          searchServiceData.getCameraPristineID());
+      searchServiceData.setSearchServiceResponse(responseApi);
+      responseApi = searchServiceData.getSearchServiceResponse();
+      assertThat("Status Code Not 200", responseApi.getResponse().getStatusCode(), equalTo(200));
+      try {
+        Thread.sleep(20000);
+        solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+
     } else if (pristine.equals("computer")) {
+
       searchServiceData.setProductIdforPristine(searchServiceProperties.get("productIdforPristine"));
       searchServiceData.setItemCount(searchServiceProperties.get("itemCount"));
       searchServiceData.setBlibliCategoryHierarchy(Collections.singletonList(searchServiceProperties
@@ -72,10 +107,25 @@ public class PristineEventsSteps {
       searchServiceData.setPristineID(searchServiceProperties.get("pristineID"));
     }
 
+    ResponseApi responseApi;
+    responseApi = searchServiceController.prepareRequestForIndexing("productCodes",
+        searchServiceData.getPristineID());
+    searchServiceData.setSearchServiceResponse(responseApi);
+    responseApi = searchServiceData.getSearchServiceResponse();
+    assertThat("Status Code Not 200", responseApi.getResponse().getStatusCode(), equalTo(200));
+    try {
+      Thread.sleep(20000);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
   }
 
   @When("^\\[search-service] publish the pristine event for '(.*)' by providing '(.*)' '(.*)' '(.*)' values for each category$")
-  public void searchServicePublishThePristineEventForPristineByProvidingCategoryPristineAttributesNamePristineAttributesValueValuesForEachCategory(
+  public void publishThePristineEvent(
       String pristine,
       String category,
       String PristineAttributesName,
@@ -151,7 +201,7 @@ public class PristineEventsSteps {
   }
 
   @Then("^\\[search-service] verify if the '(.*)' is updated for that particular ID with '(.*)' for '(.*)' category in SOLR$")
-  public void searchServiceVerifyIfThePristineAttributesNameIsUpdatedForThatParticularIDWithPristineAttributesValueForPristineCategoryInSOLR(
+  public void verifyIfThePristineAttributesNameIsUpdatedInSOLR(
       String pristineAttributesName,
       String pristineAttributesValue,
       String pristine) {

@@ -1,4 +1,4 @@
-@PristineEventsAutomationFeature @TestSuiteID=11050177
+@PristineEventsAutomationFeature @TestSuiteID=11460962
 Feature: Automation of pristine related events
 
   @PristineEvents @Regression
@@ -8,7 +8,7 @@ Feature: Automation of pristine related events
     Then [search-service] verify if the '<PristineAttributesName>' is updated for that particular ID with '<PristineAttributesValue>' for '<pristine>' category in SOLR
 
     Examples:
-    | pristine  | category        |   PristineAttributesName   | PristineAttributesValue |
-    | handphone | HANDPHONE       | HANDPHONE_OPERATING_SYSTEM | ANDROID                 |
-    | camera    | KAMERA          |  CAMERA_MODEL              |  x5                     |
-    | computer  | Komputer&Laptop | COMPUTER_BRAND             |  hp                     |
+      | pristine  | category        | PristineAttributesName     | PristineAttributesValue |
+      | handphone | HANDPHONE       | HANDPHONE_OPERATING_SYSTEM | ANDROID                 |
+      | camera    | KAMERA          | CAMERA_MODEL               | x5                      |
+      | computer  | Komputer&Laptop | COMPUTER_BRAND             | hp                      |
