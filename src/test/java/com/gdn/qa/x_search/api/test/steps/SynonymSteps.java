@@ -60,23 +60,23 @@ public class SynonymSteps {
 
   @When("^\\[search-service] send find synonym by key request$")
   public void searchServiceSendFindSynonymByKeyRequest() {
-    ResponseApi<GdnRestSingleResponse<SynonymsResponse>> response =
+    ResponseApi<GdnRestListResponse<SynonymsResponse>> response =
         searchServiceController.findByKey();
     searchServiceData.setFindSynonym(response);
   }
 
   @Then("^\\[search-service] find synonym by key request response success should be '(.*)'$")
   public void searchServiceFindSynonymByKeyRequestResponseSuccessShouldBeTrue(Boolean isSuccess) {
-    ResponseApi<GdnRestSingleResponse<SynonymsResponse>> response =
+    ResponseApi<GdnRestListResponse<SynonymsResponse>> response =
         searchServiceData.getFindSynonym();
     boolean result = response.getResponseBody().isSuccess();
-    String autoSynonymnId = response.getResponseBody().getValue().getId();
+    String autoSynonymnId = response.getResponseBody().getContent().get(0).getId();
     searchServiceData.setAutoSynonymnId(autoSynonymnId);
     assertThat("is Success is wrong", result, equalTo(isSuccess));
-    assertThat(response.getResponseBody().getValue().getKey(), equalToIgnoringCase("testingapi"));
-    assertThat(response.getResponseBody().getValue().getSynonyms(),
+    assertThat(response.getResponseBody().getContent().get(0).getKey(), equalToIgnoringCase("testingapi"));
+    assertThat(response.getResponseBody().getContent().get(0).getSynonyms(),
         equalToIgnoringCase("test1,test2"));
-    assertThat(response.getResponseBody().getValue().getGroupName(),
+    assertThat(response.getResponseBody().getContent().get(0).getGroupName(),
         equalToIgnoringCase("synonyms_gdn"));
   }
 
@@ -181,7 +181,7 @@ public class SynonymSteps {
 
   @When("^\\[search-service] send find synonym by wrong  key request$")
   public void searchServiceSendFindSynonymByWrongKeyRequest() {
-    ResponseApi<GdnRestSingleResponse<SynonymsResponse>> response =
+    ResponseApi<GdnRestListResponse<SynonymsResponse>> response =
         searchServiceController.findByWrongKey();
     searchServiceData.setFindSynonym(response);
   }
@@ -189,10 +189,10 @@ public class SynonymSteps {
   @Then("^\\[search-service] find synonym by wrong key request response success should be false$")
   public void searchServiceFindSynonymByWrongKeyRequestResponseSuccessShouldBeFalse()
   {
-    ResponseApi<GdnRestSingleResponse<SynonymsResponse>> response =
+    ResponseApi<GdnRestListResponse<SynonymsResponse>> response =
         searchServiceData.getFindSynonym();
-   assertThat(response.getResponseBody().getErrorMessage(),equalToIgnoringCase("DATA_NOT_FOUND"));
-   assertThat(response.getResponseBody().getErrorCode(),equalToIgnoringCase("empty data"));
+   assertThat(response.getResponseBody().getErrorMessage(),equalTo(null));
+   assertThat(response.getResponseBody().getErrorCode(),equalTo(null));
   }
 
 

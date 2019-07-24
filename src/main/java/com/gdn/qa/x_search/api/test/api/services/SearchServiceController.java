@@ -747,20 +747,20 @@ public class SearchServiceController extends ServiceApi {
     });
   }
 
-  public ResponseApi<GdnRestSingleResponse<SynonymsResponse>> findByKey() {
+  public ResponseApi<GdnRestListResponse<SynonymsResponse>> findByKey() {
     Response response =
-        service("searchservice").queryParam("key", searchServiceData.getSearchTerm())
-            .get(BASEPATH + "synonyms/find-by-key");
+        service("searchservice").queryParam("word", searchServiceData.getSearchTerm())
+            .get(BASEPATH + "synonyms/find");
     response.getBody().prettyPrint();
-    return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<SynonymsResponse>>() {
+    return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<SynonymsResponse>>() {
     });
   }
 
-  public ResponseApi<GdnRestSingleResponse<SynonymsResponse>> findByWrongKey() {
-    Response response = service("searchservice").queryParam("key", searchServiceData.getWrongname())
-        .get(BASEPATH + "synonyms/find-by-key");
+  public ResponseApi<GdnRestListResponse<SynonymsResponse>> findByWrongKey() {
+    Response response = service("searchservice").queryParam("word", searchServiceData.getWrongname())
+        .get(BASEPATH + "synonyms/find");
     response.getBody().prettyPrint();
-    return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<SynonymsResponse>>() {
+    return jsonApi.fromJson(response, new TypeReference<GdnRestListResponse<SynonymsResponse>>() {
     });
   }
 
