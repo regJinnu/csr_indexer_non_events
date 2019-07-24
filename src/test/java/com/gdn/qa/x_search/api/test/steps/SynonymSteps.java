@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
+import static org.hamcrest.Matchers.nullValue;
 
 @CucumberStepsDefinition
 public class SynonymSteps {
@@ -191,8 +192,8 @@ public class SynonymSteps {
   {
     ResponseApi<GdnRestListResponse<SynonymsResponse>> response =
         searchServiceData.getFindSynonym();
-   assertThat(response.getResponseBody().getErrorMessage(),equalTo(null));
-   assertThat(response.getResponseBody().getErrorCode(),equalTo(null));
+   assertThat("Synonym not found",response.getResponseBody().getErrorMessage(),nullValue());
+   assertThat("Synonym not found",response.getResponseBody().getErrorCode(),nullValue());
   }
 
 
