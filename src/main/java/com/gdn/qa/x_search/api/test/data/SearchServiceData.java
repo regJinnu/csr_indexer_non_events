@@ -187,7 +187,7 @@ public class SearchServiceData {
   private ResponseApi<GdnRestListResponse<KeywordResponse>> listOfKeywordsRequest;
   private ResponseApi<GdnRestSingleResponse<KeywordResponse>> findKeywordRequest;
   private ResponseApi<GdnRestSingleResponse<ValidateIdAndGetNameResponse>> validateIdAndGetName;
-  private ResponseApi<GdnRestSingleResponse<SynonymsResponse>> findSynonym;
+  private ResponseApi<GdnRestListResponse<SynonymsResponse>> findSynonym;
   private ResponseApi<GdnRestListResponse<SynonymsResponse>> findSynonymnByWord;
   private ResponseApi<GdnRestListResponse<StopWordResponse>> findStopword;
   private ResponseApi<GdnRestSingleResponse<StopWordResponse>> findStopWordByID;
