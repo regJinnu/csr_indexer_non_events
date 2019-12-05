@@ -93,6 +93,9 @@ public class SolrResults {
   @Field("id")
   private String id;
 
+  @Field("lastUpdatedTime")
+  private long lastUpdatedTime;
+
   public SolrResults(String brandSearch,
       String description,
       String level0Id,
@@ -126,7 +129,8 @@ public class SolrResults {
       int categorySequenceTE,
       int published,
       int buyable,
-      String id) {
+      String id,
+      long lastUpdatedTime) {
     this.pristineFacet=pristineFacet;
      this.brandSearch = brandSearch;
     this.description = description;
@@ -163,11 +167,20 @@ public class SolrResults {
     this.published=published;
     this.buyable=buyable;
     this.id = id;
+    this.lastUpdatedTime = lastUpdatedTime;
   }
 
 
   public SolrResults(){
 
+  }
+
+  public long getLastUpdatedTime() {
+    return lastUpdatedTime ;
+  }
+
+  public void setLastUpdatedTime(long lastUpdatedTime) {
+    this.lastUpdatedTime = lastUpdatedTime;
   }
 
   public String getPristineHandphoneFacet() {

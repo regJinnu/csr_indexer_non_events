@@ -62,11 +62,11 @@ public class InventoryEventSteps {
     searchServiceData.setItemSkuForReindex(searchServiceProperties.get("itemSkuForReindex"));
     try {
       
-      int status = solrHelper.updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),"/select","id",1,"nonOOS");
+      int status = solrHelper.updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),"/select","id",1,"nonOOS",SOLR_DEFAULT_COLLECTION);
       assertThat("Updating isInStock field in SOLR failed",status,equalTo(0));
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
-      int oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1).get(0).getIsInStock();
+      int oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1,SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
       log.warn("-----Product {} Set non OOS before test---{}",searchServiceData.getQueryForReindex(),oosFlag);
       assertThat("Product non OOS",oosFlag,equalTo(1));
 
@@ -95,7 +95,7 @@ public class InventoryEventSteps {
     int oosFlag = 0;
     try {
       oosFlag =
-          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1).get(0).getIsInStock();
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1,SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
       log.warn("-----IsInStock After reindex by event---{}",oosFlag);
       assertThat("Product not OOS",oosFlag,equalTo(0));
     } catch (Exception e) {
@@ -111,11 +111,11 @@ public class InventoryEventSteps {
 
     try {
 
-      int status = solrHelper.updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),"/select","id",1,"oos");
+      int status = solrHelper.updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),"/select","id",1,"oos",SOLR_DEFAULT_COLLECTION);
       assertThat("Updating isInStock field in SOLR failed",status,equalTo(0));
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
-      int oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1).get(0).getIsInStock();
+      int oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1,SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
       assertThat("Product OOS",oosFlag,equalTo(0));
 
       log.warn("-----Product Set OOS before test---{}",oosFlag);
@@ -144,7 +144,7 @@ public class InventoryEventSteps {
     try {
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
       oosFlag =
-          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1).get(0).getIsInStock();
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1,SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
       assertThat("Product not OOS",oosFlag,equalTo(1));
       log.warn("-----IsInStock After reindex by event---{}",oosFlag);
     } catch (Exception e) {
@@ -179,7 +179,7 @@ public class InventoryEventSteps {
     int oosFlag = 0;
     try {
       oosFlag =
-          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1).get(0).getIsInStock();
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1,SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
       log.warn("-----Product does not become oos in SOLR---{}",oosFlag);
       assertThat("Product OOS",oosFlag,equalTo(1));
     } catch (Exception e) {
@@ -223,7 +223,7 @@ public class InventoryEventSteps {
     try {
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
       oosFlag =
-          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1).get(0).getIsInStock();
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),"/select","isInStock",1,SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
       log.warn("-----Product does not become non oos in SOLR---{}",oosFlag);
       assertThat("Product Non OOS",oosFlag,equalTo(0));
     } catch (Exception e) {

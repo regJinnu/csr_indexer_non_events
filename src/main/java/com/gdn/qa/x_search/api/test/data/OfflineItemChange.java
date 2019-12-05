@@ -20,5 +20,8 @@ public class OfflineItemChange {
   private String externalPickupPointCode;
   private String productSku;
   private Double offerPrice;
+  private String itemCode;
+  private Boolean markForDelete;
+
 
 }

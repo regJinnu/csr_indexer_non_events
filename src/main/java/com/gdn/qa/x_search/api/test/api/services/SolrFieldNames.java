@@ -46,6 +46,7 @@ public interface SolrFieldNames {
   String MERCHANT_RATING_STRING = "merchantRatingString";
   String SALES_CATALOG_CATEGORY_COUNT = "salesCatalogCategoryCount";
   String LIST_PRICE = "listPrice";
+  String LAST_UPDATED_TIME="lastUpdatedTime";
   String IS_SYNCHRONISED = "isSynchronised";
   String X_PRODUCT_LAST_UPDATED_TIMESTAMP = "xProductLastUpdatedTimestamp";
   String BP_SERVICE_LAST_UPDATED_TIMESTAMP = "bpServiceLastUpdatedTimestamp";

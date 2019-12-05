@@ -170,6 +170,16 @@ public class SearchServiceData {
   private String searchKeyword;
   private String itemSkuForOffline;
   private String pickupPointCode;
+  private String SOLR_CNC_COLLECTION;
+  private String defCncMerchantCode;
+  private String defCncExternalPickupPointCode;
+  private String defCncProductSku;
+  private String defCncOfferPrice;
+  private String defCncMerchantSku;
+  private String defCncItemSku1;
+  private String defCncPP;
+  private String defCncItemCode;
+  private String defCncUpdatesConfig;
   private ResponseApi<GdnRestListResponse<TrainResponse>> getAllTrain;
   private ResponseApi<GdnRestListResponse<SearchRuleResponse>> getAllSearchRule;
   private ResponseApi<GdnRestListResponse<PlaceholderRuleResponse>> getAllPlaceholder;

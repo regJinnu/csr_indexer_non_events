@@ -75,7 +75,7 @@ public class ProductIndexingSteps {
       lastModifiedActual = solrHelper.getSolrProd(searchServiceData.getQueryForProductCode(),
           SELECT_HANDLER,
           "lastModifiedDate",
-          1).get(0).getLastModifiedDate();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getLastModifiedDate();
       log.warn("------Earlier Date---- lastModifiedActual ----:{}" + lastModifiedActual);
     } catch (Exception e) {
       e.printStackTrace();
@@ -104,7 +104,7 @@ public class ProductIndexingSteps {
       lastModifiedUpdated = solrHelper.getSolrProd(searchServiceData.getQueryForProductCode(),
           SELECT_HANDLER,
           "lastModifiedDate",
-          1).get(0).getLastModifiedDate();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getLastModifiedDate();
       log.warn("------Earlier Date---- lastModifiedActual ----:{}", lastModifiedActual);
       log.warn("------Update Date---- lastModifiedUpdated ----:{}", lastModifiedUpdated);
 
@@ -126,13 +126,13 @@ public class ProductIndexingSteps {
           SELECT_HANDLER,
           "id",
           1,
-          "oos");
+          "oos",SOLR_DEFAULT_COLLECTION);
       assertThat("Updating OOS in SOLR doc failed", status, equalTo(0));
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
       int oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
           "isInStock",
-          1).get(0).getIsInStock();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
       assertThat("Product not OOS in SOLR", oosFlag, equalTo(0));
     } catch (Exception e) {
       e.printStackTrace();
@@ -169,7 +169,7 @@ public class ProductIndexingSteps {
       int oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
           "isInStock",
-          1).get(0).getIsInStock();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
       assertThat("Product not OOS in SOLR", oosFlag, equalTo(1));
     } catch (Exception e) {
       e.printStackTrace();
@@ -214,16 +214,16 @@ public class ProductIndexingSteps {
         "queryForReviewAndRatingIndex"));
     try {
       String query = searchServiceData.getQueryForReviewAndRatingIndex();
-      int status = solrHelper.updateSolrDataForAutomation(query, SELECT_HANDLER, "id", 1, "reviewAndRating");
+      int status = solrHelper.updateSolrDataForAutomation(query, SELECT_HANDLER, "id", 1, "reviewAndRating",SOLR_DEFAULT_COLLECTION);
       assertThat("Updating review and rating in SOLR doc failed", status, equalTo(0));
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
       int reviewCount =
-          solrHelper.getSolrProd(query, SELECT_HANDLER, "reviewCount", 1).get(0).getReviewCount();
-      String rating = solrHelper.getSolrProd(query, SELECT_HANDLER, "rating", 1).get(0).getRating();
+          solrHelper.getSolrProd(query, SELECT_HANDLER, "reviewCount", 1,SOLR_DEFAULT_COLLECTION).get(0).getReviewCount();
+      String rating = solrHelper.getSolrProd(query, SELECT_HANDLER, "rating", 1,SOLR_DEFAULT_COLLECTION).get(0).getRating();
       reviewAndRatingTimestampActual = solrHelper.getSolrProd(query,
           SELECT_HANDLER,
           "reviewAndRatingServiceLastUpdatedTimestamp",
-          1).get(0).getReviewAndRatingServiceLastUpdatedTimestamp();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getReviewAndRatingServiceLastUpdatedTimestamp();
       log.warn("-----Review Count ---{}-----Rating--{}---reviewAndRatingTimestampActual--{}",
           reviewCount,
           rating,
@@ -257,12 +257,12 @@ public class ProductIndexingSteps {
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
       Thread.sleep(10000);
       int reviewCount =
-          solrHelper.getSolrProd(query, SELECT_HANDLER, "reviewCount", 1).get(0).getReviewCount();
-      String rating = solrHelper.getSolrProd(query, SELECT_HANDLER, "rating", 1).get(0).getRating();
+          solrHelper.getSolrProd(query, SELECT_HANDLER, "reviewCount", 1,SOLR_DEFAULT_COLLECTION).get(0).getReviewCount();
+      String rating = solrHelper.getSolrProd(query, SELECT_HANDLER, "rating", 1,SOLR_DEFAULT_COLLECTION).get(0).getRating();
       reviewAndRatingTimestampUpdated = solrHelper.getSolrProd(query,
           SELECT_HANDLER,
           "reviewAndRatingServiceLastUpdatedTimestamp",
-          1).get(0).getReviewAndRatingServiceLastUpdatedTimestamp();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getReviewAndRatingServiceLastUpdatedTimestamp();
       log.warn("-----Review Count ---{}-----Rating--{}---reviewAndRatingTimestampUpdated--{}",
           reviewCount,
           rating,
@@ -293,39 +293,39 @@ public class ProductIndexingSteps {
           SELECT_HANDLER,
           "id",
           1,
-          "categoryReindex");
+          "categoryReindex",SOLR_DEFAULT_COLLECTION);
       assertThat("Updating solr fields to different values failed", status, equalTo(0));
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
       int reviewCount = solrHelper.getSolrProd(searchServiceData.getQueryForCategoryReindex(),
           SELECT_HANDLER,
           "reviewCount",
-          1).get(0).getReviewCount();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getReviewCount();
 
       String rating = solrHelper.getSolrProd(searchServiceData.getQueryForCategoryReindex(),
           SELECT_HANDLER,
           "rating",
-          1).get(0).getRating();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getRating();
 
       int oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForCategoryReindex(),
           SELECT_HANDLER,
           "isInStock",
-          1).get(0).getIsInStock();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
 
       String merchantCommissionType =
           solrHelper.getSolrProd(searchServiceData.getQueryForCategoryReindex(),
               SELECT_HANDLER,
               "merchantCommissionType",
-              1).get(0).getMerchantCommissionType();
+              1,SOLR_DEFAULT_COLLECTION).get(0).getMerchantCommissionType();
       Double merchantRating = solrHelper.getSolrProd(searchServiceData.getQueryForCategoryReindex(),
           SELECT_HANDLER,
           "merchantRating",
-          1).get(0).getMerchantRating();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getMerchantRating();
 
       String location = solrHelper.getSolrProd(searchServiceData.getQueryForCategoryReindex(),
           SELECT_HANDLER,
           "location",
-          1).get(0).getLocation();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getLocation();
 
       log.warn(
           "--reviewCount--{}---rating--{}--reviewCount--{}--oosFlag--{}--merchantRating---{}--merchantCommissionType---{}--location--{}--",
@@ -372,32 +372,32 @@ public class ProductIndexingSteps {
       int reviewCount = solrHelper.getSolrProd(searchServiceData.getQueryForCategoryReindex(),
           SELECT_HANDLER,
           "reviewCount",
-          1).get(0).getReviewCount();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getReviewCount();
 
       String rating = solrHelper.getSolrProd(searchServiceData.getQueryForCategoryReindex(),
           SELECT_HANDLER,
           "rating",
-          1).get(0).getRating();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getRating();
 
       int oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForCategoryReindex(),
           SELECT_HANDLER,
           "isInStock",
-          1).get(0).getIsInStock();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
 
       String merchantCommissionType =
           solrHelper.getSolrProd(searchServiceData.getQueryForCategoryReindex(),
               SELECT_HANDLER,
               "merchantCommissionType",
-              1).get(0).getMerchantCommissionType();
+              1,SOLR_DEFAULT_COLLECTION).get(0).getMerchantCommissionType();
       Double merchantRating = solrHelper.getSolrProd(searchServiceData.getQueryForCategoryReindex(),
           SELECT_HANDLER,
           "merchantRating",
-          1).get(0).getMerchantRating();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getMerchantRating();
 
       String location = solrHelper.getSolrProd(searchServiceData.getQueryForCategoryReindex(),
           SELECT_HANDLER,
           "location",
-          1).get(0).getLocation();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getLocation();
 
       log.error(
           "--reviewCount--{}---rating--{}--reviewCount--{}--oosFlag--{}--merchantRating---{}--merchantCommissionType---{}--location--{}--",
@@ -483,7 +483,7 @@ public class ProductIndexingSteps {
           mongoHelper.countOfRecordsInCollection("reindex_entity"),
           equalTo(4L));
 
-      solrHelper.deleteSolrDocByQuery(searchServiceData.getQueryForReindexOfDeletedProd());
+      solrHelper.deleteSolrDocByQuery(searchServiceData.getQueryForReindexOfDeletedProd(),SOLR_DEFAULT_COLLECTION);
 
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
@@ -529,29 +529,34 @@ public class ProductIndexingSteps {
 
       log.warn("--searchServiceData.getQueryForCategoryReindex()--{}-" , queryForCatReindex);
 
-      int reviewCount = solrHelper.getSolrProd(queryForCatReindex, SELECT_HANDLER, "reviewCount", 1)
+      int reviewCount = solrHelper.getSolrProd(queryForCatReindex, SELECT_HANDLER, "reviewCount", 1,SOLR_DEFAULT_COLLECTION)
           .get(0)
           .getReviewCount();
 
-      String rating = solrHelper.getSolrProd(queryForCatReindex, SELECT_HANDLER, "rating", 1)
+      String rating = solrHelper.getSolrProd(queryForCatReindex, SELECT_HANDLER, "rating", 1
+      ,SOLR_DEFAULT_COLLECTION)
           .get(0)
           .getRating();
 
-      int oosFlag = solrHelper.getSolrProd(queryForCatReindex, SELECT_HANDLER, "isInStock", 1)
+      int oosFlag = solrHelper.getSolrProd(queryForCatReindex, SELECT_HANDLER, "isInStock", 1
+      ,SOLR_DEFAULT_COLLECTION)
           .get(0)
           .getIsInStock();
 
       String merchantCommissionType =
-          solrHelper.getSolrProd(queryForCatReindex, SELECT_HANDLER, "merchantCommissionType", 1)
+          solrHelper.getSolrProd(queryForCatReindex, SELECT_HANDLER, "merchantCommissionType", 1,
+              SOLR_DEFAULT_COLLECTION)
               .get(0)
               .getMerchantCommissionType();
 
       Double merchantRating =
-          solrHelper.getSolrProd(queryForCatReindex, SELECT_HANDLER, "merchantRating", 1)
+          solrHelper.getSolrProd(queryForCatReindex, SELECT_HANDLER, "merchantRating", 1
+          ,SOLR_DEFAULT_COLLECTION)
               .get(0)
               .getMerchantRating();
 
-      String location = solrHelper.getSolrProd(queryForCatReindex, SELECT_HANDLER, "location", 1)
+      String location = solrHelper.getSolrProd(queryForCatReindex, SELECT_HANDLER, "location", 1
+      ,SOLR_DEFAULT_COLLECTION)
           .get(0)
           .getLocation();
 
@@ -655,31 +660,31 @@ public class ProductIndexingSteps {
 
       String query = searchServiceData.getItemSkuForStoredDelta();
 
-      int status = solrHelper.updateSolrDataForAutomation(query, SELECT_HANDLER, "id", 1, "reviewAndRating");
+      int status = solrHelper.updateSolrDataForAutomation(query, SELECT_HANDLER, "id", 1, "reviewAndRating",SOLR_DEFAULT_COLLECTION);
       assertThat("Updating review and rating in SOLR doc failed", status, equalTo(0));
       Thread.sleep(10000);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
       int reviewCount =
-          solrHelper.getSolrProd(query, SELECT_HANDLER, "reviewCount", 1).get(0).getReviewCount();
-      String rating = solrHelper.getSolrProd(query, SELECT_HANDLER, "rating", 1).get(0).getRating();
+          solrHelper.getSolrProd(query, SELECT_HANDLER, "reviewCount", 1,SOLR_DEFAULT_COLLECTION).get(0).getReviewCount();
+      String rating = solrHelper.getSolrProd(query, SELECT_HANDLER, "rating", 1,SOLR_DEFAULT_COLLECTION).get(0).getRating();
 
       log.error("----reviewCount---{}---rating---{}",reviewCount,rating);
 
       assertThat("Product review count not set", reviewCount, equalTo(100));
       assertThat("Product rating not set", rating, equalTo("23"));
 
-      lastModifiedActual = solrHelper.getSolrProd(query, SELECT_HANDLER, "lastModifiedDate", 1)
+      lastModifiedActual = solrHelper.getSolrProd(query, SELECT_HANDLER, "lastModifiedDate", 1,SOLR_DEFAULT_COLLECTION)
           .get(0)
           .getLastModifiedDate();
 
       String queryInv = searchServiceData.getQueryForReindexOfDeletedProd();
 
-      solrHelper.updateSolrDataForAutomation(queryInv, SELECT_HANDLER, "id", 1, "oos");
+      solrHelper.updateSolrDataForAutomation(queryInv, SELECT_HANDLER, "id", 1, "oos",SOLR_DEFAULT_COLLECTION);
       assertThat("Updating isInStock field in SOLR failed", status, equalTo(0));
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
       int oosFlag =
-          solrHelper.getSolrProd(queryInv, SELECT_HANDLER, "isInStock", 1).get(0).getIsInStock();
+          solrHelper.getSolrProd(queryInv, SELECT_HANDLER, "isInStock", 1,SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
       assertThat("Product not OOS", oosFlag, equalTo(0));
 
       log.warn("--oosFlag--{}---reviewCount---{}---rating--{}", oosFlag, reviewCount, rating);
@@ -714,22 +719,22 @@ public class ProductIndexingSteps {
       int oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForReindexOfDeletedProd(),
           SELECT_HANDLER,
           "isInStock",
-          1).get(0).getIsInStock();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
 
       int reviewCount = solrHelper.getSolrProd(searchServiceData.getQueryForProductCode(),
           SELECT_HANDLER,
           "reviewCount",
-          1).get(0).getReviewCount();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getReviewCount();
 
       String rating = solrHelper.getSolrProd(searchServiceData.getQueryForProductCode(),
           SELECT_HANDLER,
           "rating",
-          1).get(0).getRating();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getRating();
 
       lastModifiedUpdated = solrHelper.getSolrProd(searchServiceData.getQueryForProductCode(),
           SELECT_HANDLER,
           "lastModifiedDate",
-          1).get(0).getLastModifiedDate();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getLastModifiedDate();
 
       log.warn(
           "--oosFlag--{}---reviewCount---{}---rating--{}---lastModifiedUpdated---{}---lastModifiedActual--{}",

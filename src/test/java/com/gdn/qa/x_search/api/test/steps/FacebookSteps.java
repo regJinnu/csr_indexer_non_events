@@ -7,7 +7,6 @@ import com.gdn.qa.x_search.api.test.api.services.FeedController;
 import com.gdn.qa.x_search.api.test.data.SearchServiceData;
 import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
 import com.gdn.qa.x_search.api.test.utils.*;
-import com.gdn.x.product.domain.event.model.ItemViewConfig;
 import com.gdn.x.product.domain.event.model.PristineDataItemEventModel;
 import com.jcraft.jsch.ChannelSftp;
 import com.mongodb.client.FindIterable;
@@ -23,6 +22,7 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Vector;
+
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -251,7 +251,7 @@ public class FacebookSteps {
 
       boolean isSynchronised =
           solrHelper.getSolrProd(searchServiceData.getQueryForProductCode(), SELECT_HANDLER,
-              "isSynchronised", 1).get(0).getIsSynchronised();
+              "isSynchronised", 1,SOLR_DEFAULT_COLLECTION).get(0).getIsSynchronised();
 
       assertThat("Product is not synchronised",isSynchronised,equalTo(true));
 
@@ -278,7 +278,7 @@ public class FacebookSteps {
 
       boolean isSynchronised =
           solrHelper.getSolrProd(searchServiceData.getQueryForUnsyncProduct(), SELECT_HANDLER,
-              "isSynchronised", 1).get(0).getIsSynchronised();
+              "isSynchronised", 1,SOLR_DEFAULT_COLLECTION).get(0).getIsSynchronised();
 
       assertThat("Product is not unsync",isSynchronised,equalTo(false));
 
