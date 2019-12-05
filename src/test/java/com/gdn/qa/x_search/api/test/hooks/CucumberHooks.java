@@ -308,6 +308,7 @@ public class CucumberHooks {
     }
   }
 
+
  @After("@ForceStopSolrCncUpdatesSwitch")
   public void reindexDefCnc(){
    ResponseApi responseApi;
