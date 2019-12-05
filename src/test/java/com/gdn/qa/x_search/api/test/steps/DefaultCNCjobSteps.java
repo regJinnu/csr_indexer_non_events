@@ -27,6 +27,7 @@ import java.util.Map;
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.not;
 
 @Slf4j
@@ -257,22 +258,10 @@ public class DefaultCNCjobSteps {
 
   @Then("^verify that event is not processed and stored in mongo$")
   public void verifyThatEventIsNotProcessedAndStoredInMongo() {
-//    FindIterable<Document> indexing_list_new = mongoHelper.getMongoDocumentByQuery(
-//        "indexing_list_new",
-//        "code",
-//        searchServiceData.getDefCncItemSku1() + "-" + searchServiceData.getDefCncPP());
-//
-//    int size = 0;
-//    for (Document doc : indexing_list_new) {
-//      size++;
-//    }
-//
-//    log.error("Size of indexing_list_new--{}", size);
-//
-//    assertThat("Entry does not exists in collection", size, greaterThan(0));
+    Long count= mongoHelper.countOfRecordsInCollection("indexing_list_new");
+    assertThat("Entry does not exists in collection",count, greaterThan(0L));
     System.out.println("TEST MONGO \n"+mongoHelper.countOfRecordsInCollection("indexing_list_new"));
     configHelper.findAndUpdateConfig("force.stop.solr.cnc.updates", "false");
-
   }
 
   @And("^after triggering delta job event is updated to solr$")
@@ -327,7 +316,7 @@ public class DefaultCNCjobSteps {
           10,
           SOLR_DEFAULT_COLLECTION_O2O);
       assertThat("Found product in O2O collection",
-          solrProdDeletionInNormalColl.isEmpty(),
+          solrProdDeletionInO2OColl.isEmpty(),
           equalTo(true));
 
     } catch (Exception e) {
