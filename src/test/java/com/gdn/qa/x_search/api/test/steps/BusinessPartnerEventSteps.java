@@ -69,23 +69,23 @@ public class BusinessPartnerEventSteps {
           SELECT_HANDLER,
           "id",
           1,
-          "closedStore");
+          "closedStore",SOLR_DEFAULT_COLLECTION);
       assertThat("Updating SOLR fields for test failed", status, equalTo(0));
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
       
 
       int isDelayShipping =
-          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "isDelayShipping", 1)
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "isDelayShipping", 1,SOLR_DEFAULT_COLLECTION)
               .get(0)
               .getIsDelayShipping();
 
       long startDateStoreClosed =
-          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "startDateStoreClosed", 1)
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "startDateStoreClosed", 1,SOLR_DEFAULT_COLLECTION)
               .get(0)
               .getStartDateStoreClosed();
 
       long endDateStoreClosed =
-          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "endDateStoreClosed", 1)
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "endDateStoreClosed", 1,SOLR_DEFAULT_COLLECTION)
               .get(0)
               .getEndDateStoreClosed();
 
@@ -115,12 +115,12 @@ public class BusinessPartnerEventSteps {
   public void checkStoreClosedInfoIsUpdated(){
     try {
       long startDateStoreClosed =
-          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "startDateStoreClosed", 1)
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "startDateStoreClosed", 1,SOLR_DEFAULT_COLLECTION)
               .get(0)
               .getStartDateStoreClosed();
 
       long endDateStoreClosed =
-          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "endDateStoreClosed", 1)
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "endDateStoreClosed", 1,SOLR_DEFAULT_COLLECTION)
               .get(0)
               .getEndDateStoreClosed();
 
@@ -138,7 +138,7 @@ public class BusinessPartnerEventSteps {
 
     try {
 
-      int isDelayShippingActual = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "isDelayShipping", 1)
+      int isDelayShippingActual = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "isDelayShipping", 1,SOLR_DEFAULT_COLLECTION)
           .get(0)
           .getIsDelayShipping();
 
@@ -192,7 +192,7 @@ public class BusinessPartnerEventSteps {
       boolean storeClose = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
           "storeClose",
-          1).get(0).isStoreClose();
+          1,SOLR_DEFAULT_COLLECTION).get(0).isStoreClose();
 
       assertThat("Store Close is not set",storeClose,equalTo(true));
     } catch (Exception e) {

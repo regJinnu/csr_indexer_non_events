@@ -65,7 +65,7 @@ public class ProductAdjustmentEventsSteps  {
       promoOfferPrice = solrHelper.getSolrProd(searchServiceData.getPromoItemSKUinSOLR(),
           SELECT_HANDLER,
           "salePrice",
-          1).get(0).getSalePrice();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getSalePrice();
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -100,7 +100,8 @@ public class ProductAdjustmentEventsSteps  {
   public void searchServiceCheckIfThePromoBundlingActivatedEventIsConsumedAndCheckInSolr() {
     String promoOffer= null;
     try {
-      promoOffer=solrHelper.getSolrProd(searchServiceData.getPromoItemSKUinSOLR(),SELECT_HANDLER,"activePromos",1)
+      promoOffer=solrHelper.getSolrProd(searchServiceData.getPromoItemSKUinSOLR(),SELECT_HANDLER,"activePromos",1
+      ,SOLR_DEFAULT_COLLECTION)
           .get(0).getActivePromos().get(0);
     } catch (Exception e) {
       e.printStackTrace();
@@ -134,7 +135,7 @@ public class ProductAdjustmentEventsSteps  {
       promoOffer = solrHelper.getSolrProd(searchServiceData.getPromoItemSKUinSOLR(),
           SELECT_HANDLER,
           "activePromos",
-          1).isEmpty();
+          1,SOLR_DEFAULT_COLLECTION).isEmpty();
       assertThat(promoOffer, (equalTo(true)));
     } catch (Exception e) {
       e.printStackTrace();

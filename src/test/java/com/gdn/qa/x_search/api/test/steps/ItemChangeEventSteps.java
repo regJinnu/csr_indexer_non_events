@@ -13,7 +13,6 @@ import com.gdn.qa.x_search.api.test.utils.SolrHelper;
 import com.gdn.x.product.domain.event.enums.ItemChangeEventType;
 import com.gdn.x.product.domain.event.model.*;
 import com.mongodb.client.FindIterable;
-import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -28,9 +27,7 @@ import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SELECT_HANDLER
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_DEFAULT_COLLECTION;
 import static com.gdn.x.product.domain.event.enums.ItemChangeEventType.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 
 /**
  * @author kumar on 20/08/18
@@ -78,17 +75,17 @@ public class ItemChangeEventSteps {
           SELECT_HANDLER,
           "id",
           1,
-          "price");
+          "price",SOLR_DEFAULT_COLLECTION);
       assertThat("Updating SOLR fields for test failed", status, equalTo(0));
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
       double offerPrice =
-          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "offerPrice", 1)
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "offerPrice", 1,SOLR_DEFAULT_COLLECTION)
               .get(0)
               .getOfferPrice();
 
       double listPrice  =
-          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "listPrice", 1)
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "listPrice", 1,SOLR_DEFAULT_COLLECTION)
               .get(0)
               .getListPrice();
 
@@ -125,27 +122,27 @@ public class ItemChangeEventSteps {
     try {
 
         double offerPrice =
-            solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "offerPrice", 1)
+            solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "offerPrice", 1,SOLR_DEFAULT_COLLECTION)
             .get(0)
             .getOfferPrice();
 
         double listPrice  =
-            solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "listPrice", 1)
+            solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "listPrice", 1,SOLR_DEFAULT_COLLECTION)
                 .get(0)
                 .getListPrice();
 
         double salePrice =
-            solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER,"salePrice",1)
+            solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER,"salePrice",1,SOLR_DEFAULT_COLLECTION)
                 .get(0)
                 .getSalePrice();
 
         double discount =
-            solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),SELECT_HANDLER,"discount",1)
+            solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),SELECT_HANDLER,"discount",1,SOLR_DEFAULT_COLLECTION)
                 .get(0)
                 .getDiscount();
 
         String discountString =
-            solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),SELECT_HANDLER,"discountString",1)
+            solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),SELECT_HANDLER,"discountString",1,SOLR_DEFAULT_COLLECTION)
                  .get(0)
                  .getDiscountString();
 
@@ -345,12 +342,12 @@ public class ItemChangeEventSteps {
   public void checkProductAfterReindexingByPrdChangeEvent(){
     try {
 
-        double offerPrice = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "offerPrice", 1)
+        double offerPrice = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "offerPrice", 1,SOLR_DEFAULT_COLLECTION)
             .get(0)
             .getOfferPrice();
 
         double listPrice  =
-            solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "listPrice", 1)
+            solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "listPrice", 1,SOLR_DEFAULT_COLLECTION)
                 .get(0)
                 .getListPrice();
 
@@ -378,12 +375,12 @@ public class ItemChangeEventSteps {
           SELECT_HANDLER,
           "id",
           1,
-          "offToOn");
+          "offToOn",SOLR_DEFAULT_COLLECTION);
       assertThat("Updating SOLR fields for test failed", status, equalTo(0));
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
       int off2On =
-          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "off2On", 1)
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "off2On", 1,SOLR_DEFAULT_COLLECTION)
               .get(0)
               .getOff2On();
 
@@ -418,7 +415,7 @@ public class ItemChangeEventSteps {
     try {
 
       int off2On =
-          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "off2On", 1)
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "off2On", 1,SOLR_DEFAULT_COLLECTION)
               .get(0)
               .getOff2On();
 
@@ -444,7 +441,7 @@ public class ItemChangeEventSteps {
     try {
 
       boolean isSynchronised =
-          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "isSynchronised", 1)
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "isSynchronised", 1,SOLR_DEFAULT_COLLECTION)
               .get(0)
               .getIsSynchronised();
 
@@ -487,7 +484,7 @@ public class ItemChangeEventSteps {
     try {
 
       boolean isSynchronised =
-          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "isSynchronised", 1)
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "isSynchronised", 1,SOLR_DEFAULT_COLLECTION)
               .get(0)
               .getIsSynchronised();
 
@@ -502,7 +499,7 @@ public class ItemChangeEventSteps {
   public void searchServiceLevelIdIsSetToProductSku(int arg0,String type){
     try {
     String level0Id =
-        solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),SELECT_HANDLER,"level0Id",1)
+        solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),SELECT_HANDLER,"level0Id",1,SOLR_DEFAULT_COLLECTION)
         .get(0)
         .getlevel0Id();
 
@@ -538,13 +535,13 @@ public class ItemChangeEventSteps {
 
       String name =
           solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER,
-              "nameSearch", 1)
+              "nameSearch", 1,SOLR_DEFAULT_COLLECTION)
               .get(0)
               .getNameSearch();
 
       String level0Id =
           solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER,
-              "level0Id", 1)
+              "level0Id", 1,SOLR_DEFAULT_COLLECTION)
               .get(0)
               .getlevel0Id();
 
@@ -648,32 +645,32 @@ public class ItemChangeEventSteps {
     try {
       String name =
           solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER,
-              "nameSearch", 1)
+              "nameSearch", 1,SOLR_DEFAULT_COLLECTION)
               .get(0)
               .getNameSearch();
 
       String level0Id =
           solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER,
-              "level0Id", 1)
+              "level0Id", 1,SOLR_DEFAULT_COLLECTION)
               .get(0)
               .getlevel0Id();
 
       String salesCatalogHierarchy =
           solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER,
-              "salesCatalogCategoryIdDescHierarchy",1)
+              "salesCatalogCategoryIdDescHierarchy",1,SOLR_DEFAULT_COLLECTION)
               .get(0)
               .getSalesCatalogCategoryIdDescHierarchy()
               .get(0);
 
       int categorySeq =
           solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER,
-              "categorySequenceTE-100003",1)
+              "categorySequenceTE-100003",1,SOLR_DEFAULT_COLLECTION)
               .get(0)
               .getCategorySequenceTE();
 
       String description =
           solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER,
-              "description",1)
+              "description",1,SOLR_DEFAULT_COLLECTION)
               .get(0)
               .getDescription();
 
@@ -706,19 +703,19 @@ public class ItemChangeEventSteps {
           SELECT_HANDLER,
           "id",
           1,
-          "buyableAndPublished");
+          "buyableAndPublished",SOLR_DEFAULT_COLLECTION);
       assertThat("Updating SOLR fields for test failed", status, equalTo(0));
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
       int buyable =
           solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER,
-              "buyable", 1)
+              "buyable", 1,SOLR_DEFAULT_COLLECTION)
               .get(0)
               .getBuyable();
 
       int published =
           solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER,
-              "published", 1)
+              "published", 1,SOLR_DEFAULT_COLLECTION)
               .get(0)
               .getPublished();
 
@@ -792,13 +789,13 @@ public class ItemChangeEventSteps {
     try {
       int buyable =
         solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER,
-            "buyable", 1)
+            "buyable", 1,SOLR_DEFAULT_COLLECTION)
             .get(0)
             .getBuyable();
 
       int published =
         solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER,
-            "published", 1)
+            "published", 1,SOLR_DEFAULT_COLLECTION)
             .get(0)
             .getPublished();
 
@@ -867,39 +864,39 @@ public class ItemChangeEventSteps {
           SELECT_HANDLER,
           "id",
           1,
-          "categoryReindex");
+          "categoryReindex",SOLR_DEFAULT_COLLECTION);
       assertThat("Updating SOLR fields for test failed", status, equalTo(0));
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
       int reviewCount = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
           "reviewCount",
-          1).get(0).getReviewCount();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getReviewCount();
 
       String rating = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
           "rating",
-          1).get(0).getRating();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getRating();
 
       int oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
           "isInStock",
-          1).get(0).getIsInStock();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
 
       String merchantCommissionType =
           solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
               SELECT_HANDLER,
               "merchantCommissionType",
-              1).get(0).getMerchantCommissionType();
+              1,SOLR_DEFAULT_COLLECTION).get(0).getMerchantCommissionType();
       Double merchantRating = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
           "merchantRating",
-          1).get(0).getMerchantRating();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getMerchantRating();
 
       String location = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
           "location",
-          1).get(0).getLocation();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getLocation();
 
       log.warn(
           "--reviewCount--{}---rating--{}--reviewCount--{}--oosFlag--{}--merchantRating---{}--merchantCommissionType---{}--location--{}--",
@@ -955,32 +952,32 @@ public class ItemChangeEventSteps {
       int reviewCount = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
           "reviewCount",
-          1).get(0).getReviewCount();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getReviewCount();
 
       String rating = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
           "rating",
-          1).get(0).getRating();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getRating();
 
       int oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
           "isInStock",
-          1).get(0).getIsInStock();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
 
       String merchantCommissionType =
           solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
               SELECT_HANDLER,
               "merchantCommissionType",
-              1).get(0).getMerchantCommissionType();
+              1,SOLR_DEFAULT_COLLECTION).get(0).getMerchantCommissionType();
       Double merchantRating = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
           "merchantRating",
-          1).get(0).getMerchantRating();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getMerchantRating();
 
       String location = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
           "location",
-          1).get(0).getLocation();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getLocation();
 
       log.error(
           "--reviewCount--{}---rating--{}--reviewCount--{}--oosFlag--{}--merchantRating---{}--merchantCommissionType---{}--location--{}--",
@@ -1034,17 +1031,20 @@ public class ItemChangeEventSteps {
     try {
 
       double offerPrice =
-          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "offerPrice", 1)
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "offerPrice", 1
+          ,SOLR_DEFAULT_COLLECTION)
               .get(0)
               .getOfferPrice();
 
       double listPrice  =
-          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "listPrice", 1)
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "listPrice", 1
+          ,SOLR_DEFAULT_COLLECTION)
               .get(0)
               .getListPrice();
 
       double salePrice =
-          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER,"salePrice",1)
+          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER,"salePrice",1
+          ,SOLR_DEFAULT_COLLECTION)
               .get(0)
               .getSalePrice();
 
@@ -1121,7 +1121,7 @@ public class ItemChangeEventSteps {
       searchServiceData.setSkuForReindex(searchServiceProperties.get("skuForReindex"));
       searchServiceData.setQueryForReindex(searchServiceProperties.get("queryForReindex"));
       searchServiceData.setProductCodeForReindex(searchServiceProperties.get("productCodeForReindex"));
-      solrHelper.deleteSolrDocByQuery(searchServiceData.getQueryForReindex());
+      solrHelper.deleteSolrDocByQuery(searchServiceData.getQueryForReindex(),SOLR_DEFAULT_COLLECTION);
   }
 
   @When("^\\[search-service] consumes item change event with itemChangeEventType as ITEM_DATA_CHANGE and published as '(.*)'$")

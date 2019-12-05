@@ -105,18 +105,10 @@ public class SearchServiceController extends ServiceApi {
 
   }
 
-  public ResponseApi<GdnBaseRestResponse> bodyOfRequestToUpdateTheConfig() {
-    String Bodytemplate = "{\n" + "  \"id\": \"{{id}}\",\n" + "  \"name\": \"{{name}}\",\n"
-        + "  \"label\": \"{{label}}\",\n" + "  \"value\": \"{{value}}\"\n" + "}";
-
-    Map<String, String> data = new HashMap<>();
-    data.put("id", searchServiceData.getAutoid());
-    data.put("name", searchServiceData.getName());
-    data.put("label", searchServiceData.getLabel());
-    data.put("value", searchServiceData.getUpdatedValue());
-
-    String bodyRequest = templateAPI.createFromString(Bodytemplate, data);
-    Response response = service("searchservice").body(bodyRequest).post(BASEPATH + "config/update");
+  public ResponseApi<GdnBaseRestResponse> bodyOfRequestToUpdateTheConfig(String id, String name, String label,String value) {
+    String Bodytemplate = "{\n" + "  \"id\": \""+id+"\",\n" + "  \"name\": \""+name+"\",\n"
+        + "  \"label\": \""+label+"\",\n" + "  \"value\": \""+value+"\"\n" + "}";
+    Response response = service("searchservice").body(Bodytemplate).post(BASEPATH + "config/update");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
@@ -138,8 +130,8 @@ public class SearchServiceController extends ServiceApi {
 
   }
 
-  public ResponseApi<GdnRestSingleResponse<ConfigResponse>> findByNameResponse() {
-    Response response = service("searchservice").queryParam("name", searchServiceData.getName())
+  public ResponseApi<GdnRestSingleResponse<ConfigResponse>> findByNameResponse(String name) {
+    Response response = service("searchservice").queryParam("name", name)
         .get(BASEPATH + "config/find-by-name");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnRestSingleResponse<ConfigResponse>>() {
@@ -1688,6 +1680,13 @@ public class SearchServiceController extends ServiceApi {
         service("searchservice")
             .queryParam("numHost",1)
             .post(BASEPATH + "index/publish-reindex-events");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
+
+  public ResponseApi<GdnBaseRestResponse> defaultCncJob(){
+    Response response=service("searchservice").get(BASEPATH + "index/default-cnc");
     response.getBody().prettyPrint();
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });

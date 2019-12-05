@@ -1,7 +1,12 @@
 package com.gdn.qa.x_search.api.test.hooks;
 
+import com.gdn.common.web.wrapper.response.GdnBaseRestResponse;
+import com.gdn.qa.automation.core.restassured.ResponseApi;
 import com.gdn.qa.x_search.api.test.CucumberStepsDefinition;
+import com.gdn.qa.x_search.api.test.api.services.SearchServiceController;
+import com.gdn.qa.x_search.api.test.data.SearchServiceData;
 import com.gdn.qa.x_search.api.test.utils.MongoHelper;
+import com.gdn.qa.x_search.api.test.utils.SolrHelper;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import org.bson.Document;
@@ -11,16 +16,34 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_DEFAULT_COLLECTION;
+import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_DEFAULT_COLLECTION_CNC;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+
 @CucumberStepsDefinition
 public class CucumberHooks {
 
   @Autowired
   MongoHelper mongoHelper;
 
+  @Autowired
+  private SearchServiceController searchServiceController;
+
+  @Autowired
+  private SearchServiceData searchServiceData;
+
+  @Autowired
+  SolrHelper solrHelper;
+
   SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
   @After
   public void afterRun() {
+
+
+
+
     //it will executed after scenario run
 
     //   mongoHelper.deleteFromMongo("synonyms_list","KEY","testingapi");
@@ -247,4 +270,63 @@ public class CucumberHooks {
   public void beforeAddMerchantSort() {
     mongoHelper.deleteFromMongo("merchant_sort", "merchantId", "TH7-15791");
   }
+
+  @After("@DefaultCncJobUpdate")
+  public void afterDefaultCncJob(){
+    ResponseApi<GdnBaseRestResponse> responseAfterReindexing = searchServiceController.defaultCncJob();
+    searchServiceData.setSearchServiceResponse(responseAfterReindexing);
+
+    ResponseApi<GdnBaseRestResponse> responseAfterReindexingCNCProd = searchServiceData.getSearchServiceResponse();
+    assertThat("Request failed", responseAfterReindexingCNCProd.getResponse().getStatusCode(), equalTo(200));
+    try {
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  @After("@DefaultCncJobWhenProdIsDeleted")
+  public void afterDeletingDefaultCncProd(){
+    ResponseApi responseApi;
+    responseApi = searchServiceController.prepareRequestForIndexing("itemSkus",
+        searchServiceData.getDefCncItemSku1());
+    searchServiceData.setSearchServiceResponse(responseApi);
+
+    responseApi = searchServiceData.getSearchServiceResponse();
+    assertThat("Status Code Not 200", responseApi.getResponse().getStatusCode(), equalTo(200));
+    ResponseApi<GdnBaseRestResponse> responseAfterReindexing = searchServiceController.defaultCncJob();
+    searchServiceData.setSearchServiceResponse(responseAfterReindexing);
+
+    ResponseApi<GdnBaseRestResponse> responseAfterReindexingCNCProd = searchServiceData.getSearchServiceResponse();
+    assertThat("Request failed", responseAfterReindexingCNCProd.getResponse().getStatusCode(), equalTo(200));
+    try {
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+ @After("@ForceStopSolrCncUpdatesSwitch")
+  public void reindexDefCnc(){
+   ResponseApi responseApi;
+   responseApi = searchServiceController.prepareRequestForIndexing("itemSkus",
+       searchServiceData.getDefCncItemSku1());
+   searchServiceData.setSearchServiceResponse(responseApi);
+
+   responseApi = searchServiceData.getSearchServiceResponse();
+   assertThat("Status Code Not 200", responseApi.getResponse().getStatusCode(), equalTo(200));
+   ResponseApi<GdnBaseRestResponse> responseAfterReindexing = searchServiceController.defaultCncJob();
+   searchServiceData.setSearchServiceResponse(responseAfterReindexing);
+
+   ResponseApi<GdnBaseRestResponse> responseAfterReindexingCNCProd = searchServiceData.getSearchServiceResponse();
+   assertThat("Request failed", responseAfterReindexingCNCProd.getResponse().getStatusCode(), equalTo(200));
+   try {
+     solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
+     solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+   } catch (Exception e) {
+     e.printStackTrace();
+   }
+ }
 }

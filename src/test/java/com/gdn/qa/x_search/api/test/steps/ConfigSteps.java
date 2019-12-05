@@ -86,7 +86,8 @@ public class ConfigSteps {
   @When("^\\[search-service] send update config request$")
   public void searchServiceSendUpdateConfigRequest() {
     ResponseApi<GdnBaseRestResponse> response =
-        searchServiceController.bodyOfRequestToUpdateTheConfig();
+        searchServiceController.bodyOfRequestToUpdateTheConfig(searchServiceData.getAutoid(),searchServiceData.getName(),
+            searchServiceData.getLabel(), searchServiceData.getUpdatedValue());
     searchServiceData.setSearchServiceResponse(response);
   }
 
@@ -106,7 +107,7 @@ public class ConfigSteps {
   @When("^\\[search-service] send find config by name request$")
   public void searchServiceSendFindConfigByNameRequest() {
     ResponseApi<GdnRestSingleResponse<ConfigResponse>> response =
-        searchServiceController.findByNameResponse();
+        searchServiceController.findByNameResponse(searchServiceData.getName());
     searchServiceData.setFindByRequest(response);
   }
 

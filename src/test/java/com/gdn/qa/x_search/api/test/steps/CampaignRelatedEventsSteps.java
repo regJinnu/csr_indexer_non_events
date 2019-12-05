@@ -76,7 +76,7 @@ public class CampaignRelatedEventsSteps {
       String campaignFacet = solrHelper.getSolrProd(searchServiceData.getCampaignFieldInSOLR(),
           SELECT_HANDLER,
           "campaign_CAMP-0001",
-          1).get(0).getCampaignName();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getCampaignName();
       assertThat(campaignFacet, equalTo("campaign.product.list"));
 
     } catch (Exception e) {
@@ -259,7 +259,7 @@ public class CampaignRelatedEventsSteps {
       String campaignFacet = solrHelper.getSolrProd(searchServiceData.getCampaignFieldInSOLR(),
           SELECT_HANDLER,
           "campaign_CAMP-0001",
-          1).get(0).getCampaignName();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getCampaignName();
       assertThat(campaignFacet, equalTo("campaign.product.list"));
 
     } catch (Exception e) {

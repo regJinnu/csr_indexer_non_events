@@ -213,7 +213,7 @@ public class PristineEventsSteps {
         pristineFacetInSOLR = solrHelper.getSolrProd(PRODUCT_LEVEL0ID+":" + searchServiceData.getHandphonePristineID(),
             SELECT_HANDLER,
             "PRISTINE_"+pristineAttributesName,
-            1).get(0).getPristineHandphoneFacet();
+            1,SOLR_DEFAULT_COLLECTION).get(0).getPristineHandphoneFacet();
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -226,7 +226,7 @@ public class PristineEventsSteps {
             solrHelper.getSolrProd(PRODUCT_LEVEL0ID+":" +searchServiceData.getCameraPristineID(),
                 SELECT_HANDLER,
                 "PRISTINE_"+pristineAttributesName,
-                1).get(0).getPristineCameraFacet();
+                1,SOLR_DEFAULT_COLLECTION).get(0).getPristineCameraFacet();
         assertThat(pristineFacetInSOLR, equalTo(pristineAttributesValue));
       } catch (Exception e) {
         e.printStackTrace();
@@ -240,7 +240,7 @@ public class PristineEventsSteps {
             solrHelper.getSolrProd(PRODUCT_LEVEL0ID+":" + searchServiceData.getPristineID(),
                 SELECT_HANDLER,
                 "PRISTINE_"+pristineAttributesName,
-                1).get(0).getPristineFacet();
+                1,SOLR_DEFAULT_COLLECTION).get(0).getPristineFacet();
         assertThat(pristineFacetInSOLR, equalTo(pristineAttributesValue));
       } catch (Exception e) {
         e.printStackTrace();

@@ -640,11 +640,36 @@ public class KafkaHelper {
             itemSku(params.get("itemSku")).
             pickupPointCode(params.get("pickupPointCode")).
             productSku(params.get("productSku")).
+            offerPrice(Double.valueOf(params.get("defCncOfferPrice"))).
             build();
 
     try {
       kafkaSender.send("com.gdn.x.product.offlineitem.change",
           objectMapper.writeValueAsString(offlineItemChange));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+
+  }
+
+  public void publishOfflineItemChangeEventforDefCncJob(Map<String,String> payload) {
+    OfflineItemChange offlineItemChange1 =
+        OfflineItemChange.builder().
+            timestamp(System.currentTimeMillis()).
+            uniqueId(payload.get("uniqueId")).
+            merchantCode(payload.get("merchantCode")).
+            itemSku(payload.get("itemSku")).
+            itemCode(payload.get("itemCode")).
+            pickupPointCode(payload.get("pickupPointCode")).
+            productSku(payload.get("productSku")).
+            merchantSku(payload.get("merchantSku")).
+            externalPickupPointCode(payload.get("externalPickupPointCode")).
+            offerPrice(Double.valueOf(payload.get("offerPrice"))).
+            markForDelete(true).
+            build();
+    try {
+      kafkaSender.send("com.gdn.x.product.offlineitem.change",
+          objectMapper.writeValueAsString(offlineItemChange1));
     } catch (JsonProcessingException e) {
       e.printStackTrace();
     }
