@@ -489,7 +489,7 @@ public class ProductIndexingSteps {
 
       assertThat("Failed to delete data in SOLR",
           solrHelper.getSolrProdCount(searchServiceData.getQueryForReindexOfDeletedProd(),
-              SELECT_HANDLER),
+              SELECT_HANDLER,SOLR_DEFAULT_COLLECTION),
           equalTo(0L));
 
       configHelper.findAndUpdateConfig("force.stop.solr.updates", "false");
@@ -517,7 +517,7 @@ public class ProductIndexingSteps {
       Thread.sleep(180000);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
       long count = solrHelper.getSolrProdCount(searchServiceData.getQueryForReindexOfDeletedProd(),
-          SELECT_HANDLER);
+          SELECT_HANDLER,SOLR_DEFAULT_COLLECTION);
 
       log.warn("---searchServiceData.getQueryForReindexOfDeletedProd()--{}--count--{}",
           searchServiceData.getQueryForReindexOfDeletedProd(),

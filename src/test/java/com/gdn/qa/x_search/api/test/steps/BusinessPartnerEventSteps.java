@@ -156,7 +156,7 @@ public class BusinessPartnerEventSteps {
 
     solrHelper.addSolrDocument();
     try {
-      assertThat(solrHelper.getSolrProdCount("id:AAA-60015-00008-00001-PP-3001012",SELECT_HANDLER),equalTo(1L));
+      assertThat(solrHelper.getSolrProdCount("id:AAA-60015-00008-00001-PP-3001012",SELECT_HANDLER,SOLR_DEFAULT_COLLECTION),equalTo(1L));
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -179,7 +179,7 @@ public class BusinessPartnerEventSteps {
   @Then("^\\[search-service] cnc true is removed for all products under that merchant$")
   public void checkCncIsRemoved(){
     try {
-      assertThat(solrHelper.getSolrProdCount("id:AAA-60015-00008-00001-PP-3001012",SELECT_HANDLER),equalTo(0L));
+      assertThat(solrHelper.getSolrProdCount("id:AAA-60015-00008-00001-PP-3001012",SELECT_HANDLER,SOLR_DEFAULT_COLLECTION),equalTo(0L));
     } catch (Exception e) {
       e.printStackTrace();
     }

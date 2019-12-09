@@ -62,8 +62,17 @@ public class SolrHelper {
     return solrQuery;
   }
 
-  public long getSolrProdCount(String queryText, String requestHandler) throws Exception {
+ /* public long getSolrProdCount(String queryText, String requestHandler) throws Exception {
     HttpSolrClient httpSolrClient = initializeSolr(searchServiceProperties.get("SOLR_URL_NO_PARAM"));
+    SolrQuery solrQuery = initializeSolrQuery(queryText,requestHandler,0,"id","");
+    System.out.println("----SolrQuery---"+solrQuery.toString());
+    QueryResponse queryResponse = httpSolrClient.query(solrQuery);
+    System.out.println("----=======================SolrResponse======================---"+queryResponse.getResults().getNumFound());
+    return queryResponse.getResults().getNumFound();
+  }*/
+
+  public long getSolrProdCount(String queryText, String requestHandler,String collectionName) throws Exception {
+    HttpSolrClient httpSolrClient = initializeSolr(searchServiceProperties.get("SOLR_URL_NO_PARAM"+"/"+collectionName));
     SolrQuery solrQuery = initializeSolrQuery(queryText,requestHandler,0,"id","");
     QueryResponse queryResponse = httpSolrClient.query(solrQuery);
     return queryResponse.getResults().getNumFound();
@@ -196,12 +205,15 @@ public class SolrHelper {
     }
   }
 
-  public void addSolrDocumentForItemChangeEvent(String itemSku,String sku,String productCode,String eventType){
-    HttpSolrClient httpSolrClient = initializeSolr(searchServiceProperties.get("SOLR_URL"));
+  public void addSolrDocumentForItemChangeEvent(String itemSku,String sku,String productCode,String eventType,String collectionName){
+
+    HttpSolrClient httpSolrClient = initializeSolr(searchServiceProperties.get("SOLR_URL_NO_PARAM")+"/"+collectionName);
+
     SolrInputDocument solrInputDocument = new SolrInputDocument();
     solrInputDocument.addField("id",itemSku);
     solrInputDocument.addField("sku",sku);
     solrInputDocument.addField("productCode",productCode);
+
     if(eventType.equals("itemChangeEvent")){
       solrInputDocument.addField("level0Id",sku);
       solrInputDocument.addField("level1Id",sku);

@@ -640,7 +640,6 @@ public class KafkaHelper {
             itemSku(params.get("itemSku")).
             pickupPointCode(params.get("pickupPointCode")).
             productSku(params.get("productSku")).
-            offerPrice(Double.valueOf(params.get("defCncOfferPrice"))).
             build();
 
     try {

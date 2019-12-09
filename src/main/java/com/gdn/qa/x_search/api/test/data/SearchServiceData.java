@@ -180,6 +180,7 @@ public class SearchServiceData {
   private String defCncPP;
   private String defCncItemCode;
   private String defCncUpdatesConfig;
+  private String defCncProductCode;
   private ResponseApi<GdnRestListResponse<TrainResponse>> getAllTrain;
   private ResponseApi<GdnRestListResponse<SearchRuleResponse>> getAllSearchRule;
   private ResponseApi<GdnRestListResponse<PlaceholderRuleResponse>> getAllPlaceholder;
