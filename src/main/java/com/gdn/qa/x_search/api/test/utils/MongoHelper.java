@@ -1,7 +1,10 @@
 package com.gdn.qa.x_search.api.test.utils;
 
 
-import com.mongodb.*;
+import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
+import com.mongodb.BasicDBObject;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -10,11 +13,10 @@ import org.bson.Document;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
 import org.springframework.stereotype.Component;
-import java.util.ArrayList;
+
 import java.util.Date;
-import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.MONGO_SERVER_PORT;
+
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.regex;
 import static com.mongodb.client.model.Updates.combine;
@@ -28,11 +30,16 @@ public class MongoHelper {
   SearchServiceProperties searchServiceProperties;
 
   public MongoCollection<Document> initializeDatabase(String collectionName){
-    String MONGO_SERVER_ADDRESS = searchServiceProperties.get("mongo");
-    log.debug("-----------Mongo Server host ------------"+MONGO_SERVER_ADDRESS);
+    String MONGO_SERVER_ADDRESS = searchServiceProperties.get("mongoURI");
+    log.debug("-----------Mongo Server host ----{}--------",MONGO_SERVER_ADDRESS);
+/*
     ServerAddress serverAddress = new ServerAddress(MONGO_SERVER_ADDRESS,MONGO_SERVER_PORT);
     MongoCredential mongoCredential = MongoCredential.createCredential("search","x_search","search".toCharArray());
-    MongoClient mongoClient=new MongoClient(serverAddress, new ArrayList<MongoCredential>() {{ add(mongoCredential); }});
+    MongoClientOptions mongoClientOptions =  MongoClientOptions.builder(MongoClientOptions.builder().socketTimeout(60000).build()).build();
+*/
+    MongoClientURI mongoClientURI = new MongoClientURI(MONGO_SERVER_ADDRESS);
+    MongoClient mongoClient  = new MongoClient(mongoClientURI);
+ //   MongoClient mongoClient=new MongoClient(serverAddress, mongoClientOptions);
     MongoDatabase mongoDatabase=mongoClient.getDatabase("x_search");
     MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
     return collection;

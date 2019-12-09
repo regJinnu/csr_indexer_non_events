@@ -23,7 +23,7 @@
         <maven.failsafe.plugin>2.21.0</maven.failsafe.plugin>
         <selenium.version>3.141.59</selenium.version>
         <badak.core>1.3.10</badak.core>
-        <xsearch.version>5.11.0-8</xsearch.version>
+        <xsearch.version>6.5.0-3</xsearch.version>
         <serenity.testlink.integration.version>3.4.3</serenity.testlink.integration.version>
         <testlink.devkey>b0f60503e7aab68af1e6072faf5124d6</testlink.devkey>
         <testlink.project>X-Search</testlink.project>
@@ -279,7 +279,7 @@
                 </executions>
             </plugin>
             <!--Uncomment this to Integrate with testlink-->
-            <plugin>
+  <!--          <plugin>
                 <groupId>com.gdn.qa.util</groupId>
                 <artifactId>serenity-testlink-integration</artifactId>
                 <version>${serenity.testlink.integration.version}</version>
@@ -299,7 +299,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
 
         </plugins>
     </build>
