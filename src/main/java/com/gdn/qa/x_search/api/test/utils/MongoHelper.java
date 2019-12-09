@@ -30,19 +30,10 @@ public class MongoHelper {
   SearchServiceProperties searchServiceProperties;
 
   public MongoCollection<Document> initializeDatabase(String collectionName){
-    String MONGO_SERVER_ADDRESS = searchServiceProperties.get("mongoURI");
-    log.debug("-----------Mongo Server host ----{}--------",MONGO_SERVER_ADDRESS);
-/*
-    ServerAddress serverAddress = new ServerAddress(MONGO_SERVER_ADDRESS,MONGO_SERVER_PORT);
-    MongoCredential mongoCredential = MongoCredential.createCredential("search","x_search","search".toCharArray());
-    MongoClientOptions mongoClientOptions =  MongoClientOptions.builder(MongoClientOptions.builder().socketTimeout(60000).build()).build();
-*/
-    MongoClientURI mongoClientURI = new MongoClientURI(MONGO_SERVER_ADDRESS);
+    MongoClientURI mongoClientURI = new MongoClientURI(searchServiceProperties.get("mongoURI"));
     MongoClient mongoClient  = new MongoClient(mongoClientURI);
- //   MongoClient mongoClient=new MongoClient(serverAddress, mongoClientOptions);
     MongoDatabase mongoDatabase=mongoClient.getDatabase("x_search");
-    MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
-    return collection;
+    return mongoDatabase.getCollection(collectionName);
   }
 
   public long countOfRecordsInCollection(String collectionName){
@@ -56,8 +47,7 @@ public class MongoHelper {
     MongoCollection<Document> collection = initializeDatabase(collectionName);
     Document query = new Document(queryField,value);
     String pattern = ".*" + query.getString(queryField) + ".*";
-    FindIterable<Document> mongoDoc = collection.find(regex(queryField,pattern,"i"));
-    return mongoDoc;
+    return collection.find(regex(queryField,pattern,"i"));
   }
 
   public void updateMongo(String collectionName,String queryField,String queryValue,String updateField,String updateValue){

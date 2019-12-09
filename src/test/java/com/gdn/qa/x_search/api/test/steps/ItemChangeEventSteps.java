@@ -367,10 +367,10 @@ public class ItemChangeEventSteps {
           solrHelper.getSolrProdCount("id:AAA-60015-00008-00001", SELECT_HANDLER, SOLR_DEFAULT_COLLECTION),
           equalTo(1L));
       assertThat("Test Data Not inserted in SOLR",
-          solrHelper.getSolrProdCount("id:AAA-60015-00008-00002", SELECT_HANDLER, SOLR_DEFAULT_COLLECTION_O2O),
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001", SELECT_HANDLER, SOLR_DEFAULT_COLLECTION_O2O),
           equalTo(1L));
       assertThat("Test Data Not inserted in SOLR",
-          solrHelper.getSolrProdCount("id:AAA-60015-00008-00002", SELECT_HANDLER, SOLR_DEFAULT_COLLECTION_CNC),
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001", SELECT_HANDLER, SOLR_DEFAULT_COLLECTION_CNC),
           equalTo(1L));
     } catch (Exception e) {
       e.printStackTrace();
@@ -464,6 +464,18 @@ public class ItemChangeEventSteps {
       assertThat("Test Data deleted from SOLR",
           solrHelper.getSolrProdCount("id:AAA-60015-00008-00002",SELECT_HANDLER,SOLR_DEFAULT_COLLECTION),
           equalTo(1L));
+      assertThat("Test Data Not deleted from SOLR",
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001",SELECT_HANDLER,SOLR_DEFAULT_COLLECTION_CNC),
+          equalTo(0L));
+      assertThat("Test Data deleted from SOLR",
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00002",SELECT_HANDLER,SOLR_DEFAULT_COLLECTION_CNC),
+          equalTo(1L));
+      assertThat("Test Data Not deleted from SOLR",
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001",SELECT_HANDLER,SOLR_DEFAULT_COLLECTION_O2O),
+          equalTo(0L));
+      assertThat("Test Data deleted from SOLR",
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00002",SELECT_HANDLER,SOLR_DEFAULT_COLLECTION_O2O),
+          equalTo(1L));
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -534,7 +546,7 @@ public class ItemChangeEventSteps {
     Price price = new Price();
     price.setListPrice(10000);
     price.setOfferPrice(9000);
-    Set<Price> priceSet = new HashSet();
+    Set<Price> priceSet = new HashSet<>();
     DiscountPrice discountPrice = new DiscountPrice();
     if(type.toLowerCase().trim().equals("valid")){
       Date date = new Date();
@@ -1310,7 +1322,7 @@ public class ItemChangeEventSteps {
     Price price = new Price();
     price.setListPrice(10000);
     price.setOfferPrice(9000);
-    Set<Price> priceSet = new HashSet();
+    Set<Price> priceSet = new HashSet<>();
     priceSet.add(price);
 
     kafkaHelper.publishItemChangeEvent(searchServiceData.getItemSkuForReindex(),
@@ -1372,7 +1384,7 @@ public class ItemChangeEventSteps {
     Price price = new Price();
     price.setListPrice(10000);
     price.setOfferPrice(9000);
-    Set<Price> priceSet = new HashSet();
+    Set<Price> priceSet = new HashSet<>();
     priceSet.add(price);
 
 
