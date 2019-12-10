@@ -62,15 +62,6 @@ public class SolrHelper {
     return solrQuery;
   }
 
- /* public long getSolrProdCount(String queryText, String requestHandler) throws Exception {
-    HttpSolrClient httpSolrClient = initializeSolr(searchServiceProperties.get("SOLR_URL_NO_PARAM"));
-    SolrQuery solrQuery = initializeSolrQuery(queryText,requestHandler,0,"id","");
-    System.out.println("----SolrQuery---"+solrQuery.toString());
-    QueryResponse queryResponse = httpSolrClient.query(solrQuery);
-    System.out.println("----=======================SolrResponse======================---"+queryResponse.getResults().getNumFound());
-    return queryResponse.getResults().getNumFound();
-  }*/
-
   public long getSolrProdCount(String queryText, String requestHandler,String collectionName) throws Exception {
     HttpSolrClient httpSolrClient = initializeSolr(searchServiceProperties.get("SOLR_URL_NO_PARAM")+"/"+collectionName);
     SolrQuery solrQuery = initializeSolrQuery(queryText,requestHandler,0,"id","");

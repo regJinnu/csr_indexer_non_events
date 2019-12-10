@@ -39,6 +39,7 @@ public class KafkaHelper {
         level2MerchantCode(level2MerchantCode).
         storeId("10001").
         uniqueId(level2Id).
+        cncActivated(false).
         timestamp(System.currentTimeMillis()).build();
 
     try {

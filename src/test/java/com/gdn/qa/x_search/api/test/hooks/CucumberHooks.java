@@ -272,12 +272,16 @@ public class CucumberHooks {
   }
 
   @After("@DefaultCncJobUpdate")
-  public void afterDefaultCncJob(){
-    ResponseApi<GdnBaseRestResponse> responseAfterReindexing = searchServiceController.defaultCncJob();
+  public void afterDefaultCncJob() {
+    ResponseApi<GdnBaseRestResponse> responseAfterReindexing =
+        searchServiceController.defaultCncJob();
     searchServiceData.setSearchServiceResponse(responseAfterReindexing);
 
-    ResponseApi<GdnBaseRestResponse> responseAfterReindexingCNCProd = searchServiceData.getSearchServiceResponse();
-    assertThat("Request failed", responseAfterReindexingCNCProd.getResponse().getStatusCode(), equalTo(200));
+    ResponseApi<GdnBaseRestResponse> responseAfterReindexingCNCProd =
+        searchServiceData.getSearchServiceResponse();
+    assertThat("Request failed",
+        responseAfterReindexingCNCProd.getResponse().getStatusCode(),
+        equalTo(200));
     try {
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
@@ -287,7 +291,7 @@ public class CucumberHooks {
   }
 
   @After("@DefaultCncJobWhenProdIsDeleted")
-  public void afterDeletingDefaultCncProd(){
+  public void afterDeletingDefaultCncProd() {
     ResponseApi responseApi;
     responseApi = searchServiceController.prepareRequestForIndexing("itemSkus",
         searchServiceData.getDefCncItemSku1());
@@ -295,11 +299,15 @@ public class CucumberHooks {
 
     responseApi = searchServiceData.getSearchServiceResponse();
     assertThat("Status Code Not 200", responseApi.getResponse().getStatusCode(), equalTo(200));
-    ResponseApi<GdnBaseRestResponse> responseAfterReindexing = searchServiceController.defaultCncJob();
+    ResponseApi<GdnBaseRestResponse> responseAfterReindexing =
+        searchServiceController.defaultCncJob();
     searchServiceData.setSearchServiceResponse(responseAfterReindexing);
 
-    ResponseApi<GdnBaseRestResponse> responseAfterReindexingCNCProd = searchServiceData.getSearchServiceResponse();
-    assertThat("Request failed", responseAfterReindexingCNCProd.getResponse().getStatusCode(), equalTo(200));
+    ResponseApi<GdnBaseRestResponse> responseAfterReindexingCNCProd =
+        searchServiceData.getSearchServiceResponse();
+    assertThat("Request failed",
+        responseAfterReindexingCNCProd.getResponse().getStatusCode(),
+        equalTo(200));
     try {
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
@@ -309,25 +317,63 @@ public class CucumberHooks {
   }
 
 
- @After("@ForceStopSolrCncUpdatesSwitch")
-  public void reindexDefCnc(){
-   ResponseApi responseApi;
-   responseApi = searchServiceController.prepareRequestForIndexing("itemSkus",
-       searchServiceData.getDefCncItemSku1());
-   searchServiceData.setSearchServiceResponse(responseApi);
+  @After("@ForceStopSolrCncUpdatesSwitch")
+  public void reindexDefCnc() {
+    ResponseApi responseApi;
+    responseApi = searchServiceController.prepareRequestForIndexing("itemSkus",
+        searchServiceData.getDefCncItemSku1());
+    searchServiceData.setSearchServiceResponse(responseApi);
 
-   responseApi = searchServiceData.getSearchServiceResponse();
-   assertThat("Status Code Not 200", responseApi.getResponse().getStatusCode(), equalTo(200));
-   ResponseApi<GdnBaseRestResponse> responseAfterReindexing = searchServiceController.defaultCncJob();
-   searchServiceData.setSearchServiceResponse(responseAfterReindexing);
+    responseApi = searchServiceData.getSearchServiceResponse();
+    assertThat("Status Code Not 200", responseApi.getResponse().getStatusCode(), equalTo(200));
+    ResponseApi<GdnBaseRestResponse> responseAfterReindexing =
+        searchServiceController.defaultCncJob();
+    searchServiceData.setSearchServiceResponse(responseAfterReindexing);
 
-   ResponseApi<GdnBaseRestResponse> responseAfterReindexingCNCProd = searchServiceData.getSearchServiceResponse();
-   assertThat("Request failed", responseAfterReindexingCNCProd.getResponse().getStatusCode(), equalTo(200));
-   try {
-     solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
-     solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
-   } catch (Exception e) {
-     e.printStackTrace();
-   }
- }
+    ResponseApi<GdnBaseRestResponse> responseAfterReindexingCNCProd =
+        searchServiceData.getSearchServiceResponse();
+    assertThat("Request failed",
+        responseAfterReindexingCNCProd.getResponse().getStatusCode(),
+        equalTo(200));
+    try {
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  @After("ItemChangeDeleteEvent")
+  public void afterItemChangeDeleteEvent() {
+    ResponseApi responseApi;
+    responseApi = searchServiceController.prepareRequestForIndexing("itemSkus",
+        searchServiceData.getDefCncItemSku1());
+    searchServiceData.setSearchServiceResponse(responseApi);
+
+    responseApi = searchServiceData.getSearchServiceResponse();
+    assertThat("Status Code Not 200", responseApi.getResponse().getStatusCode(), equalTo(200));
+    try {
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  @After("OfflineEventHandlingFeature")
+  public void afterOfflineChangeEvent() {
+    ResponseApi responseApi;
+    responseApi = searchServiceController.prepareRequestForIndexing("itemSkus",
+        searchServiceData.getDefCncItemSku1());
+    searchServiceData.setSearchServiceResponse(responseApi);
+
+    responseApi = searchServiceData.getSearchServiceResponse();
+    assertThat("Status Code Not 200", responseApi.getResponse().getStatusCode(), equalTo(200));
+    try {
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 }

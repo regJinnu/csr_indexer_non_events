@@ -250,24 +250,6 @@ public class ItemChangeEventSteps {
     }
   }
 
-
-  @When("^\\[search-service] consumes item change event for that itemSku$")
-  public void searchConsumesItemChangeEvent(){
-
-    kafkaHelper.publishItemChangeEvent(searchServiceData.getItemSkuForReindex(),
-        searchServiceData.getSkuForReindex(),false,false,
-        Collections.EMPTY_LIST,Collections.EMPTY_SET,false,
-        new PristineDataItemEventModel(),Collections.EMPTY_SET);
-
-    try {
-      Thread.sleep(30000);
-      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-  }
-
   @Then("^\\[search-service] price information is properly updated for the Sku with itemChangeEventType and '(.*)' discount schedule$")
   public void checkProductAfterReindexingByItemChangeEvent(String type){
 
@@ -343,24 +325,24 @@ public class ItemChangeEventSteps {
         "AAA-60015-00008",
         "MTA-66666",
         eventType,
-        SOLR_DEFAULT_COLLECTION_CNC);
-
-    solrHelper.addSolrDocumentForItemChangeEvent("AAA-60015-00008-00002",
-        "AAA-60015-00008",
-        "MTA-66666",
-        eventType,
-        SOLR_DEFAULT_COLLECTION_CNC);
-
-    solrHelper.addSolrDocumentForItemChangeEvent("AAA-60015-00008-00001",
-        "AAA-60015-00008",
-        "MTA-66666",
-        eventType,
         SOLR_DEFAULT_COLLECTION_O2O);
     solrHelper.addSolrDocumentForItemChangeEvent("AAA-60015-00008-00002",
         "AAA-60015-00008",
         "MTA-66666",
         eventType,
         SOLR_DEFAULT_COLLECTION_O2O);
+
+    //For Deleting CNC Doc creating event
+
+    searchServiceData.setDefCncExternalPickupPointCode(searchServiceProperties.get(
+        "defCncExternalPickupPointCode"));
+    searchServiceData.setDefCncMerchantCode(searchServiceProperties.get("defCncMerchantCode"));
+    searchServiceData.setDefCncProductSku(searchServiceProperties.get("defCncProductSku"));
+    searchServiceData.setDefCncOfferPrice(searchServiceProperties.get("defCncOfferPrice"));
+    searchServiceData.setDefCncMerchantSku(searchServiceProperties.get("defCncMerchantSku"));
+    searchServiceData.setDefCncItemSku1(searchServiceProperties.get("defCncItemSku1"));
+    searchServiceData.setDefCncPP(searchServiceProperties.get("defCncPP"));
+    searchServiceData.setDefCncItemCode(searchServiceProperties.get("defCncItemCode"));
 
     try {
       assertThat("Test Data Not inserted in SOLR",
@@ -368,9 +350,6 @@ public class ItemChangeEventSteps {
           equalTo(1L));
       assertThat("Test Data Not inserted in SOLR",
           solrHelper.getSolrProdCount("id:AAA-60015-00008-00001", SELECT_HANDLER, SOLR_DEFAULT_COLLECTION_O2O),
-          equalTo(1L));
-      assertThat("Test Data Not inserted in SOLR",
-          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001", SELECT_HANDLER, SOLR_DEFAULT_COLLECTION_CNC),
           equalTo(1L));
     } catch (Exception e) {
       e.printStackTrace();
@@ -385,29 +364,31 @@ public class ItemChangeEventSteps {
         Collections.EMPTY_LIST,Collections.EMPTY_SET,false,
         new PristineDataItemEventModel(),Collections.EMPTY_SET);
 
+    // Adding event to delete from CNC collection
+
+    Map<String, String> payload = new HashMap<>();
+    payload.put("uniqueId",
+        searchServiceData.getDefCncItemSku1() + "-" + searchServiceData.getDefCncPP());
+    payload.put("merchantCode", searchServiceData.getDefCncMerchantCode());
+    payload.put("itemSku", searchServiceData.getDefCncItemSku1());
+    payload.put("itemCode", searchServiceData.getDefCncItemCode());
+    payload.put("merchantSku", searchServiceData.getDefCncMerchantSku());
+    payload.put("pickupPointCode", searchServiceData.getDefCncPP());
+    payload.put("externalPickupPointCode", searchServiceData.getDefCncExternalPickupPointCode());
+    payload.put("productSku", searchServiceData.getDefCncProductSku());
+    payload.put("offerPrice", searchServiceData.getDefCncOfferPrice());
+
+    kafkaHelper.publishOfflineItemChangeEventforDefCncJob(payload);
+
     try {
       Thread.sleep(30000);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-  }
-
-
-  @When("^\\[search-service] consumes product change event for that sku$")
-  public void searchConsumesProductChangeEvent(){
-
-    kafkaHelper.publishProductChangeEvent(searchServiceData.getProductCodeForReindex(),
-        searchServiceData.getSkuForReindex(),false,true);
-
-    try {
-      Thread.sleep(90000);
-      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
     } catch (Exception e) {
       e.printStackTrace();
     }
+
   }
 
   @When("^\\[search-service] consumes product change event for that sku wrt normal and '(.*)' collection$")
@@ -448,33 +429,47 @@ public class ItemChangeEventSteps {
         "AAA-60015-00008",true,true);
 
     try {
-      Thread.sleep(30000);
+      Thread.sleep(50000);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
   @Then("^\\[search-service] deletes only the item sku of test product from SOLR$")
-  public void checkItemChangeOnlyDeletesItemSku(){
+  public void checkItemChangeOnlyDeletesItemSku() {
     try {
       assertThat("Test Data Not deleted from SOLR",
-          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001",SELECT_HANDLER,SOLR_DEFAULT_COLLECTION),
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001",
+              SELECT_HANDLER,
+              SOLR_DEFAULT_COLLECTION),
           equalTo(0L));
       assertThat("Test Data deleted from SOLR",
-          solrHelper.getSolrProdCount("id:AAA-60015-00008-00002",SELECT_HANDLER,SOLR_DEFAULT_COLLECTION),
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00002",
+              SELECT_HANDLER,
+              SOLR_DEFAULT_COLLECTION),
           equalTo(1L));
       assertThat("Test Data Not deleted from SOLR",
-          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001",SELECT_HANDLER,SOLR_DEFAULT_COLLECTION_CNC),
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001",
+              SELECT_HANDLER,
+              SOLR_DEFAULT_COLLECTION_O2O),
           equalTo(0L));
       assertThat("Test Data deleted from SOLR",
-          solrHelper.getSolrProdCount("id:AAA-60015-00008-00002",SELECT_HANDLER,SOLR_DEFAULT_COLLECTION_CNC),
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00002",
+              SELECT_HANDLER,
+              SOLR_DEFAULT_COLLECTION_O2O),
           equalTo(1L));
-      assertThat("Test Data Not deleted from SOLR",
-          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001",SELECT_HANDLER,SOLR_DEFAULT_COLLECTION_O2O),
+      assertThat("Test Data deleted from SOLR",
+          solrHelper.getSolrProdCount("id:KIK-60001-00004-00001-PP-3001140",
+              SELECT_HANDLER,
+              SOLR_DEFAULT_COLLECTION_CNC),
           equalTo(0L));
       assertThat("Test Data deleted from SOLR",
-          solrHelper.getSolrProdCount("id:AAA-60015-00008-00002",SELECT_HANDLER,SOLR_DEFAULT_COLLECTION_O2O),
+          solrHelper.getSolrProdCount("id:KIK-60001-00004-00001-PP-3001139",
+              SELECT_HANDLER,
+              SOLR_DEFAULT_COLLECTION_CNC),
           equalTo(1L));
     } catch (Exception e) {
       e.printStackTrace();
@@ -578,8 +573,9 @@ public class ItemChangeEventSteps {
           itemChangeEventStepsList,priceSet,false,new PristineDataItemEventModel(),Collections.EMPTY_SET);
 
     try {
-      Thread.sleep(30000);
+      Thread.sleep(60000);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);
     } catch (Exception e) {
       e.printStackTrace();
     }

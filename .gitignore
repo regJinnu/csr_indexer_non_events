@@ -1,4 +1,7 @@
 .idea
 target
 *.iml
+X-search.ipr
+X-search.iws
+
 /src/test/resources/application.properties
