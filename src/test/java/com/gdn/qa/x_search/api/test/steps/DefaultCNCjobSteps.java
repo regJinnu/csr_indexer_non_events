@@ -183,7 +183,6 @@ public class DefaultCNCjobSteps {
     payload.put("productSku", searchServiceData.getDefCncProductSku());
     payload.put("offerPrice", searchServiceData.getDefCncOfferPrice());
 
-    System.out.print(payload);
 
     kafkaHelper.publishOfflineItemChangeEventforDefCncJob(payload);
     try {

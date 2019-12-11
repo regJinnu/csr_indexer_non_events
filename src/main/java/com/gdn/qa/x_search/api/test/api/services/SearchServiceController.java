@@ -1691,4 +1691,12 @@ public class SearchServiceController extends ServiceApi {
     return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
     });
   }
+
+  public ResponseApi<GdnBaseRestResponse> deleteDanglingProdJob() {
+    Response response =
+        service("searchservice").get(BASEPATH + "scheduled-events/delete-unpublished");
+    response.getBody().prettyPrint();
+    return jsonApi.fromJson(response, new TypeReference<GdnBaseRestResponse>() {
+    });
+  }
 }

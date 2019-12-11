@@ -18,4 +18,5 @@ public class OOSEvent {
   private String level2Id;
   private String level2MerchantCode;
   private String uniqueId;
+  private Boolean cncActivated;
 }

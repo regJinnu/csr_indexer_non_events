@@ -17,14 +17,15 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.bson.Document;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.IOException;
 import java.util.*;
 
-import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SELECT_HANDLER;
-import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_DEFAULT_COLLECTION;
+import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.*;
 import static com.gdn.x.product.domain.event.enums.ItemChangeEventType.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -71,49 +72,182 @@ public class ItemChangeEventSteps {
 
     try {
 
-      int status = solrHelper.updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),
+      int statusOfNormalCollectionUpdate = solrHelper.updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
           "id",
           1,
-          "price",SOLR_DEFAULT_COLLECTION);
-      assertThat("Updating SOLR fields for test failed", status, equalTo(0));
+          "price",
+          SOLR_DEFAULT_COLLECTION);
+      assertThat("Updating SOLR fields for test failed", statusOfNormalCollectionUpdate, equalTo(0));
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
-      double offerPrice =
-          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "offerPrice", 1,SOLR_DEFAULT_COLLECTION)
-              .get(0)
-              .getOfferPrice();
+      double offerPrice = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+          SELECT_HANDLER,
+          "offerPrice",
+          1,
+          SOLR_DEFAULT_COLLECTION).get(0).getOfferPrice();
 
-      double listPrice  =
-          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "listPrice", 1,SOLR_DEFAULT_COLLECTION)
-              .get(0)
-              .getListPrice();
+      double listPrice = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+          SELECT_HANDLER,
+          "listPrice",
+          1,
+          SOLR_DEFAULT_COLLECTION).get(0).getListPrice();
 
       log.warn("------offerPrice--{}---listPrice--{}---}", offerPrice, listPrice);
       assertThat("offer price not set", offerPrice, equalTo(4545455.45));
-      assertThat("list price not set",listPrice,equalTo(4545455.50));
-
+      assertThat("list price not set", listPrice, equalTo(4545455.50));
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (SolrServerException e) {
+      e.printStackTrace();
     } catch (Exception e) {
       e.printStackTrace();
     }
 
   }
 
-  @When("^\\[search-service] consumes item change event for that itemSku$")
-  public void searchConsumesItemChangeEvent(){
+  @Given("^\\[search-service] change the price of the sku in Normal and '(.*)' collection$")
+  public void changeThePriceOfTheSkuInNormalAndOtherCollection(String other) {
+    resetConfigs();
+    if (other.equals("O2O")) {
+      searchServiceData.setItemSkuForReindex(searchServiceProperties.get("itemSkuForReindex"));
+      searchServiceData.setSkuForReindex(searchServiceProperties.get("skuForReindex"));
+      searchServiceData.setQueryForReindex(searchServiceProperties.get("queryForReindex"));
+      searchServiceData.setProductCodeForReindex(searchServiceProperties.get("productCodeForReindex"));
 
-    kafkaHelper.publishItemChangeEvent(searchServiceData.getItemSkuForReindex(),
-        searchServiceData.getSkuForReindex(),false,false,
-        Collections.EMPTY_LIST,Collections.EMPTY_SET,false,
-        new PristineDataItemEventModel(),Collections.EMPTY_SET);
+      int statusOfNormalCollectionUpdate = 0;
+      try {
+        statusOfNormalCollectionUpdate =
+            solrHelper.updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),
+                SELECT_HANDLER,
+                "id",
+                1,
+                "price",
+                SOLR_DEFAULT_COLLECTION);
+        assertThat("Updating SOLR fields for test failed",
+            statusOfNormalCollectionUpdate,
+            equalTo(0));
+        solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
-    try {
-      Thread.sleep(30000);
-      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
-    } catch (Exception e) {
-      e.printStackTrace();
+        double offerPrice = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+            SELECT_HANDLER,
+            "offerPrice",
+            1,
+            SOLR_DEFAULT_COLLECTION).get(0).getOfferPrice();
+
+        double listPrice = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+            SELECT_HANDLER,
+            "listPrice",
+            1,
+            SOLR_DEFAULT_COLLECTION).get(0).getListPrice();
+
+        log.warn("------offerPrice--{}---listPrice--{}---}", offerPrice, listPrice);
+        assertThat("offer price not set", offerPrice, equalTo(4545455.45));
+        assertThat("list price not set", listPrice, equalTo(4545455.50));
+
+        int statusOfO2OCollectionUpdate =
+            solrHelper.updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),
+                SELECT_HANDLER,
+                "id",
+                1,
+                "price",
+                SOLR_DEFAULT_COLLECTION_O2O);
+        assertThat("Updating SOLR fields for test failed", statusOfO2OCollectionUpdate, equalTo(0));
+        solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);
+
+        double offerPriceInO2Ocoll = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+            SELECT_HANDLER,
+            "offerPrice",
+            1,
+            SOLR_DEFAULT_COLLECTION).get(0).getOfferPrice();
+
+        double listPriceInO2Ocoll = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+            SELECT_HANDLER,
+            "listPrice",
+            1,
+            SOLR_DEFAULT_COLLECTION).get(0).getListPrice();
+
+        log.warn("------offerPrice--{}---listPrice--{}---}", offerPrice, listPrice);
+        assertThat("offer price not set", offerPriceInO2Ocoll, equalTo(4545455.45));
+        assertThat("list price not set", listPriceInO2Ocoll, equalTo(4545455.50));
+      } catch (IOException e) {
+        e.printStackTrace();
+      } catch (SolrServerException e) {
+        e.printStackTrace();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
 
+    if (other.equals("CNC")) {
+      searchServiceData.setDefCncItemSku1(searchServiceProperties.get("defCncItemSku1"));
+      searchServiceData.setDefCncPP(searchServiceProperties.get("defCncPP"));
+      searchServiceData.setDefCncProductSku(searchServiceProperties.get("defCncProductSku"));
+      searchServiceData.setDefCncProductCode(searchServiceProperties.get("defCncProductCode"));
+
+      int statusOfNormalCollectionUpdate = 0;
+      try {
+        statusOfNormalCollectionUpdate =
+            solrHelper.updateSolrDataForAutomation("id:" + searchServiceData.getDefCncItemSku1(),
+                SELECT_HANDLER,
+                "id",
+                1,
+                "price",
+                SOLR_DEFAULT_COLLECTION);
+        assertThat("Updating SOLR fields for test failed",
+            statusOfNormalCollectionUpdate,
+            equalTo(0));
+        solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+
+        double offerPrice = solrHelper.getSolrProd("id:" + searchServiceData.getDefCncItemSku1(),
+            SELECT_HANDLER,
+            "offerPrice",
+            1,
+            SOLR_DEFAULT_COLLECTION).get(0).getOfferPrice();
+
+        double listPrice = solrHelper.getSolrProd("id:" + searchServiceData.getDefCncItemSku1(),
+            SELECT_HANDLER,
+            "listPrice",
+            1,
+            SOLR_DEFAULT_COLLECTION).get(0).getListPrice();
+
+        log.warn("------offerPrice--{}---listPrice--{}---}", offerPrice, listPrice);
+        assertThat("offer price not set", offerPrice, equalTo(4545455.45));
+        assertThat("list price not set", listPrice, equalTo(4545455.50));
+
+        int statusOfCNCCollectionUpdate = solrHelper.updateSolrDataForAutomation(
+            "id:" + searchServiceData.getDefCncItemSku1() + searchServiceData.getPickupPointCode(),
+            SELECT_HANDLER,
+            "id",
+            1,
+            "price",
+            SOLR_DEFAULT_COLLECTION_CNC);
+        assertThat("Updating SOLR fields for test failed", statusOfCNCCollectionUpdate, equalTo(0));
+        solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
+
+        double offerPriceInCNCcoll = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+            SELECT_HANDLER,
+            "offerPrice",
+            1,
+            SOLR_DEFAULT_COLLECTION_CNC).get(0).getOfferPrice();
+
+        double listPriceInCNCcoll = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+            SELECT_HANDLER,
+            "listPrice",
+            1,
+            SOLR_DEFAULT_COLLECTION_CNC).get(0).getListPrice();
+
+        log.warn("------offerPrice--{}---listPrice--{}---}", offerPrice, listPrice);
+        assertThat("offer price not set", offerPriceInCNCcoll, equalTo(4545455.45));
+        assertThat("list price not set", listPriceInCNCcoll, equalTo(4545455.50));
+      } catch (IOException e) {
+        e.printStackTrace();
+      } catch (SolrServerException e) {
+        e.printStackTrace();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
   }
 
   @Then("^\\[search-service] price information is properly updated for the Sku with itemChangeEventType and '(.*)' discount schedule$")
@@ -171,18 +305,51 @@ public class ItemChangeEventSteps {
 
 
   @Given("^\\[search-service] test product is added in SOLR for '(.*)'$")
-  public void addTestDataToSolrBeforeItemChangeEvent(String eventType){
+  public void addTestDataToSolrBeforeItemChangeEvent(String eventType) {
 
     resetConfigs();
 
-        solrHelper.addSolrDocumentForItemChangeEvent("AAA-60015-00008-00001","AAA-60015-00008","MTA-66666",eventType);
-        solrHelper.addSolrDocumentForItemChangeEvent("AAA-60015-00008-00002","AAA-60015-00008","MTA-66666",eventType);
+    solrHelper.addSolrDocumentForItemChangeEvent("AAA-60015-00008-00001",
+        "AAA-60015-00008",
+        "MTA-66666",
+        eventType,
+        SOLR_DEFAULT_COLLECTION);
+
+    solrHelper.addSolrDocumentForItemChangeEvent("AAA-60015-00008-00002",
+        "AAA-60015-00008",
+        "MTA-66666",
+        eventType,
+        SOLR_DEFAULT_COLLECTION);
+
+    solrHelper.addSolrDocumentForItemChangeEvent("AAA-60015-00008-00001",
+        "AAA-60015-00008",
+        "MTA-66666",
+        eventType,
+        SOLR_DEFAULT_COLLECTION_O2O);
+    solrHelper.addSolrDocumentForItemChangeEvent("AAA-60015-00008-00002",
+        "AAA-60015-00008",
+        "MTA-66666",
+        eventType,
+        SOLR_DEFAULT_COLLECTION_O2O);
+
+    //For Deleting CNC Doc creating event
+
+    searchServiceData.setDefCncExternalPickupPointCode(searchServiceProperties.get(
+        "defCncExternalPickupPointCode"));
+    searchServiceData.setDefCncMerchantCode(searchServiceProperties.get("defCncMerchantCode"));
+    searchServiceData.setDefCncProductSku(searchServiceProperties.get("defCncProductSku"));
+    searchServiceData.setDefCncOfferPrice(searchServiceProperties.get("defCncOfferPrice"));
+    searchServiceData.setDefCncMerchantSku(searchServiceProperties.get("defCncMerchantSku"));
+    searchServiceData.setDefCncItemSku1(searchServiceProperties.get("defCncItemSku1"));
+    searchServiceData.setDefCncPP(searchServiceProperties.get("defCncPP"));
+    searchServiceData.setDefCncItemCode(searchServiceProperties.get("defCncItemCode"));
+
     try {
       assertThat("Test Data Not inserted in SOLR",
-          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001",SELECT_HANDLER),
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001", SELECT_HANDLER, SOLR_DEFAULT_COLLECTION),
           equalTo(1L));
       assertThat("Test Data Not inserted in SOLR",
-          solrHelper.getSolrProdCount("id:AAA-60015-00008-00002",SELECT_HANDLER),
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001", SELECT_HANDLER, SOLR_DEFAULT_COLLECTION_O2O),
           equalTo(1L));
     } catch (Exception e) {
       e.printStackTrace();
@@ -197,28 +364,62 @@ public class ItemChangeEventSteps {
         Collections.EMPTY_LIST,Collections.EMPTY_SET,false,
         new PristineDataItemEventModel(),Collections.EMPTY_SET);
 
+    // Adding event to delete from CNC collection
+
+    Map<String, String> payload = new HashMap<>();
+    payload.put("uniqueId",
+        searchServiceData.getDefCncItemSku1() + "-" + searchServiceData.getDefCncPP());
+    payload.put("merchantCode", searchServiceData.getDefCncMerchantCode());
+    payload.put("itemSku", searchServiceData.getDefCncItemSku1());
+    payload.put("itemCode", searchServiceData.getDefCncItemCode());
+    payload.put("merchantSku", searchServiceData.getDefCncMerchantSku());
+    payload.put("pickupPointCode", searchServiceData.getDefCncPP());
+    payload.put("externalPickupPointCode", searchServiceData.getDefCncExternalPickupPointCode());
+    payload.put("productSku", searchServiceData.getDefCncProductSku());
+    payload.put("offerPrice", searchServiceData.getDefCncOfferPrice());
+
+    kafkaHelper.publishOfflineItemChangeEventforDefCncJob(payload);
+
     try {
       Thread.sleep(30000);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
     } catch (Exception e) {
       e.printStackTrace();
     }
 
   }
 
+  @When("^\\[search-service] consumes product change event for that sku wrt normal and '(.*)' collection$")
+  public void consumesProductChangeEventForThatSkuWrtNormalAndOtherCollection(String other)
+  {
+    if(other.equals("O2O")){
+      kafkaHelper.publishProductChangeEvent(searchServiceData.getProductCodeForReindex(),
+          searchServiceData.getSkuForReindex(),false,true);
 
-  @When("^\\[search-service] consumes product change event for that sku$")
-  public void searchConsumesProductChangeEvent(){
-
-    kafkaHelper.publishProductChangeEvent(searchServiceData.getProductCodeForReindex(),
-        searchServiceData.getSkuForReindex(),false,true);
-
-    try {
-      Thread.sleep(30000);
-      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
-    } catch (Exception e) {
-      e.printStackTrace();
+      try {
+        Thread.sleep(90000);
+        solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+        solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
+
+    if (other.equals("CNC")){
+      kafkaHelper.publishProductChangeEvent(searchServiceData.getDefCncProductCode(),
+          searchServiceData.getDefCncProductSku(),false,true);
+
+      try {
+        Thread.sleep(90000);
+        solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+        solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+
   }
 
   @When("^\\[search-service] consumes item change event with markForDelete set to true$")
@@ -228,21 +429,47 @@ public class ItemChangeEventSteps {
         "AAA-60015-00008",true,true);
 
     try {
-      Thread.sleep(30000);
+      Thread.sleep(50000);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
   @Then("^\\[search-service] deletes only the item sku of test product from SOLR$")
-  public void checkItemChangeOnlyDeletesItemSku(){
+  public void checkItemChangeOnlyDeletesItemSku() {
     try {
       assertThat("Test Data Not deleted from SOLR",
-          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001",SELECT_HANDLER),
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001",
+              SELECT_HANDLER,
+              SOLR_DEFAULT_COLLECTION),
           equalTo(0L));
       assertThat("Test Data deleted from SOLR",
-          solrHelper.getSolrProdCount("id:AAA-60015-00008-00002",SELECT_HANDLER),
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00002",
+              SELECT_HANDLER,
+              SOLR_DEFAULT_COLLECTION),
+          equalTo(1L));
+      assertThat("Test Data Not deleted from SOLR",
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001",
+              SELECT_HANDLER,
+              SOLR_DEFAULT_COLLECTION_O2O),
+          equalTo(0L));
+      assertThat("Test Data deleted from SOLR",
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00002",
+              SELECT_HANDLER,
+              SOLR_DEFAULT_COLLECTION_O2O),
+          equalTo(1L));
+      assertThat("Test Data deleted from SOLR",
+          solrHelper.getSolrProdCount("id:KIK-60001-00004-00001-PP-3001140",
+              SELECT_HANDLER,
+              SOLR_DEFAULT_COLLECTION_CNC),
+          equalTo(0L));
+      assertThat("Test Data deleted from SOLR",
+          solrHelper.getSolrProdCount("id:KIK-60001-00004-00001-PP-3001139",
+              SELECT_HANDLER,
+              SOLR_DEFAULT_COLLECTION_CNC),
           equalTo(1L));
     } catch (Exception e) {
       e.printStackTrace();
@@ -253,11 +480,26 @@ public class ItemChangeEventSteps {
   public void checkTestProdIsDeleted(){
     try {
       assertThat("Test Data Not deleted from SOLR",
-          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001",SELECT_HANDLER),
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001",SELECT_HANDLER,SOLR_DEFAULT_COLLECTION),
           equalTo(0L));
       assertThat("Test Data deleted from SOLR",
-          solrHelper.getSolrProdCount("id:AAA-60015-00008-00002",SELECT_HANDLER),
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00002",SELECT_HANDLER,SOLR_DEFAULT_COLLECTION),
           equalTo(0L));
+
+      assertThat("Test Data Not deleted from SOLR",
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001",SELECT_HANDLER,SOLR_DEFAULT_COLLECTION_CNC),
+          equalTo(0L));
+      assertThat("Test Data deleted from SOLR",
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00002",SELECT_HANDLER,SOLR_DEFAULT_COLLECTION_CNC),
+          equalTo(0L));
+
+      assertThat("Test Data Not deleted from SOLR",
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001",SELECT_HANDLER,SOLR_DEFAULT_COLLECTION_O2O),
+          equalTo(0L));
+      assertThat("Test Data deleted from SOLR",
+          solrHelper.getSolrProdCount("id:AAA-60015-00008-00002",SELECT_HANDLER,SOLR_DEFAULT_COLLECTION_O2O),
+          equalTo(0L));
+
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -299,7 +541,7 @@ public class ItemChangeEventSteps {
     Price price = new Price();
     price.setListPrice(10000);
     price.setOfferPrice(9000);
-    Set<Price> priceSet = new HashSet();
+    Set<Price> priceSet = new HashSet<>();
     DiscountPrice discountPrice = new DiscountPrice();
     if(type.toLowerCase().trim().equals("valid")){
       Date date = new Date();
@@ -331,31 +573,97 @@ public class ItemChangeEventSteps {
           itemChangeEventStepsList,priceSet,false,new PristineDataItemEventModel(),Collections.EMPTY_SET);
 
     try {
-      Thread.sleep(30000);
+      Thread.sleep(60000);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
-  @Then("^\\[search-service] price information is properly updated for the Sku$")
-  public void checkProductAfterReindexingByPrdChangeEvent(){
-    try {
 
-        double offerPrice = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "offerPrice", 1,SOLR_DEFAULT_COLLECTION)
-            .get(0)
-            .getOfferPrice();
+  @Then("^\\[search-service] price information is properly updated for Sku in Normal and '(.*)'collection$")
+  public void priceInformationIsUpdatedForSku(String other) {
+    double offerPrice = 0;
+    if (other.equals("O2O")) {
+      try {
+        offerPrice = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+            SELECT_HANDLER,
+            "offerPrice",
+            1,
+            SOLR_DEFAULT_COLLECTION).get(0).getOfferPrice();
 
-        double listPrice  =
-            solrHelper.getSolrProd(searchServiceData.getQueryForReindex(), SELECT_HANDLER, "listPrice", 1,SOLR_DEFAULT_COLLECTION)
-                .get(0)
-                .getListPrice();
-
+        double listPrice = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+            SELECT_HANDLER,
+            "listPrice",
+            1,
+            SOLR_DEFAULT_COLLECTION).get(0).getListPrice();
         log.warn("------offerPrice--{}---listPrice--{}---}", offerPrice, listPrice);
         assertThat("offer price not set", offerPrice, not(equalTo(4545455.45)));
-        assertThat("list price not set",listPrice,not(equalTo(4545455.50)));
-    } catch (Exception e) {
-      e.printStackTrace();
+        assertThat("list price not set", listPrice, not(equalTo(4545455.50)));
+
+        double offerPriceInO2Ocoll = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+            SELECT_HANDLER,
+            "offerPrice",
+            1,
+            SOLR_DEFAULT_COLLECTION_O2O).get(0).getOfferPrice();
+
+        double listPriceInO2Ocoll = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+            SELECT_HANDLER,
+            "listPrice",
+            1,
+            SOLR_DEFAULT_COLLECTION_O2O).get(0).getListPrice();
+
+        log.warn("------offerPrice--{}---listPrice--{}---}", offerPrice, listPrice);
+        assertThat("offer price not set", offerPriceInO2Ocoll, not(equalTo(4545455.45)));
+        assertThat("list price not set", listPriceInO2Ocoll, not(equalTo(4545455.50)));
+
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+
+      if (other.equals("CNC")) {
+        try {
+          offerPrice = solrHelper.getSolrProd("id:" + searchServiceData.getDefCncItemSku1(),
+              SELECT_HANDLER,
+              "offerPrice",
+              1,
+              SOLR_DEFAULT_COLLECTION).get(0).getOfferPrice();
+
+          double listPrice = solrHelper.getSolrProd("id:" + searchServiceData.getDefCncItemSku1(),
+              SELECT_HANDLER,
+              "listPrice",
+              1,
+              SOLR_DEFAULT_COLLECTION).get(0).getListPrice();
+          log.warn("------offerPrice--{}---listPrice--{}---}", offerPrice, listPrice);
+
+          assertThat("offer price not set", offerPrice, not(equalTo(4545455.45)));
+          assertThat("list price not set", listPrice, not(equalTo(4545455.50)));
+
+          double offerPriceInCNCcoll = solrHelper.getSolrProd(
+              "id:" + searchServiceData.getDefCncItemSku1()
+                  + searchServiceData.getPickupPointCode(),
+              SELECT_HANDLER,
+              "offerPrice",
+              1,
+              SOLR_DEFAULT_COLLECTION_CNC).get(0).getOfferPrice();
+
+          double listPriceInCNCcoll = solrHelper.getSolrProd(
+              "id:" + searchServiceData.getDefCncItemSku1()
+                  + searchServiceData.getPickupPointCode(),
+              SELECT_HANDLER,
+              "listPrice",
+              1,
+              SOLR_DEFAULT_COLLECTION_CNC).get(0).getListPrice();
+
+          log.warn("------offerPrice--{}---listPrice--{}---}", offerPrice, listPrice);
+          assertThat("offer price not set", offerPriceInCNCcoll, not(equalTo(4545455.45)));
+          assertThat("list price not set", listPriceInCNCcoll, not(equalTo(4545455.50)));
+
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
     }
   }
 
@@ -1010,7 +1318,7 @@ public class ItemChangeEventSteps {
     Price price = new Price();
     price.setListPrice(10000);
     price.setOfferPrice(9000);
-    Set<Price> priceSet = new HashSet();
+    Set<Price> priceSet = new HashSet<>();
     priceSet.add(price);
 
     kafkaHelper.publishItemChangeEvent(searchServiceData.getItemSkuForReindex(),
@@ -1072,7 +1380,7 @@ public class ItemChangeEventSteps {
     Price price = new Price();
     price.setListPrice(10000);
     price.setOfferPrice(9000);
-    Set<Price> priceSet = new HashSet();
+    Set<Price> priceSet = new HashSet<>();
     priceSet.add(price);
 
 
@@ -1170,5 +1478,36 @@ public class ItemChangeEventSteps {
       e.printStackTrace();
     }
 
+  }
+
+  @When("^\\[search-service] consumes item change event for that itemSku present in Normal and '(.*)' collection$")
+  public void itemChangeEventForThatItemSkuPresentInNormalAndOtherCollection(String other)
+    {
+      if(other.equals("O2O")){
+        kafkaHelper.publishItemChangeEvent(searchServiceData.getItemSkuForReindex(),
+            searchServiceData.getSkuForReindex(),false,false,
+            Collections.EMPTY_LIST,Collections.EMPTY_SET,false,
+            new PristineDataItemEventModel(),Collections.EMPTY_SET);
+
+        try {
+          Thread.sleep(30000);
+          solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+
+      if(other.equals("CNC")){
+        kafkaHelper.publishItemChangeEvent(searchServiceData.getDefCncItemSku1(),
+            searchServiceData.getDefCncProductSku(),false,false,
+            Collections.EMPTY_LIST,Collections.EMPTY_SET,false,
+            new PristineDataItemEventModel(),Collections.EMPTY_SET);
+        try {
+          Thread.sleep(30000);
+          solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
   }
 }
