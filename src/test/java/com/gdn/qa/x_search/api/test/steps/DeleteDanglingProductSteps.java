@@ -40,39 +40,39 @@ public class DeleteDanglingProductSteps {
 
   @Given("^\\[search-service] add test data into related collections$")
   public void addTestDataIntoRelatedCollections() {
-    solrHelper.addSolrDocumentForItemChangeEvent("AAA-60015-00008-00001",
-        "AAA-60015-00008",
-        "MTA-66666",
+    solrHelper.addSolrDocumentForItemChangeEvent(DANGLING_JOB_ITEMSKU,
+        DANGLING_JOB_PRODUCTSKU,
+        DANGLING_JOB_PRODUCTCODE,
         eventType,
         SOLR_DEFAULT_COLLECTION);
 
-    solrHelper.addSolrDocumentForItemChangeEvent("AAA-60015-00008-00001",
-        "AAA-60015-00008",
-        "MTA-66666",
+    solrHelper.addSolrDocumentForItemChangeEvent(DANGLING_JOB_ITEMSKU,
+        DANGLING_JOB_PRODUCTSKU,
+        DANGLING_JOB_PRODUCTCODE,
         eventType,
         SOLR_DEFAULT_COLLECTION_O2O);
 
-    solrHelper.addSolrDocumentForItemChangeEvent("AAA-60015-00008-00001",
-        "AAA-60015-00008",
-        "MTA-66666",
+    solrHelper.addSolrDocumentForItemChangeEvent(DANGLING_JOB_ITEMSKU,
+        DANGLING_JOB_PRODUCTSKU,
+        DANGLING_JOB_PRODUCTCODE,
         eventType,
         SOLR_DEFAULT_COLLECTION_CNC);
 
     try {
       assertThat("Test Data is not present in Normal coll",
-          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001",
+          solrHelper.getSolrProdCount("id:"+DANGLING_JOB_ITEMSKU,
               SELECT_HANDLER,
               SOLR_DEFAULT_COLLECTION),
           equalTo(1L));
 
       assertThat("Test Data is not present in O2O coll",
-          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001",
+          solrHelper.getSolrProdCount("id:"+DANGLING_JOB_ITEMSKU,
               SELECT_HANDLER,
               SOLR_DEFAULT_COLLECTION_O2O),
           equalTo(1L));
 
       assertThat("Test Data is not present in CNC coll",
-          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001",
+          solrHelper.getSolrProdCount("id:"+DANGLING_JOB_ITEMSKU,
               SELECT_HANDLER,
               SOLR_DEFAULT_COLLECTION_CNC),
           equalTo(1L));
@@ -102,19 +102,19 @@ public class DeleteDanglingProductSteps {
   public void verifyThatDanglingDocsHaveRemovedFromAllTheCollections() {
     try {
       assertThat("Test Data Not deleted from SOLR",
-          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001",
+          solrHelper.getSolrProdCount("id:"+DANGLING_JOB_ITEMSKU,
               SELECT_HANDLER,
               SOLR_DEFAULT_COLLECTION),
           equalTo(0L));
 
       assertThat("Test Data Not deleted from SOLR in O2O coll",
-          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001",
+          solrHelper.getSolrProdCount("id:"+DANGLING_JOB_ITEMSKU,
               SELECT_HANDLER,
               SOLR_DEFAULT_COLLECTION_O2O),
           equalTo(0L));
 
       assertThat("Test Data Not deleted from SOLR in CNC coll",
-          solrHelper.getSolrProdCount("id:AAA-60015-00008-00001",
+          solrHelper.getSolrProdCount("id:"+DANGLING_JOB_ITEMSKU,
               SELECT_HANDLER,
               SOLR_DEFAULT_COLLECTION_CNC),
           equalTo(0L));

@@ -28,6 +28,10 @@ public interface UrlConstants {
   String PDF_EXTRACTION_PASSWORD = "Passw0rd";
   String SOLR_DEFAULT_COLLECTION_CNC= "cncCollection";
   String SOLR_DEFAULT_COLLECTION_O2O="o2oCollection";
+  String DANGLING_JOB_PRODUCTSKU = "AAA-60015-00008";
+  String DANGLING_JOB_ITEMSKU = "AAA-60015-00008-00001";
+  String DANGLING_JOB_PRODUCTCODE = "MTA-66666";
+
 }
 
 
