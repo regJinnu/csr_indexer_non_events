@@ -653,26 +653,59 @@ public class KafkaHelper {
   }
 
   public void publishOfflineItemChangeEventforDefCncJob(Map<String,String> payload) {
-    OfflineItemChange offlineItemChange1 =
-        OfflineItemChange.builder().
-            timestamp(System.currentTimeMillis()).
-            uniqueId(payload.get("uniqueId")).
-            merchantCode(payload.get("merchantCode")).
-            itemSku(payload.get("itemSku")).
-            itemCode(payload.get("itemCode")).
-            pickupPointCode(payload.get("pickupPointCode")).
-            productSku(payload.get("productSku")).
-            merchantSku(payload.get("merchantSku")).
-            externalPickupPointCode(payload.get("externalPickupPointCode")).
-            offerPrice(Double.valueOf(payload.get("offerPrice"))).
-            markForDelete(true).
-            build();
+    OfflineItemChange offlineItemChange1 = OfflineItemChange.builder().
+        timestamp(System.currentTimeMillis()).
+        uniqueId(payload.get("uniqueId")).
+        merchantCode(payload.get("merchantCode")).
+        itemSku(payload.get("itemSku")).
+        itemCode(payload.get("itemCode")).
+        pickupPointCode(payload.get("pickupPointCode")).
+        productSku(payload.get("productSku")).
+        merchantSku(payload.get("merchantSku")).
+        externalPickupPointCode(payload.get("externalPickupPointCode")).
+        offerPrice(Double.valueOf(payload.get("offerPrice"))).
+        markForDelete(true).
+        build();
     try {
       kafkaSender.send("com.gdn.x.product.offlineitem.change",
           objectMapper.writeValueAsString(offlineItemChange1));
     } catch (JsonProcessingException e) {
       e.printStackTrace();
     }
+  }
 
+  public void publishProductReviewEvent(int storeId, String productId, String metaDataType,
+      int averageRating, int[] ratings, double[] ratingPercentages, int reviewCount)
+      throws JsonProcessingException {
+    RatingProductIdModel ratingProductIdModel = RatingProductIdModel.builder().
+        storeId(storeId).
+        productId(productId).
+        metaDataType(metaDataType).
+        averageRating(averageRating).
+        ratings(ratings).
+        ratingPercentages(ratingPercentages).
+        reviewCount(reviewCount).build();
+
+    ProductReviewEventModel productReviewEventModel = ProductReviewEventModel.builder().
+        timestamp(System.currentTimeMillis()).
+        productReviewMetaDataList(new RatingProductIdModel[] {ratingProductIdModel}).
+        build();
+
+    kafkaSender.send("com.gdn.x.product.review.aggregate.update.count",
+        objectMapper.writeValueAsString(productReviewEventModel));
+  }
+
+  public void publishTradeInAggregateEvent(String id, String productSku, String productName, boolean active)
+      throws JsonProcessingException {
+    TradeInAggregateModel tradeInAggregateModel = TradeInAggregateModel.builder().
+        id(id).
+        productSku(productSku).
+        productName(productName).
+        active(active).
+        timestamp(System.currentTimeMillis()).
+        build();
+
+    kafkaSender.send("com.gdn.aggregate.platform.trade.in.eligible.products",
+        objectMapper.writeValueAsString(tradeInAggregateModel));
   }
 }
