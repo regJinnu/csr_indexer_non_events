@@ -181,6 +181,8 @@ public class SearchServiceData {
   private String defCncItemCode;
   private String defCncUpdatesConfig;
   private String defCncProductCode;
+  private String normalProductItemsku;
+  private String normalProductSku;
   private ResponseApi<GdnRestListResponse<TrainResponse>> getAllTrain;
   private ResponseApi<GdnRestListResponse<SearchRuleResponse>> getAllSearchRule;
   private ResponseApi<GdnRestListResponse<PlaceholderRuleResponse>> getAllPlaceholder;
