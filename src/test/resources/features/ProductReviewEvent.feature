@@ -1,9 +1,10 @@
-@ProductReviewEvent @TestSuiteID=11050177
+@ProductReviewEventFeature @TestSuiteID=11050177
 Feature: Product review event processing
 
   @ProductReviewEventProcessing @Regression
   Scenario: Verify product review event should process only on normal and o2o collection
     Given [search-service] prepare request for processing product review event
+    And [search-service] set review and rating of test product with random value
     When [search-service] send request for processing product review event
     Then [search-service] check if product review event is processed and solr is updated
     And [search-service] id get stored in delta table for processing in cnc collection

@@ -1,4 +1,4 @@
-@InventoryEventsTestFeature @TestSuiteID=11050177
+@InventoryOOSAndNonOOSEventsFeature @TestSuiteID=11050177
 Feature: Verify indexing by Inventory OOS and Non OOS events
 
   @OOSEvent @Regression

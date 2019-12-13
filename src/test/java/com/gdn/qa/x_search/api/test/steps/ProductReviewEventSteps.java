@@ -63,8 +63,8 @@ public class ProductReviewEventSteps {
     searchServiceData.setReviewCount(10);
   }
 
-  @When("^\\[search-service] send request for processing product review event$")
-  public void searchServiceSendRequestForProcessingProductReviewEvent() throws Exception {
+  @And("^\\[search-service] set review and rating of test product with random value$")
+  public void searchServiceSetReviewAndRatingOfTestProductWithRandomValue() throws Exception {
     String query = searchServiceProperties.get("queryForProductReviewEvent");
     int status = solrHelper.updateSolrDataForAutomation(query,
         SELECT_HANDLER,
@@ -115,7 +115,10 @@ public class ProductReviewEventSteps {
 
     assertThat("Test Product not set in SOLR", reviewCountO2O, equalTo(100));
     assertThat("Test Product not set in SOLR", ratingO2O, equalTo("23"));
+  }
 
+  @When("^\\[search-service] send request for processing product review event$")
+  public void searchServiceSendRequestForProcessingProductReviewEvent() throws Exception {
     kafkaHelper.publishProductReviewEvent(searchServiceData.getStoreId(),
         searchServiceData.getProductID(),
         searchServiceData.getMetaDataType(),

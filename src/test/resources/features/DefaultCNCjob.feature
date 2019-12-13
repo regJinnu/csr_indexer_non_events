@@ -1,4 +1,4 @@
-@DefaultCncJob @TestSuiteID=11050177
+@DefaultCncJobFeature @TestSuiteID=11050177
 Feature: Automation of Default CNC job
 
   @DefaultCncJobUpdate @Regression
