@@ -153,6 +153,12 @@ public class SolrHelper {
           solrUpdate.put(SolrFieldNames.SALE_PRICE,3000);
           solrUpdate.put(SolrFieldNames.LAST_UPDATED_TIME,1234);
           break;
+        case "tradeInEligible":
+          solrUpdate.put(SolrFieldNames.TRADE_IN_ELIGIBLE, false);
+          break;
+        case "tradeInInEligible":
+          solrUpdate.put(SolrFieldNames.TRADE_IN_ELIGIBLE, true);
+          break;
         default:
           break;
       }

@@ -698,6 +698,7 @@ public class ProductIndexingSteps {
   public void sendRequestToProcessStoredDelta() {
 
     configHelper.findAndUpdateConfig("force.stop.solr.updates","false");
+    configHelper.findAndUpdateConfig("force.stop.solr.cnc.updates","false");
 
     ResponseApi<GdnRestSingleResponse<SimpleStringResponse>> processingStoredDelta =
         searchServiceController.prepareRequestForProcessingStoredDelta();
