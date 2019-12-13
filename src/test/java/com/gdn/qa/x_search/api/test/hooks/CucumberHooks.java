@@ -5,6 +5,7 @@ import com.gdn.qa.automation.core.restassured.ResponseApi;
 import com.gdn.qa.x_search.api.test.CucumberStepsDefinition;
 import com.gdn.qa.x_search.api.test.api.services.SearchServiceController;
 import com.gdn.qa.x_search.api.test.data.SearchServiceData;
+import com.gdn.qa.x_search.api.test.utils.ConfigHelper;
 import com.gdn.qa.x_search.api.test.utils.MongoHelper;
 import com.gdn.qa.x_search.api.test.utils.SolrHelper;
 import cucumber.api.java.After;
@@ -35,6 +36,9 @@ public class CucumberHooks {
 
   @Autowired
   SolrHelper solrHelper;
+
+  @Autowired
+  ConfigHelper configHelper;
 
   SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
@@ -375,5 +379,19 @@ public class CucumberHooks {
     } catch (Exception e) {
       e.printStackTrace();
     }
+  }
+
+  @Before("@ProductReviewEventProcessing")
+  public void updateRelatedConfigs() {
+    configHelper.findAndUpdateConfig("force.stop.solr.updates", "false");
+    configHelper.findAndUpdateConfig("force.stop.solr.cnc.updates", "false");
+    configHelper.findAndUpdateConfig("delta.event.in.progress", "false");
+    configHelper.findAndUpdateConfig("reindex.status", "0");
+    configHelper.findAndUpdateConfig("reindex.triggered", "false");
+  }
+
+  @Before("@ProductReviewEventProcessingOnCNCCollection")
+  public void updateDeltaConfig() {
+    configHelper.findAndUpdateConfig("disable.delta.event.list", "''");
   }
 }

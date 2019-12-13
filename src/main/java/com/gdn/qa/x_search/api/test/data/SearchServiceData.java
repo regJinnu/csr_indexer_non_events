@@ -183,6 +183,15 @@ public class SearchServiceData {
   private String defCncProductCode;
   private String normalProductItemsku;
   private String normalProductSku;
+  private int storeId;
+  private String metaDataType;
+  private int averageRating;
+  private int[] ratings;
+  private double[] ratingPercentages;
+  private int reviewCount;
+  private String productSku;
+  private String productName;
+  private boolean active;
   private ResponseApi<GdnRestListResponse<TrainResponse>> getAllTrain;
   private ResponseApi<GdnRestListResponse<SearchRuleResponse>> getAllSearchRule;
   private ResponseApi<GdnRestListResponse<PlaceholderRuleResponse>> getAllPlaceholder;

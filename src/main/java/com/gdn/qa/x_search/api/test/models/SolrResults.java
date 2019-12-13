@@ -96,6 +96,9 @@ public class SolrResults {
   @Field("lastUpdatedTime")
   private long lastUpdatedTime;
 
+  @Field
+  private boolean tradeInEligible;
+
   public SolrResults(String brandSearch,
       String description,
       String level0Id,
@@ -130,7 +133,8 @@ public class SolrResults {
       int published,
       int buyable,
       String id,
-      long lastUpdatedTime) {
+      long lastUpdatedTime,
+      boolean tradeInEligible) {
     this.pristineFacet=pristineFacet;
      this.brandSearch = brandSearch;
     this.description = description;
@@ -168,6 +172,7 @@ public class SolrResults {
     this.buyable=buyable;
     this.id = id;
     this.lastUpdatedTime = lastUpdatedTime;
+    this.tradeInEligible = tradeInEligible;
   }
 
 
@@ -475,10 +480,17 @@ public class SolrResults {
     return id;
   }
 
+  public boolean getTradeInEligible() {
+    return tradeInEligible;
+  }
+
+  public void setTradeInEligible(boolean tradeInEligible) {
+    this.tradeInEligible = tradeInEligible;
+  }
+
   public void setId(String id) {
     this.id = id;
   }
-
 
   @Override
   public String toString() {
