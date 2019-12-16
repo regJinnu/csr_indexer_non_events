@@ -119,12 +119,13 @@ public class SolrHelper {
           solrUpdate.put(SolrFieldNames.REVIEW_COUNT,100);
           break;
         case "categoryReindex":
-          solrUpdate.put(SolrFieldNames.IS_IN_STOCK, "0" );
+          solrUpdate.put(SolrFieldNames.IS_IN_STOCK, "5" );
           solrUpdate.put(SolrFieldNames.RATING, "40" );
           solrUpdate.put(SolrFieldNames.REVIEW_COUNT,10);
           solrUpdate.put(SolrFieldNames.MERCHANT_COMMISSION_TYPE,"CC");
           solrUpdate.put(SolrFieldNames.MERCHANT_RATING,30.0);
           solrUpdate.put(SolrFieldNames.LOCATION,"Origin-ABC");
+          solrUpdate.put(SolrFieldNames.LAST_UPDATED_TIME,"1234");
           break;
         case "closedStore":
           solrUpdate.put(SolrFieldNames.START_DATE_STORE_CLOSED,1111111111L);
@@ -139,13 +140,16 @@ public class SolrHelper {
         case "price":
           solrUpdate.put(SolrFieldNames.OFFER_PRICE,4545455.45);
           solrUpdate.put(SolrFieldNames.LIST_PRICE,4545455.50);
+          solrUpdate.put(SolrFieldNames.LAST_UPDATED_TIME,1234);
           break;
         case "offToOn":
           solrUpdate.put(SolrFieldNames.OFF_2_ON,4);
+          solrUpdate.put(SolrFieldNames.LAST_UPDATED_TIME,1234);
           break;
         case "buyableAndPublished":
           solrUpdate.put(SolrFieldNames.BUYABLE,4);
           solrUpdate.put(SolrFieldNames.PUBLISHED,4);
+          solrUpdate.put(SolrFieldNames.LAST_UPDATED_TIME,1234);
           break;
         case "defCncOfferPrice":
           solrUpdate.put(SolrFieldNames.OFFER_PRICE,3000);

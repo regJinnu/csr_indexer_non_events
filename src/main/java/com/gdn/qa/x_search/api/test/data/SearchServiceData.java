@@ -181,6 +181,8 @@ public class SearchServiceData {
   private String defCncItemCode;
   private String defCncUpdatesConfig;
   private String defCncProductCode;
+  private String normalProductItemsku;
+  private String normalProductSku;
   private int storeId;
   private String metaDataType;
   private int averageRating;

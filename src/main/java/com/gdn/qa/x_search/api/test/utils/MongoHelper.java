@@ -66,7 +66,7 @@ public class MongoHelper {
   }
 
   public void deleteFromMongo(String collectionName,String queryField,String queryValue){
-    MongoCollection<Document> collection = initializeDatabase(collectionName);
+   MongoCollection<Document> collection = initializeDatabase(collectionName);
     collection.deleteOne(eq(queryField,queryValue));
   }
 
