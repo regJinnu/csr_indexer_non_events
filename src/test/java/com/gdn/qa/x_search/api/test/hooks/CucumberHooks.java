@@ -394,4 +394,25 @@ public class CucumberHooks {
   public void updateDeltaConfig() {
     configHelper.findAndUpdateConfig("disable.delta.event.list", "''");
   }
+
+  @After("BuyboxFeature")
+  public void afterbuyBoxChangeEvent() {
+    ResponseApi responseApi;
+    responseApi = searchServiceController.prepareRequestForIndexing("itemSkus",
+        searchServiceData.getDefCncItemSku1());
+    searchServiceData.setSearchServiceResponse(responseApi);
+
+    responseApi = searchServiceController.prepareRequestForIndexing("itemSkus",
+        searchServiceData.getItemSkuForReindex());
+    searchServiceData.setSearchServiceResponse(responseApi);
+
+    responseApi = searchServiceData.getSearchServiceResponse();
+    assertThat("Status Code Not 200", responseApi.getResponse().getStatusCode(), equalTo(200));
+    try {
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 }

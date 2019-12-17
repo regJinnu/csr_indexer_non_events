@@ -192,6 +192,7 @@ public class SearchServiceData {
   private String productSku;
   private String productName;
   private boolean active;
+  private Double buyboxScore;
   private ResponseApi<GdnRestListResponse<TrainResponse>> getAllTrain;
   private ResponseApi<GdnRestListResponse<SearchRuleResponse>> getAllSearchRule;
   private ResponseApi<GdnRestListResponse<PlaceholderRuleResponse>> getAllPlaceholder;

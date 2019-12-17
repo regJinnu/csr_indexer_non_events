@@ -33,7 +33,7 @@ public interface UrlConstants {
   String DANGLING_JOB_ITEMSKU_2="AAA-60015-00008-00002";
   String DANGLING_JOB_PRODUCTCODE = "MTA-66666";
   String PRISTINE_ID="PRI-0000-0001";
-
+  String EVENT_ID="8fa49fb8-ffcc-42d7-8b01-7df55dd3ec51";
 }
 
 
