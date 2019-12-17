@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.EVENT_ID;
+
 /**
  * @author kumar on 01/08/18
  * @project X-search
@@ -707,5 +709,25 @@ public class KafkaHelper {
 
     kafkaSender.send("com.gdn.aggregate.platform.trade.in.eligible.products",
         objectMapper.writeValueAsString(tradeInAggregateModel));
+  }
+
+  public void buyBoxEvent(String itemSku, Double buyBoxScore)
+  {
+    try {
+      ItemBuyBoxScoreDetail itemBuyBoxScoreDetail = ItemBuyBoxScoreDetail.builder()
+          .itemSku(itemSku)
+          .buyBoxScore(Double.valueOf(buyBoxScore)).build();
+
+      BuyBoxModel buyBoxModel=BuyBoxModel.builder()
+          .buyBoxScores(Collections.singletonList(itemBuyBoxScoreDetail))
+          .eventId(EVENT_ID)
+          .build();
+
+      kafkaSender.send("com.gdn.x.buybox.score.change",
+          objectMapper.writeValueAsString(buyBoxModel));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
   }
 }

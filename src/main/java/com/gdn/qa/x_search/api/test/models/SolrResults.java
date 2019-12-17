@@ -99,6 +99,9 @@ public class SolrResults {
   @Field
   private boolean tradeInEligible;
 
+  @Field("buyboxScore")
+  private Double buyboxScore;
+
   public SolrResults(String brandSearch,
       String description,
       String level0Id,
@@ -134,7 +137,8 @@ public class SolrResults {
       int buyable,
       String id,
       long lastUpdatedTime,
-      boolean tradeInEligible) {
+      boolean tradeInEligible,
+      Double buyboxScore) {
     this.pristineFacet=pristineFacet;
      this.brandSearch = brandSearch;
     this.description = description;
@@ -173,6 +177,7 @@ public class SolrResults {
     this.id = id;
     this.lastUpdatedTime = lastUpdatedTime;
     this.tradeInEligible = tradeInEligible;
+    this.buyboxScore = buyboxScore;
   }
 
 
@@ -186,6 +191,14 @@ public class SolrResults {
 
   public void setLastUpdatedTime(long lastUpdatedTime) {
     this.lastUpdatedTime = lastUpdatedTime;
+  }
+
+  public Double getBuyboxScore() {
+    return buyboxScore ;
+  }
+
+  public void setBuyboxScore(Double buyboxScore) {
+    this.buyboxScore = buyboxScore;
   }
 
   public String getPristineHandphoneFacet() {

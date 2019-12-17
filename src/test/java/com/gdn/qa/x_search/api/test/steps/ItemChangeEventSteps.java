@@ -2230,14 +2230,6 @@ public class ItemChangeEventSteps {
           false,
           new PristineDataItemEventModel(),
           Collections.EMPTY_SET);
-
-      try {
-        Thread.sleep(30000);
-        solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
-        solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
     }
 
     if (other.equals("CNC")) {
@@ -2250,13 +2242,14 @@ public class ItemChangeEventSteps {
           false,
           new PristineDataItemEventModel(),
           Collections.EMPTY_SET);
-      try {
-        Thread.sleep(30000);
-        solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
-        solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+    }
+    try {
+      Thread.sleep(40000);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
+    } catch (Exception e) {
+      e.printStackTrace();
     }
   }
 
