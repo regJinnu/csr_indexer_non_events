@@ -23,5 +23,8 @@ public class KafkaSender {
     kafkaTemplate.send(kafkaTopic, message);
   }
 
-
+  public void sendEvent(String kafkaTopic, String message) {
+    log.warn("---sending payload='{}' with topic='{}'",message,kafkaTopic);
+    kafkaTemplate.send(kafkaTopic, "[" + message + "]");
+  }
 }

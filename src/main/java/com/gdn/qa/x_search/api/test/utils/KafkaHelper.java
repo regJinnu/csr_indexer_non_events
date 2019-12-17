@@ -730,4 +730,67 @@ public class KafkaHelper {
     }
 
   }
+
+  public void publishAggregateInventoryChangeEvent(String itemSku,
+      boolean cnc,
+      String type,
+      String location1,
+      String location2,
+      String location3,
+      String status1,
+      String status2) throws JsonProcessingException {
+
+    StockInformationModel stockInformationModel1 = StockInformationModel.builder().
+        location(location1).
+        status(status1).build();
+    StockInformationModel stockInformationModel2 = StockInformationModel.builder().
+        location(location2).
+        status(status2).build();
+    StockInformationModel stockInformationModel3 = StockInformationModel.builder().
+        location(location3).
+        status(status1).build();
+
+    AggregateInventoryChangeModel aggregateInventoryChangeModel =
+        AggregateInventoryChangeModel.builder().
+            itemSku(itemSku).
+            cnc(cnc).
+            type(type).
+            stockInformations(new StockInformationModel[] {stockInformationModel1,
+                stockInformationModel2, stockInformationModel3}).
+            build();
+
+    kafkaSender.sendEvent("com.gdn.aggregate.modules.inventory.changed.event",
+        objectMapper.writeValueAsString(aggregateInventoryChangeModel));
+  }
+
+  public void publishAggregateInventoryChangeEvent(String itemSku,
+      boolean cnc,
+      String type,
+      String location1,
+      String status1,
+      String ppCode1,
+      String location2,
+      String status2,
+      String ppCode2) throws JsonProcessingException {
+
+    StockInformationModel stockInformationModel1 = StockInformationModel.builder().
+        location(location1).
+        status(status1).
+        pickupPointCode(ppCode1).build();
+    StockInformationModel stockInformationModel2 = StockInformationModel.builder().
+        location(location2).
+        status(status2).
+        pickupPointCode(ppCode2).build();
+
+    AggregateInventoryChangeModel aggregateInventoryChangeModel =
+        AggregateInventoryChangeModel.builder().
+            itemSku(itemSku).
+            cnc(cnc).
+            type(type).
+            stockInformations(new StockInformationModel[] {stockInformationModel1, stockInformationModel2}).
+            build();
+
+    kafkaSender.sendEvent("com.gdn.aggregate.modules.inventory.changed.event",
+        objectMapper.writeValueAsString(aggregateInventoryChangeModel));
+  }
 }

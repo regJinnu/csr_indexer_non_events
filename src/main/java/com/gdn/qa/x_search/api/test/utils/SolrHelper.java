@@ -166,6 +166,9 @@ public class SolrHelper {
         case "buyBox":
           solrUpdate.put(SolrFieldNames.LAST_UPDATED_TIME,1234);
           break;
+        case "inventoryChange":
+          solrUpdate.put(SolrFieldNames.All_LOCATION, null);
+          solrUpdate.put(SolrFieldNames.STOCK_LOCATION, null);
         default:
           break;
       }

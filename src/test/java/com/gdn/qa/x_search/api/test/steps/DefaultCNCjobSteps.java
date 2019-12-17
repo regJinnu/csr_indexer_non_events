@@ -101,15 +101,15 @@ public class DefaultCNCjobSteps {
 
 
   @When("^the default cnc job has ran and collections are committed$")
-  public void theDefaultCncJobHasRan() {
+  public void theDefaultCncJobHasRan() throws Exception {
     ResponseApi<GdnBaseRestResponse> response = searchServiceController.defaultCncJob();
     searchServiceData.setSearchServiceResponse(response);
-    try {
-      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
-      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
-    } catch (Exception e) {
-      e.printStackTrace();
+    Thread.sleep(20000);
+    while(!Boolean.parseBoolean(configHelper.findConfigValue("enable.default.cnc.index"))) {
+      Thread.sleep(60000);
     }
+    solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+    solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
   }
 
   @Then("^verify that the default cnc product is updated$")
