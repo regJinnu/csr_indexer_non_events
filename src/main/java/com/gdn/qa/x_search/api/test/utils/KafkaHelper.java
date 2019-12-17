@@ -63,10 +63,8 @@ public class KafkaHelper {
 
     Date date = new Date();
     DateTime dtStartWithBuffer = new DateTime(date);
-/*    DateTime dtStart = dtStartWithBuffer.plusDays(2);
-    DateTime dtEnd = dtStart.plusDays(2);*/
-    DateTime dtStart = dtStartWithBuffer.minusDays(1);
-    DateTime dtEnd = dtStart.plusDays(1);
+    DateTime dtStart = dtStartWithBuffer.plusDays(2);
+    DateTime dtEnd = dtStart.plusDays(2);
 
     BPStoreClosedEvent bpStoreClosedEvent = BPStoreClosedEvent.builder().
         timestamp(System.currentTimeMillis()).
