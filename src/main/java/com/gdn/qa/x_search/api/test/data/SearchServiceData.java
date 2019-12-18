@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Component
@@ -193,6 +194,12 @@ public class SearchServiceData {
   private String productName;
   private boolean active;
   private Double buyboxScore;
+  private String itemSku;
+  private boolean cnc;
+  private Map<String, String> location;
+  private String status1;
+  private String status2;
+  private String pickupPointCode2;
   private ResponseApi<GdnRestListResponse<TrainResponse>> getAllTrain;
   private ResponseApi<GdnRestListResponse<SearchRuleResponse>> getAllSearchRule;
   private ResponseApi<GdnRestListResponse<PlaceholderRuleResponse>> getAllPlaceholder;

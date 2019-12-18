@@ -5,6 +5,7 @@ import com.gdn.qa.automation.core.restassured.ResponseApi;
 import com.gdn.qa.x_search.api.test.CucumberStepsDefinition;
 import com.gdn.qa.x_search.api.test.api.services.SearchServiceController;
 import com.gdn.qa.x_search.api.test.data.SearchServiceData;
+import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
 import com.gdn.qa.x_search.api.test.utils.ConfigHelper;
 import com.gdn.qa.x_search.api.test.utils.MongoHelper;
 import com.gdn.qa.x_search.api.test.utils.SolrHelper;
@@ -15,10 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
-import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_DEFAULT_COLLECTION;
-import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_DEFAULT_COLLECTION_CNC;
+import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.*;
+import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SELECT_HANDLER;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -39,6 +41,9 @@ public class CucumberHooks {
 
   @Autowired
   ConfigHelper configHelper;
+
+  @Autowired
+  SearchServiceProperties searchServiceProperties;
 
   SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
@@ -414,5 +419,35 @@ public class CucumberHooks {
     } catch (Exception e) {
       e.printStackTrace();
     }
+  }
+
+  @Before("@AggregateInventoryChangeNonCNCEvent")
+  public void updateAggregateLocationConfig() {
+    configHelper.findAndUpdateConfig("enable.aggregate.location.change.service", "true");
+    configHelper.findAndUpdateConfig("force.stop.solr.updates", "false");
+  }
+
+  @Before("@AggregateInventoryChangeCNCEvent")
+  public void updateSolrDefaultDocument() throws Exception {
+    String query = "id:" + searchServiceProperties.get("itemSkuForInventoryChangeCNC") + "-" + searchServiceProperties.get("ppCode1ForInventoryChangeCNC");
+    int status = solrHelper.updateSolrDataForAutomation(query,
+        SELECT_HANDLER,
+        "id",
+        1,
+        "inventoryChange",
+        SOLR_DEFAULT_COLLECTION);
+    assertThat("Updating inventoryStockLocation info in SOLR doc failed", status, equalTo(0));
+    solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+    ArrayList<String> allLocation =
+        solrHelper.getSolrProd(query, SELECT_HANDLER, "allLocation", 1, SOLR_DEFAULT_COLLECTION)
+            .get(0)
+            .getAllLocation();
+    ArrayList<String> stockLocation =
+        solrHelper.getSolrProd(query, SELECT_HANDLER, "stockLocation", 1, SOLR_DEFAULT_COLLECTION)
+            .get(0)
+            .getStockLocation();
+
+    assertThat("Test Product not set in SOLR", allLocation, equalTo(null));
+    assertThat("Test Product not set in SOLR", stockLocation, equalTo(null));
   }
 }
