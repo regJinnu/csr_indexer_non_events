@@ -170,7 +170,6 @@ public class KafkaHelper {
     } catch (JsonProcessingException e) {
       e.printStackTrace();
     }
-
   }
 
   public void publishItemChangeEvent(String itemSku,
@@ -200,6 +199,29 @@ public class KafkaHelper {
       kafkaSender.send("com.gdn.x.product.item.change",
           objectMapper.writeValueAsString(itemChangeEvent));
     } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
+    /**
+     * @author poushaliM on 17/12/19
+     * @project X-search
+     */
+
+  public void publishCategoryChangeEvent(String name, String catagoryCode, boolean activated,String catalogType){
+
+    CatalogDomainEventModel catalogDomainEventModel=CatalogDomainEventModel.builder().name(name).catalogCode(catagoryCode)
+        .catalogType(catalogType).build();
+    CategoryDomainEventModel categoryDomainEventModel= CategoryDomainEventModel.builder()
+        .timestamp(System.currentTimeMillis())
+        .name(name)
+        .categoryCode(catagoryCode)
+        .activated(activated)
+        .catalogDomainEventModel(catalogDomainEventModel).build();
+    try {
+      kafkaSender.send("com.gdn.x.productcategorybase.category.publish",
+          objectMapper.writeValueAsString(categoryDomainEventModel));
+    }catch (JsonProcessingException e){
       e.printStackTrace();
     }
   }

@@ -190,6 +190,14 @@ public class SearchServiceData {
   private String productSku;
   private String productName;
   private boolean active;
+  private String itemSkuForCategoryReindex;
+  private String categoryName;
+  private String categoryCode;
+  private String activated;
+  private String catalogType;
+  private String defCncItemSkuforCategoryIndex;
+  private String pickUpPointforCategoryIndex;
+  private String defCncPPforCategoryIndex;
   private ResponseApi<GdnRestListResponse<TrainResponse>> getAllTrain;
   private ResponseApi<GdnRestListResponse<SearchRuleResponse>> getAllSearchRule;
   private ResponseApi<GdnRestListResponse<PlaceholderRuleResponse>> getAllPlaceholder;
