@@ -734,20 +734,18 @@ public class KafkaHelper {
   public void publishAggregateInventoryChangeEvent(String itemSku,
       boolean cnc,
       String type,
-      String location1,
-      String location2,
-      String location3,
+      Map<String, String> location,
       String status1,
       String status2) throws JsonProcessingException {
 
     StockInformationModel stockInformationModel1 = StockInformationModel.builder().
-        location(location1).
+        location(location.get("location1")).
         status(status1).build();
     StockInformationModel stockInformationModel2 = StockInformationModel.builder().
-        location(location2).
+        location(location.get("location2")).
         status(status2).build();
     StockInformationModel stockInformationModel3 = StockInformationModel.builder().
-        location(location3).
+        location(location.get("location3")).
         status(status1).build();
 
     AggregateInventoryChangeModel aggregateInventoryChangeModel =
@@ -766,19 +764,18 @@ public class KafkaHelper {
   public void publishAggregateInventoryChangeEvent(String itemSku,
       boolean cnc,
       String type,
-      String location1,
+      Map<String, String> location,
       String status1,
       String ppCode1,
-      String location2,
       String status2,
       String ppCode2) throws JsonProcessingException {
 
     StockInformationModel stockInformationModel1 = StockInformationModel.builder().
-        location(location1).
+        location(location.get("location1")).
         status(status1).
         pickupPointCode(ppCode1).build();
     StockInformationModel stockInformationModel2 = StockInformationModel.builder().
-        location(location2).
+        location(location.get("location2")).
         status(status2).
         pickupPointCode(ppCode2).build();
 

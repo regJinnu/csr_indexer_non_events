@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Component
@@ -195,9 +196,7 @@ public class SearchServiceData {
   private Double buyboxScore;
   private String itemSku;
   private boolean cnc;
-  private String location1;
-  private String location2;
-  private String location3;
+  private Map<String, String> location;
   private String status1;
   private String status2;
   private String pickupPointCode2;

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -45,9 +46,10 @@ public class AggregateInventoryChangeSteps {
     searchServiceData.setItemSku(searchServiceProperties.get("itemSkuForInventoryChange"));
     searchServiceData.setCnc(false);
     searchServiceData.setType("OFFLINE");
-    searchServiceData.setLocation1("Jakarta");
-    searchServiceData.setLocation2("Bogor");
-    searchServiceData.setLocation3("Tangerang");
+    searchServiceData.setLocation(new HashMap<>());
+    searchServiceData.getLocation().put("location1", "Jakarta");
+    searchServiceData.getLocation().put("location2","Bogor");
+    searchServiceData.getLocation().put("location3", "Tangerang");
     searchServiceData.setStatus1("IN_STOCK");
     searchServiceData.setStatus2("OUT_OF_STOCK");
   }
@@ -107,9 +109,7 @@ public class AggregateInventoryChangeSteps {
     kafkaHelper.publishAggregateInventoryChangeEvent(searchServiceData.getItemSku(),
         searchServiceData.isCnc(),
         searchServiceData.getType(),
-        searchServiceData.getLocation1(),
-        searchServiceData.getLocation2(),
-        searchServiceData.getLocation3(),
+        searchServiceData.getLocation(),
         searchServiceData.getStatus1(),
         searchServiceData.getStatus2());
     Thread.sleep(30000);
@@ -174,9 +174,9 @@ public class AggregateInventoryChangeSteps {
     searchServiceData.setItemSku(searchServiceProperties.get("itemSkuForInventoryChangeCNC"));
     searchServiceData.setCnc(true);
     searchServiceData.setType("OFFLINE");
-    searchServiceData.setLocation1("Jakarta");
+    searchServiceData.getLocation().put("location1", "Jakarta");
     searchServiceData.setPickupPointCode(searchServiceProperties.get("ppCode1ForInventoryChangeCNC"));
-    searchServiceData.setLocation2("Bogor");
+    searchServiceData.getLocation().put("location2","Bogor");
     searchServiceData.setPickupPointCode2(searchServiceProperties.get("ppCode2ForInventoryChangeCNC"));
     searchServiceData.setStatus1("IN_STOCK");
     searchServiceData.setStatus2("OUT_OF_STOCK");
@@ -242,10 +242,9 @@ public class AggregateInventoryChangeSteps {
     kafkaHelper.publishAggregateInventoryChangeEvent(searchServiceData.getItemSku(),
         searchServiceData.isCnc(),
         searchServiceData.getType(),
-        searchServiceData.getLocation1(),
+        searchServiceData.getLocation(),
         searchServiceData.getStatus1(),
         searchServiceData.getPickupPointCode(),
-        searchServiceData.getLocation2(),
         searchServiceData.getStatus2(),
         searchServiceData.getPickupPointCode2());
     Thread.sleep(20000);
