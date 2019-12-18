@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Component
@@ -181,6 +182,8 @@ public class SearchServiceData {
   private String defCncItemCode;
   private String defCncUpdatesConfig;
   private String defCncProductCode;
+  private String normalProductItemsku;
+  private String normalProductSku;
   private int storeId;
   private String metaDataType;
   private int averageRating;
@@ -198,6 +201,13 @@ public class SearchServiceData {
   private String defCncItemSkuforCategoryIndex;
   private String pickUpPointforCategoryIndex;
   private String defCncPPforCategoryIndex;
+  private Double buyboxScore;
+  private String itemSku;
+  private boolean cnc;
+  private Map<String, String> location;
+  private String status1;
+  private String status2;
+  private String pickupPointCode2;
   private ResponseApi<GdnRestListResponse<TrainResponse>> getAllTrain;
   private ResponseApi<GdnRestListResponse<SearchRuleResponse>> getAllSearchRule;
   private ResponseApi<GdnRestListResponse<PlaceholderRuleResponse>> getAllPlaceholder;

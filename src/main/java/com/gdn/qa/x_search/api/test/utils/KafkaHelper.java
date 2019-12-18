@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.EVENT_ID;
+
 /**
  * @author kumar on 01/08/18
  * @project X-search
@@ -729,5 +731,86 @@ public class KafkaHelper {
 
     kafkaSender.send("com.gdn.aggregate.platform.trade.in.eligible.products",
         objectMapper.writeValueAsString(tradeInAggregateModel));
+  }
+
+
+  public void buyBoxEvent(String itemSku, Double buyBoxScore)
+  {
+    try {
+      ItemBuyBoxScoreDetail itemBuyBoxScoreDetail = ItemBuyBoxScoreDetail.builder()
+          .itemSku(itemSku)
+          .buyBoxScore(Double.valueOf(buyBoxScore)).build();
+
+      BuyBoxModel buyBoxModel=BuyBoxModel.builder()
+          .buyBoxScores(Collections.singletonList(itemBuyBoxScoreDetail))
+          .eventId(EVENT_ID)
+          .build();
+
+      kafkaSender.send("com.gdn.x.buybox.score.change",
+          objectMapper.writeValueAsString(buyBoxModel));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+  }
+
+  public void publishAggregateInventoryChangeEvent(String itemSku,
+      boolean cnc,
+      String type,
+      Map<String, String> location,
+      String status1,
+      String status2) throws JsonProcessingException {
+
+    StockInformationModel stockInformationModel1 = StockInformationModel.builder().
+        location(location.get("location1")).
+        status(status1).build();
+    StockInformationModel stockInformationModel2 = StockInformationModel.builder().
+        location(location.get("location2")).
+        status(status2).build();
+    StockInformationModel stockInformationModel3 = StockInformationModel.builder().
+        location(location.get("location3")).
+        status(status1).build();
+
+    AggregateInventoryChangeModel aggregateInventoryChangeModel =
+        AggregateInventoryChangeModel.builder().
+            itemSku(itemSku).
+            cnc(cnc).
+            type(type).
+            stockInformations(new StockInformationModel[] {stockInformationModel1,
+                stockInformationModel2, stockInformationModel3}).
+            build();
+
+    kafkaSender.sendEvent("com.gdn.aggregate.modules.inventory.changed.event",
+        objectMapper.writeValueAsString(aggregateInventoryChangeModel));
+  }
+
+  public void publishAggregateInventoryChangeEvent(String itemSku,
+      boolean cnc,
+      String type,
+      Map<String, String> location,
+      String status1,
+      String ppCode1,
+      String status2,
+      String ppCode2) throws JsonProcessingException {
+
+    StockInformationModel stockInformationModel1 = StockInformationModel.builder().
+        location(location.get("location1")).
+        status(status1).
+        pickupPointCode(ppCode1).build();
+    StockInformationModel stockInformationModel2 = StockInformationModel.builder().
+        location(location.get("location2")).
+        status(status2).
+        pickupPointCode(ppCode2).build();
+
+    AggregateInventoryChangeModel aggregateInventoryChangeModel =
+        AggregateInventoryChangeModel.builder().
+            itemSku(itemSku).
+            cnc(cnc).
+            type(type).
+            stockInformations(new StockInformationModel[] {stockInformationModel1, stockInformationModel2}).
+            build();
+
+    kafkaSender.sendEvent("com.gdn.aggregate.modules.inventory.changed.event",
+        objectMapper.writeValueAsString(aggregateInventoryChangeModel));
   }
 }

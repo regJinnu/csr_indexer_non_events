@@ -99,6 +99,15 @@ public class SolrResults {
   @Field
   private boolean tradeInEligible;
 
+  @Field("buyboxScore")
+  private Double buyboxScore;
+
+  @Field
+  private ArrayList<String> allLocation;
+
+  @Field
+  private ArrayList<String> stockLocation;
+
   public SolrResults(String brandSearch,
       String description,
       String level0Id,
@@ -134,7 +143,10 @@ public class SolrResults {
       int buyable,
       String id,
       long lastUpdatedTime,
-      boolean tradeInEligible) {
+      boolean tradeInEligible,
+      Double buyboxScore,
+      ArrayList<String> allLocation,
+      ArrayList<String> stockLocation) {
     this.pristineFacet=pristineFacet;
      this.brandSearch = brandSearch;
     this.description = description;
@@ -173,6 +185,9 @@ public class SolrResults {
     this.id = id;
     this.lastUpdatedTime = lastUpdatedTime;
     this.tradeInEligible = tradeInEligible;
+    this.buyboxScore = buyboxScore;
+    this.allLocation = allLocation;
+    this.stockLocation = stockLocation;
   }
 
 
@@ -186,6 +201,14 @@ public class SolrResults {
 
   public void setLastUpdatedTime(long lastUpdatedTime) {
     this.lastUpdatedTime = lastUpdatedTime;
+  }
+
+  public Double getBuyboxScore() {
+    return buyboxScore ;
+  }
+
+  public void setBuyboxScore(Double buyboxScore) {
+    this.buyboxScore = buyboxScore;
   }
 
   public String getPristineHandphoneFacet() {
@@ -486,6 +509,22 @@ public class SolrResults {
 
   public void setTradeInEligible(boolean tradeInEligible) {
     this.tradeInEligible = tradeInEligible;
+  }
+
+  public ArrayList<String> getAllLocation() {
+    return allLocation;
+  }
+
+  public void setAllLocation(ArrayList<String> allLocation) {
+    this.allLocation = allLocation;
+  }
+
+  public ArrayList<String> getStockLocation() {
+    return stockLocation;
+  }
+
+  public void setStockLocation(ArrayList<String> stockLocation) {
+    this.stockLocation = stockLocation;
   }
 
   public void setId(String id) {

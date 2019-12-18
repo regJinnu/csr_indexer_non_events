@@ -77,6 +77,8 @@ public interface SolrFieldNames {
   String MODEL_NUMBER_EXTRACTED="modelNumberExtracted";
   String BRAND_LOWER="brandLower";
   String TRADE_IN_ELIGIBLE="tradeInEligible";
+  String All_LOCATION="allLocation";
+  String STOCK_LOCATION="stockLocation";
 
   //suggestion collection
   String CATEGORIES = "categories";

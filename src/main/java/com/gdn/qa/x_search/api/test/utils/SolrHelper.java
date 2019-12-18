@@ -119,12 +119,13 @@ public class SolrHelper {
           solrUpdate.put(SolrFieldNames.REVIEW_COUNT,100);
           break;
         case "categoryReindex":
-          solrUpdate.put(SolrFieldNames.IS_IN_STOCK, "0" );
+          solrUpdate.put(SolrFieldNames.IS_IN_STOCK, "5" );
           solrUpdate.put(SolrFieldNames.RATING, "40" );
           solrUpdate.put(SolrFieldNames.REVIEW_COUNT,10);
           solrUpdate.put(SolrFieldNames.MERCHANT_COMMISSION_TYPE,"CC");
           solrUpdate.put(SolrFieldNames.MERCHANT_RATING,30.0);
           solrUpdate.put(SolrFieldNames.LOCATION,"Origin-ABC");
+          solrUpdate.put(SolrFieldNames.LAST_UPDATED_TIME,"1234");
           break;
         case "closedStore":
           solrUpdate.put(SolrFieldNames.START_DATE_STORE_CLOSED,1111111111L);
@@ -139,13 +140,16 @@ public class SolrHelper {
         case "price":
           solrUpdate.put(SolrFieldNames.OFFER_PRICE,4545455.45);
           solrUpdate.put(SolrFieldNames.LIST_PRICE,4545455.50);
+          solrUpdate.put(SolrFieldNames.LAST_UPDATED_TIME,1234);
           break;
         case "offToOn":
           solrUpdate.put(SolrFieldNames.OFF_2_ON,4);
+          solrUpdate.put(SolrFieldNames.LAST_UPDATED_TIME,1234);
           break;
         case "buyableAndPublished":
           solrUpdate.put(SolrFieldNames.BUYABLE,4);
           solrUpdate.put(SolrFieldNames.PUBLISHED,4);
+          solrUpdate.put(SolrFieldNames.LAST_UPDATED_TIME,1234);
           break;
         case "defCncOfferPrice":
           solrUpdate.put(SolrFieldNames.OFFER_PRICE,3000);
@@ -159,6 +163,7 @@ public class SolrHelper {
         case "tradeInInEligible":
           solrUpdate.put(SolrFieldNames.TRADE_IN_ELIGIBLE, true);
           break;
+<<<<<<< HEAD
           case "salesCatalogCategoryIdDescHierarchy":
               solrUpdate.put(SolrFieldNames.SALES_CATALOG_CATEGORY_ID_DESC_HIERARCHY,"VA-1000003;Vandana testing category TEST");
               solrUpdate.put(SolrFieldNames.LAST_UPDATED_TIME,1100);
@@ -166,6 +171,14 @@ public class SolrHelper {
           case "salesCatalogCategoryIdDescHierarchyCNC":
               solrUpdate.put(SolrFieldNames.SALES_CATALOG_CATEGORY_ID_DESC_HIERARCHY,"TEST CNC Category");
               solrUpdate.put(SolrFieldNames.LAST_UPDATED_TIME,1001);
+=======
+        case "buyBox":
+          solrUpdate.put(SolrFieldNames.LAST_UPDATED_TIME,1234);
+          break;
+        case "inventoryChange":
+          solrUpdate.put(SolrFieldNames.All_LOCATION, null);
+          solrUpdate.put(SolrFieldNames.STOCK_LOCATION, null);
+>>>>>>> c2a0cda12b4a36119404e2b4ec3688559eea1fb3
         default:
           break;
       }
