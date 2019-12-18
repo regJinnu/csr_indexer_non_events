@@ -9,4 +9,4 @@ Feature:Verifying item and product change event listeners
     Examples:
       |other|
       | O2O |
-#      | CNC |
+      | CNC |
