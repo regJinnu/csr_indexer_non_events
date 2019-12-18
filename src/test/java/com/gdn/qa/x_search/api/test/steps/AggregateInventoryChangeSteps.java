@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -46,10 +47,11 @@ public class AggregateInventoryChangeSteps {
     searchServiceData.setItemSku(searchServiceProperties.get("itemSkuForInventoryChange"));
     searchServiceData.setCnc(false);
     searchServiceData.setType("OFFLINE");
-    searchServiceData.setLocation(new HashMap<>());
-    searchServiceData.getLocation().put("location1", "Jakarta");
-    searchServiceData.getLocation().put("location2","Bogor");
-    searchServiceData.getLocation().put("location3", "Tangerang");
+    Map<String,String> locationMap = new HashMap<>();
+    locationMap.put("location1", "Jakarta");
+    locationMap.put("location2","Bogor");
+    locationMap.put("location3", "Tangerang");
+    searchServiceData.setLocation(locationMap);
     searchServiceData.setStatus1("IN_STOCK");
     searchServiceData.setStatus2("OUT_OF_STOCK");
   }
@@ -174,9 +176,11 @@ public class AggregateInventoryChangeSteps {
     searchServiceData.setItemSku(searchServiceProperties.get("itemSkuForInventoryChangeCNC"));
     searchServiceData.setCnc(true);
     searchServiceData.setType("OFFLINE");
-    searchServiceData.getLocation().put("location1", "Jakarta");
+    Map<String,String> locationMap = new HashMap<>();
+    locationMap.put("location1", "Jakarta");
+    locationMap.put("location2","Bogor");
+    searchServiceData.setLocation(locationMap);
     searchServiceData.setPickupPointCode(searchServiceProperties.get("ppCode1ForInventoryChangeCNC"));
-    searchServiceData.getLocation().put("location2","Bogor");
     searchServiceData.setPickupPointCode2(searchServiceProperties.get("ppCode2ForInventoryChangeCNC"));
     searchServiceData.setStatus1("IN_STOCK");
     searchServiceData.setStatus2("OUT_OF_STOCK");
