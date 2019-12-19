@@ -243,7 +243,7 @@ public class CategoryChangeEventListenerSteps {
                  try {
                      Thread.sleep(30000);
                      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
-                     solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNCNEW);
+                     solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
                  } catch (Exception e) {
                      e.printStackTrace();
                  }
