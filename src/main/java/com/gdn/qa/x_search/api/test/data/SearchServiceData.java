@@ -200,6 +200,17 @@ public class SearchServiceData {
   private String status1;
   private String status2;
   private String pickupPointCode2;
+  private String userId;
+  private String accountId;
+  private String sessionid;
+  private String clientMemberId;
+  private String pageType;
+  private String device;
+  private String deviceType;
+  private String browser;
+  private String browserVersion;
+  private Long count;
+  private Date lastUpdatedTime;
   private ResponseApi<GdnRestListResponse<TrainResponse>> getAllTrain;
   private ResponseApi<GdnRestListResponse<SearchRuleResponse>> getAllSearchRule;
   private ResponseApi<GdnRestListResponse<PlaceholderRuleResponse>> getAllPlaceholder;
