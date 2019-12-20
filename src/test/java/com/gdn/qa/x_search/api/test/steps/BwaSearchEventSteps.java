@@ -71,8 +71,8 @@ public class BwaSearchEventSteps {
 
     }
 
-    @When("^\\[search-service] publish the bwa search event$")
-    public void searchServicePublishTheBwaSearchEvent() {
+    @And("^\\[search-service\\] prepare payload for publishing the bwa search event$")
+    public void searchServicePreparePayloadForPublishingTheBwaSearchEvent() {
         Map<String, String> payload = new HashMap<>();
         payload.put("accountId", searchServiceData.getAccountId());
         payload.put("userId", searchServiceData.getUserId());
@@ -87,7 +87,12 @@ public class BwaSearchEventSteps {
         payload.put("device", searchServiceData.getDevice());
         payload.put("browser", searchServiceData.getBrowser());
         payload.put("browserType", searchServiceData.getBrowserVersion());
-        kafkaHelper.publishSearchBwaEvent(payload);
+        searchServiceData.setPayload(payload);
+    }
+
+    @When("^\\[search-service] publish the bwa search event$")
+    public void searchServicePublishTheBwaSearchEvent() {
+        kafkaHelper.publishSearchBwaEvent(searchServiceData.getPayload());
     }
 
     @Then("^\\[search-service] check if the search count increased in db$")
