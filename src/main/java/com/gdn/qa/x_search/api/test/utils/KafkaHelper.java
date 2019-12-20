@@ -790,30 +790,4 @@ public class KafkaHelper {
     kafkaSender.sendEvent("com.gdn.aggregate.modules.inventory.changed.event",
         objectMapper.writeValueAsString(aggregateInventoryChangeModel));
   }
-
-  public void publishSearchBwaEvent(Map<String, String> payload) {
-
-    BwaSearchEventModel bwaSearchEventModel = BwaSearchEventModel.builder().
-            accountid(payload.get("accountId")).
-            userid(payload.get("userId")).
-            sessionid(payload.get("sessionId")).
-            searchinternalkeyword(payload.get("keyword")).
-            searchinternalcategoryid(payload.get("categoryId")).
-            searchinternalcategoryname(payload.get("categoryName")).
-            clientmemberid(payload.get("clientMemberId")).
-            pageurl(payload.get("url")).
-            pagetype(payload.get("pageType")).
-            device(payload.get("deviceType")).
-            devicetype(payload.get("device")).
-            browser(payload.get("browser")).
-            browserversion(payload.get("browserType")).
-            build();
-    BwaEventModel bwaEventModel = BwaEventModel.builder().searchinternalkeyword(bwaSearchEventModel).build();
-    try {
-      kafkaSender.send("topic.bwa.search.internal.keyword",
-              objectMapper.writeValueAsString(bwaEventModel));
-    } catch (JsonProcessingException e) {
-      e.printStackTrace();
-    }
-  }
 }
