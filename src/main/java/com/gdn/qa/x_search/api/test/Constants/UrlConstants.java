@@ -34,6 +34,14 @@ public interface UrlConstants {
   String DANGLING_JOB_PRODUCTCODE = "MTA-66666";
   String PRISTINE_ID="PRI-0000-0001";
   String EVENT_ID="8fa49fb8-ffcc-42d7-8b01-7df55dd3ec51";
+  String ACCOUNT_ID = "blibli-seoul";
+  String USER_ID = "1916329177.U.9407511781281912.1549263794";
+  String SESSION_ID = "723337755.S.7656656614297553.1576727494";
+  String PAGE_TYPE = "home";
+  String DEVICE_TYPE = "desktop";
+  String DEVICE = "windows";
+  String BROWSER = "chrome";
+  String BROWSER_VERSION = "79.0";
 }
 
 

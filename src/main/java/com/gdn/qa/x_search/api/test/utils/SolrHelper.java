@@ -170,6 +170,7 @@ public class SolrHelper {
           case "salesCatalogCategoryIdDescHierarchyCNC":
               solrUpdate.put(SolrFieldNames.SALES_CATALOG_CATEGORY_ID_DESC_HIERARCHY,"TEST CNC Category");
               solrUpdate.put(SolrFieldNames.LAST_UPDATED_TIME,1001);
+              break;
         case "buyBox":
           solrUpdate.put(SolrFieldNames.LAST_UPDATED_TIME,1234);
           break;
