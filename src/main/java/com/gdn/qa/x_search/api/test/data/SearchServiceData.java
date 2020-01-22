@@ -219,6 +219,7 @@ public class SearchServiceData {
   private String browserVersion;
   private Long count;
   private Date lastUpdatedTime;
+  private Map<String,String> payload;
   private ResponseApi<GdnRestListResponse<TrainResponse>> getAllTrain;
   private ResponseApi<GdnRestListResponse<SearchRuleResponse>> getAllSearchRule;
   private ResponseApi<GdnRestListResponse<PlaceholderRuleResponse>> getAllPlaceholder;
