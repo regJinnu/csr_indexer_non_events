@@ -163,6 +163,14 @@ public class SolrHelper {
         case "tradeInInEligible":
           solrUpdate.put(SolrFieldNames.TRADE_IN_ELIGIBLE, true);
           break;
+          case "salesCatalogCategoryIdDescHierarchy":
+              solrUpdate.put(SolrFieldNames.SALES_CATALOG_CATEGORY_ID_DESC_HIERARCHY,"VA-1000003;Vandana testing category TEST");
+              solrUpdate.put(SolrFieldNames.LAST_UPDATED_TIME,1100);
+              break;
+          case "salesCatalogCategoryIdDescHierarchyCNC":
+              solrUpdate.put(SolrFieldNames.SALES_CATALOG_CATEGORY_ID_DESC_HIERARCHY,"TEST CNC Category");
+              solrUpdate.put(SolrFieldNames.LAST_UPDATED_TIME,1001);
+              break;
         case "buyBox":
           solrUpdate.put(SolrFieldNames.LAST_UPDATED_TIME,1234);
           break;

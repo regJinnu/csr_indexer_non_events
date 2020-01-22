@@ -222,13 +222,13 @@ public class ItemChangeEventSteps {
             SELECT_HANDLER,
             "offerPrice",
             1,
-            SOLR_DEFAULT_COLLECTION).get(0).getOfferPrice();
+            SOLR_DEFAULT_COLLECTION_O2O).get(0).getOfferPrice();
 
         double listPriceInO2Ocoll = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
             SELECT_HANDLER,
             "listPrice",
             1,
-            SOLR_DEFAULT_COLLECTION).get(0).getListPrice();
+            SOLR_DEFAULT_COLLECTION_O2O).get(0).getListPrice();
 
         log.warn("------offerPrice--{}---listPrice--{}---}", offerPrice, listPrice);
         assertThat("offer price not set", offerPriceInO2Ocoll, equalTo(4545455.45));

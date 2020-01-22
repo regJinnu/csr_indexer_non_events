@@ -3,6 +3,8 @@ package com.gdn.qa.x_search.api.test.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gdn.qa.x_search.api.test.data.*;
+import com.gdn.qa.x_search.api.test.models.CatalogDomainEventModel;
+import com.gdn.qa.x_search.api.test.models.CategoryDomainEventModel;
 import com.gdn.x.product.domain.event.enums.ItemChangeEventType;
 import com.gdn.x.product.domain.event.model.ItemViewConfig;
 import com.gdn.x.product.domain.event.model.Price;
@@ -172,7 +174,6 @@ public class KafkaHelper {
     } catch (JsonProcessingException e) {
       e.printStackTrace();
     }
-
   }
 
   public void publishItemChangeEvent(String itemSku,
@@ -202,6 +203,29 @@ public class KafkaHelper {
       kafkaSender.send("com.gdn.x.product.item.change",
           objectMapper.writeValueAsString(itemChangeEvent));
     } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
+    /**
+     * @author poushaliM on 17/12/19
+     * @project X-search
+     */
+
+  public void publishCategoryChangeEvent(String name, String catagoryCode, boolean activated,String catalogType){
+
+    CatalogDomainEventModel catalogDomainEventModel=CatalogDomainEventModel.builder().name(name).catalogCode(catagoryCode)
+        .catalogType(catalogType).build();
+    CategoryDomainEventModel categoryDomainEventModel= CategoryDomainEventModel.builder()
+        .timestamp(System.currentTimeMillis())
+        .name(name)
+        .categoryCode(catagoryCode)
+        .activated(activated)
+        .catalogDomainEventModel(catalogDomainEventModel).build();
+    try {
+      kafkaSender.send("com.gdn.x.productcategorybase.category.publish",
+          objectMapper.writeValueAsString(categoryDomainEventModel));
+    }catch (JsonProcessingException e){
       e.printStackTrace();
     }
   }
@@ -711,6 +735,7 @@ public class KafkaHelper {
         objectMapper.writeValueAsString(tradeInAggregateModel));
   }
 
+
   public void buyBoxEvent(String itemSku, Double buyBoxScore)
   {
     try {
@@ -790,6 +815,7 @@ public class KafkaHelper {
     kafkaSender.sendEvent("com.gdn.aggregate.modules.inventory.changed.event",
         objectMapper.writeValueAsString(aggregateInventoryChangeModel));
   }
+
 
   public void publishSearchBwaEvent(Map<String, String> payload) {
 
