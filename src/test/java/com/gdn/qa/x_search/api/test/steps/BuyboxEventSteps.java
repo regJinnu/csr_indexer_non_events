@@ -102,7 +102,7 @@ public class BuyboxEventSteps {
   public void fetchParamsRequiredToSendBuyboxEventForCncProd() {
     searchServiceData.setDefCncItemSku1(searchServiceProperties.get("defCncItemSku1"));
     searchServiceData.setBuyboxScore(Double.valueOf(searchServiceProperties.get("buyboxScore")));
-    searchServiceData.setDefCncPP(searchServiceProperties.get("defCncPP"));
+    searchServiceData.setDefCncId(searchServiceProperties.get("defCncId"));
   }
 
   @When("^\\[search-service] send buybox related event through kafka for cnc prod$")
@@ -122,7 +122,7 @@ public class BuyboxEventSteps {
   public void verifyThatBuyboxScoreIsNotUpdatedInSolr() {
     try {
       String query =
-          "id:" + searchServiceData.getDefCncItemSku1() + "-" + searchServiceData.getDefCncPP();
+          searchServiceData.getDefCncId();
 
       Double buyboxScoreInCnc= solrHelper.getSolrProd(query,
           SELECT_HANDLER,
