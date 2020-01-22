@@ -1,4 +1,4 @@
-package com.gdn.qa.x_search.api.test.data;
+package com.gdn.qa.x_search.api.test.models;
 
 
 import lombok.Builder;

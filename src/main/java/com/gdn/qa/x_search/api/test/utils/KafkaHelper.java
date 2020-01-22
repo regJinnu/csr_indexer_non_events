@@ -3,6 +3,7 @@ package com.gdn.qa.x_search.api.test.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gdn.qa.x_search.api.test.data.*;
+import com.gdn.qa.x_search.api.test.models.CatalogDomainEventModel;
 import com.gdn.qa.x_search.api.test.models.CategoryDomainEventModel;
 import com.gdn.x.product.domain.event.enums.ItemChangeEventType;
 import com.gdn.x.product.domain.event.model.ItemViewConfig;
