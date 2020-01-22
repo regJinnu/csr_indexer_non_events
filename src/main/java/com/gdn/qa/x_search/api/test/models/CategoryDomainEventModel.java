@@ -1,5 +1,6 @@
-package com.gdn.qa.x_search.api.test.data;
+package com.gdn.qa.x_search.api.test.models;
 
+import com.gdn.qa.x_search.api.test.data.CatalogDomainEventModel;
 import lombok.Builder;
 import lombok.Data;
 
