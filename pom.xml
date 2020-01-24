@@ -63,6 +63,10 @@
                     <artifactId>websocket-common</artifactId>
                     <groupId>org.eclipse.jetty.websocket</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -150,6 +154,14 @@
                     <artifactId>guava</artifactId>
                     <groupId>com.google.guava</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>solr-solrj</artifactId>
+                    <groupId>org.apache.solr</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>kafka-clients</artifactId>
+                    <groupId>org.apache.kafka</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -176,6 +188,12 @@
             <groupId>com.gdn.x.product</groupId>
             <artifactId>product-domain-event</artifactId>
             <version>2.25.4-1</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
@@ -259,8 +277,7 @@
                     </includes>
                     <systemPropertyVariables>
                         <cucumber.options>--junit,--step-notifications</cucumber.options>
-                        <spring.config.location>classpath:/application-UATA.properties
-                        </spring.config.location>
+                        <spring.config.location>classpath:/application-UATA.properties</spring.config.location>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

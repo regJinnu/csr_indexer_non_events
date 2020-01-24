@@ -196,8 +196,7 @@ public class ProductReviewEventSteps {
     long countOfDocsInCollectionAfterDeltaProcessing =
         mongoHelper.countOfRecordsInCollection("indexing_list_new");
     assertThat("Number of documents are equal",
-        countOfDocsInCollectionAfterDeltaProcessing,
-        lessThan(countOfDocsInCollection));
+        countOfDocsInCollectionAfterDeltaProcessing, lessThan(countOfDocsInCollection));
     Document searchDoc = new Document("code", searchServiceProperties.get("idForProductReview"));
     long countOfProductReviewIds = mongoHelper.countByMongoquery("indexing_list_new", searchDoc);
     assertThat("Specified document not found", countOfProductReviewIds, equalTo(1L));
@@ -266,7 +265,7 @@ public class ProductReviewEventSteps {
     mongoHelper.insertInMongo("indexing_list_new", storedDeltaDoc3);
 
     long countOfStoredEvents = mongoHelper.countOfRecordsInCollection("indexing_list_new");
-    assertThat("No Stored events exists in Mongo", countOfStoredEvents, greaterThanOrEqualTo(0L));
+    assertThat("No Stored events exists in Mongo", countOfStoredEvents, greaterThan(0L));
 
     countOfDocsInCollection = mongoHelper.countOfRecordsInCollection("indexing_list_new");
   }

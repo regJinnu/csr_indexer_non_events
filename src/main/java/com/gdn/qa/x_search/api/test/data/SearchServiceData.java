@@ -179,6 +179,7 @@ public class SearchServiceData {
   private String defCncMerchantSku;
   private String defCncItemSku1;
   private String defCncPP;
+  private String defCncId;
   private String defCncItemCode;
   private String defCncUpdatesConfig;
   private String defCncProductCode;

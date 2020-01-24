@@ -117,7 +117,6 @@ public class InventoryEventSteps {
     try {
       Thread.sleep(50000);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
-      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -125,8 +124,8 @@ public class InventoryEventSteps {
 
   @Then("^\\[search-service] product becomes oos in SOLR$")
   public void checkProductIsOOSAfterEvent(){
-
     try {
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
       oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           "/select",
           "isInStock",
@@ -165,32 +164,15 @@ public class InventoryEventSteps {
       assertThat("Updating isInStock field in SOLR failed", status, equalTo(0));
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
-      int statusInO2O =
-          solrHelper.updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),
-              "/select",
-              "id",
-              1,
-              "oos",
-              SOLR_DEFAULT_COLLECTION_O2O);
-      assertThat("Updating isInStock field in SOLR failed in o2o coll", statusInO2O, equalTo(0));
-      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);
-
       int oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           "/select",
           "isInStock",
           1,
           SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
-      int oosFlagInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          "/select",
-          "isInStock",
-          1,
-          SOLR_DEFAULT_COLLECTION_O2O).get(0).getIsInStock();
 
       log.warn("-----Product {} Set non OOS before test---{}",searchServiceData.getQueryForReindex(),oosFlag);
 
       assertThat("Product non OOS",oosFlag,equalTo(0));
-      assertThat("Product non OOS",oosFlagInO2O,equalTo(0));
-
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -214,8 +196,6 @@ public class InventoryEventSteps {
   public void checkProductIsNotOOSAfterEvent(){
     try {
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
-      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);
-
       oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           "/select",
           "isInStock",
@@ -226,19 +206,6 @@ public class InventoryEventSteps {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    try {
-      oosFlagInO2OColl = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          "/select",
-          "isInStock",
-          1,
-          SOLR_DEFAULT_COLLECTION_O2O).get(0).getIsInStock();
-      log.warn("-----IsInStock After reindex by event---{}", oosFlagInO2OColl);
-      assertThat("Product not OOS", oosFlagInO2OColl, equalTo(1));
-      log.warn("-----IsInStock After reindex by event in o2o coll---{}",oosFlagInO2OColl);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
   }
 
   @Given("^\\[search-service] force.stop flag is set to '(.*)'$")
@@ -265,6 +232,7 @@ public class InventoryEventSteps {
   @Then("^\\[search-service] product does not becomes oos in SOLR$")
   public void searchServiceProductDoesNotBecomesOosInSOLR(){
     try {
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
       oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           "/select",
           "isInStock",
@@ -336,15 +304,6 @@ public class InventoryEventSteps {
           SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
       log.warn("-----Product does not become non oos in SOLR---{}", oosFlag);
       assertThat("Product Non OOS", oosFlag, equalTo(0));
-
-      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);
-      oosFlagInO2OColl = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          "/select",
-          "isInStock",
-          1,
-          SOLR_DEFAULT_COLLECTION_O2O).get(0).getIsInStock();
-      log.warn("-----Product does not become non oos in SOLR in O2O coll---{}", oosFlagInO2OColl);
-      assertThat("Product Non OOS", oosFlagInO2OColl, equalTo(0));
     } catch (Exception e) {
       e.printStackTrace();
     }
