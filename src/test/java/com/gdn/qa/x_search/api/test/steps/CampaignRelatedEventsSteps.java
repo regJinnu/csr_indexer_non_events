@@ -75,9 +75,9 @@ public class CampaignRelatedEventsSteps {
     try {
       String campaignFacet = solrHelper.getSolrProd(searchServiceData.getCampaignFieldInSOLR(),
           SELECT_HANDLER,
-          "campaign_CAMP-0001",
+          "campaign_"+searchServiceData.getCampaignCode(),
           1,SOLR_DEFAULT_COLLECTION).get(0).getCampaignName();
-      assertThat(campaignFacet, equalTo("campaign.product.list"));
+      assertThat(campaignFacet, equalTo(searchServiceData.getCampaignName()));
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -87,13 +87,14 @@ public class CampaignRelatedEventsSteps {
   @Given("^\\[search-service] set list of campaign codes to go live$")
   public void searchServiceSetListOfCampaignCodesToGoLive() {
     searchServiceData.setCampaignCodeList(searchServiceProperties.get("campaignCodeList"));
+    searchServiceData.setCampaignCode(searchServiceProperties.get("campaignCode"));
 
   }
 
   @When("^\\[search-service] publish the campaign live event$")
   public void searchServicePublishTheCampaignLiveEvent() {
     kafkaHelper.campaignLiveEvent(searchServiceData.getCampaignCodeList(),
-        "CAMP-0001",false,"",false);
+            searchServiceData.getCampaignName(),false,"",false);
     try {
       Thread.sleep(30000);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
@@ -108,7 +109,7 @@ public class CampaignRelatedEventsSteps {
         mongoHelper.getMongoDocumentByQuery("set_config", "name", "campaign.live.list");
     for (Document doc : mongoDocumentByQuery) {
       String docInStringFormat = doc.toString();
-      assertThat(docInStringFormat.contains("CAMP-0001"), equalTo(true));
+      assertThat(docInStringFormat.contains(searchServiceData.getCampaignCode()), equalTo(true));
     }
   }
 
@@ -116,6 +117,7 @@ public class CampaignRelatedEventsSteps {
   public void searchServiceSetListOfCampaignCodesToStop() {
     searchServiceData.setCampaignCode(searchServiceProperties.get("campaignCode"));
     searchServiceData.setCampaignProductSku(searchServiceProperties.get("campaignProductSku"));
+    searchServiceData.setCampaignName(searchServiceProperties.get("campaignName"));
   }
 
   @When("^\\[search-service] publish the campaign stop event$")
@@ -137,13 +139,13 @@ public class CampaignRelatedEventsSteps {
           mongoHelper.getMongoDocumentByQuery("set_config", "name", "campaign.live.list");
       for (Document doc : mongoDocumentByQuery) {
         String docInStringFormat = doc.toString();
-        assertThat(docInStringFormat.contains("CAMP-0001"), equalTo(false));
+        assertThat(docInStringFormat.contains(searchServiceData.getCampaignCode()+","), equalTo(false));
       }
 
       long countWithFq =
           solrHelper.getSolrProdCountWithFq("sku:"+searchServiceData.getCampaignProductSku(),
               SELECT_HANDLER,
-              "campaign_CAMP-0001:[* TO *]");
+              "campaign_"+searchServiceData.getCampaignCode()+":"+searchServiceData.getCampaignName(),SOLR_DEFAULT_COLLECTION);
 
       assertThat("SOLR data not updated",countWithFq, equalTo(1L));
     } catch (Exception e) {
@@ -156,6 +158,8 @@ public class CampaignRelatedEventsSteps {
   public void searchServiceSetListOfCampaignCodesToEnd() {
     searchServiceData.setCampaignCodeList(searchServiceProperties.get("campaignCodeList"));
     searchServiceData.setCampaignProductSku(searchServiceProperties.get("campaignProductSku"));
+    searchServiceData.setCampaignName(searchServiceProperties.get("campaignName"));
+    searchServiceData.setCampaignCode(searchServiceProperties.get("campaignCode"));
   }
 
   @When("^\\[search-service] publish the campaign end event$")
@@ -176,7 +180,7 @@ public class CampaignRelatedEventsSteps {
       long countWithFq =
           solrHelper.getSolrProdCountWithFq("sku:"+searchServiceData.getCampaignProductSku(),
               SELECT_HANDLER,
-              "campaign_CAMP-0001:[* TO *]");
+                  "campaign_"+searchServiceData.getCampaignCode()+":"+searchServiceData.getCampaignName(),SOLR_DEFAULT_COLLECTION);
 
       assertThat("SOLR data not updated",countWithFq, equalTo(0L));
     } catch (Exception e) {
@@ -191,6 +195,7 @@ public class CampaignRelatedEventsSteps {
     searchServiceData.setItemSkuForRemove(searchServiceProperties.get("itemSkuForRemove"));
     searchServiceData.setCampaignDiscount(searchServiceProperties.get("campaignDiscount"));
     searchServiceData.setCampaignFieldInSOLR(searchServiceProperties.get("campaignFieldInSOLR"));
+    searchServiceData.setCampaignName(searchServiceProperties.get("campaignName"));
   }
 
   @When("^\\[search-service] publish the campaign remove event$")
@@ -214,7 +219,7 @@ public class CampaignRelatedEventsSteps {
       long countWithFq =
           solrHelper.getSolrProdCountWithFq("sku:"+searchServiceData.getCampaignProductSku(),
               SELECT_HANDLER,
-              "campaign_CAMP-0001:[* TO *]");
+              "campaign_"+searchServiceData.getCampaignCode()+":"+searchServiceData.getCampaignName(),SOLR_DEFAULT_COLLECTION);
 
       assertThat("SOLR data not updated",countWithFq, equalTo(1L));
     } catch (Exception e) {
@@ -258,9 +263,9 @@ public class CampaignRelatedEventsSteps {
     try {
       String campaignFacet = solrHelper.getSolrProd(searchServiceData.getCampaignFieldInSOLR(),
           SELECT_HANDLER,
-          "campaign_CAMP-0001",
+          "campaign_"+searchServiceData.getCampaignCode(),
           1,SOLR_DEFAULT_COLLECTION).get(0).getCampaignName();
-      assertThat(campaignFacet, equalTo("campaign.product.list"));
+      assertThat(campaignFacet, equalTo(searchServiceData.getCampaignName()));
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -290,10 +295,10 @@ public class CampaignRelatedEventsSteps {
       throws Throwable {
     FindIterable<Document> mongoDocumentByQuery = mongoHelper.getMongoDocumentByQuery("config_list",
         "exclusive.campaign.code",
-        "CAMP-0001");
+        searchServiceData.getCampaignCode());
     for (Document doc : mongoDocumentByQuery) {
       String docInStringFormat = doc.toString();
-      assertThat(docInStringFormat.contains("CAMP-0001"), equalTo(true));
+      assertThat(docInStringFormat.contains(searchServiceData.getCampaignCode()), equalTo(null));
     }
   }
 
@@ -303,7 +308,8 @@ public class CampaignRelatedEventsSteps {
     searchServiceData.setCampaignProductSku(searchServiceProperties.get("campaignProductSku"));
     searchServiceData.setItemSkuForRemove(searchServiceProperties.get("itemSkuForRemove"));
     searchServiceData.setCampaignDiscount(searchServiceProperties.get("campaignDiscount"));
-    searchServiceData.setCampaignFieldInSOLR(searchServiceProperties.get(""));
+    searchServiceData.setCampaignFieldInSOLR(searchServiceProperties.get("campaignFieldInSOLR"));
+    searchServiceData.setCampaignName(searchServiceProperties.get("campaignName"));
   }
 
   @When("^\\[search-service] publish the campaign remove event with exclusive flag$")
@@ -327,7 +333,7 @@ public class CampaignRelatedEventsSteps {
       long countWithFq =
           solrHelper.getSolrProdCountWithFq("sku:" + searchServiceData.getCampaignProductSku(),
               SELECT_HANDLER,
-              "campaign_CAMP-0001:[* TO *]");
+              "campaign_"+searchServiceData.getCampaignCode()+":"+searchServiceData.getCampaignName(),SOLR_DEFAULT_COLLECTION);
 
       assertThat("SOLR data not updated", countWithFq, equalTo(1L));
     } catch (Exception e) {
@@ -339,6 +345,8 @@ public class CampaignRelatedEventsSteps {
   public void searchServiceSetListOfCampaignCodesToEndWithExclusiveFlag() throws Throwable {
     searchServiceData.setCampaignCodeList(searchServiceProperties.get("campaignCodeList"));
     searchServiceData.setCampaignProductSku(searchServiceProperties.get("campaignProductSku"));
+    searchServiceData.setCampaignName(searchServiceProperties.get("campaignName"));
+    searchServiceData.setCampaignCode(searchServiceProperties.get("campaignCode"));
   }
 
   @When("^\\[search-service] publish the campaign end event with exclusive flag$")
@@ -359,7 +367,7 @@ public class CampaignRelatedEventsSteps {
     try {
       countWithFq = solrHelper.getSolrProdCountWithFq("sku:" + searchServiceData.getCampaignProductSku(),
           SELECT_HANDLER,
-          "campaign_CAMP-0001:[* TO *]");
+              "campaign_"+searchServiceData.getCampaignCode()+":"+searchServiceData.getCampaignName(),SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -367,16 +375,18 @@ public class CampaignRelatedEventsSteps {
       FindIterable<Document> mongoDocumentByQuery = mongoHelper.getMongoDocumentByQuery(
           "config_list",
           "exclusive.campaign.code",
-          "CAMP-0001");
+          searchServiceData.getCampaignCode());
       for (Document doc : mongoDocumentByQuery) {
         String docInStringFormat = doc.toString();
-        assertThat(docInStringFormat.contains("CAMP-0001"), equalTo(null));
+        assertThat(docInStringFormat.contains(searchServiceData.getCampaignCode()+","), equalTo(false));
     }
   }
 
   @Given("^\\[search-service] set list of campaign codes to stop with exclusive flag$")
   public void searchServiceSetListOfCampaignCodesToStopWithExclusiveFlag() throws Throwable {
     searchServiceData.setCampaignCode(searchServiceProperties.get("campaignCode"));
+    searchServiceData.setCampaignName(searchServiceProperties.get("campaignName"));
+    searchServiceData.setCampaignProductSku(searchServiceProperties.get("campaignProductSku"));
   }
 
   @When("^\\[search-service] publish the campaign stop event with exclusive flag$")
@@ -396,8 +406,53 @@ public class CampaignRelatedEventsSteps {
     long countWithFq =
         solrHelper.getSolrProdCountWithFq("sku:" + searchServiceData.getCampaignProductSku(),
             SELECT_HANDLER,
-            "campaign_CAMP-0001:[* TO *]");
+                "campaign_"+searchServiceData.getCampaignCode()+":"+searchServiceData.getCampaignName(),SOLR_DEFAULT_COLLECTION);
 
     assertThat("SOLR data not updated", countWithFq, equalTo(1L));
   }
+
+  @Then("^\\[search-service\\] check if the field is updated for normal product and not updated for cnc product in solr$")
+  public void searchServiceCheckIfTheFieldIsUpdatedForNormalProductAndNotUpdatedForCncProductInSolr() {
+    try {
+      long countWithFq =
+              solrHelper.getSolrProdCountWithFq(searchServiceData.getCampaignFieldInSOLR(),
+                      SELECT_HANDLER,
+                      "campaign_"+searchServiceData.getCampaignCode()+":"+searchServiceData.getCampaignName(),SOLR_DEFAULT_COLLECTION);
+
+      assertThat("cnc product is also updated by campaign event",countWithFq, equalTo(1L));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Given("^\\[search-service\\] set all the values for publishing the exclusive campaign event on cnc product$")
+  public void searchServiceSetAllTheValuesForPublishingTheExclusiveCampaignEventOnCncProduct() {
+    searchServiceData.setCampaignCode(searchServiceProperties.get("campaignCode"));
+    searchServiceData.setCampaignName(searchServiceProperties.get("campaignName"));
+    searchServiceData.setCampaignProductSku(searchServiceProperties.get("campaignCncProductSku"));
+    searchServiceData.setCampaignItemSku(searchServiceProperties.get("campaignCncItemSku"));
+    searchServiceData.setCampaignDiscount(searchServiceProperties.get("campaignDiscount"));
+    searchServiceData.setTagLabel(searchServiceProperties.get("tagLabel"));
+    searchServiceData.setQuota(Integer.parseInt(searchServiceProperties.get("quota")));
+    searchServiceData.setCampaignFieldInSOLR(searchServiceProperties.get("campaignCncFieldInSOLR"));
+    searchServiceData.setExclusive(Boolean.parseBoolean(searchServiceProperties.get("exclusive")));
+  }
+
+  @When("^\\[search-service\\] publish the exclusive campaign publish event for cnc product$")
+  public void searchServicePublishTheExclusiveCampaignPublishEventForCncProduct() {
+      kafkaHelper.publishCampaignEventExclusiveForCnc(searchServiceData.getCampaignName(),
+              searchServiceData.getCampaignCode(),
+              searchServiceData.getCampaignProductSku(),
+              searchServiceData.getCampaignItemSku(),
+              Double.valueOf(searchServiceData.getCampaignDiscount()),
+              searchServiceData.getQuota(),
+              searchServiceData.getTagLabel(),
+              searchServiceData.isExclusive());
+      try {
+        Thread.sleep(30000);
+        solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
 }

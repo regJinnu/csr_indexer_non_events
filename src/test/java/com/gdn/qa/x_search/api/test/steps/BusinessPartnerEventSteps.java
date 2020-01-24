@@ -310,7 +310,7 @@ public class BusinessPartnerEventSteps {
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
       long count = solrHelper.getSolrProdCountWithFq(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
-          "published:[0 TO *] AND storeClose:*");
+          "published:[0 TO *] AND storeClose:*",SOLR_DEFAULT_COLLECTION);
 
       assertThat("storeClose field not removed after reindex", count, equalTo(0L));
 
@@ -349,7 +349,7 @@ public class BusinessPartnerEventSteps {
       long count = solrHelper.getSolrProdCountWithFq(
           "id:" + searchServiceProperties.get("businessPartnerCode") + "*",
           SELECT_HANDLER,
-          "published:[0 TO *] AND storeClose:*");
+          "published:[0 TO *] AND storeClose:*",SOLR_DEFAULT_COLLECTION);
 
       assertThat("storeClose field not removed after reindex", count, equalTo(0L));
 

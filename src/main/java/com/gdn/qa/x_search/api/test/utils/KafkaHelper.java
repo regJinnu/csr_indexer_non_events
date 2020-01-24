@@ -341,7 +341,7 @@ public class KafkaHelper {
         .promotionStartTime(dtStart.toDate())
         .promotionEndTime(dtEnd.toDate())
         .tagLabel(tagLabel)
-        .exclusive(true)
+        .exclusive(exclusive)
         .build();
     try {
       kafkaSender.send("com.gdn.x.campaign.published",
@@ -351,8 +351,8 @@ public class KafkaHelper {
     }
   }
 
-  public void campaignLiveEventExclusive(String campaignCode,
-      String campaignName,
+  public void campaignLiveEventExclusive(String campaignName,
+      String campaignCode,
       String tagLabel,
       boolean exclusive) {
     Date date = new Date();
@@ -364,7 +364,7 @@ public class KafkaHelper {
         .campaignName(campaignName)
         .promotionEndTime(dtEnd.toDate())
         .promotionStartTime(dtStart.toDate())
-        .exclusive(true)
+        .exclusive(exclusive)
         .tagLabel(tagLabel)
         .build();
 
@@ -838,6 +838,48 @@ public class KafkaHelper {
     try {
       kafkaSender.send("topic.bwa.search.internal.keyword",
               objectMapper.writeValueAsString(bwaEventModel));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void publishCampaignEventExclusiveForCnc(String campaignName,
+                                            String campaignCode,
+                                            String productSku,
+                                            String itemSku,
+                                            Double discount,
+                                            int quota,
+                                            String tagLabel,
+                                            boolean exclusive) {
+
+    Date date = new Date();
+    DateTime dtStart = new DateTime(date);
+    DateTime dtEnd = dtStart.plusDays(1);
+
+    ProductSkuEventModel productSkuEventModel = ProductSkuEventModel.builder()
+            .productSku(productSku)
+            .itemSku(itemSku)
+            .discount(discount)
+            .quota(quota)
+            .build();
+
+    List<ProductSkuEventModel> skuList = new ArrayList<>();
+    skuList.add(productSkuEventModel);
+
+
+    CampaignPublishEvent campaignPublishEvent = CampaignPublishEvent.builder()
+            .timestamp(System.currentTimeMillis())
+            .campaignName(campaignName)
+            .campaignCode(campaignCode)
+            .skuList(skuList)
+            .promotionStartTime(dtStart.toDate())
+            .promotionEndTime(dtEnd.toDate())
+            .tagLabel(tagLabel)
+            .exclusive(exclusive)
+            .build();
+    try {
+      kafkaSender.send("com.gdn.x.campaign.published",
+              objectMapper.writeValueAsString(campaignPublishEvent));
     } catch (JsonProcessingException e) {
       e.printStackTrace();
     }
