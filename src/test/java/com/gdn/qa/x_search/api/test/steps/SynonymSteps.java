@@ -99,7 +99,6 @@ public class SynonymSteps {
         searchServiceData.getFindKeywordRequest();
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
-    //assertThat(response.getResponseBody().getValue().get);
   }
 
   @Given("^\\[search-service] prepare find synonym using properties using properties data$")
