@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -45,7 +46,7 @@ public class CucumberHooks {
   @Autowired
   SearchServiceProperties searchServiceProperties;
 
-  SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+  SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
   @After
   public void afterRun() {
@@ -63,7 +64,8 @@ public class CucumberHooks {
   public void beforeSynonymRun() {
 
     try {
-      Date date = dateFormat.parse("2017-09-19T05:19:45.468Z");
+      Date date = dateFormat.parse(LocalDateTime.now().toString());
+      mongoHelper.deleteFromMongo("synonyms_list","KEY","testingapi");
 
       Document synDoc = new Document("_class", "com.gdn.x.search.entity.SynonymsEntity").append(
           "KEY",
