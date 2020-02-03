@@ -107,10 +107,10 @@ public class KeywordSteps {
     ResponseApi<GdnRestSingleResponse<KeywordResponse>> response =
         searchServiceData.getFindKeywordRequest();
     assertThat(response.getResponseBody().getValue().getCategoryProductName(),
-        equalTo("test test"));
+        equalTo(searchServiceProperties.get("categoryProductName")));
     assertThat(response.getResponseBody().getValue().getCategoryProductId(),
-        equalTo("MTA-0306233"));
-    assertThat(response.getResponseBody().getValue().getKeyword(), equalTo("testautomation"));
+        equalTo(searchServiceProperties.get("categoryProductId")));
+    assertThat(response.getResponseBody().getValue().getKeyword(), equalTo(searchServiceProperties.get("keyword")));
     String autoKeywordId = response.getResponseBody().getValue().getId();
     searchServiceData.setAutoKeywordId(autoKeywordId);
     Date autoUpdatedDate = response.getResponseBody().getValue().getCreatedDate();
@@ -134,12 +134,12 @@ public class KeywordSteps {
   public void searchServiceFindKeywordByIdRequestResponseSuccessShouldBeTrue() {
     ResponseApi<GdnRestSingleResponse<KeywordResponse>> response =
         searchServiceData.getFindKeywordRequest();
-    assertThat(response.getResponseBody().getValue().getNegativeKeyword(), equalTo("backcase"));
+    assertThat(response.getResponseBody().getValue().getNegativeKeyword(), equalTo(searchServiceProperties.get("negativeKeyword")));
     assertThat(response.getResponseBody().getValue().getCategoryProductName(),
-        equalTo("test test"));
+        equalTo(searchServiceProperties.get("categoryProductName")));
     assertThat(response.getResponseBody().getValue().getCategoryProductId(),
-        equalTo("MTA-0306233"));
-    assertThat(response.getResponseBody().getValue().getKeyword(), equalTo("testautomation"));
+        equalTo(searchServiceProperties.get("categoryProductId")));
+    assertThat(response.getResponseBody().getValue().getKeyword(), equalTo(searchServiceProperties.get("keyword")));
 
   }
 
@@ -164,13 +164,13 @@ public class KeywordSteps {
     ResponseApi<GdnRestListResponse<KeywordResponse>> response =
         searchServiceData.getListOfKeywordsRequest();
     assertThat(response.getResponseBody().getContent().get(0).getCategoryProductName(),
-        equalTo("test test"));
+        equalTo(searchServiceProperties.get("categoryProductName")));
     assertThat(response.getResponseBody().getContent().get(0).getNegativeKeyword(),
-        equalTo("backcase"));
+        equalTo(searchServiceProperties.get("negativeKeyword")));
     assertThat(response.getResponseBody().getContent().get(0).getCategoryProductId(),
-        equalTo("MTA-0306233"));
+        equalTo(searchServiceProperties.get("categoryProductId")));
     assertThat(response.getResponseBody().getContent().get(0).getKeyword(),
-        equalTo("testautomation"));
+        equalTo(searchServiceProperties.get("keyword")));
   }
 
   @Given("^\\[search-service] prepare request to find if the product exists$")
@@ -264,13 +264,13 @@ public class KeywordSteps {
     boolean result = response.getResponseBody().isSuccess();
     assertThat("is Success is wrong", result, equalTo(isSuccess));
     assertThat(response.getResponseBody().getContent().get(0).getCategoryProductName(),
-        equalTo("test test"));
+        equalTo(searchServiceProperties.get("categoryProductName")));
     assertThat(response.getResponseBody().getContent().get(0).getNegativeKeyword(),
-        equalTo("screenguard"));
+        equalTo(searchServiceProperties.get("updatedNegativeKeyword")));
     assertThat(response.getResponseBody().getContent().get(0).getCategoryProductId(),
-        equalTo("MTA-0306233"));
+        equalTo(searchServiceProperties.get("categoryProductId")));
     assertThat(response.getResponseBody().getContent().get(0).getKeyword(),
-        equalTo("testautomation"));
+        equalTo(searchServiceProperties.get("keyword")));
   }
 
   @Given("^\\[search-service] prepare request to find keyword by querying in wrong way$")
@@ -428,7 +428,7 @@ public class KeywordSteps {
   public void searchServicePrepareRequestToDeleteKeyword() {
     searchServiceData.setAutoKeywordId(searchServiceData.getAutoKeywordId());
     searchServiceData.setKeyword(searchServiceProperties.get("keyword"));
-    searchServiceData.setNegativeKeyword(searchServiceProperties.get("negativeKeyword"));
+    searchServiceData.setUpdatedNegativeKeyword(searchServiceProperties.get("updatedNegativeKeyword"));
     searchServiceData.setCategoryProductId(searchServiceProperties.get("categoryProductId"));
     searchServiceData.setCategoryProductName(searchServiceProperties.get("categoryProductName"));
     searchServiceData.setType(searchServiceProperties.get("type"));
@@ -451,7 +451,7 @@ public class KeywordSteps {
   public void searchServicePrepareRequestToDeleteNonExistingKeyword() {
     searchServiceData.setWrongid(searchServiceProperties.get("wrongid"));
     searchServiceData.setKeyword(searchServiceProperties.get("keyword"));
-    searchServiceData.setNegativeKeyword(searchServiceProperties.get("negativeKeyword"));
+    searchServiceData.setUpdatedNegativeKeyword(searchServiceProperties.get("updatedNegativeKeyword"));
     searchServiceData.setCategoryProductId(searchServiceProperties.get("categoryProductId"));
     searchServiceData.setCategoryProductName(searchServiceProperties.get("categoryProductName"));
     searchServiceData.setType(searchServiceProperties.get("type"));
