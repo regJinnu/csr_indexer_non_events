@@ -56,8 +56,8 @@ public class ProductIndexingSteps {
   long reviewAndRatingTimestampUpdated;
 
 
-  private static final String expectedListOfervices =
-      "MERCHANT_ANALYTICS,MERCHANT_SERVICE,CAMPAIGN_INDEX,ANALYTICS_SERVICE,STORE_CLOSE_SERVICE,LOCATION_AND_INVENTORY_SERVICE,PRODUCT_REVIEW_AND_RATING_SERVICE,PRISTINE_SERVICE,KEYWORD_SERVICE,CAMPAIGN_SERVICE,BOOSTED_KEYWORD,MODEL_NUMBER_EXTRACTION,BUYBOX_SERVICE,OXFORD,NONE";
+  private static final String expectedListOfServices =
+      "MERCHANT_SERVICE,ANALYTICS_SERVICE,STORE_CLOSE_SERVICE,LOCATION_AND_INVENTORY_SERVICE,PRODUCT_REVIEW_AND_RATING_SERVICE,PRISTINE_SERVICE,KEYWORD_SERVICE,CAMPAIGN_SERVICE,BOOSTED_KEYWORD,MODEL_NUMBER_EXTRACTION,BUYBOX_SERVICE,OXFORD,MERCHANT_ANALYTICS,NONE,CAMPAIGN_INDEX,AGGREGATE_SERVICE,MERCHANT_VOUCHER_SERVICE";
 
   @Given("^\\[search-service] failed Ids exist in the DB$")
   public void checkFailedIdsExist() {
@@ -116,8 +116,8 @@ public class ProductIndexingSteps {
     }
   }
 
-  @Given("^\\[search-service] product is OOS in SOLR and isInStock in Xproduct$")
-  public void checkProductStatusInSOLR() {
+  @Given("^\\[search-service\\] isInStock value is different in SOLR and Xproduct$")
+  public void searchServiceIsInStockValueIsDifferentInSOLRAndXproduct() {
     searchServiceData.setSkuForReindex(searchServiceProperties.get("skuForReindex"));
     searchServiceData.setProductCodeForReindex(searchServiceProperties.get("productCodeForReindex"));
     searchServiceData.setQueryForReindex(searchServiceProperties.get("queryForReindex"));
@@ -126,14 +126,14 @@ public class ProductIndexingSteps {
           SELECT_HANDLER,
           "id",
           1,
-          "oos",SOLR_DEFAULT_COLLECTION);
+          "randomInStockValue",SOLR_DEFAULT_COLLECTION);
       assertThat("Updating OOS in SOLR doc failed", status, equalTo(0));
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
       int oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
           "isInStock",
           1,SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
-      assertThat("Product not OOS in SOLR", oosFlag, equalTo(0));
+      assertThat("Product not updated in SOLR", oosFlag, equalTo(5));
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -170,7 +170,7 @@ public class ProductIndexingSteps {
           SELECT_HANDLER,
           "isInStock",
           1,SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
-      assertThat("Product not OOS in SOLR", oosFlag, equalTo(1));
+      assertThat("Product not updated in SOLR", oosFlag, not(equalTo(5)));
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -202,7 +202,7 @@ public class ProductIndexingSteps {
     String actual = responseApi.getResponseBody().getValue().getValue();
 
     for (String s : actual.split(",")) {
-      assertThat("Services do not match", expectedListOfervices, containsString(s));
+      assertThat("Services do not match", expectedListOfServices, containsString(s));
     }
 
   }
@@ -339,9 +339,9 @@ public class ProductIndexingSteps {
 
       assertThat("Test Product not set in SOLR", reviewCount, equalTo(10));
       assertThat("Test Product not set in SOLR", rating, equalTo("40"));
-      assertThat("Test Product not set in SOLR", oosFlag, equalTo(0));
+      assertThat("Test Product not set in SOLR", oosFlag, equalTo(5));
       assertThat("Test Product not set in SOLR", merchantRating, equalTo(30.0));
-      assertThat("Test Product not set in SOLR", merchantCommissionType, equalTo("CC"));
+      assertThat("Test Product not set in SOLR", merchantCommissionType, equalTo("TC"));
       assertThat("Test Product not set in SOLR", location, equalTo("Origin-ABC"));
 
     } catch (Exception e) {
@@ -366,7 +366,7 @@ public class ProductIndexingSteps {
     assertThat("Status Code Not 200", responseApi.getResponse().getStatusCode(), equalTo(200));
 
     try {
-      Thread.sleep(10000);
+      Thread.sleep(60000);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
       int reviewCount = solrHelper.getSolrProd(searchServiceData.getQueryForCategoryReindex(),
@@ -410,10 +410,10 @@ public class ProductIndexingSteps {
           location);
 
       assertThat("ReviewCount not updated after reindex", reviewCount, not(equalTo(10)));
-      assertThat("Rating not updated after reindex", rating, not(equalTo("4")));
-      assertThat("isInStock not updated after reindex", oosFlag, equalTo(1));
-      assertThat("Merchant Rating not updated after reindex", merchantRating, not(equalTo(3.0)));
-      assertThat("Merchant Comm Type not updated after reindex", merchantCommissionType, not(equalTo("CC")));
+      assertThat("Rating not updated after reindex", rating, not(equalTo("40")));
+      assertThat("isInStock not updated after reindex", oosFlag, not(equalTo(5)));
+      assertThat("Merchant Rating not updated after reindex", merchantRating, not(equalTo(30.0)));
+      assertThat("Merchant Comm Type not updated after reindex", merchantCommissionType, not(equalTo("TC")));
       assertThat("Location not updated after reindex", location, not(equalTo("Origin-ABC")));
 
     } catch (Exception e) {
@@ -442,16 +442,8 @@ public class ProductIndexingSteps {
           mongoHelper.countOfRecordsInCollection("reindex_entity"),
           equalTo(0L));
 
-      Document indexDoc1 = new Document("_class", "com.gdn.x.search.entity.ReIndexEntity").append(
-          "productId", "MTA-0406061")
-          .append("status", 0)
-          .append("isFailed", 0)
-          .append("idType", "productCode")
-          .append("version", 1)
-          .append("MARK_FOR_DELETE", false);
-
-      Document indexDoc4 = new Document("_class", "com.gdn.x.search.entity.ReIndexEntity").append(
-          "productId", "MTA-0406229")
+      Document indexDoc1 = new Document("_class", "com.gdn.x.search.entity.ReIndexEntity")
+            .append("productId", searchServiceProperties.get("productCodeForDeletedProd"))
           .append("status", 0)
           .append("isFailed", 0)
           .append("idType", "productCode")
@@ -459,16 +451,8 @@ public class ProductIndexingSteps {
           .append("MARK_FOR_DELETE", false);
 
       Document indexDoc2 = new Document("_class", "com.gdn.x.search.entity.ReIndexEntity").append(
-          "productId", "TOQ-15126-00352")
+          "productId", searchServiceProperties.get("skuForCategoryReindex"))
           .append("status", 0)
-          .append("isFailed", 0)
-          .append("idType", "productSku")
-          .append("version", 1)
-          .append("MARK_FOR_DELETE", false);
-
-      Document indexDoc3 = new Document("_class", "com.gdn.x.search.entity.ReIndexEntity").append(
-          "productId", "TH7-15791-00136")
-          .append("status", 1)
           .append("isFailed", 0)
           .append("idType", "productSku")
           .append("version", 1)
@@ -476,12 +460,10 @@ public class ProductIndexingSteps {
 
       mongoHelper.insertInMongo("reindex_entity", indexDoc1);
       mongoHelper.insertInMongo("reindex_entity", indexDoc2);
-      mongoHelper.insertInMongo("reindex_entity", indexDoc3);
-      mongoHelper.insertInMongo("reindex_entity", indexDoc4);
 
       assertThat("Test data insertion in Mongo failed",
           mongoHelper.countOfRecordsInCollection("reindex_entity"),
-          equalTo(4L));
+          equalTo(2L));
 
       solrHelper.deleteSolrDocByQuery(searchServiceData.getQueryForReindexOfDeletedProd(),SOLR_DEFAULT_COLLECTION);
 
@@ -514,7 +496,7 @@ public class ProductIndexingSteps {
 
     try {
 
-      Thread.sleep(180000);
+      Thread.sleep(100000);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
       long count = solrHelper.getSolrProdCount(searchServiceData.getQueryForReindexOfDeletedProd(),
           SELECT_HANDLER,SOLR_DEFAULT_COLLECTION);
@@ -570,12 +552,12 @@ public class ProductIndexingSteps {
           location);
 
       assertThat("Review Count not indexed in SOLR", reviewCount, not(equalTo(10)));
-      assertThat("Rating not indexed in SOLR", rating, not(equalTo("4")));
-      assertThat("isInStock not indexed in SOLR", oosFlag, equalTo(1));
-      assertThat("Merchant Rating not indexed in SOLR", merchantRating, not(equalTo(3.0)));
+      assertThat("Rating not indexed in SOLR", rating, not(equalTo("40")));
+      assertThat("isInStock not indexed in SOLR", oosFlag, not(equalTo(5)));
+      assertThat("Merchant Rating not indexed in SOLR", merchantRating, not(equalTo(30.0)));
       assertThat("Merchant commission type not indexed in SOLR",
           merchantCommissionType,
-          not(equalTo("CC")));
+          not(equalTo("TC")));
       assertThat("Location not indexed in SOLR", location, not(equalTo("Origin-ABC")));
 
     } catch (Exception e) {
@@ -654,7 +636,7 @@ public class ProductIndexingSteps {
     }
 
     long countOfStoredEvents = mongoHelper.countOfRecordsInCollection("indexing_list_new");
-    assertThat("No Stored events exists in Mongo", countOfStoredEvents, greaterThanOrEqualTo(0L));
+    assertThat("No Stored events exists in Mongo", countOfStoredEvents, greaterThan(0L));
 
     try {
 
@@ -679,13 +661,13 @@ public class ProductIndexingSteps {
 
       String queryInv = searchServiceData.getQueryForReindexOfDeletedProd();
 
-      solrHelper.updateSolrDataForAutomation(queryInv, SELECT_HANDLER, "id", 1, "oos",SOLR_DEFAULT_COLLECTION);
+      solrHelper.updateSolrDataForAutomation(queryInv, SELECT_HANDLER, "id", 1, "randomInStockValue",SOLR_DEFAULT_COLLECTION);
       assertThat("Updating isInStock field in SOLR failed", status, equalTo(0));
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
       int oosFlag =
           solrHelper.getSolrProd(queryInv, SELECT_HANDLER, "isInStock", 1,SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
-      assertThat("Product not OOS", oosFlag, equalTo(0));
+      assertThat("Product not updated", oosFlag, equalTo(5));
 
       log.warn("--oosFlag--{}---reviewCount---{}---rating--{}", oosFlag, reviewCount, rating);
 
@@ -714,7 +696,7 @@ public class ProductIndexingSteps {
     assertThat("Status Code Not 200", responseApi.getResponse().getStatusCode(), equalTo(200));
 
     try {
-      Thread.sleep(10000);
+      Thread.sleep(50000);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
       int oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForReindexOfDeletedProd(),
@@ -749,7 +731,7 @@ public class ProductIndexingSteps {
           reviewCount,
           not(equalTo(100)));
       assertThat("Product rating not updated even after reindex", rating, not(equalTo("23")));
-      assertThat("Product OOS even after reindex", oosFlag, equalTo(1));
+      assertThat("StockValue not changed after reindex", oosFlag, not(equalTo(5)));
       assertThat("Last Modified Data is not Updated",
           lastModifiedUpdated,
           greaterThan(lastModifiedActual));

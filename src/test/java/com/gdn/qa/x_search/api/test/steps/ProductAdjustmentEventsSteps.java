@@ -2,21 +2,23 @@ package com.gdn.qa.x_search.api.test.steps;
 
 import com.gdn.qa.x_search.api.test.CucumberStepsDefinition;
 import com.gdn.qa.x_search.api.test.data.SearchServiceData;
+import com.gdn.qa.x_search.api.test.models.SolrResults;
 import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
 import com.gdn.qa.x_search.api.test.utils.KafkaHelper;
 import com.gdn.qa.x_search.api.test.utils.SolrHelper;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
+import java.util.List;
 
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SELECT_HANDLER;
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_DEFAULT_COLLECTION;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 
 @CucumberStepsDefinition
 public class ProductAdjustmentEventsSteps  {
@@ -130,13 +132,11 @@ public class ProductAdjustmentEventsSteps  {
 
   @Then("^\\[search-service] check if the promo Bundling Deactivated event is consumed and check in solr$")
   public void searchServiceCheckIfThePromoBundlingDeactivatedEventIsConsumedAndCheckInSolr() {
-    Boolean promoOffer=false;
     try {
-      promoOffer = solrHelper.getSolrProd(searchServiceData.getPromoItemSKUinSOLR(),
-          SELECT_HANDLER,
-          "activePromos",
-          1,SOLR_DEFAULT_COLLECTION).isEmpty();
-      assertThat(promoOffer, (equalTo(true)));
+      Assert.assertNull(solrHelper.getSolrProd(searchServiceData.getPromoItemSKUinSOLR(),
+              SELECT_HANDLER,
+              "activePromos",
+              1,SOLR_DEFAULT_COLLECTION).get(0).getActivePromos());
     } catch (Exception e) {
       e.printStackTrace();
     }
