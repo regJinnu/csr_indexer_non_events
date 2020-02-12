@@ -1,4 +1,4 @@
-@ProductReviewEventFeature @TestSuiteID=11050177
+@ProductReviewEventFeature @TestSuiteID=11540257
 Feature: Product review event processing
 
   @ProductReviewEventProcessing @Regression

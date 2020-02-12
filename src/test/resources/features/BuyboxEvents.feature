@@ -1,4 +1,4 @@
-@BuyboxFeature @TestSuiteID=11050177
+@BuyboxFeature @TestSuiteID=11540257
 Feature: Automation of buybox events
 
   @Regression @Positive

@@ -1,4 +1,4 @@
-@PromotionRelatedEventsFeature @TestSuiteID=11050177
+@PromotionRelatedEventsFeature @TestSuiteID=11540257
 
 Feature:Promotion related events
 

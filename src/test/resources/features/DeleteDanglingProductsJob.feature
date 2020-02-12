@@ -1,4 +1,4 @@
-@DeleteDanglingProducts @TestSuiteID=11460962
+@DeleteDanglingProducts @TestSuiteID=11540257
 Feature: Automation of Delete dangling products job
 
   @DeleteDanglingProductsFromAllCollections @Regression

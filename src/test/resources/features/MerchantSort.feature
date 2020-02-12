@@ -1,4 +1,4 @@
-@MerchantSortFeature @TestSuiteID=11050177
+@MerchantSortFeature @TestSuiteID=11540257
 Feature:Merchant Sort controller related API's
 
   @Regression @Positive @AddMerchantSort

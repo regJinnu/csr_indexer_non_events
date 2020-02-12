@@ -1,4 +1,4 @@
-@ProductReportControllerFeature @TestSuiteID=11050177
+@ProductReportControllerFeature @TestSuiteID=11540257
 Feature: Product report controller api's
 
   @Regression @QueryToGetCatergoryList
