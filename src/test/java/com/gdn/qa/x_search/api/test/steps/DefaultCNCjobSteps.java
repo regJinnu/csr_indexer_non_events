@@ -26,9 +26,7 @@ import java.util.Map;
 
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 
 @Slf4j
 @CucumberStepsDefinition
@@ -60,9 +58,10 @@ public class DefaultCNCjobSteps {
 
     searchServiceData.setDefCncItemSku1(searchServiceProperties.get("defCncItemSku1"));
     searchServiceData.setDefCncPP(searchServiceProperties.get("defCncPP"));
-
+    searchServiceData.setDefCncMerchant(searchServiceProperties.get("defCncMerchant"));
     String query =
-        "id:" + searchServiceData.getDefCncItemSku1() + "-" + searchServiceData.getDefCncPP();
+        "id:" + searchServiceData.getDefCncPP()+"!"+searchServiceData.getDefCncMerchant()+"!"
+            +searchServiceData.getDefCncItemSku1()+"-"+ searchServiceData.getDefCncPP();
     int status = 0;
     try {
       status = solrHelper.updateSolrDataForAutomation(query,
@@ -197,7 +196,8 @@ public class DefaultCNCjobSteps {
   @Then("^verify that product is deleted from respective collections as well$")
   public void productIsDeletedFromRespectiveCollections() {
     String query =
-        "id:" + searchServiceData.getDefCncItemSku1() + "-" + searchServiceData.getDefCncPP();
+        "id:" + searchServiceData.getDefCncPP()+"!"+searchServiceData.getDefCncMerchant()+"!"
+            +searchServiceData.getDefCncItemSku1()+"-"+ searchServiceData.getDefCncPP();
     List<SolrResults> solrProdDeletionInNormalColl = null;
     try {
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
@@ -286,7 +286,8 @@ public class DefaultCNCjobSteps {
     List<SolrResults> solrProdDeletionInNormalColl = null;
     List<SolrResults> solrProdDeletionInO2OColl = null;
     String query =
-        "id:" + searchServiceData.getDefCncItemSku1() + "-" + searchServiceData.getDefCncPP();
+        "id:" + searchServiceData.getDefCncPP()+"!"+searchServiceData.getDefCncMerchant()+"!"
+            +searchServiceData.getDefCncItemSku1()+"-"+ searchServiceData.getDefCncPP();
     try {
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);

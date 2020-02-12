@@ -1,4 +1,4 @@
-@XproductEventHandlingFeature @TestSuiteID=11050177
+@XproductEventHandlingFeature @TestSuiteID=13759419
 Feature:Verifying item and product change event listeners
 
   @ItemChangeEvent @Regression
@@ -18,7 +18,7 @@ Feature:Verifying item and product change event listeners
     Then [search-service] deletes only the item sku of test product from SOLR
     And [search-service] Db entry is created for the Sku in deleted product collection
 
-  @ProductChangeEvent @Regression
+  @ProductChangeEvent  @Deprecated
   Scenario Outline: Verify product change event reindexes the data for the sku which is present in both Normal and other collection
     Given [search-service] change the price of the sku in Normal and '<other>' collection
     When [search-service] consumes product change event for that sku wrt normal and '<other>' collection
@@ -30,7 +30,7 @@ Feature:Verifying item and product change event listeners
       | CNC   |
 
 
-  @ProductChangeDeleteEvent @Regression
+  @ProductChangeDeleteEvent @Deprecated
   Scenario:  Verify product change event when markForDelete is set to true
     Given [search-service] test product is added in SOLR for 'productChangeEvent'
     When [search-service] consumes item change event with markForDelete set to true
