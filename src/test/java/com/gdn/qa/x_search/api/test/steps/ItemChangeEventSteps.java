@@ -484,7 +484,7 @@ public class ItemChangeEventSteps {
         eventType,
         SOLR_DEFAULT_COLLECTION);
 
-    solrHelper.addSolrDocumentForItemChangeEvent(DANGLING_JOB_ITEMSKU,
+    solrHelper.addSolrDocumentForItemChangeEvent(DANGLING_JOB_ITEMSKU_2,
         DANGLING_JOB_PRODUCTSKU,
         DANGLING_JOB_PRODUCTCODE,
         eventType,
@@ -495,7 +495,8 @@ public class ItemChangeEventSteps {
         DANGLING_JOB_PRODUCTCODE,
         eventType,
         SOLR_DEFAULT_COLLECTION_O2O);
-    solrHelper.addSolrDocumentForItemChangeEvent(DANGLING_JOB_ITEMSKU,
+
+    solrHelper.addSolrDocumentForItemChangeEvent(DANGLING_JOB_ITEMSKU_2,
         DANGLING_JOB_PRODUCTSKU,
         DANGLING_JOB_PRODUCTCODE,
         eventType,
@@ -645,12 +646,12 @@ public class ItemChangeEventSteps {
               SOLR_DEFAULT_COLLECTION_O2O),
           equalTo(1L));
       assertThat("Test Data deleted from SOLR",
-          solrHelper.getSolrProdCount("id:KIK-60001-00004-00001-PP-3001140",
+          solrHelper.getSolrProdCount("id:"+DANGLING_JOB_CNC_ITEMSKU,
               SELECT_HANDLER,
               SOLR_DEFAULT_COLLECTION_CNC),
           equalTo(0L));
       assertThat("Test Data deleted from SOLR",
-          solrHelper.getSolrProdCount("id:KIK-60001-00004-00001-PP-3001139",
+          solrHelper.getSolrProdCount("id:"+DANGLING_JOB_CNC_ITEMSKU2,
               SELECT_HANDLER,
               SOLR_DEFAULT_COLLECTION_CNC),
           equalTo(1L));
