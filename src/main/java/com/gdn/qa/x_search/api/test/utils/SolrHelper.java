@@ -109,6 +109,7 @@ public class SolrHelper {
 
       switch (caseToBeUpdated){
         case "oos":
+          solrUpdate.put(SolrFieldNames.STOCK_LOCATION,null);
           solrUpdate.put(SolrFieldNames.IS_IN_STOCK, "0" );
           break;
         case "nonOOS":
@@ -119,10 +120,11 @@ public class SolrHelper {
           solrUpdate.put(SolrFieldNames.REVIEW_COUNT,100);
           break;
         case "categoryReindex":
+          solrUpdate.put(SolrFieldNames.STOCK_LOCATION,null);
           solrUpdate.put(SolrFieldNames.IS_IN_STOCK, "5" );
           solrUpdate.put(SolrFieldNames.RATING, "40" );
           solrUpdate.put(SolrFieldNames.REVIEW_COUNT,10);
-          solrUpdate.put(SolrFieldNames.MERCHANT_COMMISSION_TYPE,"CC");
+          solrUpdate.put(SolrFieldNames.MERCHANT_COMMISSION_TYPE,"TC");
           solrUpdate.put(SolrFieldNames.MERCHANT_RATING,30.0);
           solrUpdate.put(SolrFieldNames.LOCATION,"Origin-ABC");
           solrUpdate.put(SolrFieldNames.LAST_UPDATED_TIME,"1234");
@@ -177,6 +179,11 @@ public class SolrHelper {
         case "inventoryChange":
           solrUpdate.put(SolrFieldNames.All_LOCATION, null);
           solrUpdate.put(SolrFieldNames.STOCK_LOCATION, null);
+          break;
+        case "randomInStockValue":
+          solrUpdate.put(SolrFieldNames.STOCK_LOCATION, null);
+          solrUpdate.put(SolrFieldNames.IS_IN_STOCK, "5" );
+           break;
         default:
           break;
       }
