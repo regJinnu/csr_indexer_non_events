@@ -1,4 +1,4 @@
-@CampaignEventsFeature @TestSuiteID=11050177
+@CampaignEventsFeature @TestSuiteID=11540257
 Feature: Campaign Related Events
 
   @CampaignPublish @NotExclusive @Regression @Positive

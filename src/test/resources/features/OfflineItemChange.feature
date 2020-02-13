@@ -1,4 +1,4 @@
-@OfflineEventHandlingFeature @TestSuiteID=11050177
+@OfflineEventHandlingFeature @TestSuiteID=11540257
 Feature:Verifying offline item change event listeners
 
   @Regression @Positive

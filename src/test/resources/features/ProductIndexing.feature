@@ -1,4 +1,4 @@
-@ProductIndexFeature @TestSuiteID=11050177
+@ProductIndexFeature @TestSuiteID=11540257
 Feature: Product Indexing Api
 
   @IndexByProductCode @Regression

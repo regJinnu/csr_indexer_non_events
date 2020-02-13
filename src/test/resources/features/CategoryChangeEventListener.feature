@@ -1,4 +1,4 @@
-@CategoryEventChangeFeature @TestSuiteID=11460962
+@CategoryEventChangeFeature @TestSuiteID=11540257
 Feature:Verifying item and product change event listeners
 
   @CategoryEventChange @Positive @Regression

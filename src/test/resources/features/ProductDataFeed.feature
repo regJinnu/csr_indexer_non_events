@@ -1,4 +1,4 @@
-@PDFFeature @TestSuiteID=11050177
+@PDFFeature @TestSuiteID=11540257
 Feature: Verify product data feed
 
   @Regression

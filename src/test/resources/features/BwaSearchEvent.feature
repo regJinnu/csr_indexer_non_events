@@ -1,4 +1,4 @@
-@BwaSearchEventsFeature @TestSuiteID=11050177
+@BwaSearchEventsFeature @TestSuiteID=11540257
 Feature: Bwa Search Events
 
   @SearchBwaEvent  @Regression @Positive

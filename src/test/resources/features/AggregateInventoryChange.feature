@@ -1,4 +1,4 @@
-@AggregateInventoryChangeFeature @TestSuiteID=11050177
+@AggregateInventoryChangeFeature @TestSuiteID=11540257
 Feature: Verify Aggregate Inventory Change Event
 
   @AggregateInventoryChangeNonCNCEvent @Regression

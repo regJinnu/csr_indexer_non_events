@@ -1,4 +1,4 @@
-@TradeInAggregateEventFeature @TestSuiteID=11050177
+@TradeInAggregateEventFeature @TestSuiteID=11540257
 Feature: Trade In Aggregate event feature
 
   @TradeInAggregateEventProcessing @Regression @Positive
