@@ -1070,7 +1070,7 @@ public class ItemChangeEventSteps {
           SELECT_HANDLER,
           "isSynchronised",
           1,
-          SOLR_DEFAULT_COLLECTION).get(0).getIsSynchronised();
+          SOLR_DEFAULT_COLLECTION).get(0).isSynchronised();
 
       assertThat("isSynchronised not set to true", isSynchronised, equalTo(true));
 
@@ -1078,7 +1078,7 @@ public class ItemChangeEventSteps {
           SELECT_HANDLER,
           "isSynchronised",
           1,
-          SOLR_DEFAULT_COLLECTION_O2O).get(0).getIsSynchronised();
+          SOLR_DEFAULT_COLLECTION_O2O).get(0).isSynchronised();
       assertThat("isSynchronised not set to true In O2O", isSynchronisedInO2O, equalTo(true));
     } catch (Exception e) {
       e.printStackTrace();
@@ -1195,7 +1195,7 @@ public class ItemChangeEventSteps {
           SELECT_HANDLER,
           "isSynchronised",
           1,
-          SOLR_DEFAULT_COLLECTION).get(0).getIsSynchronised();
+          SOLR_DEFAULT_COLLECTION).get(0).isSynchronised();
       assertThat("isSynchronised is set to true", isSynchronised, equalTo(false));
 
       if (flag.equals("true")) {
@@ -1203,7 +1203,7 @@ public class ItemChangeEventSteps {
             SELECT_HANDLER,
             "isSynchronised",
             1,
-            SOLR_DEFAULT_COLLECTION_O2O).get(0).getIsSynchronised();
+            SOLR_DEFAULT_COLLECTION_O2O).get(0).isSynchronised();
         assertThat("isSynchronised is set to true In O2O", isSynchronisedInO2O, equalTo(false));
       }
     } catch (Exception e) {
@@ -1221,13 +1221,13 @@ public class ItemChangeEventSteps {
           SELECT_HANDLER,
           "level0Id",
           1,
-          SOLR_DEFAULT_COLLECTION).get(0).getlevel0Id();
+          SOLR_DEFAULT_COLLECTION).get(0).getLevel0Id();
 
       String level0IdInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
           "level0Id",
           1,
-          SOLR_DEFAULT_COLLECTION_O2O).get(0).getlevel0Id();
+          SOLR_DEFAULT_COLLECTION_O2O).get(0).getLevel0Id();
 
       if (type.trim().toLowerCase().equals("productsku") && (flag.equals("false"))) {
         assertThat("Level0Id is not set to sku",
@@ -1274,7 +1274,7 @@ public class ItemChangeEventSteps {
           SELECT_HANDLER,
           "level0Id",
           1,
-          SOLR_DEFAULT_COLLECTION).get(0).getlevel0Id();
+          SOLR_DEFAULT_COLLECTION).get(0).getLevel0Id();
 
       assertThat("Name is not set", name, not(equalTo("Pristine Product Testing")));
       assertThat("Level0Id is not set",
@@ -1291,7 +1291,7 @@ public class ItemChangeEventSteps {
           SELECT_HANDLER,
           "level0Id",
           1,
-          SOLR_DEFAULT_COLLECTION_O2O).get(0).getlevel0Id();
+          SOLR_DEFAULT_COLLECTION_O2O).get(0).getLevel0Id();
 
       assertThat("Name is not set", nameInO2O, not(equalTo("Pristine Product Testing")));
       assertThat("Level0Id is not set",
@@ -1417,7 +1417,7 @@ public class ItemChangeEventSteps {
           SELECT_HANDLER,
           "level0Id",
           1,
-          SOLR_DEFAULT_COLLECTION).get(0).getlevel0Id();
+          SOLR_DEFAULT_COLLECTION).get(0).getLevel0Id();
 
       String salesCatalogHierarchy = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
@@ -1460,7 +1460,7 @@ public class ItemChangeEventSteps {
             SELECT_HANDLER,
             "level0Id",
             1,
-            SOLR_DEFAULT_COLLECTION_O2O).get(0).getlevel0Id();
+            SOLR_DEFAULT_COLLECTION_O2O).get(0).getLevel0Id();
 
         String salesCatalogHierarchyInO2O =
             solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),

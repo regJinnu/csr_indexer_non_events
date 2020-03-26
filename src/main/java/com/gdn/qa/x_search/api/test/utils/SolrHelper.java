@@ -87,7 +87,8 @@ public class SolrHelper {
   }
 
   public List<SolrResults>  getSolrProd(String queryText, String requestHandler,String field,int rows,String fq,String collectionName) throws Exception {
-    HttpSolrClient httpSolrClient = initializeSolr(searchServiceProperties.get("SOLR_URL_NO_PARAM"+"/"+collectionName));
+    String url = searchServiceProperties.get("SOLR_URL_NO_PARAM")+"/"+collectionName;
+    HttpSolrClient httpSolrClient = initializeSolr(url);
     SolrQuery solrQuery = initializeSolrQuery(queryText,requestHandler,rows,field,fq);
     QueryResponse queryResponse = httpSolrClient.query(solrQuery);
     SolrDocumentList solrDocuments = queryResponse.getResults();
@@ -184,6 +185,14 @@ public class SolrHelper {
           solrUpdate.put(SolrFieldNames.STOCK_LOCATION, null);
           solrUpdate.put(SolrFieldNames.IS_IN_STOCK, "5" );
            break;
+        case "merchantVoucherCount":
+          solrUpdate.put(SolrFieldNames.VOUCHER_COUNT, 100);
+          break;
+        case "officialStore":
+          solrUpdate.put(SolrFieldNames.OFFICIAL,false);
+          solrUpdate.put(SolrFieldNames.BRAND_CATALOG,"abc");
+          solrUpdate.put(SolrFieldNames.STORE_CATALOG,"abc");
+          break;
         default:
           break;
       }
@@ -201,9 +210,7 @@ public class SolrHelper {
     HttpSolrClient httpSolrClient = initializeSolr(searchServiceProperties.get("SOLR_URL_NO_PARAM")+"/"+collectionName);
     try {
       httpSolrClient.deleteByQuery(solrQuery);
-    } catch (SolrServerException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
+    } catch (SolrServerException | IOException e) {
       e.printStackTrace();
     }
   }

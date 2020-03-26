@@ -53,7 +53,7 @@ public class TradeInAggregateEventSteps {
     boolean tradeInEligible =
         solrHelper.getSolrProd(query, SELECT_HANDLER, "tradeInEligible", 1, SOLR_DEFAULT_COLLECTION)
             .get(0)
-            .getTradeInEligible();
+            .isTradeInEligible();
 
     assertThat("Test Product not set in SOLR", tradeInEligible, equalTo(Boolean.parseBoolean(preEventTradeInValue)));
   }
@@ -76,7 +76,7 @@ public class TradeInAggregateEventSteps {
     boolean tradeInEligible =
         solrHelper.getSolrProd(query, SELECT_HANDLER, "tradeInEligible", 1, SOLR_DEFAULT_COLLECTION)
             .get(0)
-            .getTradeInEligible();
+            .isTradeInEligible();
     assertThat("Test Product not updated after event processing", tradeInEligible, equalTo(Boolean.parseBoolean(active)));
   }
 }

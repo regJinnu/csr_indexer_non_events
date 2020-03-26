@@ -221,6 +221,7 @@ public class SearchServiceData {
   private Long count;
   private Date lastUpdatedTime;
   private String defCncMerchant;
+  private int voucherCount;
   private Map<String,String> payload;
   private ResponseApi<GdnRestListResponse<TrainResponse>> getAllTrain;
   private ResponseApi<GdnRestListResponse<SearchRuleResponse>> getAllSearchRule;

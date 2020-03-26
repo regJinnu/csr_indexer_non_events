@@ -79,6 +79,10 @@ public interface SolrFieldNames {
   String TRADE_IN_ELIGIBLE="tradeInEligible";
   String All_LOCATION="allLocation";
   String STOCK_LOCATION="stockLocation";
+  String VOUCHER_COUNT="merchantVoucherCount";
+  String OFFICIAL="isOfficial";
+  String BRAND_CATALOG="brandCatalog";
+  String STORE_CATALOG="storeCatalog";
 
   //suggestion collection
   String CATEGORIES = "categories";

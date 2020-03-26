@@ -884,4 +884,67 @@ public class KafkaHelper {
       e.printStackTrace();
     }
   }
+
+  public void publishMerchantVoucherEvent(String itemSku,int voucherCount){
+
+    List<VoucherItemMap> itemMapList = new ArrayList<>();
+
+    VoucherItemMap voucherItemMap = VoucherItemMap.builder()
+        .uniqueId(itemSku)
+        .voucherCount(voucherCount)
+        .cncRuleApplied(false)
+        .build();
+
+    itemMapList.add(voucherItemMap);
+
+    MerchantVoucherEventModel merchantVoucher = MerchantVoucherEventModel.builder()
+        .voucherItemMap(itemMapList)
+        .storeId("10001")
+        .build();
+
+    try {
+      kafkaSender.send("com.gdn.partners.merchant.voucher.sku.mapping.count.event.external",
+          objectMapper.writeValueAsString(merchantVoucher));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void publishOxfordFlagChange(String merchantCode,List<String> brandsToAdd,List<String> brandsToDelete,boolean isOfficial){
+    OxfordFlagChangeEventModel oxfordFlagChangeEventModel = OxfordFlagChangeEventModel.builder()
+        .timestamp(System.currentTimeMillis())
+        .code(merchantCode)
+        .officialStore(isOfficial)
+        .officialBrands(brandsToAdd)
+        .removedOfficialBrands(brandsToDelete)
+        .build();
+
+    try {
+      kafkaSender.send("oxford_update_merchant_event",
+          objectMapper.writeValueAsString(oxfordFlagChangeEventModel));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void publishOxfordSkuChange(String sku,String brand,String store){
+
+    Map<OxfordSkuChangeModel.ContractType, List<String>> map = new HashMap<>();
+    map.put(OxfordSkuChangeModel.ContractType.STORE,Collections.singletonList(store));
+    map.put(OxfordSkuChangeModel.ContractType.BRAND,Collections.singletonList(brand));
+
+    OxfordSkuChangeModel oxfordSkuChangeModel = OxfordSkuChangeModel.builder()
+        .timestamp(System.currentTimeMillis())
+        .sku(sku)
+        .catalogNamesByContractType(map)
+        .build();
+
+    try {
+      kafkaSender.send("oxford_update_product_event",
+          objectMapper.writeValueAsString(oxfordSkuChangeModel));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
 }
