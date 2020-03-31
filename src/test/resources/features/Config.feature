@@ -1,4 +1,4 @@
-@ConfigFeature @TestSuiteID=11050177
+@ConfigFeature @TestSuiteID=11540257
 Feature:Config controller related API's
 
   @Regression @FindByName
@@ -7,7 +7,7 @@ Feature:Config controller related API's
     When  [search-service] send find config by name request
     Then [search-service] find config name by request response success should be 'true'
 
-  @NegativeCase @FindByNameWhichIsNotPresent
+  @NegativeCase @FindByNameWhichIsNotPresent @Regression
   Scenario: User wants to search for Config by giving name which is not present
     Given [search-service] prepare find config by name which is not present in the config list
     When  [search-service] send find config by name which is not present in the config list
@@ -19,7 +19,7 @@ Feature:Config controller related API's
     When [search-service] send find config by id request
     Then [search-service] find config id by request response success should be 'true'
 
-  @NegativeCase @FindByWrongId
+  @NegativeCase @FindByWrongId @Regression
   Scenario: User wants to search for config by giving wrong ID
     Given [search-service] prepare find config by id request by providing wrong ID
     When [search-service] send find config by id request with wrong id
@@ -32,7 +32,7 @@ Feature:Config controller related API's
     When [search-service] send find config by word request
     Then [search-service] find config word by request response success should be 'true'
 
-  @NegativeCase @FindByNotExistingWord
+  @NegativeCase @FindByNotExistingWord @Regression
   Scenario: User wants to search for config by giving word which doesnot exists
     Given [search-service] prepare find config by word request which is not present in the list
     When [search-service] send find request config by non existing word in the config list
@@ -44,7 +44,7 @@ Feature:Config controller related API's
     When [search-service] send update config request
     Then [search-service] set update config request response success should be 'true'
 
-  @NegativeCase  @UpdateConfigWithEmptyBody
+  @NegativeCase  @UpdateConfigWithEmptyBody @Regression
   Scenario: User wants to update the existing config with empty body
     Given [search-service] prepare update existing config request with empty body
     When [search-service] send update config request with empty body
@@ -56,7 +56,7 @@ Feature:Config controller related API's
     When [search-service] send delete config request
     Then [search-service] set delete config request response success should be 'true'
 
-  @Delete @NegativeCase
+  @Delete @NegativeCase @Regression
   Scenario: User enters wrong id to delete the existing config
     Given [search-service] prepare delete existing config request by providing wrong id
     When [search-service] send delete config request with wrong id
@@ -68,7 +68,7 @@ Feature:Config controller related API's
     When  [search-service] send save config request
     Then  [search-service] set save config request response success should be 'true'
 
-  @Save @NegativeCase
+  @Save @NegativeCase @Regression
   Scenario: User wants to save config with the empty body
     Given [search-service] prepare save config request with empty body
     When [search-service] send save config request with empty body

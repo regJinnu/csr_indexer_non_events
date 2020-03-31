@@ -99,7 +99,7 @@ public class ProductDataFeedSteps {
     try {
       long solrProdCount = solrHelper.getSolrProdCountWithFq("*:*",
           "/browse",
-          "nameSearch:"+"\""+ searchServiceData.getFeedValue()+"\"");
+          "nameSearch:"+"\""+ searchServiceData.getFeedValue()+"\"",SOLR_DEFAULT_COLLECTION);
 
       FTPHelper ftpHelper = new FTPHelper();
 

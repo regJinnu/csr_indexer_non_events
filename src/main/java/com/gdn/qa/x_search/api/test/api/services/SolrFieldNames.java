@@ -46,6 +46,7 @@ public interface SolrFieldNames {
   String MERCHANT_RATING_STRING = "merchantRatingString";
   String SALES_CATALOG_CATEGORY_COUNT = "salesCatalogCategoryCount";
   String LIST_PRICE = "listPrice";
+  String LAST_UPDATED_TIME="lastUpdatedTime";
   String IS_SYNCHRONISED = "isSynchronised";
   String X_PRODUCT_LAST_UPDATED_TIMESTAMP = "xProductLastUpdatedTimestamp";
   String BP_SERVICE_LAST_UPDATED_TIMESTAMP = "bpServiceLastUpdatedTimestamp";
@@ -75,6 +76,13 @@ public interface SolrFieldNames {
   String BRAND_SEARCH="brandSearch";
   String MODEL_NUMBER_EXTRACTED="modelNumberExtracted";
   String BRAND_LOWER="brandLower";
+  String TRADE_IN_ELIGIBLE="tradeInEligible";
+  String All_LOCATION="allLocation";
+  String STOCK_LOCATION="stockLocation";
+  String VOUCHER_COUNT="merchantVoucherCount";
+  String OFFICIAL="isOfficial";
+  String BRAND_CATALOG="brandCatalog";
+  String STORE_CATALOG="storeCatalog";
 
   //suggestion collection
   String CATEGORIES = "categories";

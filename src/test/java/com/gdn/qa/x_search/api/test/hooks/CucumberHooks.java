@@ -1,7 +1,14 @@
 package com.gdn.qa.x_search.api.test.hooks;
 
+import com.gdn.common.web.wrapper.response.GdnBaseRestResponse;
+import com.gdn.qa.automation.core.restassured.ResponseApi;
 import com.gdn.qa.x_search.api.test.CucumberStepsDefinition;
+import com.gdn.qa.x_search.api.test.api.services.SearchServiceController;
+import com.gdn.qa.x_search.api.test.data.SearchServiceData;
+import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
+import com.gdn.qa.x_search.api.test.utils.ConfigHelper;
 import com.gdn.qa.x_search.api.test.utils.MongoHelper;
+import com.gdn.qa.x_search.api.test.utils.SolrHelper;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import org.bson.Document;
@@ -9,7 +16,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+
+import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.*;
+import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SELECT_HANDLER;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 @CucumberStepsDefinition
 public class CucumberHooks {
@@ -17,10 +31,29 @@ public class CucumberHooks {
   @Autowired
   MongoHelper mongoHelper;
 
-  SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+  @Autowired
+  private SearchServiceController searchServiceController;
+
+  @Autowired
+  private SearchServiceData searchServiceData;
+
+  @Autowired
+  SolrHelper solrHelper;
+
+  @Autowired
+  ConfigHelper configHelper;
+
+  @Autowired
+  SearchServiceProperties searchServiceProperties;
+
+  SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
   @After
   public void afterRun() {
+
+
+
+
     //it will executed after scenario run
 
     //   mongoHelper.deleteFromMongo("synonyms_list","KEY","testingapi");
@@ -31,7 +64,8 @@ public class CucumberHooks {
   public void beforeSynonymRun() {
 
     try {
-      Date date = dateFormat.parse("2017-09-19T05:19:45.468Z");
+      Date date = dateFormat.parse(LocalDateTime.now().toString());
+      mongoHelper.deleteFromMongo("synonyms_list","KEY","testingapi");
 
       Document synDoc = new Document("_class", "com.gdn.x.search.entity.SynonymsEntity").append(
           "KEY",
@@ -246,5 +280,176 @@ public class CucumberHooks {
   @Before("@AddMerchantSort")
   public void beforeAddMerchantSort() {
     mongoHelper.deleteFromMongo("merchant_sort", "merchantId", "TH7-15791");
+  }
+
+  @After("@DefaultCncJobUpdate")
+  public void afterDefaultCncJob() {
+    ResponseApi<GdnBaseRestResponse> responseAfterReindexing =
+        searchServiceController.defaultCncJob();
+    searchServiceData.setSearchServiceResponse(responseAfterReindexing);
+
+    ResponseApi<GdnBaseRestResponse> responseAfterReindexingCNCProd =
+        searchServiceData.getSearchServiceResponse();
+    assertThat("Request failed",
+        responseAfterReindexingCNCProd.getResponse().getStatusCode(),
+        equalTo(200));
+    try {
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  @After("@DefaultCncJobWhenProdIsDeleted")
+  public void afterDeletingDefaultCncProd() {
+    ResponseApi responseApi;
+    responseApi = searchServiceController.prepareRequestForIndexing("itemSkus",
+        searchServiceData.getDefCncItemSku1());
+    searchServiceData.setSearchServiceResponse(responseApi);
+
+    responseApi = searchServiceData.getSearchServiceResponse();
+    assertThat("Status Code Not 200", responseApi.getResponse().getStatusCode(), equalTo(200));
+    ResponseApi<GdnBaseRestResponse> responseAfterReindexing =
+        searchServiceController.defaultCncJob();
+    searchServiceData.setSearchServiceResponse(responseAfterReindexing);
+
+    ResponseApi<GdnBaseRestResponse> responseAfterReindexingCNCProd =
+        searchServiceData.getSearchServiceResponse();
+    assertThat("Request failed",
+        responseAfterReindexingCNCProd.getResponse().getStatusCode(),
+        equalTo(200));
+    try {
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+
+  @After("@ForceStopSolrCncUpdatesSwitch")
+  public void reindexDefCnc() {
+    ResponseApi responseApi;
+    responseApi = searchServiceController.prepareRequestForIndexing("itemSkus",
+        searchServiceData.getDefCncItemSku1());
+    searchServiceData.setSearchServiceResponse(responseApi);
+
+    responseApi = searchServiceData.getSearchServiceResponse();
+    assertThat("Status Code Not 200", responseApi.getResponse().getStatusCode(), equalTo(200));
+    ResponseApi<GdnBaseRestResponse> responseAfterReindexing =
+        searchServiceController.defaultCncJob();
+    searchServiceData.setSearchServiceResponse(responseAfterReindexing);
+
+    ResponseApi<GdnBaseRestResponse> responseAfterReindexingCNCProd =
+        searchServiceData.getSearchServiceResponse();
+    assertThat("Request failed",
+        responseAfterReindexingCNCProd.getResponse().getStatusCode(),
+        equalTo(200));
+    try {
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  @After("ItemChangeDeleteEvent")
+  public void afterItemChangeDeleteEvent() {
+    ResponseApi responseApi;
+    responseApi = searchServiceController.prepareRequestForIndexing("itemSkus",
+        searchServiceData.getDefCncItemSku1());
+    searchServiceData.setSearchServiceResponse(responseApi);
+
+    responseApi = searchServiceData.getSearchServiceResponse();
+    assertThat("Status Code Not 200", responseApi.getResponse().getStatusCode(), equalTo(200));
+    try {
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  @After("OfflineEventHandlingFeature")
+  public void afterOfflineChangeEvent() {
+    ResponseApi responseApi;
+    responseApi = searchServiceController.prepareRequestForIndexing("itemSkus",
+        searchServiceData.getDefCncItemSku1());
+    searchServiceData.setSearchServiceResponse(responseApi);
+
+    responseApi = searchServiceData.getSearchServiceResponse();
+    assertThat("Status Code Not 200", responseApi.getResponse().getStatusCode(), equalTo(200));
+    try {
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Before("@ProductReviewEventProcessing")
+  public void updateRelatedConfigs() {
+    configHelper.findAndUpdateConfig("force.stop.solr.updates", "false");
+    configHelper.findAndUpdateConfig("force.stop.solr.cnc.updates", "false");
+    configHelper.findAndUpdateConfig("delta.event.in.progress", "false");
+    configHelper.findAndUpdateConfig("reindex.status", "0");
+    configHelper.findAndUpdateConfig("reindex.triggered", "false");
+  }
+
+  @Before("@ProductReviewEventProcessingOnCNCCollection")
+  public void updateDeltaConfig() {
+    configHelper.findAndUpdateConfig("disable.delta.event.list", "''");
+  }
+
+  @After("BuyboxFeature")
+  public void afterbuyBoxChangeEvent() {
+    ResponseApi responseApi;
+    responseApi = searchServiceController.prepareRequestForIndexing("itemSkus",
+        searchServiceData.getDefCncItemSku1());
+    searchServiceData.setSearchServiceResponse(responseApi);
+
+    responseApi = searchServiceController.prepareRequestForIndexing("itemSkus",
+        searchServiceData.getItemSkuForReindex());
+    searchServiceData.setSearchServiceResponse(responseApi);
+
+    responseApi = searchServiceData.getSearchServiceResponse();
+    assertThat("Status Code Not 200", responseApi.getResponse().getStatusCode(), equalTo(200));
+    try {
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
+      solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Before("@AggregateInventoryChangeNonCNCEvent")
+  public void updateAggregateLocationConfig() {
+    configHelper.findAndUpdateConfig("enable.aggregate.location.change.service", "true");
+    configHelper.findAndUpdateConfig("force.stop.solr.updates", "false");
+  }
+
+  @Before("@AggregateInventoryChangeCNCEvent")
+  public void updateSolrDefaultDocument() throws Exception {
+    String query = "id:" + searchServiceProperties.get("itemSkuForInventoryChangeCNC") + "-" + searchServiceProperties.get("ppCode1ForInventoryChangeCNC");
+    int status = solrHelper.updateSolrDataForAutomation(query,
+        SELECT_HANDLER,
+        "id",
+        1,
+        "inventoryChange",
+        SOLR_DEFAULT_COLLECTION);
+    assertThat("Updating inventoryStockLocation info in SOLR doc failed", status, equalTo(0));
+    solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+    ArrayList<String> allLocation =
+        solrHelper.getSolrProd(query, SELECT_HANDLER, "allLocation", 1, SOLR_DEFAULT_COLLECTION)
+            .get(0)
+            .getAllLocation();
+    ArrayList<String> stockLocation =
+        solrHelper.getSolrProd(query, SELECT_HANDLER, "stockLocation", 1, SOLR_DEFAULT_COLLECTION)
+            .get(0)
+            .getStockLocation();
+
+    assertThat("Test Product not set in SOLR", allLocation, equalTo(null));
+    assertThat("Test Product not set in SOLR", stockLocation, equalTo(null));
   }
 }

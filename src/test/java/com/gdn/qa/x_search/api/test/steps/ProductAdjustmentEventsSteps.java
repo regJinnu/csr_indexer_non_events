@@ -2,21 +2,23 @@ package com.gdn.qa.x_search.api.test.steps;
 
 import com.gdn.qa.x_search.api.test.CucumberStepsDefinition;
 import com.gdn.qa.x_search.api.test.data.SearchServiceData;
+import com.gdn.qa.x_search.api.test.models.SolrResults;
 import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
 import com.gdn.qa.x_search.api.test.utils.KafkaHelper;
 import com.gdn.qa.x_search.api.test.utils.SolrHelper;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
+import java.util.List;
 
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SELECT_HANDLER;
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_DEFAULT_COLLECTION;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 
 @CucumberStepsDefinition
 public class ProductAdjustmentEventsSteps  {
@@ -65,7 +67,7 @@ public class ProductAdjustmentEventsSteps  {
       promoOfferPrice = solrHelper.getSolrProd(searchServiceData.getPromoItemSKUinSOLR(),
           SELECT_HANDLER,
           "salePrice",
-          1).get(0).getSalePrice();
+          1,SOLR_DEFAULT_COLLECTION).get(0).getSalePrice();
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -84,7 +86,7 @@ public class ProductAdjustmentEventsSteps  {
 
   @When("^\\[search-service] publish the promo Bundling Activated event$")
   public void searchServicePublishThePromoBundlingActivatedEvent() {
-    kafkaHelper.promoBundlingActivateEvent(searchServiceData.getPromoBundlingId(),
+    kafkaHelper.promoBundlingActivateEvent("1234",
         searchServiceData.getPromoItemSKU(),
         searchServiceData.getPromoBundlingType(),
         Collections.singletonList(searchServiceData.getComplementaryProducts()));
@@ -100,7 +102,8 @@ public class ProductAdjustmentEventsSteps  {
   public void searchServiceCheckIfThePromoBundlingActivatedEventIsConsumedAndCheckInSolr() {
     String promoOffer= null;
     try {
-      promoOffer=solrHelper.getSolrProd(searchServiceData.getPromoItemSKUinSOLR(),SELECT_HANDLER,"activePromos",1)
+      promoOffer=solrHelper.getSolrProd(searchServiceData.getPromoItemSKUinSOLR(),SELECT_HANDLER,"activePromos",1
+      ,SOLR_DEFAULT_COLLECTION)
           .get(0).getActivePromos().get(0);
     } catch (Exception e) {
       e.printStackTrace();
@@ -129,13 +132,14 @@ public class ProductAdjustmentEventsSteps  {
 
   @Then("^\\[search-service] check if the promo Bundling Deactivated event is consumed and check in solr$")
   public void searchServiceCheckIfThePromoBundlingDeactivatedEventIsConsumedAndCheckInSolr() {
-    String promoOffer= null;
     try {
-      promoOffer = solrHelper.getSolrProd(searchServiceData.getPromoItemSKUinSOLR(),SELECT_HANDLER,"activePromos",1)
-          .get(0).getActivePromos().get(0);
+      Boolean promoOffer = solrHelper.getSolrProd(searchServiceData.getPromoItemSKUinSOLR(),
+              SELECT_HANDLER,
+              "activePromos",
+              1,SOLR_DEFAULT_COLLECTION).get(0).getActivePromos()==null;
+     assertThat(promoOffer,equalTo(true));
     } catch (Exception e) {
       e.printStackTrace();
     }
-    assertThat(promoOffer,equalTo(null));
   }
 }

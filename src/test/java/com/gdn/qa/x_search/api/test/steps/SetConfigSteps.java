@@ -85,6 +85,6 @@ public class SetConfigSteps {
   public void searchServiceUpdateNonExistingFieldCacheRequestResponseSuccessShouldBeFalse()
   {
     ResponseApi<GdnBaseRestResponse> response=searchServiceData.getSearchServiceResponse();
-    assertThat(response.getResponseBody().getErrorCode(),equalTo(500));
+    assertThat(response.getResponse().getStatusCode(),equalTo(500));
   }
 }

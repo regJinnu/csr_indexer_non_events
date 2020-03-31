@@ -3,6 +3,8 @@ package com.gdn.qa.x_search.api.test.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gdn.qa.x_search.api.test.data.*;
+import com.gdn.qa.x_search.api.test.models.CatalogDomainEventModel;
+import com.gdn.qa.x_search.api.test.models.CategoryDomainEventModel;
 import com.gdn.x.product.domain.event.enums.ItemChangeEventType;
 import com.gdn.x.product.domain.event.model.ItemViewConfig;
 import com.gdn.x.product.domain.event.model.Price;
@@ -14,6 +16,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+
+import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.EVENT_ID;
 
 /**
  * @author kumar on 01/08/18
@@ -39,6 +43,7 @@ public class KafkaHelper {
         level2MerchantCode(level2MerchantCode).
         storeId("10001").
         uniqueId(level2Id).
+        cncActivated(false).
         timestamp(System.currentTimeMillis()).build();
 
     try {
@@ -169,7 +174,6 @@ public class KafkaHelper {
     } catch (JsonProcessingException e) {
       e.printStackTrace();
     }
-
   }
 
   public void publishItemChangeEvent(String itemSku,
@@ -199,6 +203,29 @@ public class KafkaHelper {
       kafkaSender.send("com.gdn.x.product.item.change",
           objectMapper.writeValueAsString(itemChangeEvent));
     } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
+    /**
+     * @author poushaliM on 17/12/19
+     * @project X-search
+     */
+
+  public void publishCategoryChangeEvent(String name, String catagoryCode, boolean activated,String catalogType){
+
+    CatalogDomainEventModel catalogDomainEventModel=CatalogDomainEventModel.builder().name(name).catalogCode(catagoryCode)
+        .catalogType(catalogType).build();
+    CategoryDomainEventModel categoryDomainEventModel= CategoryDomainEventModel.builder()
+        .timestamp(System.currentTimeMillis())
+        .name(name)
+        .categoryCode(catagoryCode)
+        .activated(activated)
+        .catalogDomainEventModel(catalogDomainEventModel).build();
+    try {
+      kafkaSender.send("com.gdn.x.productcategorybase.category.publish",
+          objectMapper.writeValueAsString(categoryDomainEventModel));
+    }catch (JsonProcessingException e){
       e.printStackTrace();
     }
   }
@@ -314,7 +341,7 @@ public class KafkaHelper {
         .promotionStartTime(dtStart.toDate())
         .promotionEndTime(dtEnd.toDate())
         .tagLabel(tagLabel)
-        .exclusive(true)
+        .exclusive(exclusive)
         .build();
     try {
       kafkaSender.send("com.gdn.x.campaign.published",
@@ -324,8 +351,8 @@ public class KafkaHelper {
     }
   }
 
-  public void campaignLiveEventExclusive(String campaignCode,
-      String campaignName,
+  public void campaignLiveEventExclusive(String campaignName,
+      String campaignCode,
       String tagLabel,
       boolean exclusive) {
     Date date = new Date();
@@ -337,7 +364,7 @@ public class KafkaHelper {
         .campaignName(campaignName)
         .promotionEndTime(dtEnd.toDate())
         .promotionStartTime(dtStart.toDate())
-        .exclusive(true)
+        .exclusive(exclusive)
         .tagLabel(tagLabel)
         .build();
 
@@ -650,4 +677,274 @@ public class KafkaHelper {
     }
 
   }
+
+  public void publishOfflineItemChangeEventforDefCncJob(Map<String,String> payload) {
+    OfflineItemChange offlineItemChange1 = OfflineItemChange.builder().
+        timestamp(System.currentTimeMillis()).
+        uniqueId(payload.get("uniqueId")).
+        merchantCode(payload.get("merchantCode")).
+        itemSku(payload.get("itemSku")).
+        itemCode(payload.get("itemCode")).
+        pickupPointCode(payload.get("pickupPointCode")).
+        productSku(payload.get("productSku")).
+        merchantSku(payload.get("merchantSku")).
+        externalPickupPointCode(payload.get("externalPickupPointCode")).
+        offerPrice(Double.valueOf(payload.get("offerPrice"))).
+        markForDelete(true).
+        build();
+    try {
+      kafkaSender.send("com.gdn.x.product.offlineitem.change",
+          objectMapper.writeValueAsString(offlineItemChange1));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void publishProductReviewEvent(int storeId, String productId, String metaDataType,
+      int averageRating, int[] ratings, double[] ratingPercentages, int reviewCount)
+      throws JsonProcessingException {
+    RatingProductIdModel ratingProductIdModel = RatingProductIdModel.builder().
+        storeId(storeId).
+        productId(productId).
+        metaDataType(metaDataType).
+        averageRating(averageRating).
+        ratings(ratings).
+        ratingPercentages(ratingPercentages).
+        reviewCount(reviewCount).build();
+
+    ProductReviewEventModel productReviewEventModel = ProductReviewEventModel.builder().
+        timestamp(System.currentTimeMillis()).
+        productReviewMetaDataList(new RatingProductIdModel[] {ratingProductIdModel}).
+        build();
+
+    kafkaSender.send("com.gdn.x.product.review.aggregate.update.count",
+        objectMapper.writeValueAsString(productReviewEventModel));
+  }
+
+  public void publishTradeInAggregateEvent(String id, String productSku, String productName, boolean active)
+      throws JsonProcessingException {
+    TradeInAggregateModel tradeInAggregateModel = TradeInAggregateModel.builder().
+        id(id).
+        productSku(productSku).
+        productName(productName).
+        active(active).
+        timestamp(System.currentTimeMillis()).
+        build();
+
+    kafkaSender.send("com.gdn.aggregate.platform.trade.in.eligible.products",
+        objectMapper.writeValueAsString(tradeInAggregateModel));
+  }
+
+
+  public void buyBoxEvent(String itemSku, Double buyBoxScore)
+  {
+    try {
+      ItemBuyBoxScoreDetail itemBuyBoxScoreDetail = ItemBuyBoxScoreDetail.builder()
+          .itemSku(itemSku)
+          .buyBoxScore(Double.valueOf(buyBoxScore)).build();
+
+      BuyBoxModel buyBoxModel=BuyBoxModel.builder()
+          .buyBoxScores(Collections.singletonList(itemBuyBoxScoreDetail))
+          .eventId(EVENT_ID)
+          .build();
+
+      kafkaSender.send("com.gdn.x.buybox.score.change",
+          objectMapper.writeValueAsString(buyBoxModel));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+  }
+
+  public void publishAggregateInventoryChangeEvent(String itemSku,
+      boolean cnc,
+      String type,
+      Map<String, String> location,
+      String status1,
+      String status2) throws JsonProcessingException {
+
+    StockInformationModel stockInformationModel1 = StockInformationModel.builder().
+        location(location.get("location1")).
+        status(status1).build();
+    StockInformationModel stockInformationModel2 = StockInformationModel.builder().
+        location(location.get("location2")).
+        status(status2).build();
+    StockInformationModel stockInformationModel3 = StockInformationModel.builder().
+        location(location.get("location3")).
+        status(status1).build();
+
+    AggregateInventoryChangeModel aggregateInventoryChangeModel =
+        AggregateInventoryChangeModel.builder().
+            itemSku(itemSku).
+            cnc(cnc).
+            type(type).
+            stockInformations(new StockInformationModel[] {stockInformationModel1,
+                stockInformationModel2, stockInformationModel3}).
+            build();
+
+    kafkaSender.sendEvent("com.gdn.aggregate.modules.inventory.changed.event",
+        objectMapper.writeValueAsString(aggregateInventoryChangeModel));
+  }
+
+  public void publishAggregateInventoryChangeEvent(String itemSku,
+      boolean cnc,
+      String type,
+      Map<String, String> location,
+      String status1,
+      String ppCode1,
+      String status2,
+      String ppCode2) throws JsonProcessingException {
+
+    StockInformationModel stockInformationModel1 = StockInformationModel.builder().
+        location(location.get("location1")).
+        status(status1).
+        pickupPointCode(ppCode1).build();
+    StockInformationModel stockInformationModel2 = StockInformationModel.builder().
+        location(location.get("location2")).
+        status(status2).
+        pickupPointCode(ppCode2).build();
+
+    AggregateInventoryChangeModel aggregateInventoryChangeModel =
+        AggregateInventoryChangeModel.builder().
+            itemSku(itemSku).
+            cnc(cnc).
+            type(type).
+            stockInformations(new StockInformationModel[] {stockInformationModel1, stockInformationModel2}).
+            build();
+
+    kafkaSender.sendEvent("com.gdn.aggregate.modules.inventory.changed.event",
+        objectMapper.writeValueAsString(aggregateInventoryChangeModel));
+  }
+
+
+  public void publishSearchBwaEvent(Map<String, String> payload) {
+
+    BwaSearchEventModel bwaSearchEventModel = BwaSearchEventModel.builder().
+            accountid(payload.get("accountId")).
+            userid(payload.get("userId")).
+            sessionid(payload.get("sessionId")).
+            searchinternalkeyword(payload.get("keyword")).
+            searchinternalcategoryid(payload.get("categoryId")).
+            searchinternalcategoryname(payload.get("categoryName")).
+            clientmemberid(payload.get("clientMemberId")).
+            pageurl(payload.get("url")).
+            pagetype(payload.get("pageType")).
+            device(payload.get("deviceType")).
+            devicetype(payload.get("device")).
+            browser(payload.get("browser")).
+            browserversion(payload.get("browserType")).
+            build();
+    BwaEventModel bwaEventModel = BwaEventModel.builder().searchinternalkeyword(bwaSearchEventModel).build();
+    try {
+      kafkaSender.send("topic.bwa.search.internal.keyword",
+              objectMapper.writeValueAsString(bwaEventModel));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void publishCampaignEventExclusiveForCnc(String campaignName,
+                                            String campaignCode,
+                                            String productSku,
+                                            String itemSku,
+                                            Double discount,
+                                            int quota,
+                                            String tagLabel,
+                                            boolean exclusive) {
+
+    Date date = new Date();
+    DateTime dtStart = new DateTime(date);
+    DateTime dtEnd = dtStart.plusDays(1);
+
+    ProductSkuEventModel productSkuEventModel = ProductSkuEventModel.builder()
+            .productSku(productSku)
+            .itemSku(itemSku)
+            .discount(discount)
+            .quota(quota)
+            .build();
+
+    List<ProductSkuEventModel> skuList = new ArrayList<>();
+    skuList.add(productSkuEventModel);
+
+
+    CampaignPublishEvent campaignPublishEvent = CampaignPublishEvent.builder()
+            .timestamp(System.currentTimeMillis())
+            .campaignName(campaignName)
+            .campaignCode(campaignCode)
+            .skuList(skuList)
+            .promotionStartTime(dtStart.toDate())
+            .promotionEndTime(dtEnd.toDate())
+            .tagLabel(tagLabel)
+            .exclusive(exclusive)
+            .build();
+    try {
+      kafkaSender.send("com.gdn.x.campaign.published",
+              objectMapper.writeValueAsString(campaignPublishEvent));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void publishMerchantVoucherEvent(String itemSku,int voucherCount){
+
+    List<VoucherItemMap> itemMapList = new ArrayList<>();
+
+    VoucherItemMap voucherItemMap = VoucherItemMap.builder()
+        .uniqueId(itemSku)
+        .voucherCount(voucherCount)
+        .cncRuleApplied(false)
+        .build();
+
+    itemMapList.add(voucherItemMap);
+
+    MerchantVoucherEventModel merchantVoucher = MerchantVoucherEventModel.builder()
+        .voucherItemMap(itemMapList)
+        .storeId("10001")
+        .build();
+
+    try {
+      kafkaSender.send("com.gdn.partners.merchant.voucher.sku.mapping.count.event.external",
+          objectMapper.writeValueAsString(merchantVoucher));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void publishOxfordFlagChange(String merchantCode,List<String> brandsToAdd,List<String> brandsToDelete,boolean isOfficial){
+    OxfordFlagChangeEventModel oxfordFlagChangeEventModel = OxfordFlagChangeEventModel.builder()
+        .timestamp(System.currentTimeMillis())
+        .code(merchantCode)
+        .officialStore(isOfficial)
+        .officialBrands(brandsToAdd)
+        .removedOfficialBrands(brandsToDelete)
+        .build();
+
+    try {
+      kafkaSender.send("oxford_update_merchant_event",
+          objectMapper.writeValueAsString(oxfordFlagChangeEventModel));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void publishOxfordSkuChange(String sku,String brand,String store){
+
+    Map<OxfordSkuChangeModel.ContractType, List<String>> map = new HashMap<>();
+    map.put(OxfordSkuChangeModel.ContractType.STORE,Collections.singletonList(store));
+    map.put(OxfordSkuChangeModel.ContractType.BRAND,Collections.singletonList(brand));
+
+    OxfordSkuChangeModel oxfordSkuChangeModel = OxfordSkuChangeModel.builder()
+        .timestamp(System.currentTimeMillis())
+        .sku(sku)
+        .catalogNamesByContractType(map)
+        .build();
+
+    try {
+      kafkaSender.send("oxford_update_product_event",
+          objectMapper.writeValueAsString(oxfordSkuChangeModel));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
 }

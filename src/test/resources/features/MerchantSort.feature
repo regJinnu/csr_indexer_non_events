@@ -1,4 +1,4 @@
-@MerchantSortFeature @TestSuiteID=11050177
+@MerchantSortFeature @TestSuiteID=11540257
 Feature:Merchant Sort controller related API's
 
   @Regression @Positive @AddMerchantSort
@@ -7,7 +7,7 @@ Feature:Merchant Sort controller related API's
     When [search-service] send add new merchant sort mapping request
     Then [search-service] new merchant sort mapping must be added
 
-  @Negative @AddMerchantSortWithIncorrectMerchantInfo
+  @Negative @AddMerchantSortWithIncorrectMerchantInfo @Regression
   Scenario: User want to add merchant sort mapping with incorrect merchant info
     Given [search-service] prepare request to add new merchant sort mapping with incorrect merchant info
     When [search-service] send add new merchant sort mapping with incorrect merchant info request
@@ -25,7 +25,7 @@ Feature:Merchant Sort controller related API's
     When [search-service] send search merchant sort mapping by merchant id request
     Then [search-service] search merchant sort mapping by merchant id request response should contain requested document
 
-  @Negative @FindByIncorrectMerchantId
+  @Negative @FindByIncorrectMerchantId @Regression
   Scenario: User want to search for merchant sort mapping by incorrect merchant id
     Given [search-service] prepare search merchant sort mapping by incorrect merchant id request
     When [search-service] send search merchant sort mapping by incorrect merchant id request
@@ -55,7 +55,7 @@ Feature:Merchant Sort controller related API's
     When [search-service] send delete merchant sort mapping request
     Then [search-service] requested mapping must get deleted
 
-  @Negative @DeleteWithIncorrectId
+  @Negative @DeleteWithIncorrectId @Regression
   Scenario: User want to delete merchant sort mapping with incorrect id
     Given [search-service] prepare delete merchant sort mapping with incorrect id request
     When [search-service] send delete merchant sort mapping with incorrect id request

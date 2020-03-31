@@ -1,139 +1,206 @@
-@XproductEventHandlingFeature @TestSuiteID=11050177
+@XproductEventHandlingFeature @TestSuiteID=11540257
 Feature:Verifying item and product change event listeners
 
-  @ItemChangeEvent
-  Scenario: Verify item change event reindexes the data for the itemSku without itemChangeEventType
-    Given [search-service] change the price of the sku in SOLR
-    When [search-service] consumes item change event for that itemSku
-    Then [search-service] price information is properly updated for the Sku
+  @ItemChangeEvent @Regression
+  Scenario Outline: Verify item change event reindexes the data for the itemSku without itemChangeEventType
+    Given [search-service] change the price of the sku in Normal and '<other>' collection
+    When [search-service] consumes item change event for that itemSku present in Normal and '<other>' collection
+    Then [search-service] price information is properly updated for Sku in Normal and '<other>'collection
+    Examples:
+      | other |
+      | O2O   |
+      | CNC   |
 
-  @ItemChangeDeleteEvent
+  @ItemChangeDeleteEvent @Regression
   Scenario: Verify item change event when isArchived is set to true
     Given [search-service] test product is added in SOLR for 'itemChangeEvent'
     When [search-service] consumes item change event with isArchived is set to true
     Then [search-service] deletes only the item sku of test product from SOLR
     And [search-service] Db entry is created for the Sku in deleted product collection
 
-  @ProductChangeEvent
-  Scenario: Verify product change event reindexes the data for the sku
-    Given [search-service] change the price of the sku in SOLR
-    When [search-service] consumes product change event for that sku
-    Then [search-service] price information is properly updated for the Sku
+  @ProductChangeEvent  @Regression
+  Scenario Outline: Verify product change event reindexes the data for the sku which is present in both Normal and other collection
+    Given [search-service] change the price of the sku in Normal and '<other>' collection
+    When [search-service] consumes product change event for that sku wrt normal and '<other>' collection
+    Then [search-service] price information is properly updated for Sku in Normal and '<other>'collection
 
-  @ProductChangeDeleteEvent
+    Examples:
+      | other |
+      | O2O   |
+      | CNC   |
+
+
+  @ProductChangeDeleteEvent @Regression
   Scenario:  Verify product change event when markForDelete is set to true
     Given [search-service] test product is added in SOLR for 'productChangeEvent'
     When [search-service] consumes item change event with markForDelete set to true
     Then [search-service] deletes the test product from SOLR
     Then [search-service] Db entry is created for the productCode in deleted product collection
 
-  @ItemChangePriceChangeAtomicUpdateNoSchedule
-  Scenario: Verify item change event with price updates without discount schedule
+  @ItemChangePriceChangeAtomicUpdateNoSchedule @Regression
+  Scenario Outline: Verify item change event with price updates without discount schedule
     Given [search-service] change the price of the sku in SOLR
-    When [search-service] consumes item change event for that itemSku with price change in itemChangeEventType and 'no' discount schedule
-    Then [search-service] price information is properly updated for the Sku with itemChangeEventType and 'no' discount schedule
+    When [search-service] consumes item change event with price change and 'no' discount schedule and '<status>'
+    Then [search-service] price information is updated with itemChangeEventType and 'no' discount schedule and '<status>'
 
-  @ItemChangePriceChangeAtomicUpdateValidSchedule
-  Scenario: Verify item change event with price updates with valid discount schedule
+    Examples:
+      | status |
+      | false  |
+      | true   |
+
+  @ItemChangePriceChangeAtomicUpdateValidSchedule @Regression
+  Scenario Outline: Verify item change event with price updates with valid discount schedule
     Given [search-service] change the price of the sku in SOLR
-    When [search-service] consumes item change event for that itemSku with price change in itemChangeEventType and 'valid' discount schedule
-    Then [search-service] price information is properly updated for the Sku with itemChangeEventType and 'valid' discount schedule
+    When [search-service] consumes item change event with price change and 'valid' discount schedule and '<status>'
+    Then [search-service] price information is updated with itemChangeEventType and 'valid' discount schedule and '<status>'
+    Examples:
+      | status |
+      | false  |
+      | true   |
 
-  @ItemChangePriceChangeAtomicUpdateInValidSchedule
-  Scenario: Verify item change event with price updates with in-valid discount schedule
+  @ItemChangePriceChangeAtomicUpdateInValidSchedule @Regression
+  Scenario Outline: Verify item change event with price updates with in-valid discount schedule
     Given [search-service] change the price of the sku in SOLR
-    When [search-service] consumes item change event for that itemSku with price change in itemChangeEventType and 'invalid' discount schedule
-    Then [search-service] price information is properly updated for the Sku with itemChangeEventType and 'invalid' discount schedule
+    When [search-service] consumes item change event with price change and 'invalid' discount schedule and '<status>'
+    Then [search-service] price information is updated with itemChangeEventType and 'invalid' discount schedule and '<status>'
+    Examples:
+      | status |
+      | false  |
+      | true   |
 
-  @ItemChangeOfflineChange
+  @ItemChangeOfflineChange @Regression
   Scenario Outline: Verify item change event with OFFLINE_ITEM_FLAG_CHANGE itemChangeEventType
     Given [search-service] update the off2On field in SOLR for the sku
     When [search-service] consumes item change event with itemChangeEventType as OFFLINE_ITEM_FLAG_CHANGE and offToOn flag value as '<flag>'
     Then [search-service] o2o flag is updated to '<flag>'
-
     Examples:
-    |flag   |
-    |true   |
-    |false  |
+      | flag  |
+      | true  |
+      | false |
 
-  @ItemChangeSyncUnsync
-  Scenario: Verify item change event with SYNC_UNSYNC_FLAG_CHANGE itemChangeEventType
+  @ItemChangeSyncUnsync @Regression
+  Scenario Outline: Verify item change event with SYNC_UNSYNC_FLAG_CHANGE itemChangeEventType
     Given [search-service] check isSynchronised field in SOLR for the sku
-    When [search-service] consumes item change event with itemChangeEventType as SYNC_UNSYNC_FLAG_CHANGE 'without' PristineDataItem
-    Then [search-service] isSynchronised flag is updated to false
-    And [search-service] level0Id is set to 'productSku'
+    When [search-service] consumes itemChangeEvent as SYNC_UNSYNC_FLAG_CHANGE 'without' PristineDataItem and offToOn flag as '<flag>'
+    Then [search-service] isSynchronised flag is updated to false and offToOn flag as '<flag>'
+    And [search-service] level0Id is set to 'productSku' and offToOn flag as '<flag>'
+    Examples:
+      | flag  |
+      | false |
+      | true  |
 
-  @ItemChangeSyncUnsync
-  Scenario: Verify item change event with SYNC_UNSYNC_FLAG_CHANGE itemChangeEventType
+  @ItemChangeSyncUnsync @Regression
+  Scenario Outline: Verify item change event with SYNC_UNSYNC_FLAG_CHANGE itemChangeEventType in Normal and O2O collections
     Given [search-service] check isSynchronised field in SOLR for the sku
-    When [search-service] consumes item change event with itemChangeEventType as SYNC_UNSYNC_FLAG_CHANGE 'with' PristineDataItem
-    Then [search-service] isSynchronised flag is updated to false
-    And [search-service] level0Id is set to 'PristineId'
+    When [search-service] consumes itemChangeEvent as SYNC_UNSYNC_FLAG_CHANGE 'with' PristineDataItem and offToOn flag as '<flag>'
+    Then [search-service] isSynchronised flag is updated to false and offToOn flag as '<flag>'
+    And [search-service] level0Id is set to 'PristineId' and offToOn flag as '<flag>'
+    Examples:
+      | flag  |
+      | false |
+      | true  |
 
-  @ItemChangePristineMappingChange
-  Scenario: Verify item change event with PRISTINE_MAPPING_CHANGE itemChangeEventType
+  @ItemChangePristineMappingChange @Regression
+  Scenario Outline: Verify item change event with PRISTINE_MAPPING_CHANGE itemChangeEventType
     Given [search-service] check name and level0Id field in SOLR for the sku
-    When [search-service] consumes item change event with itemChangeEventType as PRISTINE_MAPPING_CHANGE
-    Then [search-service] pristine name,id and sales catalog is updated accordingly
+    When [search-service] consumes item change event with itemChangeEventType as PRISTINE_MAPPING_CHANGE and offToOn flag as '<flag>'
+    Then [search-service] pristine name,id and sales catalog is updated accordingly and offToOn flag as '<flag>'
+    Examples:
+      | flag  |
+      | false |
+      | true  |
 
-  @ItemChangePristineMappingChange1
-  Scenario: Verify item change event with PRISTINE_MAPPING_CHANGE and no PristineDataItem
+  @ItemChangePristineMappingChange1 @Regression
+  Scenario Outline: Verify item change event with PRISTINE_MAPPING_CHANGE and no PristineDataItem
     Given [search-service] update fields in SOLR to test data
-    When [search-service] consumes item change event with itemChangeEventType as PRISTINE_MAPPING_CHANGE and no PristineDataItem
-    Then [search-service] complete SOLR doc is updated instead of atomic update
+    When [search-service] consumes item change event as PRISTINE_MAPPING_CHANGE and no PristineDataItem and offToOn as '<flag>'
+    Then [search-service] complete SOLR doc is updated instead of atomic update and offToOn as '<flag>'
+    Examples:
+      | flag  |
+      | false |
+      | true  |
 
-  @ItemChangeItemDataChange
-  Scenario: Verify item change event with ITEM_DATA_CHANGE itemChangeEventType
+
+  @ItemChangeItemDataChange @Regression
+  Scenario Outline: Verify item change event with ITEM_DATA_CHANGE itemChangeEventType
     Given [search-service] check buyable,published field in SOLR for the sku
-    When [search-service] consumes item change event with itemChangeEventType as ITEM_DATA_CHANGE with 'no' schedule
-    Then [search-service] buyable,published field are added in SOLR with 'no' schedule in DB
+    When [search-service] consumes item change event with 'no' schedule and offToOn as '<flag>'
+    Then [search-service] buyable,published are added in SOLR with 'no' schedule in DB and offToOn as '<flag>'
+    Examples:
+      | flag  |
+      | false |
+      | true  |
 
-  @ItemChangeItemDataChange
-  Scenario: Verify item change event with ITEM_DATA_CHANGE itemChangeEventType
+  @ItemChangeItemDataChange @Regression
+  Scenario Outline: Verify item change event with ITEM_DATA_CHANGE itemChangeEventType
     Given [search-service] check buyable,published field in SOLR for the sku
-    When [search-service] consumes item change event with itemChangeEventType as ITEM_DATA_CHANGE with 'already running' schedule
-    Then [search-service] buyable,published field are added in SOLR with 'already running' schedule in DB
+    When [search-service] consumes item change event with 'already running' schedule and offToOn as '<flag>'
+    Then [search-service] buyable,published are added in SOLR with 'already running' schedule in DB and offToOn as '<flag>'
+    Examples:
+      | flag  |
+      | false |
+      | true  |
 
-  @ItemChangeItemDataChange
-  Scenario: Verify item change event with ITEM_DATA_CHANGE itemChangeEventType
+  @ItemChangeItemDataChangeFutureSchedule @Regression
+  Scenario Outline: Verify item change event with ITEM_DATA_CHANGE itemChangeEventType
     Given [search-service] check buyable,published field in SOLR for the sku
-    When [search-service] consumes item change event with itemChangeEventType as ITEM_DATA_CHANGE with 'future' schedule
-    Then [search-service] buyable,published field are added in SOLR with 'future' schedule in DB
+    When [search-service] consumes item change event with 'future' schedule and offToOn as '<flag>'
+    Then [search-service] buyable,published are added in SOLR with 'future' schedule in DB and offToOn as '<flag>'
+    Examples:
+      | flag  |
+      | false |
+      | true  |
 
-  @ItemChangeShippingArchiveChange
+  @ItemChangeShippingArchiveChange @Regression
   Scenario Outline: Verify item change event with SHIPPING_CHANGE itemChangeEventType
     Given [search-service] update fields in SOLR to test data
-    When [search-service] consumes item change event with itemChangeEventType as '<type>'
-    Then [search-service] complete SOLR doc is updated instead of atomic update
+    When [search-service] consumes item change event  as '<type>' and offToOn as '<flag>'
+    Then [search-service] complete SOLR doc is updated instead of atomic update and offToOn as '<flag>'
 
-  Examples:
-    |type|
-    |SHIPPING_CHANGE|
-    |ARCHIVED_FLAG_CHANGE|
+    Examples:
+      | type                 | flag  |
+      | SHIPPING_CHANGE      | false |
+      | ARCHIVED_FLAG_CHANGE | true  |
 
-  @ItemChangeShippingAndPrice
-  Scenario: Verify item change event with SHIPPING_CHANGE and ITEM_PRICE_CHANGE together
+  @ItemChangeShippingAndPrice  @Regression
+  Scenario Outline: Verify item change event with SHIPPING_CHANGE and ITEM_PRICE_CHANGE together
     Given [search-service] update fields in SOLR to test data
     And [search-service] change the price of the sku in SOLR
-    When [search-service] consumes item change event with itemChangeEventType with both shipping and price change
-    Then [search-service] complete SOLR doc is updated instead of atomic update for price
+    When [search-service] consumes item change event with both shipping and price change and offToOn as '<flag>'
+    Then [search-service] complete SOLR doc is updated instead of atomic update and offToOn as '<flag>'
+    Examples:
+      | flag  |
+      | false |
+      | true  |
 
-  @ItemChangePriceAndData
-  Scenario: Verify item change event with ITEM_DATA_CHANGE and ITEM_PRICE_CHANGE together
+  @ItemChangePriceAndData @Regression
+  Scenario Outline: Verify item change event with ITEM_DATA_CHANGE and ITEM_PRICE_CHANGE together
     Given [search-service] check buyable,published field in SOLR for the sku
     And [search-service] change the price of the sku in SOLR
-    When [search-service] consumes item change event with itemChangeEventType with both data and price change
-    Then [search-service] buyable,published field are added in SOLR with 'no' schedule in DB
-    And [search-service] price information is properly updated for the Sku with itemChangeEventType and 'no' discount schedule
+    When [search-service] consumes item change event with with both data and price change and offToOn as '<flag>'
+    Then [search-service] consumes item change event with 'no' schedule and offToOn as '<flag>'
+    Then [search-service] buyable,published are added in SOLR with 'no' schedule in DB and offToOn as '<flag>'
+    Examples:
+      | flag  |
+      | false |
+      | true  |
 
-  @ItemChangeDataWithPublished
-  Scenario: Verify item change event with ITEM_DATA_CHANGE with published as true
+  @ItemChangeDataWithPublished @Regression
+  Scenario Outline: Verify item change event with ITEM_DATA_CHANGE with published as true
     Given [search-service] remove the SOLR doc from SOLR
-    When [search-service] consumes item change event with itemChangeEventType as ITEM_DATA_CHANGE and published as 'true'
-    Then [search-service] complete SOLR doc is updated instead of atomic update
+    When [search-service] consumes itemChangeEventType as ITEM_DATA_CHANGE and published as 'true' and offToOn as '<flag>'
+    Then [search-service] complete SOLR doc is updated instead of atomic update and offToOn as '<flag>'
+    Examples:
+      | flag  |
+      | false |
+      | true  |
 
-  @ItemChangeDataWithPublished
-  Scenario: Verify item change event with ITEM_DATA_CHANGE with published as false
+  @ItemChangeDataWithPublished @Regression
+  Scenario Outline: Verify item change event with ITEM_DATA_CHANGE with published as false
     Given [search-service] check buyable,published field in SOLR for the sku
-    When [search-service] consumes item change event with itemChangeEventType as ITEM_DATA_CHANGE and published as 'false'
-    Then [search-service] complete SOLR doc is updated instead of atomic update
+    When [search-service] consumes itemChangeEventType as ITEM_DATA_CHANGE and published as 'false' and offToOn as '<flag>'
+    Then [search-service] complete SOLR doc is updated instead of atomic update and offToOn as '<flag>'
+    Examples:
+      | flag  |
+      | false |
+      | true  |

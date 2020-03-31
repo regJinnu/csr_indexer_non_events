@@ -1,21 +1,21 @@
-@InventoryEventsTestFeature @TestSuiteID=11050177
+@InventoryOOSAndNonOOSEventsFeature @TestSuiteID=11540257
 Feature: Verify indexing by Inventory OOS and Non OOS events
 
-  @OOSEvent
+  @OOSEvent @Regression
   Scenario: Verify inventory oos event when force stop is false
     Given [search-service] verify product is in stock in SOLR
     And [search-service] force.stop flag is set to 'false'
     When [search-service] consumes oos event for the product
     Then [search-service] product becomes oos in SOLR
 
-  @NonOOSEvent
+  @NonOOSEvent @Regression
   Scenario: Verify inventory non-oos event when force stop is false
     Given [search-service] verify product is out of stock in SOLR
     And [search-service] force.stop flag is set to 'false'
     When [search-service] consumes non oos event for the product
     Then [search-service] product becomes in stock in SOLR
 
-  @OOSEventWithoutWhitelist
+  @OOSEventWithoutWhitelist @Regression
   Scenario: Verify inventory oos event are processed when force stop is true but event not added in whitelist config
     Given [search-service] verify product is in stock in SOLR
     And [search-service] force.stop flag is set to 'true'
@@ -24,7 +24,7 @@ Feature: Verify indexing by Inventory OOS and Non OOS events
     Then [search-service] product does not becomes oos in SOLR
     And [search-service] events are stored in indexing_list_new collection and processed when job is run after turning off the flag
 
-  @NonOOSEventWithoutWhitelist
+  @NonOOSEventWithoutWhitelist @Regression
   Scenario: Verify inventory non-oos event are processed when force stop is true but event not added in whitelist config
     Given [search-service] verify product is out of stock in SOLR
     And [search-service] force.stop flag is set to 'true'
@@ -34,7 +34,7 @@ Feature: Verify indexing by Inventory OOS and Non OOS events
     And [search-service] events are stored in indexing_list_new collection and processed when job is run after turning off the flag
     And [search-service] product becomes in stock in SOLR
 
-  @WhitelistOOSEvent
+  @WhitelistOOSEvent @Regression
   Scenario: Verify inventory oos event are processed when force stop is true and event is added in whitelist config
     Given [search-service] verify product is in stock in SOLR
     And [search-service] force.stop flag is set to 'true'
@@ -42,7 +42,7 @@ Feature: Verify indexing by Inventory OOS and Non OOS events
     When [search-service] consumes oos event for the product
     Then [search-service] product becomes oos in SOLR
 
-  @WhitelistNonOOSEvent
+  @WhitelistNonOOSEvent @Regression
   Scenario: Verify inventory non-oos event are processed when force stop is true and event is added in whitelist config
     Given [search-service] verify product is out of stock in SOLR
     And [search-service] force.stop flag is set to 'true'
