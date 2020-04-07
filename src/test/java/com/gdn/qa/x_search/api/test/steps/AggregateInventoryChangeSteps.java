@@ -187,8 +187,12 @@ public class AggregateInventoryChangeSteps {
   public void searchServiceSetLocationInfoOfTestProductWithRandomValuesInCncCollection()
       throws Exception {
 
-    String query = "id:" + searchServiceProperties.get("itemSkuForInventoryChangeCNC") + "-"
-        + searchServiceProperties.get("ppCode1ForInventoryChangeCNC");
+    String ppCode = searchServiceProperties.get("ppCode1ForInventoryChangeCNC");
+    String itemSku = searchServiceProperties.get("itemSkuForInventoryChangeCNC");
+    String[] tokens = itemSku.split("-");
+    String merchantCode = tokens[0]+"-"+tokens[1];
+    String query = "id:"+ppCode+"!"+merchantCode+"!" + itemSku + "-" +ppCode;
+
     int status = solrHelper.updateSolrDataForAutomation(query,
         SELECT_HANDLER,
         "id",
@@ -212,8 +216,10 @@ public class AggregateInventoryChangeSteps {
     assertThat("Test Product not set in SOLR", allLocation, equalTo(null));
     assertThat("Test Product not set in SOLR", stockLocation, equalTo(null));
 
-    String query1 = "id:" + searchServiceProperties.get("itemSkuForInventoryChangeCNC") + "-"
-        + searchServiceProperties.get("ppCode2ForInventoryChangeCNC");
+    String ppCode2 = searchServiceProperties.get("ppCode2ForInventoryChangeCNC");
+
+    String query1 = "id:"+ppCode2+"!"+merchantCode+"!" + itemSku + "-" +ppCode2;
+
     int status1 = solrHelper.updateSolrDataForAutomation(query1,
         SELECT_HANDLER,
         "id",
@@ -258,8 +264,11 @@ public class AggregateInventoryChangeSteps {
   public void searchServiceAggregateInventoryChangeEventIsProcessedAndSolrCncCollectionIsUpdated()
       throws Exception {
 
-    String query = "id:" + searchServiceProperties.get("itemSkuForInventoryChangeCNC") + "-"
-        + searchServiceProperties.get("ppCode1ForInventoryChangeCNC");
+    String ppCode = searchServiceProperties.get("ppCode1ForInventoryChangeCNC");
+    String itemSku = searchServiceProperties.get("itemSkuForInventoryChangeCNC");
+    String[] tokens = itemSku.split("-");
+    String merchantCode = tokens[0]+"-"+tokens[1];
+    String query = "id:"+ppCode+"!"+merchantCode+"!" + itemSku + "-" +ppCode;
 
     SolrResults solrResultsCNC = solrHelper.getSolrProd(query,
         SELECT_HANDLER,
@@ -282,8 +291,9 @@ public class AggregateInventoryChangeSteps {
         lastUpdatedTimeAfterEventCNC,
         greaterThan(lastUpdatedTimeBeforeEventCNC));
 
-    String query1 = "id:" + searchServiceProperties.get("itemSkuForInventoryChangeCNC") + "-"
-        + searchServiceProperties.get("ppCode2ForInventoryChangeCNC");
+    String ppCode2 = searchServiceProperties.get("ppCode2ForInventoryChangeCNC");
+
+    String query1 = "id:"+ppCode2+"!"+merchantCode+"!" + itemSku + "-" +ppCode2;
 
     SolrResults solrResultsCNC1 = solrHelper.getSolrProd(query1,
         SELECT_HANDLER,
@@ -309,15 +319,19 @@ public class AggregateInventoryChangeSteps {
   public void defaultProductInNormalCollectionShouldBeUpdatedWithAggregateInventoryChangeData()
       throws Exception {
 
-    String query = "id:" + searchServiceProperties.get("itemSkuForInventoryChangeCNC") + "-"
-        + searchServiceProperties.get("ppCode1ForInventoryChangeCNC");
+    String ppCode = searchServiceProperties.get("ppCode1ForInventoryChangeCNC");
+    String itemSku = searchServiceProperties.get("itemSkuForInventoryChangeCNC");
+    String[] tokens = itemSku.split("-");
+    String merchantCode = tokens[0]+"-"+tokens[1];
+    String query = "id:"+ppCode+"!"+merchantCode+"!" + itemSku + "-" +ppCode;
+
 
     SolrResults solrResults = solrHelper.getSolrProd(query,
         SELECT_HANDLER,
         "allLocation,stockLocation,lastUpdatedTime",
         1,
         Collections.emptyList(),
-        SOLR_DEFAULT_COLLECTION_CNC).get(0);
+        SOLR_DEFAULT_COLLECTION).get(0);
 
     ArrayList<String> allLocation = solrResults.getAllLocation();
     ArrayList<String> stockLocation = solrResults.getStockLocation();
