@@ -11,6 +11,8 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Collections;
+
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SELECT_HANDLER;
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_DEFAULT_COLLECTION;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -40,7 +42,8 @@ public class TradeInAggregateEventSteps {
   }
 
   @And("^\\[search-service] set trade in value as (.*) of test product based on (.*)$")
-  public void searchServiceSetTradeInFieldOfTestProduct(String preEventTradeInValue, String caseToBeUpdated) throws Exception {
+  public void searchServiceSetTradeInFieldOfTestProduct(String preEventTradeInValue,
+      String caseToBeUpdated) throws Exception {
     String query = searchServiceProperties.get("solrQueryForTradeInEvent");
     int status = solrHelper.updateSolrDataForAutomation(query,
         SELECT_HANDLER,
@@ -50,12 +53,16 @@ public class TradeInAggregateEventSteps {
         SOLR_DEFAULT_COLLECTION);
     assertThat("Updating tradeInEligible in SOLR doc failed", status, equalTo(0));
     solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
-    boolean tradeInEligible =
-        solrHelper.getSolrProd(query, SELECT_HANDLER, "tradeInEligible", 1, SOLR_DEFAULT_COLLECTION)
-            .get(0)
-            .isTradeInEligible();
+    boolean tradeInEligible = solrHelper.getSolrProd(query,
+        SELECT_HANDLER,
+        "tradeInEligible",
+        1,
+        Collections.emptyList(),
+        SOLR_DEFAULT_COLLECTION).get(0).isTradeInEligible();
 
-    assertThat("Test Product not set in SOLR", tradeInEligible, equalTo(Boolean.parseBoolean(preEventTradeInValue)));
+    assertThat("Test Product not set in SOLR",
+        tradeInEligible,
+        equalTo(Boolean.parseBoolean(preEventTradeInValue)));
   }
 
   @When("^\\[search-service] send request for processing trade in aggregate event$")
@@ -73,10 +80,14 @@ public class TradeInAggregateEventSteps {
   public void searchServiceCheckIfTradeInAggregateEventIsProcessedAndSolrIsUpdated(String active)
       throws Exception {
     String query = searchServiceProperties.get("solrQueryForTradeInEvent");
-    boolean tradeInEligible =
-        solrHelper.getSolrProd(query, SELECT_HANDLER, "tradeInEligible", 1, SOLR_DEFAULT_COLLECTION)
-            .get(0)
-            .isTradeInEligible();
-    assertThat("Test Product not updated after event processing", tradeInEligible, equalTo(Boolean.parseBoolean(active)));
+    boolean tradeInEligible = solrHelper.getSolrProd(query,
+        SELECT_HANDLER,
+        "tradeInEligible",
+        1,
+        Collections.emptyList(),
+        SOLR_DEFAULT_COLLECTION).get(0).isTradeInEligible();
+    assertThat("Test Product not updated after event processing",
+        tradeInEligible,
+        equalTo(Boolean.parseBoolean(active)));
   }
 }

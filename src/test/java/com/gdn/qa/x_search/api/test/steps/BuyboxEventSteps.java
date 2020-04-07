@@ -3,6 +3,7 @@ package com.gdn.qa.x_search.api.test.steps;
 import com.gdn.qa.x_search.api.test.CucumberStepsDefinition;
 import com.gdn.qa.x_search.api.test.api.services.SearchServiceController;
 import com.gdn.qa.x_search.api.test.data.SearchServiceData;
+import com.gdn.qa.x_search.api.test.models.SolrResults;
 import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
 import com.gdn.qa.x_search.api.test.utils.KafkaHelper;
 import com.gdn.qa.x_search.api.test.utils.SolrHelper;
@@ -10,10 +11,9 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.IOException;
+import java.util.Collections;
 
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -43,22 +43,18 @@ public class BuyboxEventSteps {
     try {
 
       int statusOfNormalCollectionUpdate =
-       solrHelper.updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "id",
-          1,
-          "buyBox",
-          SOLR_DEFAULT_COLLECTION);
+          solrHelper.updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),
+              SELECT_HANDLER,
+              "id",
+              1,
+              "buyBox",
+              SOLR_DEFAULT_COLLECTION);
 
       assertThat("Updating SOLR fields for test failed",
           statusOfNormalCollectionUpdate,
           equalTo(0));
 
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
-    } catch (IOException e) {
-      e.printStackTrace();
-    } catch (SolrServerException e) {
-      e.printStackTrace();
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -79,20 +75,20 @@ public class BuyboxEventSteps {
   @Then("^\\[search-service] verify that buybox score is updated in solr$")
   public void verifyThatBuyboxScoreIsUpdatedInSolr() {
     try {
-      Double buyboxScore= solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "buyboxScore",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getBuyboxScore();
 
-      Long lastUpdatedTime= solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      SolrResults solrResults = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
-          "lastUpdatedTime",
+          "buyboxScore,lastUpdatedTime",
           1,
-          SOLR_DEFAULT_COLLECTION).get(0).getLastUpdatedTime();
+          Collections.emptyList(),
+          SOLR_DEFAULT_COLLECTION).get(0);
+
+      Double buyboxScore = solrResults.getBuyboxScore();
+
+      Long lastUpdatedTime = solrResults.getLastUpdatedTime();
 
       assertThat("buyBoxScore not updated", buyboxScore, equalTo(100.0));
-      assertThat("lastUpdatedTime not updated", lastUpdatedTime,not(equalTo(1234l)));
+      assertThat("lastUpdatedTime not updated", lastUpdatedTime, not(equalTo(1234l)));
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -121,19 +117,20 @@ public class BuyboxEventSteps {
   @Then("^\\[search-service] verify that buybox score is not updated in solr$")
   public void verifyThatBuyboxScoreIsNotUpdatedInSolr() {
     try {
-      String query =
-          searchServiceData.getDefCncId();
+      String query = searchServiceData.getDefCncId();
 
-      Double buyboxScoreInCnc= solrHelper.getSolrProd(query,
+      Double buyboxScoreInCnc = solrHelper.getSolrProd(query,
           SELECT_HANDLER,
           "buyboxScore",
           1,
+          Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION_CNC).get(0).getBuyboxScore();
 
       Double buyboxScore = solrHelper.getSolrProd("id:" + searchServiceData.getDefCncItemSku1(),
           SELECT_HANDLER,
           "buyboxScore",
           1,
+          Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION).get(0).getBuyboxScore();
 
       assertThat("buyBoxScore not updated", buyboxScore, equalTo(100.0));

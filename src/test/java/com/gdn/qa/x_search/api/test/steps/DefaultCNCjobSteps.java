@@ -20,9 +20,7 @@ import cucumber.api.java.en.When;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -60,8 +58,8 @@ public class DefaultCNCjobSteps {
     searchServiceData.setDefCncPP(searchServiceProperties.get("defCncPP"));
     searchServiceData.setDefCncMerchant(searchServiceProperties.get("defCncMerchant"));
     String query =
-        "id:" + searchServiceData.getDefCncPP()+"!"+searchServiceData.getDefCncMerchant()+"!"
-            +searchServiceData.getDefCncItemSku1()+"-"+ searchServiceData.getDefCncPP();
+        "id:" + searchServiceData.getDefCncPP() + "!" + searchServiceData.getDefCncMerchant() + "!"
+            + searchServiceData.getDefCncItemSku1() + "-" + searchServiceData.getDefCncPP();
     int status = 0;
     try {
       status = solrHelper.updateSolrDataForAutomation(query,
@@ -77,19 +75,21 @@ public class DefaultCNCjobSteps {
           SELECT_HANDLER,
           "id,offerPrice,listPrice,salePrice,lastUpdatedTime",
           10,
+          Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION_CNC);
 
-      for (int i = 0; i < solrProd.size(); i++) {
-        assertThat("Offer Price is not set", solrProd.get(i).getOfferPrice(), equalTo(3000.0));
-        assertThat("List Price is not set", solrProd.get(i).getListPrice(), equalTo(3000.0));
+      for (SolrResults solrResults : solrProd) {
+        assertThat("Offer Price is not set", solrResults.getOfferPrice(), equalTo(3000.0));
+        assertThat("List Price is not set", solrResults.getListPrice(), equalTo(3000.0));
         assertThat("Last updated Time is not set",
-            solrProd.get(i).getLastUpdatedTime(),
-            equalTo(Long.valueOf(1234)));
+            solrResults.getLastUpdatedTime(),
+            equalTo(1234L));
       }
       List<SolrResults> solrProdInNormalCollection = solrHelper.getSolrProd(query,
           SELECT_HANDLER,
           "id,offerPrice,listPrice,lastUpdatedTime",
           10,
+          Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION);
       assertThat(solrProdInNormalCollection.isEmpty(), equalTo(true));
 
@@ -104,7 +104,7 @@ public class DefaultCNCjobSteps {
     ResponseApi<GdnBaseRestResponse> response = searchServiceController.defaultCncJob();
     searchServiceData.setSearchServiceResponse(response);
     Thread.sleep(20000);
-    while(!Boolean.parseBoolean(configHelper.findConfigValue("enable.default.cnc.index"))) {
+    while (!Boolean.parseBoolean(configHelper.findConfigValue("enable.default.cnc.index"))) {
       Thread.sleep(60000);
     }
     solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
@@ -116,10 +116,9 @@ public class DefaultCNCjobSteps {
 
     ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
     assertThat("Request failed", response.getResponse().getStatusCode(), equalTo(200));
-    String Response = response.getResponseBody().getErrorMessage();
     assertThat("Response failed", response.getResponseBody().isSuccess(), equalTo(true));
 
-    List<SolrResults> solrProdInNormalCollection = null;
+    List<SolrResults> solrProdInNormalCollection = new ArrayList<>();
     try {
       String query =
           "id:" + searchServiceData.getDefCncItemSku1() + "-" + searchServiceData.getDefCncPP();
@@ -127,21 +126,22 @@ public class DefaultCNCjobSteps {
           SELECT_HANDLER,
           "id,offerPrice,listPrice,lastUpdatedTime",
           10,
+          Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION);
     } catch (Exception e) {
       e.printStackTrace();
     }
 
-    for (int i = 0; i < solrProdInNormalCollection.size(); i++) {
+    assertThat(solrProdInNormalCollection.isEmpty(), equalTo(false));
 
-      assertThat(solrProdInNormalCollection.isEmpty(), equalTo(false));
+    for (SolrResults solrResults : solrProdInNormalCollection) {
+
       assertThat("Last updated Time is not set",
-          solrProdInNormalCollection.get(i).getLastUpdatedTime(),
-          not(equalTo(Long.valueOf(1234))));
+          solrResults.getLastUpdatedTime(),
+          not(equalTo(1234L)));
     }
 
-    ResponseApi responseApi;
-    responseApi = searchServiceController.prepareRequestForIndexing("itemSkus",
+    ResponseApi responseApi = searchServiceController.prepareRequestForIndexing("itemSkus",
         searchServiceData.getDefCncItemSku1() + "-" + searchServiceData.getDefCncPP());
     searchServiceData.setSearchServiceResponse(responseApi);
 
@@ -151,8 +151,6 @@ public class DefaultCNCjobSteps {
     try {
       Thread.sleep(20000);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -196,15 +194,16 @@ public class DefaultCNCjobSteps {
   @Then("^verify that product is deleted from respective collections as well$")
   public void productIsDeletedFromRespectiveCollections() {
     String query =
-        "id:" + searchServiceData.getDefCncPP()+"!"+searchServiceData.getDefCncMerchant()+"!"
-            +searchServiceData.getDefCncItemSku1()+"-"+ searchServiceData.getDefCncPP();
-    List<SolrResults> solrProdDeletionInNormalColl = null;
+        "id:" + searchServiceData.getDefCncPP() + "!" + searchServiceData.getDefCncMerchant() + "!"
+            + searchServiceData.getDefCncItemSku1() + "-" + searchServiceData.getDefCncPP();
+    List<SolrResults> solrProdDeletionInNormalColl;
     try {
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
       solrProdDeletionInNormalColl = solrHelper.getSolrProd(query,
           SELECT_HANDLER,
           "id,offerPrice,listPrice,lastUpdatedTime",
           10,
+          Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION);
       assertThat("Found product in Normal collection",
           solrProdDeletionInNormalColl.isEmpty(),
@@ -257,9 +256,10 @@ public class DefaultCNCjobSteps {
 
   @Then("^verify that event is not processed and stored in mongo$")
   public void verifyThatEventIsNotProcessedAndStoredInMongo() {
-    Long count= mongoHelper.countOfRecordsInCollection("indexing_list_new");
-    assertThat("Entry does not exists in collection",count, greaterThan(0L));
-    System.out.println("TEST MONGO \n"+mongoHelper.countOfRecordsInCollection("indexing_list_new"));
+    Long count = mongoHelper.countOfRecordsInCollection("indexing_list_new");
+    assertThat("Entry does not exists in collection", count, greaterThan(0L));
+    System.out.println(
+        "TEST MONGO \n" + mongoHelper.countOfRecordsInCollection("indexing_list_new"));
     configHelper.findAndUpdateConfig("force.stop.solr.cnc.updates", "false");
   }
 
@@ -273,8 +273,6 @@ public class DefaultCNCjobSteps {
     try {
       Thread.sleep(60000);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -282,12 +280,12 @@ public class DefaultCNCjobSteps {
 
   @Then("^verify that product is deleted from cnc collection as well$")
   public void verifyThatProductIsDeletedFromCncCollection() {
-    List<SolrResults> solrProdDeletionInCNCColl = null;
-    List<SolrResults> solrProdDeletionInNormalColl = null;
-    List<SolrResults> solrProdDeletionInO2OColl = null;
+    List<SolrResults> solrProdDeletionInCNCColl;
+    List<SolrResults> solrProdDeletionInNormalColl;
+    List<SolrResults> solrProdDeletionInO2OColl;
     String query =
-        "id:" + searchServiceData.getDefCncPP()+"!"+searchServiceData.getDefCncMerchant()+"!"
-            +searchServiceData.getDefCncItemSku1()+"-"+ searchServiceData.getDefCncPP();
+        "id:" + searchServiceData.getDefCncPP() + "!" + searchServiceData.getDefCncMerchant() + "!"
+            + searchServiceData.getDefCncItemSku1() + "-" + searchServiceData.getDefCncPP();
     try {
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);
@@ -296,6 +294,7 @@ public class DefaultCNCjobSteps {
           SELECT_HANDLER,
           "id,offerPrice,listPrice,lastUpdatedTime",
           10,
+          Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION_CNC);
       assertThat("Found product in cnc collection",
           solrProdDeletionInCNCColl.isEmpty(),
@@ -305,6 +304,7 @@ public class DefaultCNCjobSteps {
           SELECT_HANDLER,
           "id,offerPrice,listPrice,lastUpdatedTime",
           10,
+          Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION);
       assertThat("Found product in Normal collection",
           solrProdDeletionInNormalColl.isEmpty(),
@@ -314,6 +314,7 @@ public class DefaultCNCjobSteps {
           SELECT_HANDLER,
           "id,offerPrice,listPrice,lastUpdatedTime",
           10,
+          Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION_O2O);
       assertThat("Found product in O2O collection",
           solrProdDeletionInO2OColl.isEmpty(),

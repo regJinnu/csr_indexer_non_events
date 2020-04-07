@@ -5,6 +5,7 @@ import com.gdn.qa.automation.core.restassured.ResponseApi;
 import com.gdn.qa.x_search.api.test.CucumberStepsDefinition;
 import com.gdn.qa.x_search.api.test.api.services.SearchServiceController;
 import com.gdn.qa.x_search.api.test.data.SearchServiceData;
+import com.gdn.qa.x_search.api.test.models.SolrResults;
 import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
 import com.gdn.qa.x_search.api.test.utils.ConfigHelper;
 import com.gdn.qa.x_search.api.test.utils.KafkaHelper;
@@ -14,6 +15,8 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Collections;
 
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SELECT_HANDLER;
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_DEFAULT_COLLECTION;
@@ -68,14 +71,18 @@ public class LogisticOptionEventSteps {
       assertThat("Updating Logistic options and commission type fields in SOLR failed",status,equalTo(0));
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
-      String commissionType = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-         SELECT_HANDLER,"merchantCommissionType",1,SOLR_DEFAULT_COLLECTION).get(0).getMerchantCommissionType();
+      SolrResults solrResults = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+          SELECT_HANDLER,
+          "merchantCommissionType,logisticOptions,location",
+          1,
+          Collections.emptyList(),
+          SOLR_DEFAULT_COLLECTION).get(0);
 
-      String logisticOption = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,"logisticOptions",1,SOLR_DEFAULT_COLLECTION).get(0).getLogisticOptions().get(0);
+      String commissionType = solrResults.getMerchantCommissionType();
 
-      String location = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,"location",1,SOLR_DEFAULT_COLLECTION).get(0).getLocation();
+      String logisticOption = solrResults.getLogisticOptions().get(0);
+
+      String location = solrResults.getLocation();
 
 
       log.warn("-----Product merchantCommissionType---{}----LogisticOptions---{}-",commissionType,logisticOption);
@@ -153,14 +160,19 @@ public class LogisticOptionEventSteps {
       } catch (Exception e) {
         e.printStackTrace();
       }
-        String commissionType = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,"merchantCommissionType",1,SOLR_DEFAULT_COLLECTION).get(0).getMerchantCommissionType();
 
-      String logisticOption = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,"logisticOptions",1,SOLR_DEFAULT_COLLECTION).get(0).getLogisticOptions().get(0);
+      SolrResults solrResults = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+          SELECT_HANDLER,
+          "merchantCommissionType,logisticOptions,location",
+          1,
+          Collections.emptyList(),
+          SOLR_DEFAULT_COLLECTION).get(0);
 
-      String location = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,"location",1,SOLR_DEFAULT_COLLECTION).get(0).getLocation();
+      String commissionType = solrResults.getMerchantCommissionType();
+
+      String logisticOption = solrResults.getLogisticOptions().get(0);
+
+      String location = solrResults.getLocation();
 
       log.warn("-----Product merchantCommissionType---{}----LogisticOptions---{}-",commissionType,logisticOption);
       assertThat("Location is not changed after reindex",location,equalTo("Origin-Jakarta"));
@@ -205,14 +217,18 @@ public class LogisticOptionEventSteps {
   public void testProductIsNotUpdated(){
     try {
 
-      String commissionType = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,"merchantCommissionType",1,SOLR_DEFAULT_COLLECTION).get(0).getMerchantCommissionType();
+      SolrResults solrResults = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+          SELECT_HANDLER,
+          "merchantCommissionType,logisticOptions,location",
+          1,
+          Collections.emptyList(),
+          SOLR_DEFAULT_COLLECTION).get(0);
 
-      String logisticOption = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,"logisticOptions",1,SOLR_DEFAULT_COLLECTION).get(0).getLogisticOptions().get(0);
+      String commissionType = solrResults.getMerchantCommissionType();
 
-      String location = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,"location",1,SOLR_DEFAULT_COLLECTION).get(0).getLocation();
+      String logisticOption = solrResults.getLogisticOptions().get(0);
+
+      String location = solrResults.getLocation();
 
       log.warn("-----Product merchantCommissionType---{}----LogisticOptions---{}-",commissionType,logisticOption);
       assertThat("Test commission type not set",commissionType,equalTo("TEST_COMM_TYPE"));

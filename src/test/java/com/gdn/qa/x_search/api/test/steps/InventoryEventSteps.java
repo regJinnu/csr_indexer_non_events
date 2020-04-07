@@ -20,8 +20,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_DEFAULT_COLLECTION;
-import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.SOLR_DEFAULT_COLLECTION_O2O;
+import java.util.Collections;
+
+import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
@@ -67,7 +68,7 @@ public class InventoryEventSteps {
     try {
 
       int status = solrHelper.updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),
-          "/select",
+          SELECT_HANDLER,
           "id",
           1,
           "nonOOS",
@@ -77,7 +78,7 @@ public class InventoryEventSteps {
 
       int statusInO2O =
           solrHelper.updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),
-              "/select",
+              SELECT_HANDLER,
               "id",
               1,
               "nonOOS",
@@ -86,14 +87,15 @@ public class InventoryEventSteps {
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);
 
       int oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          "/select",
+          SELECT_HANDLER,
           "isInStock",
-          1,
+          1, Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
+
       int oosFlagInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          "/select",
+          SELECT_HANDLER,
           "isInStock",
-          1,
+          1,Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION_O2O).get(0).getIsInStock();
 
       log.warn("-----Product {} Set non OOS before test---{}",
@@ -127,9 +129,9 @@ public class InventoryEventSteps {
     try {
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
       oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          "/select",
+          SELECT_HANDLER,
           "isInStock",
-          1,
+          1,Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
       log.warn("-----IsInStock After reindex by event---{}", oosFlag);
       assertThat("Product not OOS", oosFlag, equalTo(0));
@@ -138,9 +140,9 @@ public class InventoryEventSteps {
     }
     try {
       oosFlagInO2OColl = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          "/select",
+          SELECT_HANDLER,
           "isInStock",
-          1,
+          1,Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION_O2O).get(0).getIsInStock();
       log.warn("-----IsInStock After reindex by event in o2o coll----{}", oosFlagInO2OColl);
       assertThat("Product not OOS", oosFlagInO2OColl, equalTo(0));
@@ -156,7 +158,7 @@ public class InventoryEventSteps {
     try {
 
       int status = solrHelper.updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),
-          "/select",
+          SELECT_HANDLER,
           "id",
           1,
           "oos",
@@ -165,9 +167,9 @@ public class InventoryEventSteps {
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
       int oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          "/select",
+          SELECT_HANDLER,
           "isInStock",
-          1,
+          1,Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
 
       log.warn("-----Product {} Set non OOS before test---{}",searchServiceData.getQueryForReindex(),oosFlag);
@@ -197,9 +199,9 @@ public class InventoryEventSteps {
     try {
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
       oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          "/select",
+          SELECT_HANDLER,
           "isInStock",
-          1,
+          1,Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
       assertThat("Product not OOS", oosFlag, equalTo(1));
       log.warn("-----IsInStock After reindex by event---{}", oosFlag);
@@ -234,9 +236,9 @@ public class InventoryEventSteps {
     try {
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
       oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          "/select",
+          SELECT_HANDLER,
           "isInStock",
-          1,
+          1,Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
       assertThat("Product OOS", oosFlag, equalTo(1));
       log.warn("-----Product does not become oos in SOLR---{}", oosFlag);
@@ -246,9 +248,9 @@ public class InventoryEventSteps {
 
     try {
       oosFlagInO2OColl = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          "/select",
+          SELECT_HANDLER,
           "isInStock",
-          1,
+          1,Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION_O2O).get(0).getIsInStock();
       log.warn("-----IsInStock After reindex by event---{}", oosFlagInO2OColl);
       assertThat("Product not OOS", oosFlagInO2OColl, equalTo(1));
@@ -286,8 +288,6 @@ public class InventoryEventSteps {
 
     try {
       Thread.sleep(60000);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -298,9 +298,9 @@ public class InventoryEventSteps {
     try {
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
       oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          "/select",
+          SELECT_HANDLER,
           "isInStock",
-          1,
+          1,Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
       log.warn("-----Product does not become non oos in SOLR---{}", oosFlag);
       assertThat("Product Non OOS", oosFlag, equalTo(0));

@@ -13,6 +13,9 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Collections;
+
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -36,10 +39,9 @@ public class DeleteDanglingProductSteps {
   @Autowired
   ConfigHelper configHelper;
 
-  private String eventType="itemChangeEvent";
-
   @Given("^\\[search-service] add test data into related collections$")
   public void addTestDataIntoRelatedCollections() {
+    String eventType = "itemChangeEvent";
     solrHelper.addSolrDocumentForItemChangeEvent(DANGLING_JOB_ITEMSKU,
         DANGLING_JOB_PRODUCTSKU,
         DANGLING_JOB_PRODUCTCODE,
@@ -60,21 +62,24 @@ public class DeleteDanglingProductSteps {
 
     try {
       assertThat("Test Data is not present in Normal coll",
-          solrHelper.getSolrProdCount("id:"+DANGLING_JOB_ITEMSKU,
+          solrHelper.getSolrProdCount("id:" + DANGLING_JOB_ITEMSKU,
               SELECT_HANDLER,
-              SOLR_DEFAULT_COLLECTION),
+              SOLR_DEFAULT_COLLECTION,
+              Collections.emptyList()),
           equalTo(1L));
 
       assertThat("Test Data is not present in O2O coll",
-          solrHelper.getSolrProdCount("id:"+DANGLING_JOB_ITEMSKU,
+          solrHelper.getSolrProdCount("id:" + DANGLING_JOB_ITEMSKU,
               SELECT_HANDLER,
-              SOLR_DEFAULT_COLLECTION_O2O),
+              SOLR_DEFAULT_COLLECTION_O2O,
+              Collections.emptyList()),
           equalTo(1L));
 
       assertThat("Test Data is not present in CNC coll",
-          solrHelper.getSolrProdCount("id:"+DANGLING_JOB_ITEMSKU,
+          solrHelper.getSolrProdCount("id:" + DANGLING_JOB_ITEMSKU,
               SELECT_HANDLER,
-              SOLR_DEFAULT_COLLECTION_CNC),
+              SOLR_DEFAULT_COLLECTION_CNC,
+              Collections.emptyList()),
           equalTo(1L));
     } catch (Exception e) {
       e.printStackTrace();
@@ -83,7 +88,7 @@ public class DeleteDanglingProductSteps {
 
   @When("^\\[search-service] delete dangling products job has run$")
   public void deleteDanglingProductsJobHasRun() {
-    configHelper.findAndUpdateConfig("delete.unpublished.products","true");
+    configHelper.findAndUpdateConfig("delete.unpublished.products", "true");
 
     ResponseApi<GdnBaseRestResponse> response = searchServiceController.deleteDanglingProdJob();
     searchServiceData.setSearchServiceResponse(response);
@@ -92,7 +97,7 @@ public class DeleteDanglingProductSteps {
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);
-      configHelper.findAndUpdateConfig("delete.unpublished.products","false");
+      configHelper.findAndUpdateConfig("delete.unpublished.products", "false");
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -102,21 +107,24 @@ public class DeleteDanglingProductSteps {
   public void verifyThatDanglingDocsHaveRemovedFromAllTheCollections() {
     try {
       assertThat("Test Data Not deleted from SOLR",
-          solrHelper.getSolrProdCount("id:"+DANGLING_JOB_ITEMSKU,
+          solrHelper.getSolrProdCount("id:" + DANGLING_JOB_ITEMSKU,
               SELECT_HANDLER,
-              SOLR_DEFAULT_COLLECTION),
+              SOLR_DEFAULT_COLLECTION,
+              Collections.emptyList()),
           equalTo(0L));
 
       assertThat("Test Data Not deleted from SOLR in O2O coll",
-          solrHelper.getSolrProdCount("id:"+DANGLING_JOB_ITEMSKU,
+          solrHelper.getSolrProdCount("id:" + DANGLING_JOB_ITEMSKU,
               SELECT_HANDLER,
-              SOLR_DEFAULT_COLLECTION_O2O),
+              SOLR_DEFAULT_COLLECTION_O2O,
+              Collections.emptyList()),
           equalTo(0L));
 
       assertThat("Test Data Not deleted from SOLR in CNC coll",
-          solrHelper.getSolrProdCount("id:"+DANGLING_JOB_ITEMSKU,
+          solrHelper.getSolrProdCount("id:" + DANGLING_JOB_ITEMSKU,
               SELECT_HANDLER,
-              SOLR_DEFAULT_COLLECTION_CNC),
+              SOLR_DEFAULT_COLLECTION_CNC,
+              Collections.emptyList()),
           equalTo(0L));
 
     } catch (Exception e) {

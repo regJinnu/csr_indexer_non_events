@@ -2,6 +2,7 @@ package com.gdn.qa.x_search.api.test.steps;
 
 import com.gdn.qa.x_search.api.test.CucumberStepsDefinition;
 import com.gdn.qa.x_search.api.test.data.SearchServiceData;
+import com.gdn.qa.x_search.api.test.models.SolrResults;
 import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
 import com.gdn.qa.x_search.api.test.utils.ConfigHelper;
 import com.gdn.qa.x_search.api.test.utils.KafkaHelper;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.*;
@@ -74,19 +76,18 @@ public class ProductReviewEventSteps {
         SOLR_DEFAULT_COLLECTION);
     assertThat("Updating review and rating in SOLR doc failed", status, equalTo(0));
     solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
-    int reviewCount =
-        solrHelper.getSolrProd(query, SELECT_HANDLER, "reviewCount", 1, SOLR_DEFAULT_COLLECTION)
-            .get(0)
-            .getReviewCount();
-    String rating =
-        solrHelper.getSolrProd(query, SELECT_HANDLER, "rating", 1, SOLR_DEFAULT_COLLECTION)
-            .get(0)
-            .getRating();
-    reviewAndRatingTimestampBeforeEvent = solrHelper.getSolrProd(query,
+
+    SolrResults solrResults = solrHelper.getSolrProd(query,
         SELECT_HANDLER,
-        "reviewAndRatingServiceLastUpdatedTimestamp",
+        "reviewCount,rating,reviewAndRatingServiceLastUpdatedTimestamp",
         1,
-        SOLR_DEFAULT_COLLECTION).get(0).getReviewAndRatingServiceLastUpdatedTimestamp();
+        Collections.emptyList(),
+        SOLR_DEFAULT_COLLECTION).get(0);
+
+    int reviewCount = solrResults.getReviewCount();
+    String rating = solrResults.getRating();
+
+    reviewAndRatingTimestampBeforeEvent = solrResults.getReviewAndRatingServiceLastUpdatedTimestamp();
 
     assertThat("Test Product not set in SOLR", reviewCount, equalTo(100));
     assertThat("Test Product not set in SOLR", rating, equalTo("23"));
@@ -99,19 +100,19 @@ public class ProductReviewEventSteps {
         SOLR_DEFAULT_COLLECTION_O2O);
     assertThat("Updating review and rating in SOLR doc failed", statusO2O, equalTo(0));
     solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);
-    int reviewCountO2O =
-        solrHelper.getSolrProd(query, SELECT_HANDLER, "reviewCount", 1, SOLR_DEFAULT_COLLECTION_O2O)
-            .get(0)
-            .getReviewCount();
-    String ratingO2O =
-        solrHelper.getSolrProd(query, SELECT_HANDLER, "rating", 1, SOLR_DEFAULT_COLLECTION_O2O)
-            .get(0)
-            .getRating();
-    reviewAndRatingTimestampBeforeEventO2O = solrHelper.getSolrProd(query,
+
+    SolrResults solrResultsO2O = solrHelper.getSolrProd(query,
         SELECT_HANDLER,
-        "reviewAndRatingServiceLastUpdatedTimestamp",
+        "reviewCount,rating,reviewAndRatingServiceLastUpdatedTimestamp",
         1,
-        SOLR_DEFAULT_COLLECTION_O2O).get(0).getReviewAndRatingServiceLastUpdatedTimestamp();
+        Collections.emptyList(),
+        SOLR_DEFAULT_COLLECTION_O2O).get(0);
+
+    int reviewCountO2O = solrResultsO2O.getReviewCount();
+
+    String ratingO2O = solrResultsO2O.getRating();
+
+    reviewAndRatingTimestampBeforeEventO2O = solrResultsO2O.getReviewAndRatingServiceLastUpdatedTimestamp();
 
     assertThat("Test Product not set in SOLR", reviewCountO2O, equalTo(100));
     assertThat("Test Product not set in SOLR", ratingO2O, equalTo("23"));
@@ -136,38 +137,38 @@ public class ProductReviewEventSteps {
     solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);
 
     String query = searchServiceProperties.get("queryForProductReviewEvent");
-    int reviewCount =
-        solrHelper.getSolrProd(query, SELECT_HANDLER, "reviewCount", 1, SOLR_DEFAULT_COLLECTION)
-            .get(0)
-            .getReviewCount();
-    String rating =
-        solrHelper.getSolrProd(query, SELECT_HANDLER, "rating", 1, SOLR_DEFAULT_COLLECTION)
-            .get(0)
-            .getRating();
-    reviewAndRatingTimestampAfterEvent = solrHelper.getSolrProd(query,
+
+    SolrResults solrResults = solrHelper.getSolrProd(query,
         SELECT_HANDLER,
-        "reviewAndRatingServiceLastUpdatedTimestamp",
+        "reviewCount,rating,reviewAndRatingServiceLastUpdatedTimestamp",
         1,
-        SOLR_DEFAULT_COLLECTION).get(0).getReviewAndRatingServiceLastUpdatedTimestamp();
+        Collections.emptyList(),
+        SOLR_DEFAULT_COLLECTION).get(0);
+
+    int reviewCount = solrResults.getReviewCount();
+    String rating = solrResults.getRating();
+
+    reviewAndRatingTimestampAfterEvent = solrResults.getReviewAndRatingServiceLastUpdatedTimestamp();
+
     assertThat("Test Product not updated after event processing", reviewCount, equalTo(10));
     assertThat("Test Product not updated after event processing", rating, equalTo("5"));
     assertThat("reviewAndRatingTimestamp is not Updated",
         reviewAndRatingTimestampAfterEvent,
         greaterThan(reviewAndRatingTimestampBeforeEvent));
 
-    int reviewCountO2O =
-        solrHelper.getSolrProd(query, SELECT_HANDLER, "reviewCount", 1, SOLR_DEFAULT_COLLECTION_O2O)
-            .get(0)
-            .getReviewCount();
-    String ratingO2O =
-        solrHelper.getSolrProd(query, SELECT_HANDLER, "rating", 1, SOLR_DEFAULT_COLLECTION_O2O)
-            .get(0)
-            .getRating();
-    reviewAndRatingTimestampAfterEventO2O = solrHelper.getSolrProd(query,
+    SolrResults solrResultsO2O = solrHelper.getSolrProd(query,
         SELECT_HANDLER,
-        "reviewAndRatingServiceLastUpdatedTimestamp",
+        "reviewCount,rating,reviewAndRatingServiceLastUpdatedTimestamp",
         1,
-        SOLR_DEFAULT_COLLECTION_O2O).get(0).getReviewAndRatingServiceLastUpdatedTimestamp();
+        Collections.emptyList(),
+        SOLR_DEFAULT_COLLECTION_O2O).get(0);
+
+    int reviewCountO2O = solrResultsO2O.getReviewCount();
+
+    String ratingO2O = solrResultsO2O.getRating();
+
+    reviewAndRatingTimestampAfterEventO2O = solrResultsO2O.getReviewAndRatingServiceLastUpdatedTimestamp();
+
     assertThat("Test Product not updated after event processing", reviewCountO2O, equalTo(10));
     assertThat("Test Product not updated after event processing", ratingO2O, equalTo("5"));
     assertThat("reviewAndRatingTimestamp is not Updated",
@@ -291,14 +292,16 @@ public class ProductReviewEventSteps {
     assertThat("Updating review and rating in SOLR doc failed", status, equalTo(0));
     Thread.sleep(20000);
     solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
-    int reviewCount =
-        solrHelper.getSolrProd(query, SELECT_HANDLER, "reviewCount", 1, SOLR_DEFAULT_COLLECTION_CNC)
-            .get(0)
-            .getReviewCount();
-    String rating =
-        solrHelper.getSolrProd(query, SELECT_HANDLER, "rating", 1, SOLR_DEFAULT_COLLECTION_CNC)
-            .get(0)
-            .getRating();
+
+    SolrResults solrResults = solrHelper.getSolrProd(query,
+        SELECT_HANDLER,
+        "reviewCount,rating",
+        1,
+        Collections.emptyList(),
+        SOLR_DEFAULT_COLLECTION_CNC).get(0);
+
+    int reviewCount = solrResults.getReviewCount();
+    String rating = solrResults.getRating();
 
     assertThat("Test Product not set in SOLR", reviewCount, equalTo(100));
     assertThat("Test Product not set in SOLR", rating, equalTo("23"));
@@ -311,14 +314,16 @@ public class ProductReviewEventSteps {
     solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
 
     String query = searchServiceProperties.get("queryForProductReviewEventCNC");
-    int reviewCount =
-        solrHelper.getSolrProd(query, SELECT_HANDLER, "reviewCount", 1, SOLR_DEFAULT_COLLECTION_CNC)
-            .get(0)
-            .getReviewCount();
-    String rating =
-        solrHelper.getSolrProd(query, SELECT_HANDLER, "rating", 1, SOLR_DEFAULT_COLLECTION_CNC)
-            .get(0)
-            .getRating();
+
+    SolrResults solrResults = solrHelper.getSolrProd(query,
+        SELECT_HANDLER,
+        "reviewCount,rating",
+        1,
+        Collections.emptyList(),
+        SOLR_DEFAULT_COLLECTION_CNC).get(0);
+
+    int reviewCount = solrResults.getReviewCount();
+    String rating = solrResults.getRating();
 
     assertThat("Test Product not updated after event processing", reviewCount, equalTo(0));
     assertThat("Test Product not updated after event processing", rating, equalTo("0"));

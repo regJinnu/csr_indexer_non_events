@@ -5,6 +5,7 @@ import com.gdn.qa.automation.core.restassured.ResponseApi;
 import com.gdn.qa.x_search.api.test.CucumberStepsDefinition;
 import com.gdn.qa.x_search.api.test.api.services.SearchServiceController;
 import com.gdn.qa.x_search.api.test.data.SearchServiceData;
+import com.gdn.qa.x_search.api.test.models.SolrResults;
 import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
 import com.gdn.qa.x_search.api.test.utils.ConfigHelper;
 import com.gdn.qa.x_search.api.test.utils.KafkaHelper;
@@ -101,23 +102,18 @@ public class ItemChangeEventSteps {
           equalTo(0));
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
-      double offerPrice = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      SolrResults solrResults = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
-          "offerPrice",
+          "offerPrice,listPrice,lastUpdatedTime",
           1,
-          SOLR_DEFAULT_COLLECTION).get(0).getOfferPrice();
+          Collections.emptyList(),
+          SOLR_DEFAULT_COLLECTION).get(0);
 
-      double listPrice = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "listPrice",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getListPrice();
+      double offerPrice = solrResults.getOfferPrice();
 
-      Long lastUpdatedTime = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "lastUpdatedTime",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getLastUpdatedTime();
+      double listPrice = solrResults.getListPrice();
+
+      Long lastUpdatedTime = solrResults.getLastUpdatedTime();
 
       log.warn("------Normal coll offerPrice--{}---listPrice--{}---}", offerPrice, listPrice);
       assertThat("offer price not set", offerPrice, equalTo(4545455.45));
@@ -133,37 +129,31 @@ public class ItemChangeEventSteps {
               SOLR_DEFAULT_COLLECTION_O2O);
       assertThat("Updating SOLR fields for test failed", statusOfO2OCollectionUpdate, equalTo(0));
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);
-      offerPriceInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "offerPrice",
-          1,
-          SOLR_DEFAULT_COLLECTION_O2O).get(0).getOfferPrice();
 
-      listPriceInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      SolrResults solrResultsO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
-          "listPrice",
+          "offerPrice,listPrice,lastUpdatedTime",
           1,
-          SOLR_DEFAULT_COLLECTION_O2O).get(0).getListPrice();
+          Collections.emptyList(),
+          SOLR_DEFAULT_COLLECTION_O2O).get(0);
 
-      Long lastUpdatedTimeInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "lastUpdatedTime",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getLastUpdatedTime();
+      offerPriceInO2O = solrResultsO2O.getOfferPrice();
 
-      log.warn("------{O2O COLL offerPrice--{}---listPrice--{}---}",
+      listPriceInO2O = solrResultsO2O.getListPrice();
+
+      long lastUpdatedTimeInO2O = solrResultsO2O.getLastUpdatedTime();
+
+      log.warn("------O2O COLL offerPrice--{}---listPrice--{}---lastUpdatedTimeInO2O-{}",
           offerPriceInO2O,
-          listPriceInO2O);
+          listPriceInO2O,
+          lastUpdatedTimeInO2O);
+
       assertThat("offer price not set", offerPriceInO2O, equalTo(4545455.45));
       assertThat("list price not set", listPriceInO2O, equalTo(4545455.50));
-      assertThat("Test Product not set in SOLR", lastUpdatedTime, equalTo(1234l));
+      assertThat("Test Product not set in SOLR", lastUpdatedTimeInO2O, equalTo(1234l));
 
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);
-    } catch (IOException e) {
-      e.printStackTrace();
-    } catch (SolrServerException e) {
-      e.printStackTrace();
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -192,17 +182,16 @@ public class ItemChangeEventSteps {
             equalTo(0));
         solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
-        double offerPrice = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+        SolrResults solrResults = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
             SELECT_HANDLER,
-            "offerPrice",
+            "offerPrice,listPrice",
             1,
-            SOLR_DEFAULT_COLLECTION).get(0).getOfferPrice();
+            Collections.emptyList(),
+            SOLR_DEFAULT_COLLECTION).get(0);
 
-        double listPrice = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-            SELECT_HANDLER,
-            "listPrice",
-            1,
-            SOLR_DEFAULT_COLLECTION).get(0).getListPrice();
+        double offerPrice = solrResults.getOfferPrice();
+
+        double listPrice = solrResults.getListPrice();
 
         log.warn("------offerPrice--{}---listPrice--{}---}", offerPrice, listPrice);
         assertThat("offer price not set", offerPrice, equalTo(4545455.45));
@@ -218,25 +207,20 @@ public class ItemChangeEventSteps {
         assertThat("Updating SOLR fields for test failed", statusOfO2OCollectionUpdate, equalTo(0));
         solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);
 
-        double offerPriceInO2Ocoll = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+        SolrResults solrResultsO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
             SELECT_HANDLER,
-            "offerPrice",
+            "offerPrice,listPrice",
             1,
-            SOLR_DEFAULT_COLLECTION_O2O).get(0).getOfferPrice();
+            Collections.emptyList(),
+            SOLR_DEFAULT_COLLECTION_O2O).get(0);
 
-        double listPriceInO2Ocoll = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-            SELECT_HANDLER,
-            "listPrice",
-            1,
-            SOLR_DEFAULT_COLLECTION_O2O).get(0).getListPrice();
+        double offerPriceInO2Ocoll = solrResultsO2O.getOfferPrice();
+
+        double listPriceInO2Ocoll = solrResultsO2O.getListPrice();
 
         log.warn("------offerPrice--{}---listPrice--{}---}", offerPrice, listPrice);
         assertThat("offer price not set", offerPriceInO2Ocoll, equalTo(4545455.45));
         assertThat("list price not set", listPriceInO2Ocoll, equalTo(4545455.50));
-      } catch (IOException e) {
-        e.printStackTrace();
-      } catch (SolrServerException e) {
-        e.printStackTrace();
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -262,17 +246,17 @@ public class ItemChangeEventSteps {
             equalTo(0));
         solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
-        double offerPrice = solrHelper.getSolrProd("id:" + searchServiceData.getDefCncItemSku1(),
-            SELECT_HANDLER,
-            "offerPrice",
-            1,
-            SOLR_DEFAULT_COLLECTION).get(0).getOfferPrice();
+        SolrResults solrResults =
+            solrHelper.getSolrProd("id:" + searchServiceData.getDefCncItemSku1(),
+                SELECT_HANDLER,
+                "offerPrice,listPrice",
+                1,
+                Collections.emptyList(),
+                SOLR_DEFAULT_COLLECTION).get(0);
 
-        double listPrice = solrHelper.getSolrProd("id:" + searchServiceData.getDefCncItemSku1(),
-            SELECT_HANDLER,
-            "listPrice",
-            1,
-            SOLR_DEFAULT_COLLECTION).get(0).getListPrice();
+        double offerPrice = solrResults.getOfferPrice();
+
+        double listPrice = solrResults.getListPrice();
 
         log.warn("------offerPrice--{}---listPrice--{}---}", offerPrice, listPrice);
         assertThat("offer price not set", offerPrice, equalTo(4545455.45));
@@ -288,25 +272,21 @@ public class ItemChangeEventSteps {
         assertThat("Updating SOLR fields for test failed", statusOfCNCCollectionUpdate, equalTo(0));
         solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
 
-        double offerPriceInCNCcoll = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-            SELECT_HANDLER,
-            "offerPrice",
-            1,
-            SOLR_DEFAULT_COLLECTION_CNC).get(0).getOfferPrice();
+        SolrResults solrResultsCNC =
+            solrHelper.getSolrProd("id:" + searchServiceData.getDefCncItemSku1(),
+                SELECT_HANDLER,
+                "offerPrice,listPrice",
+                1,
+                Collections.emptyList(),
+                SOLR_DEFAULT_COLLECTION_CNC).get(0);
 
-        double listPriceInCNCcoll = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-            SELECT_HANDLER,
-            "listPrice",
-            1,
-            SOLR_DEFAULT_COLLECTION_CNC).get(0).getListPrice();
+        double offerPriceInCNCcoll = solrResultsCNC.getOfferPrice();
+
+        double listPriceInCNCcoll = solrResultsCNC.getListPrice();
 
         log.warn("------offerPrice--{}---listPrice--{}---}", offerPrice, listPrice);
         assertThat("offer price not set", offerPriceInCNCcoll, equalTo(4545455.45));
         assertThat("list price not set", listPriceInCNCcoll, equalTo(4545455.50));
-      } catch (IOException e) {
-        e.printStackTrace();
-      } catch (SolrServerException e) {
-        e.printStackTrace();
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -317,41 +297,25 @@ public class ItemChangeEventSteps {
   public void priceInformationIsUpdatedForitemChangeEventTypeAndNoDiscountSchedule(String type,
       String status) {
     try {
-      offerPrice = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "offerPrice",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getOfferPrice();
 
-      listPrice = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      SolrResults solrResults = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
-          "listPrice",
+          "offerPrice,listPrice,salePrice,discount,discountString,lastUpdatedTime",
           1,
-          SOLR_DEFAULT_COLLECTION).get(0).getListPrice();
+          Collections.emptyList(),
+          SOLR_DEFAULT_COLLECTION).get(0);
 
-      salePrice = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "salePrice",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getSalePrice();
+      offerPrice = solrResults.getOfferPrice();
 
-      discount = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "discount",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getDiscount();
+      listPrice = solrResults.getListPrice();
 
-      discountString = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "discountString",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getDiscountString();
+      salePrice = solrResults.getSalePrice();
 
-      lastUpdatedTime = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "lastUpdatedTime",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getLastUpdatedTime();
+      discount = solrResults.getDiscount();
+
+      discountString = solrResults.getDiscountString();
+
+      lastUpdatedTime = solrResults.getLastUpdatedTime();
 
 
       log.warn("------offerPrice--{}---listPrice--{}---salePrice--{}---lastUpdatedTime---{}---",
@@ -361,41 +325,24 @@ public class ItemChangeEventSteps {
           lastUpdatedTime);
       log.warn("------discount--{}---discountString--{}---}", discount, discountString);
 
-      offerPriceInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      SolrResults solrResultsO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
-          "offerPrice",
+          "offerPrice,listPrice,salePrice,discount,discountString,lastUpdatedTime",
           1,
-          SOLR_DEFAULT_COLLECTION_O2O).get(0).getOfferPrice();
+          Collections.emptyList(),
+          SOLR_DEFAULT_COLLECTION_O2O).get(0);
 
-      listPriceInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "listPrice",
-          1,
-          SOLR_DEFAULT_COLLECTION_O2O).get(0).getListPrice();
+      offerPriceInO2O = solrResultsO2O.getOfferPrice();
 
-      salePriceInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "salePrice",
-          1,
-          SOLR_DEFAULT_COLLECTION_O2O).get(0).getSalePrice();
+      listPriceInO2O = solrResultsO2O.getListPrice();
 
-      discountInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "discount",
-          1,
-          SOLR_DEFAULT_COLLECTION_O2O).get(0).getDiscount();
+      salePriceInO2O = solrResultsO2O.getSalePrice();
 
-      discountStringInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "discountString",
-          1,
-          SOLR_DEFAULT_COLLECTION_O2O).get(0).getDiscountString();
+      discountInO2O = solrResultsO2O.getDiscount();
 
-      lastUpdatedTimeInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "lastUpdatedTime",
-          1,
-          SOLR_DEFAULT_COLLECTION_O2O).get(0).getLastUpdatedTime();
+      discountStringInO2O = solrResultsO2O.getDiscountString();
+
+      lastUpdatedTimeInO2O = solrResultsO2O.getLastUpdatedTime();
 
       log.warn(
           "------offerPriceInO2O--{}---listPriceInO2O--{}---salePriceInO2O--{}-lastUpdatedTimeInO2O--{}--",
@@ -412,19 +359,19 @@ public class ItemChangeEventSteps {
     if (type.toLowerCase().trim().equals("no") && status.equals("false")) {
       assertThat("offer price not set", offerPrice, equalTo(9000.0));
       assertThat("list price not set", listPrice, equalTo(10000.0));
-      assertThat("lastUpdatedTime not set in SOLR", lastUpdatedTime, not(equalTo(1234l)));
+      assertThat("lastUpdatedTime not set in SOLR", lastUpdatedTime, not(equalTo(1234L)));
       assertThat("offer price not set", offerPriceInO2O, not(equalTo(9000.0)));
       assertThat("list price not set", listPriceInO2O, not(equalTo(10000.0)));
-      assertThat("lastUpdatedTime not set in SOLR", lastUpdatedTimeInO2O, (equalTo(1234l)));
+      assertThat("lastUpdatedTime not set in SOLR", lastUpdatedTimeInO2O, (equalTo(1234L)));
     }
 
     if (type.toLowerCase().trim().equals("no") && status.equals("true")) {
       assertThat("offer price not set", offerPrice, equalTo(9000.0));
       assertThat("list price not set", listPrice, equalTo(10000.0));
-      assertThat("lastUpdatedTime not set in SOLR", lastUpdatedTime, not(equalTo(1234l)));
+      assertThat("lastUpdatedTime not set in SOLR", lastUpdatedTime, not(equalTo(1234L)));
       assertThat("offer price not set", offerPriceInO2O, equalTo(9000.0));
       assertThat("list price not set", listPriceInO2O, equalTo(10000.0));
-      assertThat("lastUpdatedTime not set in SOLR", lastUpdatedTimeInO2O, not(equalTo(1234l)));
+      assertThat("lastUpdatedTime not set in SOLR", lastUpdatedTimeInO2O, not(equalTo(1234L)));
     }
 
     if (type.toLowerCase().trim().equals("valid") && status.equals("false")) {
@@ -434,8 +381,8 @@ public class ItemChangeEventSteps {
       assertThat("sale price not set", salePriceInO2O, not(equalTo(8900.0)));
       assertThat("discount not set", discountStringInO2O, not(equalTo("11")));
       assertThat("discount not set", discountInO2O, not(equalTo(11.0)));
-      assertThat("lastUpdatedTime not set in SOLR", lastUpdatedTime, not(equalTo(1234l)));
-      assertThat("lastUpdatedTime not set in SOLR", lastUpdatedTimeInO2O, (equalTo(1234l)));
+      assertThat("lastUpdatedTime not set in SOLR", lastUpdatedTime, not(equalTo(1234L)));
+      assertThat("lastUpdatedTime not set in SOLR", lastUpdatedTimeInO2O, (equalTo(1234L)));
     }
 
     if (type.toLowerCase().trim().equals("valid") && status.equals("true")) {
@@ -445,8 +392,8 @@ public class ItemChangeEventSteps {
       assertThat("sale price not set", salePriceInO2O, equalTo(8900.0));
       assertThat("discount not set", discountStringInO2O, equalTo("11"));
       assertThat("discount not set", discountInO2O, equalTo(11.0));
-      assertThat("lastUpdatedTime not set in SOLR", lastUpdatedTime, not(equalTo(1234l)));
-      assertThat("lastUpdatedTime not set in SOLR", lastUpdatedTimeInO2O, not(equalTo(1234l)));
+      assertThat("lastUpdatedTime not set in SOLR", lastUpdatedTime, not(equalTo(1234L)));
+      assertThat("lastUpdatedTime not set in SOLR", lastUpdatedTimeInO2O, not(equalTo(1234L)));
     }
 
     if (type.toLowerCase().trim().equals("invalid") && status.equals("false")) {
@@ -456,8 +403,8 @@ public class ItemChangeEventSteps {
       assertThat("sale price not set", salePriceInO2O, not(equalTo(9000.0)));
       assertThat("discount not set", discountStringInO2O, not(equalTo("10")));
       assertThat("discount not set", discountInO2O, not(equalTo(10.0)));
-      assertThat("lastUpdatedTime not set in SOLR", lastUpdatedTime, not(equalTo(1234l)));
-      assertThat("lastUpdatedTime not set in SOLR", lastUpdatedTimeInO2O, (equalTo(1234l)));
+      assertThat("lastUpdatedTime not set in SOLR", lastUpdatedTime, not(equalTo(1234L)));
+      assertThat("lastUpdatedTime not set in SOLR", lastUpdatedTimeInO2O, (equalTo(1234L)));
     }
 
     if (type.toLowerCase().trim().equals("invalid") && status.equals("true")) {
@@ -467,8 +414,8 @@ public class ItemChangeEventSteps {
       assertThat("sale price not set", salePriceInO2O, equalTo(9000.0));
       assertThat("discount not set", discountStringInO2O, equalTo("10"));
       assertThat("discount not set", discountInO2O, equalTo(10.0));
-      assertThat("lastUpdatedTime not set in SOLR", lastUpdatedTime, not(equalTo(1234l)));
-      assertThat("lastUpdatedTime not set in SOLR", lastUpdatedTimeInO2O, not(equalTo(1234l)));
+      assertThat("lastUpdatedTime not set in SOLR", lastUpdatedTime, not(equalTo(1234L)));
+      assertThat("lastUpdatedTime not set in SOLR", lastUpdatedTimeInO2O, not(equalTo(1234L)));
     }
     unInitialize();
   }
@@ -518,12 +465,14 @@ public class ItemChangeEventSteps {
       assertThat("Test Data Not inserted in SOLR",
           solrHelper.getSolrProdCount("id:AAA-60015-00008-00001",
               SELECT_HANDLER,
-              SOLR_DEFAULT_COLLECTION),
+              SOLR_DEFAULT_COLLECTION,
+              Collections.emptyList()),
           equalTo(1L));
       assertThat("Test Data Not inserted in SOLR",
           solrHelper.getSolrProdCount("id:AAA-60015-00008-00001",
               SELECT_HANDLER,
-              SOLR_DEFAULT_COLLECTION_O2O),
+              SOLR_DEFAULT_COLLECTION_O2O,
+              Collections.emptyList()),
           equalTo(1L));
     } catch (Exception e) {
       e.printStackTrace();
@@ -628,32 +577,32 @@ public class ItemChangeEventSteps {
       assertThat("Test Data Not deleted from SOLR",
           solrHelper.getSolrProdCount("id:" + DANGLING_JOB_ITEMSKU,
               SELECT_HANDLER,
-              SOLR_DEFAULT_COLLECTION),
+              SOLR_DEFAULT_COLLECTION,Collections.emptyList()),
           equalTo(0L));
       assertThat("Test Data deleted from SOLR",
           solrHelper.getSolrProdCount("id:" + DANGLING_JOB_ITEMSKU_2,
               SELECT_HANDLER,
-              SOLR_DEFAULT_COLLECTION),
+              SOLR_DEFAULT_COLLECTION,Collections.emptyList()),
           equalTo(1L));
       assertThat("Test Data Not deleted from SOLR",
           solrHelper.getSolrProdCount("id:" + DANGLING_JOB_ITEMSKU,
               SELECT_HANDLER,
-              SOLR_DEFAULT_COLLECTION_O2O),
+              SOLR_DEFAULT_COLLECTION_O2O,Collections.emptyList()),
           equalTo(0L));
       assertThat("Test Data deleted from SOLR",
           solrHelper.getSolrProdCount("id:" + DANGLING_JOB_ITEMSKU_2,
               SELECT_HANDLER,
-              SOLR_DEFAULT_COLLECTION_O2O),
+              SOLR_DEFAULT_COLLECTION_O2O,Collections.emptyList()),
           equalTo(1L));
       assertThat("Test Data deleted from SOLR",
-          solrHelper.getSolrProdCount("id:"+DANGLING_JOB_CNC_ITEMSKU,
+          solrHelper.getSolrProdCount("id:" + DANGLING_JOB_CNC_ITEMSKU,
               SELECT_HANDLER,
-              SOLR_DEFAULT_COLLECTION_CNC),
+              SOLR_DEFAULT_COLLECTION_CNC,Collections.emptyList()),
           equalTo(0L));
       assertThat("Test Data deleted from SOLR",
-          solrHelper.getSolrProdCount("id:"+DANGLING_JOB_CNC_ITEMSKU2,
+          solrHelper.getSolrProdCount("id:" + DANGLING_JOB_CNC_ITEMSKU2,
               SELECT_HANDLER,
-              SOLR_DEFAULT_COLLECTION_CNC),
+              SOLR_DEFAULT_COLLECTION_CNC,Collections.emptyList()),
           equalTo(1L));
     } catch (Exception e) {
       e.printStackTrace();
@@ -666,34 +615,34 @@ public class ItemChangeEventSteps {
       assertThat("Test Data Not deleted from SOLR",
           solrHelper.getSolrProdCount("id:" + DANGLING_JOB_ITEMSKU,
               SELECT_HANDLER,
-              SOLR_DEFAULT_COLLECTION),
+              SOLR_DEFAULT_COLLECTION,Collections.emptyList()),
           equalTo(0L));
       assertThat("Test Data deleted from SOLR",
           solrHelper.getSolrProdCount("id:" + DANGLING_JOB_ITEMSKU_2,
               SELECT_HANDLER,
-              SOLR_DEFAULT_COLLECTION),
+              SOLR_DEFAULT_COLLECTION,Collections.emptyList()),
           equalTo(0L));
 
       assertThat("Test Data Not deleted from SOLR",
           solrHelper.getSolrProdCount("id:" + DANGLING_JOB_ITEMSKU,
               SELECT_HANDLER,
-              SOLR_DEFAULT_COLLECTION_CNC),
+              SOLR_DEFAULT_COLLECTION_CNC,Collections.emptyList()),
           equalTo(0L));
       assertThat("Test Data deleted from SOLR",
           solrHelper.getSolrProdCount("id:" + DANGLING_JOB_ITEMSKU_2,
               SELECT_HANDLER,
-              SOLR_DEFAULT_COLLECTION_CNC),
+              SOLR_DEFAULT_COLLECTION_CNC,Collections.emptyList()),
           equalTo(0L));
 
       assertThat("Test Data Not deleted from SOLR",
           solrHelper.getSolrProdCount("id:" + DANGLING_JOB_ITEMSKU,
               SELECT_HANDLER,
-              SOLR_DEFAULT_COLLECTION_O2O),
+              SOLR_DEFAULT_COLLECTION_O2O,Collections.emptyList()),
           equalTo(0L));
       assertThat("Test Data deleted from SOLR",
           solrHelper.getSolrProdCount("id:" + DANGLING_JOB_ITEMSKU_2,
               SELECT_HANDLER,
-              SOLR_DEFAULT_COLLECTION_O2O),
+              SOLR_DEFAULT_COLLECTION_O2O,Collections.emptyList()),
           equalTo(0L));
 
     } catch (Exception e) {
@@ -788,32 +737,32 @@ public class ItemChangeEventSteps {
     double offerPrice = 0;
     if (other.equals("O2O")) {
       try {
-        offerPrice = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-            SELECT_HANDLER,
-            "offerPrice",
-            1,
-            SOLR_DEFAULT_COLLECTION).get(0).getOfferPrice();
 
-        double listPrice = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+        SolrResults solrResults = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
             SELECT_HANDLER,
-            "listPrice",
+            "offerPrice,listPrice",
             1,
-            SOLR_DEFAULT_COLLECTION).get(0).getListPrice();
+            Collections.emptyList(),
+            SOLR_DEFAULT_COLLECTION).get(0);
+
+        offerPrice = solrResults.getOfferPrice();
+
+        double listPrice = solrResults.getListPrice();
+
         log.warn("------offerPrice--{}---listPrice--{}---}", offerPrice, listPrice);
         assertThat("offer price not set", offerPrice, not(equalTo(4545455.45)));
         assertThat("list price not set", listPrice, not(equalTo(4545455.50)));
 
-        double offerPriceInO2Ocoll = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+        SolrResults solrResultsO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
             SELECT_HANDLER,
-            "offerPrice",
+            "offerPrice,listPrice",
             1,
-            SOLR_DEFAULT_COLLECTION_O2O).get(0).getOfferPrice();
+            Collections.emptyList(),
+            SOLR_DEFAULT_COLLECTION_O2O).get(0);
 
-        double listPriceInO2Ocoll = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-            SELECT_HANDLER,
-            "listPrice",
-            1,
-            SOLR_DEFAULT_COLLECTION_O2O).get(0).getListPrice();
+        double offerPriceInO2Ocoll = solrResultsO2O.getOfferPrice();
+
+        double listPriceInO2Ocoll = solrResultsO2O.getListPrice();
 
         log.warn("------offerPrice--{}---listPrice--{}---}", offerPrice, listPrice);
         assertThat("offer price not set", offerPriceInO2Ocoll, not(equalTo(4545455.45)));
@@ -825,37 +774,36 @@ public class ItemChangeEventSteps {
 
       if (other.equals("CNC")) {
         try {
-          offerPrice = solrHelper.getSolrProd("id:" + searchServiceData.getDefCncItemSku1(),
-              SELECT_HANDLER,
-              "offerPrice",
-              1,
-              SOLR_DEFAULT_COLLECTION).get(0).getOfferPrice();
 
-          double listPrice = solrHelper.getSolrProd("id:" + searchServiceData.getDefCncItemSku1(),
-              SELECT_HANDLER,
-              "listPrice",
-              1,
-              SOLR_DEFAULT_COLLECTION).get(0).getListPrice();
+          SolrResults solrResults =
+              solrHelper.getSolrProd("id:" + searchServiceData.getDefCncItemSku1(),
+                  SELECT_HANDLER,
+                  "offerPrice,listPrice",
+                  1,
+                  Collections.emptyList(),
+                  SOLR_DEFAULT_COLLECTION).get(0);
+
+          offerPrice = solrResults.getOfferPrice();
+
+          double listPrice = solrResults.getListPrice();
+
           log.warn("------offerPrice--{}---listPrice--{}---}", offerPrice, listPrice);
 
           assertThat("offer price not set", offerPrice, not(equalTo(4545455.45)));
           assertThat("list price not set", listPrice, not(equalTo(4545455.50)));
 
-          double offerPriceInCNCcoll = solrHelper.getSolrProd(
+          SolrResults solrResultsCNC = solrHelper.getSolrProd(
               "id:" + searchServiceData.getDefCncItemSku1()
                   + searchServiceData.getPickupPointCode(),
               SELECT_HANDLER,
-              "offerPrice",
+              "offerPrice,listPrice",
               1,
-              SOLR_DEFAULT_COLLECTION_CNC).get(0).getOfferPrice();
+              Collections.emptyList(),
+              SOLR_DEFAULT_COLLECTION_CNC).get(0);
 
-          double listPriceInCNCcoll = solrHelper.getSolrProd(
-              "id:" + searchServiceData.getDefCncItemSku1()
-                  + searchServiceData.getPickupPointCode(),
-              SELECT_HANDLER,
-              "listPrice",
-              1,
-              SOLR_DEFAULT_COLLECTION_CNC).get(0).getListPrice();
+          double offerPriceInCNCcoll = solrResultsCNC.getOfferPrice();
+
+          double listPriceInCNCcoll = solrResultsCNC.getListPrice();
 
           log.warn("------offerPrice--{}---listPrice--{}---}", offerPrice, listPrice);
           assertThat("offer price not set", offerPriceInCNCcoll, not(equalTo(4545455.45)));
@@ -888,17 +836,16 @@ public class ItemChangeEventSteps {
       assertThat("Updating SOLR fields for test failed", status, equalTo(0));
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
-      int off2On = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      SolrResults solrResults = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
-          "off2On",
+          "off2On,lastUpdatedTime",
           1,
-          SOLR_DEFAULT_COLLECTION).get(0).getOff2On();
+          Collections.emptyList(),
+          SOLR_DEFAULT_COLLECTION).get(0);
 
-      lastUpdatedTime = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "lastUpdatedTime",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getLastUpdatedTime();
+      int off2On = solrResults.getOff2On();
+
+      lastUpdatedTime = solrResults.getLastUpdatedTime();
 
       log.warn("------off2on--{}------lastUpdatedTime------{}-----}", off2On, lastUpdatedTime);
       assertThat("off2on not set", off2On, equalTo(4));
@@ -914,17 +861,16 @@ public class ItemChangeEventSteps {
       assertThat("Updating SOLR fields for test failed In O2O coll", status, equalTo(0));
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);
 
-      int off2OnInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      SolrResults solrResultsO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
-          "off2On",
+          "off2On,lastUpdatedTime",
           1,
-          SOLR_DEFAULT_COLLECTION_O2O).get(0).getOff2On();
+          Collections.emptyList(),
+          SOLR_DEFAULT_COLLECTION_O2O).get(0);
 
-      lastUpdatedTimeInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "lastUpdatedTime",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getLastUpdatedTime();
+      int off2OnInO2O = solrResultsO2O.getOff2On();
+
+      lastUpdatedTimeInO2O = solrResultsO2O.getLastUpdatedTime();
 
       log.warn("------off2on--{}------lastUpdatedTime------{}-----}", off2On, lastUpdatedTimeInO2O);
       assertThat("off2on not set InO2O", off2OnInO2O, equalTo(4));
@@ -942,18 +888,16 @@ public class ItemChangeEventSteps {
           equalTo(0));
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
-      int statusOfNormalProdInSolr = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      SolrResults solrResults1 = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
-          "off2On",
+          "off2On,lastUpdatedTime",
           1,
-          SOLR_DEFAULT_COLLECTION_O2O).get(0).getOff2On();
+          Collections.emptyList(),
+          SOLR_DEFAULT_COLLECTION_O2O).get(0);
 
-      Long lastUpdatedTimeInNormalProd =
-          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-              SELECT_HANDLER,
-              "lastUpdatedTime",
-              1,
-              SOLR_DEFAULT_COLLECTION).get(0).getLastUpdatedTime();
+      int statusOfNormalProdInSolr = solrResults1.getOff2On();
+
+      Long lastUpdatedTimeInNormalProd = solrResults1.getLastUpdatedTime();
 
       log.warn("------off2on--{}------lastUpdatedTime------{}-----}",
           off2On,
@@ -998,32 +942,30 @@ public class ItemChangeEventSteps {
   @Then("^\\[search-service] o2o flag is updated to '(.*)'$")
   public void checkO2OFlag(boolean flag) {
     try {
-      if (flag == true) {
-        int off2On = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      if (flag) {
+        SolrResults solrResults = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
             SELECT_HANDLER,
-            "off2On",
+            "off2On,lastUpdatedTime",
             1,
-            SOLR_DEFAULT_COLLECTION).get(0).getOff2On();
+            Collections.emptyList(),
+            SOLR_DEFAULT_COLLECTION).get(0);
+
+        int off2On = solrResults.getOff2On();
+        lastUpdatedTime = solrResults.getLastUpdatedTime();
+
         log.warn("------off2on--{}----lastUpdatedTime{}--", off2On, lastUpdatedTime);
         assertThat("off2on not set", off2On, equalTo(1));
 
-        lastUpdatedTime = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+        SolrResults solrResultsO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
             SELECT_HANDLER,
-            "lastUpdatedTime",
+            "off2On,lastUpdatedTime",
             1,
-            SOLR_DEFAULT_COLLECTION).get(0).getLastUpdatedTime();
+            Collections.emptyList(),
+            SOLR_DEFAULT_COLLECTION_O2O).get(0);
 
-        int off2OnInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-            SELECT_HANDLER,
-            "off2On",
-            1,
-            SOLR_DEFAULT_COLLECTION_O2O).get(0).getOff2On();
+        int off2OnInO2O = solrResultsO2O.getOff2On();
 
-        lastUpdatedTimeInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-            SELECT_HANDLER,
-            "lastUpdatedTime",
-            1,
-            SOLR_DEFAULT_COLLECTION).get(0).getLastUpdatedTime();
+        lastUpdatedTimeInO2O = solrResultsO2O.getLastUpdatedTime();
 
         log.warn("------off2on In O2O--{}---lastUpdatedTimeInO2O---{}------",
             off2OnInO2O,
@@ -1033,19 +975,18 @@ public class ItemChangeEventSteps {
         assertThat("last updated time is not set", lastUpdatedTimeInO2O, not(equalTo(1234l)));
 
       }
-      if (flag == false) {
-        int off2OnInNormalColl =
+      if (!flag) {
+        SolrResults solrResults =
             solrHelper.getSolrProd("id:" + searchServiceData.getNormalProductItemsku(),
                 SELECT_HANDLER,
-                "off2On",
+                "off2On,lastUpdatedTime",
                 1,
-                SOLR_DEFAULT_COLLECTION).get(0).getOff2On();
+                Collections.emptyList(),
+                SOLR_DEFAULT_COLLECTION).get(0);
 
-        lastUpdatedTime = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-            SELECT_HANDLER,
-            "lastUpdatedTime",
-            1,
-            SOLR_DEFAULT_COLLECTION).get(0).getLastUpdatedTime();
+        int off2OnInNormalColl =solrResults.getOff2On();
+
+        lastUpdatedTime = solrResults.getLastUpdatedTime();
 
         log.warn("------off2on--{}------", off2OnInNormalColl);
         assertThat("off2on not set", off2OnInNormalColl, equalTo(0));
@@ -1069,7 +1010,7 @@ public class ItemChangeEventSteps {
       boolean isSynchronised = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
           "isSynchronised",
-          1,
+          1,Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION).get(0).isSynchronised();
 
       assertThat("isSynchronised not set to true", isSynchronised, equalTo(true));
@@ -1077,7 +1018,7 @@ public class ItemChangeEventSteps {
       boolean isSynchronisedInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
           "isSynchronised",
-          1,
+          1,Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION_O2O).get(0).isSynchronised();
       assertThat("isSynchronised not set to true In O2O", isSynchronisedInO2O, equalTo(true));
     } catch (Exception e) {
@@ -1194,7 +1135,7 @@ public class ItemChangeEventSteps {
       boolean isSynchronised = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
           "isSynchronised",
-          1,
+          1,Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION).get(0).isSynchronised();
       assertThat("isSynchronised is set to true", isSynchronised, equalTo(false));
 
@@ -1202,7 +1143,7 @@ public class ItemChangeEventSteps {
         boolean isSynchronisedInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
             SELECT_HANDLER,
             "isSynchronised",
-            1,
+            1,Collections.emptyList(),
             SOLR_DEFAULT_COLLECTION_O2O).get(0).isSynchronised();
         assertThat("isSynchronised is set to true In O2O", isSynchronisedInO2O, equalTo(false));
       }
@@ -1220,13 +1161,13 @@ public class ItemChangeEventSteps {
       String level0Id = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
           "level0Id",
-          1,
+          1,Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION).get(0).getLevel0Id();
 
       String level0IdInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
           "level0Id",
-          1,
+          1,Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION_O2O).get(0).getLevel0Id();
 
       if (type.trim().toLowerCase().equals("productsku") && (flag.equals("false"))) {
@@ -1264,34 +1205,32 @@ public class ItemChangeEventSteps {
     searchServiceData.setQueryForReindex(searchServiceProperties.get("queryForReindex"));
     searchServiceData.setProductCodeForReindex(searchServiceProperties.get("productCodeForReindex"));
     try {
-      String name = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      SolrResults solrResults = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
-          "nameSearch",
+          "nameSearch,level0Id",
           1,
-          SOLR_DEFAULT_COLLECTION).get(0).getNameSearch();
+          Collections.emptyList(),
+          SOLR_DEFAULT_COLLECTION).get(0);
 
-      String level0Id = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "level0Id",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getLevel0Id();
+      String name = solrResults.getNameSearch();
+
+      String level0Id = solrResults.getLevel0Id();
 
       assertThat("Name is not set", name, not(equalTo("Pristine Product Testing")));
       assertThat("Level0Id is not set",
           level0Id,
           equalTo(searchServiceData.getProductCodeForReindex()));
 
-      String nameInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      SolrResults solrResultsO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
-          "nameSearch",
+          "nameSearch,level0Id",
           1,
-          SOLR_DEFAULT_COLLECTION_O2O).get(0).getNameSearch();
+          Collections.emptyList(),
+          SOLR_DEFAULT_COLLECTION_O2O).get(0);
 
-      String level0IdInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "level0Id",
-          1,
-          SOLR_DEFAULT_COLLECTION_O2O).get(0).getLevel0Id();
+      String nameInO2O = solrResultsO2O.getNameSearch();
+
+      String level0IdInO2O = solrResultsO2O.getLevel0Id();
 
       assertThat("Name is not set", nameInO2O, not(equalTo("Pristine Product Testing")));
       assertThat("Level0Id is not set",
@@ -1407,35 +1346,23 @@ public class ItemChangeEventSteps {
   @Then("^\\[search-service] pristine name,id and sales catalog is updated accordingly and offToOn flag as '(.*)'$")
   public void pristineNameIdAndSalesCatalogIsUpdatedAccordingly(String flag) {
     try {
-      String name = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "nameSearch",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getNameSearch();
 
-      String level0Id = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      SolrResults solrResults = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
-          "level0Id",
+          "nameSearch,level0Id,salesCatalogCategoryIdDescHierarchy,categorySequenceTE-100003,description",
           1,
-          SOLR_DEFAULT_COLLECTION).get(0).getLevel0Id();
+          Collections.emptyList(),
+          SOLR_DEFAULT_COLLECTION).get(0);
 
-      String salesCatalogHierarchy = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "salesCatalogCategoryIdDescHierarchy",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getSalesCatalogCategoryIdDescHierarchy().get(0);
+      String name = solrResults.getNameSearch();
 
-      int categorySeq = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "categorySequenceTE-100003",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getCategorySequenceTE();
+      String level0Id = solrResults.getLevel0Id();
 
-      String description = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "description",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getDescription();
+      String salesCatalogHierarchy = solrResults.getSalesCatalogCategoryIdDescHierarchy().get(0);
+
+      int categorySeq = solrResults.getCategorySequenceTE();
+
+      String description = solrResults.getDescription();
 
       log.error("----name--{}-description-{}---query-{}",
           name,
@@ -1450,36 +1377,23 @@ public class ItemChangeEventSteps {
       assertThat("Sales Catalog sequence is not set", categorySeq, equalTo(10));
 
       if (flag.equals("true")) {
-        String nameInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-            SELECT_HANDLER,
-            "nameSearch",
-            1,
-            SOLR_DEFAULT_COLLECTION_O2O).get(0).getNameSearch();
 
-        String level0IdInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+        SolrResults solrResultsO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
             SELECT_HANDLER,
-            "level0Id",
+            "nameSearch,level0Id,salesCatalogCategoryIdDescHierarchy,categorySequenceTE-100003,description",
             1,
-            SOLR_DEFAULT_COLLECTION_O2O).get(0).getLevel0Id();
+            Collections.emptyList(),
+            SOLR_DEFAULT_COLLECTION).get(0);
 
-        String salesCatalogHierarchyInO2O =
-            solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-                SELECT_HANDLER,
-                "salesCatalogCategoryIdDescHierarchy",
-                1,
-                SOLR_DEFAULT_COLLECTION_O2O).get(0).getSalesCatalogCategoryIdDescHierarchy().get(0);
+        String nameInO2O = solrResultsO2O.getNameSearch();
 
-        int categorySeqInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-            SELECT_HANDLER,
-            "categorySequenceTE-100003",
-            1,
-            SOLR_DEFAULT_COLLECTION_O2O).get(0).getCategorySequenceTE();
+        String level0IdInO2O = solrResultsO2O.getLevel0Id();
 
-        String descriptionInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-            SELECT_HANDLER,
-            "description",
-            1,
-            SOLR_DEFAULT_COLLECTION_O2O).get(0).getDescription();
+        String salesCatalogHierarchyInO2O = solrResultsO2O.getSalesCatalogCategoryIdDescHierarchy().get(0);
+
+        int categorySeqInO2O = solrResultsO2O.getCategorySequenceTE();
+
+        String descriptionInO2O = solrResultsO2O.getDescription();
 
         log.error("----name--{}-description-{}---query-{}",
             nameInO2O,
@@ -1520,17 +1434,16 @@ public class ItemChangeEventSteps {
       assertThat("Updating SOLR fields for test failed", status, equalTo(0));
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
-      int buyable = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      SolrResults solrResults = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
-          "buyable",
+          "buyable,published",
           1,
-          SOLR_DEFAULT_COLLECTION).get(0).getBuyable();
+          Collections.emptyList(),
+          SOLR_DEFAULT_COLLECTION).get(0);
 
-      int published = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "published",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getPublished();
+      int buyable = solrResults.getBuyable();
+
+      int published = solrResults.getPublished();
 
       assertThat("Buyable is not set", buyable, equalTo(4));
       assertThat("Published is not set", published, equalTo(4));
@@ -1546,17 +1459,16 @@ public class ItemChangeEventSteps {
 
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);
 
-      int buyableInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      SolrResults solrResultsO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
-          "buyable",
+          "buyable,published",
           1,
-          SOLR_DEFAULT_COLLECTION_O2O).get(0).getBuyable();
+          Collections.emptyList(),
+          SOLR_DEFAULT_COLLECTION_O2O).get(0);
 
-      int publishedInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "published",
-          1,
-          SOLR_DEFAULT_COLLECTION_O2O).get(0).getPublished();
+      int buyableInO2O = solrResultsO2O.getBuyable();
+
+      int publishedInO2O = solrResultsO2O.getPublished();
 
       assertThat("Buyable is not set in o2o", buyableInO2O, equalTo(4));
       assertThat("Published is not set in o2o", publishedInO2O, equalTo(4));
@@ -1629,40 +1541,32 @@ public class ItemChangeEventSteps {
   public void buyablePublishedAreAddedInSOLRWithNoScheduleInDBAndOffToOnAsFlag(String type,
       String flag) {
     try {
-      int buyable = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "buyable",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getBuyable();
 
-      int published = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      SolrResults solrResults = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
-          "published",
+          "buyable,published,lastUpdatedTime",
           1,
-          SOLR_DEFAULT_COLLECTION).get(0).getPublished();
+          Collections.emptyList(),
+          SOLR_DEFAULT_COLLECTION).get(0);
 
-      lastUpdatedTime = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "lastUpdatedTime",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getLastUpdatedTime();
+      int buyable = solrResults.getBuyable();
 
-      int buyableInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "buyable",
-          1,
-          SOLR_DEFAULT_COLLECTION_O2O).get(0).getBuyable();
+      int published = solrResults.getPublished();
 
-      int publishedInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      lastUpdatedTime = solrResults.getLastUpdatedTime();
+
+      SolrResults solrResultsO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
-          "published",
+          "buyable,published,lastUpdatedTime",
           1,
-          SOLR_DEFAULT_COLLECTION_O2O).get(0).getPublished();
-      lastUpdatedTimeInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "lastUpdatedTime",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getLastUpdatedTime();
+          Collections.emptyList(),
+          SOLR_DEFAULT_COLLECTION_O2O).get(0);
+
+      int buyableInO2O = solrResultsO2O.getBuyable();
+
+      int publishedInO2O = solrResultsO2O.getPublished();
+
+      lastUpdatedTimeInO2O = solrResultsO2O.getLastUpdatedTime();
 
       FindIterable<Document> mongoDocumentByQuery = mongoHelper.getMongoDocumentByQuery(
           "scheduled_events",
@@ -1763,46 +1667,26 @@ public class ItemChangeEventSteps {
       assertThat("Updating SOLR fields for test failed", status, equalTo(0));
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
-      int reviewCount = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      SolrResults solrResults = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
-          "reviewCount",
+          "reviewCount,rating,isInStock,merchantCommissionType,merchantRating,location,lastUpdatedTime",
           1,
-          SOLR_DEFAULT_COLLECTION).get(0).getReviewCount();
+          Collections.emptyList(),
+          SOLR_DEFAULT_COLLECTION).get(0);
 
-      String rating = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "rating",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getRating();
+      int reviewCount = solrResults.getReviewCount();
 
-      int oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "isInStock",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
+      String rating = solrResults.getRating();
 
-      String merchantCommissionType = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "merchantCommissionType",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getMerchantCommissionType();
-      Double merchantRating = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "merchantRating",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getMerchantRating();
+      int oosFlag = solrResults.getIsInStock();
 
-      String location = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "location",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getLocation();
+      String merchantCommissionType = solrResults.getMerchantCommissionType();
 
-      Long lastUpdatedTime = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "lastUpdatedTime",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getLastUpdatedTime();
+      Double merchantRating = solrResults.getMerchantRating();
+
+      String location = solrResults.getLocation();
+
+      Long lastUpdatedTime = solrResults.getLastUpdatedTime();
 
       log.warn(
           "--reviewCount--{}---rating--{}--reviewCount--{}--oosFlag--{}--merchantRating---{}--merchantCommissionType---{}--location--{}--lastUpdatedTime{}",
@@ -1833,47 +1717,27 @@ public class ItemChangeEventSteps {
       assertThat("Updating SOLR fields for test failed", statusForO2O, equalTo(0));
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);
 
-      int reviewCountInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      SolrResults solrResultsO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
-          "reviewCount",
+          "reviewCount,rating,isInStock,merchantCommissionType,merchantRating,location,lastUpdatedTime",
           1,
-          SOLR_DEFAULT_COLLECTION).get(0).getReviewCount();
+          Collections.emptyList(),
+          SOLR_DEFAULT_COLLECTION_O2O).get(0);
 
-      String ratingInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "rating",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getRating();
 
-      int oosFlagInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "isInStock",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
+      int reviewCountInO2O = solrResultsO2O.getReviewCount();
 
-      String merchantCommissionTypeInO2O =
-          solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-              SELECT_HANDLER,
-              "merchantCommissionType",
-              1,
-              SOLR_DEFAULT_COLLECTION).get(0).getMerchantCommissionType();
-      Double merchantRatingInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "merchantRating",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getMerchantRating();
+      String ratingInO2O = solrResultsO2O.getRating();
 
-      String locationInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "location",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getLocation();
+      int oosFlagInO2O = solrResultsO2O.getIsInStock();
 
-      Long lastUpdatedTimeInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "lastUpdatedTime",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getLastUpdatedTime();
+      String merchantCommissionTypeInO2O = solrResultsO2O.getMerchantCommissionType();
+
+      Double merchantRatingInO2O = solrResultsO2O.getMerchantRating();
+
+      String locationInO2O = solrResultsO2O.getLocation();
+
+      Long lastUpdatedTimeInO2O = solrResultsO2O.getLastUpdatedTime();
 
       log.warn(
           "--reviewCount--{}---rating--{}--reviewCount--{}--oosFlag--{}--merchantRating---{}--merchantCommissionType---{}--location--{}--lastUpdatedTime{}",
@@ -1930,46 +1794,27 @@ public class ItemChangeEventSteps {
   @Then("^\\[search-service] complete SOLR doc is updated instead of atomic update and offToOn as '(.*)'$")
   public void completeSOLRDocIsUpdatedInsteadOfAtomicUpdate(String flag) {
     try {
-      int reviewCount = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "reviewCount",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getReviewCount();
 
-      String rating = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      SolrResults solrResults = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
-          "rating",
+          "reviewCount,rating,isInStock,merchantCommissionType,merchantRating,location,lastUpdatedTime",
           1,
-          SOLR_DEFAULT_COLLECTION).get(0).getRating();
+          Collections.emptyList(),
+          SOLR_DEFAULT_COLLECTION).get(0);
 
-      int oosFlag = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "isInStock",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getIsInStock();
+      int reviewCount = solrResults.getReviewCount();
 
-      String merchantCommissionType = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "merchantCommissionType",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getMerchantCommissionType();
-      Double merchantRating = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "merchantRating",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getMerchantRating();
+      String rating = solrResults.getRating();
 
-      String location = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "location",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getLocation();
+      int oosFlag = solrResults.getIsInStock();
 
-      lastUpdatedTime = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "lastUpdatedTime",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getLastUpdatedTime();
+      String merchantCommissionType = solrResults.getMerchantCommissionType();
+
+      Double merchantRating = solrResults.getMerchantRating();
+
+      String location = solrResults.getLocation();
+
+      lastUpdatedTime = solrResults.getLastUpdatedTime();
 
       log.error(
           "--reviewCount--{}---rating--{}--reviewCount--{}--oosFlag--{}--merchantRating---{}--merchantCommissionType---{}--"
@@ -1994,47 +1839,28 @@ public class ItemChangeEventSteps {
       assertThat("last updated time is not set", lastUpdatedTime, not(equalTo(1234l)));
 
       if (flag.equals("true")) {
-        int reviewCountInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-            SELECT_HANDLER,
-            "reviewCount",
-            1,
-            SOLR_DEFAULT_COLLECTION_O2O).get(0).getReviewCount();
 
-        String ratingInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+        SolrResults solrResultsO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
             SELECT_HANDLER,
-            "rating",
+            "reviewCount,rating,isInStock,merchantCommissionType,merchantRating,location,lastUpdatedTime",
             1,
-            SOLR_DEFAULT_COLLECTION_O2O).get(0).getRating();
+            Collections.emptyList(),
+            SOLR_DEFAULT_COLLECTION_O2O).get(0);
 
-        int oosFlagInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-            SELECT_HANDLER,
-            "isInStock",
-            1,
-            SOLR_DEFAULT_COLLECTION_O2O).get(0).getIsInStock();
+        int reviewCountInO2O = solrResultsO2O.getReviewCount();
 
-        String merchantCommissionTypeInO2O =
-            solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-                SELECT_HANDLER,
-                "merchantCommissionType",
-                1,
-                SOLR_DEFAULT_COLLECTION_O2O).get(0).getMerchantCommissionType();
-        Double merchantRatingInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-            SELECT_HANDLER,
-            "merchantRating",
-            1,
-            SOLR_DEFAULT_COLLECTION_O2O).get(0).getMerchantRating();
+        String ratingInO2O = solrResultsO2O.getRating();
 
-        String locationInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-            SELECT_HANDLER,
-            "location",
-            1,
-            SOLR_DEFAULT_COLLECTION_O2O).get(0).getLocation();
+        int oosFlagInO2O = solrResultsO2O.getIsInStock();
 
-        lastUpdatedTimeInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-            SELECT_HANDLER,
-            "lastUpdatedTime",
-            1,
-            SOLR_DEFAULT_COLLECTION_O2O).get(0).getLastUpdatedTime();
+        String merchantCommissionTypeInO2O = solrResultsO2O.getMerchantCommissionType();
+
+        Double merchantRatingInO2O = solrResultsO2O.getMerchantRating();
+
+        String locationInO2O = solrResultsO2O.getLocation();
+
+        Long lastUpdatedTimeInO2O = solrResultsO2O.getLastUpdatedTime();
+
 
         log.error(
             "--reviewCountInO2O--{}---ratingInO2O--{}--reviewCountInO2O--{}--oosFlagInO2O--{}--merchantRatingInO2O"

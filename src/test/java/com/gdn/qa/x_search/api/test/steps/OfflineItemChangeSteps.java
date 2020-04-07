@@ -15,6 +15,7 @@ import cucumber.api.java.en.When;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,17 +55,15 @@ public class OfflineItemChangeSteps {
     searchServiceData.setPickupPointCode(searchServiceProperties.get("pickupPointCode"));
     String query = "itemSku:" + searchServiceData.getItemSkuForOffline();
 
-    int status = 0;
-    int statusForNormalCollection=0;
     try {
-      status = solrHelper.updateSolrDataForAutomation(query,
+      int status = solrHelper.updateSolrDataForAutomation(query,
           SELECT_HANDLER,
           "id",
           3,
           "price",
           SOLR_DEFAULT_COLLECTION_CNC);
 
-      statusForNormalCollection = solrHelper.updateSolrDataForAutomation(query,
+      int statusForNormalCollection = solrHelper.updateSolrDataForAutomation(query,
           SELECT_HANDLER,
           "id",
           3,
@@ -72,7 +71,7 @@ public class OfflineItemChangeSteps {
           SOLR_DEFAULT_COLLECTION);
 
       assertThat("Updating SOLR fields for test failed", status, equalTo(0));
-      assertThat("Updating SOLR fields for test failed in NOrmal Collection", status, equalTo(0));
+      assertThat("Updating SOLR fields for test failed in NOrmal Collection", statusForNormalCollection, equalTo(0));
 
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
@@ -80,18 +79,18 @@ public class OfflineItemChangeSteps {
       List<SolrResults> solrProd = solrHelper.getSolrProd(query,
           SELECT_HANDLER,
           "id,offerPrice,listPrice",
-          10,
+          10, Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION_CNC);
 
-      for (int i = 0; i < solrProd.size(); i++) {
-        assertThat("Offer Price is not set", solrProd.get(i).getOfferPrice(), equalTo(4545455.45));
-        assertThat("List Price is not set", solrProd.get(i).getListPrice(), equalTo(4545455.50));
+      for (SolrResults solrResults : solrProd) {
+        assertThat("Offer Price is not set", solrResults.getOfferPrice(), equalTo(4545455.45));
+        assertThat("List Price is not set", solrResults.getListPrice(), equalTo(4545455.50));
       }
 
       List<SolrResults> solrProdInNormalCol = solrHelper.getSolrProd(query,
           SELECT_HANDLER,
           "id,offerPrice,listPrice",
-          10,
+          10,Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION);
 
       for (int i = 0; i < solrProd.size(); i++) {
@@ -135,7 +134,6 @@ public class OfflineItemChangeSteps {
     searchServiceData.setSearchServiceResponse(responseForDefCncJob);
     ResponseApi<GdnBaseRestResponse> response = searchServiceData.getSearchServiceResponse();
     assertThat("Request failed", response.getResponse().getStatusCode(), equalTo(200));
-    String Response = response.getResponseBody().getErrorMessage();
     assertThat("Response failed", response.getResponseBody().isSuccess(), equalTo(true));
 
     try {
@@ -154,31 +152,25 @@ public class OfflineItemChangeSteps {
       List<SolrResults> solrProd = solrHelper.getSolrProd(query,
           SELECT_HANDLER,
           "id,offerPrice,listPrice",
-          10,
+          10,Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION_CNC);
 
-      for (int i = 0; i < solrProd.size(); i++) {
-        if (solrProd.get(i).getId().equals("KIK-60001-00004-00001-PP-3001140")) {
-          assertThat("Offer Price is not set",
-              solrProd.get(i).getOfferPrice(),
-              (equalTo(4545455.45)));
-          assertThat("List Price is not set",
-              solrProd.get(i).getListPrice(),
-              (equalTo(4545455.50)));
+      for (SolrResults solrResults : solrProd) {
+        if (solrResults.getId().equals("KIK-60001-00004-00001-PP-3001140")) {
+          assertThat("Offer Price is not set", solrResults.getOfferPrice(), (equalTo(4545455.45)));
+          assertThat("List Price is not set", solrResults.getListPrice(), (equalTo(4545455.50)));
         }
-        if (solrProd.get(i).getId().equals("KIK-60001-00004-00001-PP-3001139")) {
+        if (solrResults.getId().equals("KIK-60001-00004-00001-PP-3001139")) {
           assertThat("Offer Price is not set",
-              solrProd.get(i).getOfferPrice(),
-             not(equalTo(4545455.45)));
-          assertThat("List Price is not set",
-              solrProd.get(i).getListPrice(),
-            not(equalTo(4545455.50)));
+              solrResults.getOfferPrice(),
+              not(equalTo(4545455.45)));
+          assertThat("List Price is not set", solrResults.getListPrice(), not(equalTo(4545455.50)));
         }
       }
       List<SolrResults> solrProdInNormalCollection = solrHelper.getSolrProd(query,
           SELECT_HANDLER,
           "id,offerPrice,listPrice",
-          10,
+          10,Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION);
       for (int i = 0; i < solrProd.size(); i++) {
         assertThat("Offer Price is not set", solrProdInNormalCollection.get(i).getOfferPrice(), (equalTo(4545455.45)));
@@ -192,19 +184,15 @@ public class OfflineItemChangeSteps {
   @Then("^\\[search-service] all solr doc associated to the itemSku are updated$")
   public void allSolrDocAssociatedToTheItemSkuAreUpdated() {
     String query = "itemSku:" + searchServiceData.getItemSkuForOffline();
-    List<SolrResults> solrProd = null;
     try {
-      solrProd = solrHelper.getSolrProd(query,
+      List<SolrResults> solrProd = solrHelper.getSolrProd(query,
           SELECT_HANDLER,
           "id,offerPrice,listPrice",
-          10,
+          10,Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION);
-      for (int i = 0; i < solrProd.size(); i++) {
-        assertThat("Offer Price is not set", solrProd.get(i).getOfferPrice(),
-            not(equalTo(4545455.45)));
-        assertThat("List Price is not set",
-            solrProd.get(i).getListPrice(),
-            not(equalTo(4545455.50)));
+      for (SolrResults solrResults : solrProd) {
+        assertThat("Offer Price is not set", solrResults.getOfferPrice(), not(equalTo(4545455.45)));
+        assertThat("List Price is not set", solrResults.getListPrice(), not(equalTo(4545455.50)));
       }
     } catch (Exception e) {
       e.printStackTrace();

@@ -24,6 +24,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -59,22 +60,24 @@ public class ProductDataFeedSteps {
   ZipUnzipHelper unzipHelper;
 
   @Given("^\\[search-service] prepare request to run product data feed$")
-  public void preparePDFRequest(){
-   searchServiceData.setFeedKey(searchServiceProperties.get("pdfFeedKey"));
-   searchServiceData.setFeedType(searchServiceProperties.get("pdfFeedType"));
-   searchServiceData.setFeedValue(searchServiceProperties.get("pdfFeedValue"));
+  public void preparePDFRequest() {
+    searchServiceData.setFeedKey(searchServiceProperties.get("pdfFeedKey"));
+    searchServiceData.setFeedType(searchServiceProperties.get("pdfFeedType"));
+    searchServiceData.setFeedValue(searchServiceProperties.get("pdfFeedValue"));
 
     ResponseApi<GdnRestListResponse<FeedExclusionEntityResponse>> exclusionExist =
         searchServiceController.findFeedByWord("abhinav");
 
-    if(exclusionExist.getResponseBody().getPageMetaData().getTotalRecords()==0)
-    {
-    ResponseApi<GdnBaseRestResponse> response =
-        searchServiceController.saveFeedExclusion(searchServiceData.getFeedType(),
-            searchServiceData.getFeedKey(),searchServiceData.getFeedValue(),true);
-    searchServiceData.setSearchServiceResponse(response);
-    assertThat("Status code not 200",
-        searchServiceData.getSearchServiceResponse().getResponse().getStatusCode(),equalTo(200));
+    if (exclusionExist.getResponseBody().getPageMetaData().getTotalRecords() == 0) {
+      ResponseApi<GdnBaseRestResponse> response = searchServiceController.saveFeedExclusion(
+          searchServiceData.getFeedType(),
+          searchServiceData.getFeedKey(),
+          searchServiceData.getFeedValue(),
+          true);
+      searchServiceData.setSearchServiceResponse(response);
+      assertThat("Status code not 200",
+          searchServiceData.getSearchServiceResponse().getResponse().getStatusCode(),
+          equalTo(200));
     }
   }
 
@@ -84,22 +87,25 @@ public class ProductDataFeedSteps {
         searchServiceController.runProductDataFeed();
     searchServiceData.setProductDataFeed(response);
     assertThat("Status code not 200",
-        searchServiceData.getProductDataFeed().getResponse().getStatusCode(),equalTo(200));
+        searchServiceData.getProductDataFeed().getResponse().getStatusCode(),
+        equalTo(200));
   }
 
   @Then("^\\[search-service] file is written to ftp server$")
-  public void fileIsWrittenToFtpServer()  {
+  public void fileIsWrittenToFtpServer() {
     FTPHelper ftpHelper = new FTPHelper();
     boolean fileExists = ftpHelper.checkFileExists(REMOTE_PDF_FILE_LOCATION, PDF_FILE_NAME);
-    assertThat("File not existing in remote server",fileExists,equalTo(true));
+    assertThat("File not existing in remote server", fileExists, equalTo(true));
   }
 
   @Then("^\\[search-service] product count matches with solr query$")
-  public void productCountMatchesWithSolrQuery(){
+  public void productCountMatchesWithSolrQuery() {
     try {
-      long solrProdCount = solrHelper.getSolrProdCountWithFq("*:*",
+      long solrProdCount = solrHelper.getSolrProdCount("*:*",
           "/browse",
-          "nameSearch:"+"\""+ searchServiceData.getFeedValue()+"\"",SOLR_DEFAULT_COLLECTION);
+          SOLR_DEFAULT_COLLECTION,
+          Collections.singletonList(
+              "nameSearch:" + "\"" + searchServiceData.getFeedValue() + "\""));
 
       FTPHelper ftpHelper = new FTPHelper();
 
@@ -114,12 +120,13 @@ public class ProductDataFeedSteps {
       ftpHelper.getFileUsingFtp(REMOTE_PDF_FILE_LOCATION, PDF_FILE_NAME);
 
       File[] listOfFiles = dir.listFiles();
-      assertThat("No files downloaded",listOfFiles.length,not(equalTo(0)));
+      assertThat("No files downloaded", listOfFiles.length, not(equalTo(0)));
 
-        unzipHelper.extractPasswordZipFile(LOCAL_STORAGE_LOCATION+PDF_FILE_NAME,"Passw0rd"
-            ,LOCAL_STORAGE_LOCATION+PDF_FILE_NAME);
+      unzipHelper.extractPasswordZipFile(LOCAL_STORAGE_LOCATION + PDF_FILE_NAME,
+          "Passw0rd",
+          LOCAL_STORAGE_LOCATION + PDF_FILE_NAME);
 
-        int countOfRecordsInFile = 0;
+      int countOfRecordsInFile = 0;
 
       for (File listOfFile : listOfFiles) {
         if (listOfFile.isFile()) {
@@ -129,9 +136,10 @@ public class ProductDataFeedSteps {
             e.printStackTrace();
           }
         }
-    }
+      }
 
-      assertThat("No of Records in File does not match with solr",countOfRecordsInFile,
+      assertThat("No of Records in File does not match with solr",
+          countOfRecordsInFile,
           equalTo(solrProdCount));
 
     } catch (Exception e) {
@@ -141,17 +149,16 @@ public class ProductDataFeedSteps {
   }
 
   @Then("^\\[search-service] products mentioned as exclusion are not written in the feed$")
-  public void exclusionAreNotWrittenInTheFeed(){
-    File jsonFile = new File(LOCAL_STORAGE_LOCATION+PDF_FILE_NAME);
+  public void exclusionAreNotWrittenInTheFeed() {
+    File jsonFile = new File(LOCAL_STORAGE_LOCATION + PDF_FILE_NAME);
     try {
       BufferedReader bufferedReader = new BufferedReader(new FileReader(jsonFile));
       Gson gson = new Gson();
       Map<String, List<ProductDataFeed>> productDataFeed = gson.fromJson(bufferedReader, Map.class);
 
-      for (Map.Entry<String,List<ProductDataFeed>> entry : productDataFeed.entrySet()){
+      for (Map.Entry<String, List<ProductDataFeed>> entry : productDataFeed.entrySet()) {
         List<ProductDataFeed> productDataFeeds = entry.getValue();
-        for (ProductDataFeed prod:productDataFeeds
-             ) {
+        for (ProductDataFeed prod : productDataFeeds) {
           assertThat("Product name does not match with exclusion",
               prod.getName().toLowerCase(),
               containsString("abhinav automation test prod"));
@@ -164,14 +171,13 @@ public class ProductDataFeedSteps {
   }
 
 
-
   @Then("^\\[search-service] only default products are written in the file$")
-  public void defaultProductsAreWrittenInTheFile()  {
-    
+  public void defaultProductsAreWrittenInTheFile() {
+
   }
 
   @Then("^\\[search-service] product details matches with data in solr$")
-  public void productDetailsMatchesWithDataInSolr()  {
-    
+  public void productDetailsMatchesWithDataInSolr() {
+
   }
 }

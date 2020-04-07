@@ -2,6 +2,7 @@ package com.gdn.qa.x_search.api.test.steps;
 
 import com.gdn.qa.x_search.api.test.CucumberStepsDefinition;
 import com.gdn.qa.x_search.api.test.data.SearchServiceData;
+import com.gdn.qa.x_search.api.test.models.SolrResults;
 import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
 import com.gdn.qa.x_search.api.test.utils.KafkaHelper;
 import com.gdn.qa.x_search.api.test.utils.SolrHelper;
@@ -11,14 +12,12 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 
 @CucumberStepsDefinition
 public class AggregateInventoryChangeSteps {
@@ -47,9 +46,9 @@ public class AggregateInventoryChangeSteps {
     searchServiceData.setItemSku(searchServiceProperties.get("itemSkuForInventoryChange"));
     searchServiceData.setCnc(false);
     searchServiceData.setType("OFFLINE");
-    Map<String,String> locationMap = new HashMap<>();
+    Map<String, String> locationMap = new HashMap<>();
     locationMap.put("location1", "Jakarta");
-    locationMap.put("location2","Bogor");
+    locationMap.put("location2", "Bogor");
     locationMap.put("location3", "Tangerang");
     searchServiceData.setLocation(locationMap);
     searchServiceData.setStatus1("IN_STOCK");
@@ -68,14 +67,14 @@ public class AggregateInventoryChangeSteps {
         SOLR_DEFAULT_COLLECTION);
     assertThat("Updating inventoryStockLocation info in SOLR doc failed", status, equalTo(0));
     solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
-    ArrayList<String> allLocation =
-        solrHelper.getSolrProd(query, SELECT_HANDLER, "allLocation", 1, SOLR_DEFAULT_COLLECTION)
-            .get(0)
-            .getAllLocation();
-    ArrayList<String> stockLocation =
-        solrHelper.getSolrProd(query, SELECT_HANDLER, "stockLocation", 1, SOLR_DEFAULT_COLLECTION)
-            .get(0)
-            .getStockLocation();
+    SolrResults solrResults = solrHelper.getSolrProd(query,
+        SELECT_HANDLER,
+        "allLocation,stockLocation",
+        1,
+        Collections.emptyList(),
+        SOLR_DEFAULT_COLLECTION).get(0);
+    ArrayList<String> allLocation = solrResults.getAllLocation();
+    ArrayList<String> stockLocation = solrResults.getStockLocation();
     lastUpdatedTimeBeforeEvent = System.currentTimeMillis();
 
     assertThat("Test Product not set in SOLR", allLocation, equalTo(null));
@@ -89,15 +88,14 @@ public class AggregateInventoryChangeSteps {
         SOLR_DEFAULT_COLLECTION_O2O);
     assertThat("Updating inventoryStockLocation info in SOLR doc failed", status1, equalTo(0));
     solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);
-    ArrayList<String> allLocation1 =
-        solrHelper.getSolrProd(query, SELECT_HANDLER, "allLocation", 1, SOLR_DEFAULT_COLLECTION_O2O)
-            .get(0)
-            .getAllLocation();
-    ArrayList<String> stockLocation1 = solrHelper.getSolrProd(query,
+    SolrResults solrResults1 = solrHelper.getSolrProd(query,
         SELECT_HANDLER,
-        "stockLocation",
+        "allLocation,stockLocation",
         1,
-        SOLR_DEFAULT_COLLECTION_O2O).get(0).getStockLocation();
+        Collections.emptyList(),
+        SOLR_DEFAULT_COLLECTION_O2O).get(0);
+    ArrayList<String> allLocation1 = solrResults1.getAllLocation();
+    ArrayList<String> stockLocation1 = solrResults1.getStockLocation();
     lastUpdatedTimeBeforeEventO2O = System.currentTimeMillis();
 
     assertThat("Test Product not set in SOLR", allLocation1, equalTo(null));
@@ -124,18 +122,20 @@ public class AggregateInventoryChangeSteps {
       throws Exception {
 
     String query = "id:" + searchServiceProperties.get("itemSkuForInventoryChange");
-    ArrayList<String> allLocation =
-        solrHelper.getSolrProd(query, SELECT_HANDLER, "allLocation", 1, SOLR_DEFAULT_COLLECTION)
-            .get(0)
-            .getAllLocation();
-    ArrayList<String> stockLocation =
-        solrHelper.getSolrProd(query, SELECT_HANDLER, "stockLocation", 1, SOLR_DEFAULT_COLLECTION)
-            .get(0)
-            .getStockLocation();
-    lastUpdatedTimeAfterEvent =
-        solrHelper.getSolrProd(query, SELECT_HANDLER, "lastUpdatedTime", 1, SOLR_DEFAULT_COLLECTION)
-            .get(0)
-            .getLastUpdatedTime();
+
+    SolrResults solrResults = solrHelper.getSolrProd(query,
+        SELECT_HANDLER,
+        "allLocation,stockLocation,lastUpdatedTime",
+        1,
+        Collections.emptyList(),
+        SOLR_DEFAULT_COLLECTION).get(0);
+
+    ArrayList<String> allLocation = solrResults.getAllLocation();
+
+    ArrayList<String> stockLocation = solrResults.getStockLocation();
+
+    lastUpdatedTimeAfterEvent = solrResults.getLastUpdatedTime();
+
     assertThat("Test Product not updated after event processing",
         allLocation,
         equalTo(new ArrayList<>(Arrays.asList("Jakarta", "Bogor", "Tangerang"))));
@@ -146,20 +146,17 @@ public class AggregateInventoryChangeSteps {
         lastUpdatedTimeAfterEvent,
         greaterThan(lastUpdatedTimeBeforeEvent));
 
-    ArrayList<String> allLocation1 =
-        solrHelper.getSolrProd(query, SELECT_HANDLER, "allLocation", 1, SOLR_DEFAULT_COLLECTION_O2O)
-            .get(0)
-            .getAllLocation();
-    ArrayList<String> stockLocation1 = solrHelper.getSolrProd(query,
+    SolrResults solrResultsO2O = solrHelper.getSolrProd(query,
         SELECT_HANDLER,
-        "stockLocation",
+        "allLocation,stockLocation,lastUpdatedTime",
         1,
-        SOLR_DEFAULT_COLLECTION_O2O).get(0).getStockLocation();
-    lastUpdatedTimeAfterEventO2O = solrHelper.getSolrProd(query,
-        SELECT_HANDLER,
-        "lastUpdatedTime",
-        1,
-        SOLR_DEFAULT_COLLECTION_O2O).get(0).getLastUpdatedTime();
+        Collections.emptyList(),
+        SOLR_DEFAULT_COLLECTION_O2O).get(0);
+
+    ArrayList<String> allLocation1 = solrResultsO2O.getAllLocation();
+    ArrayList<String> stockLocation1 = solrResultsO2O.getStockLocation();
+    lastUpdatedTimeAfterEventO2O = solrResultsO2O.getLastUpdatedTime();
+
     assertThat("Test Product not updated after event processing",
         allLocation1,
         equalTo(new ArrayList<>(Arrays.asList("Jakarta", "Bogor", "Tangerang"))));
@@ -176,9 +173,9 @@ public class AggregateInventoryChangeSteps {
     searchServiceData.setItemSku(searchServiceProperties.get("itemSkuForInventoryChangeCNC"));
     searchServiceData.setCnc(true);
     searchServiceData.setType("OFFLINE");
-    Map<String,String> locationMap = new HashMap<>();
+    Map<String, String> locationMap = new HashMap<>();
     locationMap.put("location1", "Jakarta");
-    locationMap.put("location2","Bogor");
+    locationMap.put("location2", "Bogor");
     searchServiceData.setLocation(locationMap);
     searchServiceData.setPickupPointCode(searchServiceProperties.get("ppCode1ForInventoryChangeCNC"));
     searchServiceData.setPickupPointCode2(searchServiceProperties.get("ppCode2ForInventoryChangeCNC"));
@@ -200,15 +197,17 @@ public class AggregateInventoryChangeSteps {
         SOLR_DEFAULT_COLLECTION_CNC);
     assertThat("Updating inventoryStockLocation info in SOLR doc failed", status, equalTo(0));
     solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
-    ArrayList<String> allLocation =
-        solrHelper.getSolrProd(query, SELECT_HANDLER, "allLocation", 1, SOLR_DEFAULT_COLLECTION_CNC)
-            .get(0)
-            .getAllLocation();
-    ArrayList<String> stockLocation = solrHelper.getSolrProd(query,
+
+    SolrResults solrResults = solrHelper.getSolrProd(query,
         SELECT_HANDLER,
-        "stockLocation",
+        "allLocation,stockLocation",
         1,
-        SOLR_DEFAULT_COLLECTION_CNC).get(0).getStockLocation();
+        Collections.emptyList(),
+        SOLR_DEFAULT_COLLECTION_CNC).get(0);
+
+
+    ArrayList<String> allLocation = solrResults.getAllLocation();
+    ArrayList<String> stockLocation = solrResults.getStockLocation();
 
     assertThat("Test Product not set in SOLR", allLocation, equalTo(null));
     assertThat("Test Product not set in SOLR", stockLocation, equalTo(null));
@@ -223,16 +222,16 @@ public class AggregateInventoryChangeSteps {
         SOLR_DEFAULT_COLLECTION_CNC);
     assertThat("Updating inventoryStockLocation info in SOLR doc failed", status1, equalTo(0));
     solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_CNC);
-    ArrayList<String> allLocation1 = solrHelper.getSolrProd(query1,
+
+    SolrResults solrResultsCNC = solrHelper.getSolrProd(query1,
         SELECT_HANDLER,
-        "allLocation",
+        "allLocation,stockLocation",
         1,
-        SOLR_DEFAULT_COLLECTION_CNC).get(0).getAllLocation();
-    ArrayList<String> stockLocation1 = solrHelper.getSolrProd(query1,
-        SELECT_HANDLER,
-        "stockLocation",
-        1,
-        SOLR_DEFAULT_COLLECTION_CNC).get(0).getStockLocation();
+        Collections.emptyList(),
+        SOLR_DEFAULT_COLLECTION_CNC).get(0);
+
+    ArrayList<String> allLocation1 = solrResultsCNC.getAllLocation();
+    ArrayList<String> stockLocation1 = solrResultsCNC.getStockLocation();
 
     assertThat("Test Product not set in SOLR", allLocation1, equalTo(null));
     assertThat("Test Product not set in SOLR", stockLocation1, equalTo(null));
@@ -261,50 +260,45 @@ public class AggregateInventoryChangeSteps {
 
     String query = "id:" + searchServiceProperties.get("itemSkuForInventoryChangeCNC") + "-"
         + searchServiceProperties.get("ppCode1ForInventoryChangeCNC");
-    ArrayList<String> allLocation =
-        solrHelper.getSolrProd(query, SELECT_HANDLER, "allLocation", 1, SOLR_DEFAULT_COLLECTION_CNC)
-            .get(0)
-            .getAllLocation();
-    ArrayList<String> stockLocation = solrHelper.getSolrProd(query,
+
+    SolrResults solrResultsCNC = solrHelper.getSolrProd(query,
         SELECT_HANDLER,
-        "stockLocation",
+        "allLocation,stockLocation,lastUpdatedTime",
         1,
-        SOLR_DEFAULT_COLLECTION_CNC).get(0).getStockLocation();
-    lastUpdatedTimeAfterEventCNC = solrHelper.getSolrProd(query,
-        SELECT_HANDLER,
-        "lastUpdatedTime",
-        1,
-        SOLR_DEFAULT_COLLECTION_CNC).get(0).getLastUpdatedTime();
+        Collections.emptyList(),
+        SOLR_DEFAULT_COLLECTION_CNC).get(0);
+
+    ArrayList<String> allLocation = solrResultsCNC.getAllLocation();
+    ArrayList<String> stockLocation = solrResultsCNC.getStockLocation();
+    lastUpdatedTimeAfterEventCNC = solrResultsCNC.getLastUpdatedTime();
+
     assertThat("Test Product not updated after event processing",
         allLocation,
-        equalTo(new ArrayList<>(Arrays.asList("Jakarta"))));
+        equalTo(new ArrayList<>(Collections.singletonList("Jakarta"))));
     assertThat("Test Product not updated after event processing",
         stockLocation,
-        equalTo(new ArrayList<>(Arrays.asList("Jakarta"))));
+        equalTo(new ArrayList<>(Collections.singletonList("Jakarta"))));
     assertThat("LastUpdatedTime is not Updated",
         lastUpdatedTimeAfterEventCNC,
         greaterThan(lastUpdatedTimeBeforeEventCNC));
 
     String query1 = "id:" + searchServiceProperties.get("itemSkuForInventoryChangeCNC") + "-"
         + searchServiceProperties.get("ppCode2ForInventoryChangeCNC");
-    ArrayList<String> allLocation1 = solrHelper.getSolrProd(query1,
+
+    SolrResults solrResultsCNC1 = solrHelper.getSolrProd(query1,
         SELECT_HANDLER,
-        "allLocation",
+        "allLocation,stockLocation,lastUpdatedTime",
         1,
-        SOLR_DEFAULT_COLLECTION_CNC).get(0).getAllLocation();
-    ArrayList<String> stockLocation1 = solrHelper.getSolrProd(query1,
-        SELECT_HANDLER,
-        "stockLocation",
-        1,
-        SOLR_DEFAULT_COLLECTION_CNC).get(0).getStockLocation();
-    lastUpdatedTimeAfterEventCNC = solrHelper.getSolrProd(query1,
-        SELECT_HANDLER,
-        "lastUpdatedTime",
-        1,
-        SOLR_DEFAULT_COLLECTION_CNC).get(0).getLastUpdatedTime();
+        Collections.emptyList(),
+        SOLR_DEFAULT_COLLECTION_CNC).get(0);
+
+    ArrayList<String> allLocation1 = solrResultsCNC1.getAllLocation();
+    ArrayList<String> stockLocation1 = solrResultsCNC1.getStockLocation();
+    lastUpdatedTimeAfterEventCNC = solrResultsCNC1.getLastUpdatedTime();
+
     assertThat("Test Product not updated after event processing",
         allLocation1,
-        equalTo(new ArrayList<>(Arrays.asList("Bogor"))));
+        equalTo(new ArrayList<>(Collections.singletonList("Bogor"))));
     assertThat("Test Product not updated after event processing", stockLocation1, equalTo(null));
     assertThat("LastUpdatedTime is not Updated",
         lastUpdatedTimeAfterEventCNC,
@@ -317,24 +311,24 @@ public class AggregateInventoryChangeSteps {
 
     String query = "id:" + searchServiceProperties.get("itemSkuForInventoryChangeCNC") + "-"
         + searchServiceProperties.get("ppCode1ForInventoryChangeCNC");
-    ArrayList<String> allLocation =
-        solrHelper.getSolrProd(query, SELECT_HANDLER, "allLocation", 1, SOLR_DEFAULT_COLLECTION)
-            .get(0)
-            .getAllLocation();
-    ArrayList<String> stockLocation =
-        solrHelper.getSolrProd(query, SELECT_HANDLER, "stockLocation", 1, SOLR_DEFAULT_COLLECTION)
-            .get(0)
-            .getStockLocation();
-    lastUpdatedTimeAfterEventCNC =
-        solrHelper.getSolrProd(query, SELECT_HANDLER, "lastUpdatedTime", 1, SOLR_DEFAULT_COLLECTION)
-            .get(0)
-            .getLastUpdatedTime();
+
+    SolrResults solrResults = solrHelper.getSolrProd(query,
+        SELECT_HANDLER,
+        "allLocation,stockLocation,lastUpdatedTime",
+        1,
+        Collections.emptyList(),
+        SOLR_DEFAULT_COLLECTION_CNC).get(0);
+
+    ArrayList<String> allLocation = solrResults.getAllLocation();
+    ArrayList<String> stockLocation = solrResults.getStockLocation();
+    lastUpdatedTimeAfterEventCNC = solrResults.getLastUpdatedTime();
+
     assertThat("Test Product not updated after event processing",
         allLocation,
         equalTo(new ArrayList<>(Arrays.asList("Jakarta", "Bogor"))));
     assertThat("Test Product not updated after event processing",
         stockLocation,
-        equalTo(new ArrayList<>(Arrays.asList("Jakarta"))));
+        equalTo(new ArrayList<>(Collections.singletonList("Jakarta"))));
     assertThat("LastUpdatedTime is not Updated",
         lastUpdatedTimeAfterEventCNC,
         greaterThan(lastUpdatedTimeBeforeEventCNC));
