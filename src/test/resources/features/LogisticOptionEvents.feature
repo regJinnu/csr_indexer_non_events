@@ -14,7 +14,7 @@ Feature: Verify indexing by logistic option events
     When [search-service] consumes logistic 'option' event for a merchant containing test product when merchant count is 'less' than 10
     Then [search-service] merchant commission type and logistic option for test product is updated
 
-  @LogisticOptionChangeEvent @Regression
+  @LogisticOptionChangeEvent2 @Regression
   Scenario: Verify Logistic option change event when merchant count is greater than 10
     Given [search-service] update merchant commission type and logistic option for test product
     When [search-service] consumes logistic 'option' event for a merchant containing test product when merchant count is 'more' than 10
