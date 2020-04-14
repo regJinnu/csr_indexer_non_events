@@ -12,7 +12,8 @@ import java.util.List;
 @Data
 @Builder
 public class CampaignRemoveEvent {
+  private long timestamp;
   private String campaignCode;
   private List<ProductSkuEventModel> skuList;
-  private long timestamp;
+  private boolean emptyQuota;
 }

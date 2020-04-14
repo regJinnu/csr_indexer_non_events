@@ -245,6 +245,9 @@ public class SolrHelper {
     solrInputDocument.addField("id", itemSku);
     solrInputDocument.addField("sku", sku);
     solrInputDocument.addField("productCode", productCode);
+    solrInputDocument.addField("published",0);
+    solrInputDocument.addField("buyable",0);
+    solrInputDocument.addField("off2On",0);
 
     if (eventType.equals("itemChangeEvent")) {
       solrInputDocument.addField("level0Id", sku);

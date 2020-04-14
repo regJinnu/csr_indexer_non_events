@@ -126,4 +126,9 @@ public class SolrResults {
   @Field("storeCatalog")
   private ArrayList<String> storeCatalog;
 
+  @Field("campaign_CAMP-00001_900")
+  private String campaignNameFS1;
+
+  @Field("campaign_CAMP-00001_901")
+  private String campaignNameFS2;
 }

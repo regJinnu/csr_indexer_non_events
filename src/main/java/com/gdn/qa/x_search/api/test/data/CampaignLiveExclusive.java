@@ -8,5 +8,6 @@ import java.util.List;
 @Data
 
 public class CampaignLiveExclusive {
+  private long timestamp;
   List<CampaignEventModel> campaigns;
 }

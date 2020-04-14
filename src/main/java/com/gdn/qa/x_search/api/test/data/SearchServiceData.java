@@ -96,6 +96,7 @@ public class SearchServiceData {
   private String campaignProductSku;
   private String campaignItemSku;
   private String campaignDiscount;
+  private String sessionIds;
   private String campaignFieldInSOLR;
   private String campaignCodeList;
   private String itemSkuForRemove;
@@ -222,6 +223,7 @@ public class SearchServiceData {
   private Date lastUpdatedTime;
   private String defCncMerchant;
   private int voucherCount;
+  private int activeSession;
   private Map<String,String> payload;
   private ResponseApi<GdnRestListResponse<TrainResponse>> getAllTrain;
   private ResponseApi<GdnRestListResponse<SearchRuleResponse>> getAllSearchRule;

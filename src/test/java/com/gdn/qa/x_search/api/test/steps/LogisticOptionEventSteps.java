@@ -88,7 +88,7 @@ public class LogisticOptionEventSteps {
       log.warn("-----Product merchantCommissionType---{}----LogisticOptions---{}-",commissionType,logisticOption);
       assertThat("Test commission type not set",commissionType,equalTo("TEST_COMM_TYPE"));
       assertThat("Test logistic option not set",logisticOption,equalTo("TEST_LOGISTIC_OPTION"));
-      assertThat("Tes location not set",location,equalTo("TEST_LOCATION"));
+      assertThat("Test location not set",location,equalTo("TEST_LOCATION"));
 
 
     } catch (Exception e) {
