@@ -15,7 +15,7 @@ public class CampaignStopEvent {
   private long timestamp;
   private String storeId;
   private boolean markForDelete;
-
+  private int session;
 }
 
 

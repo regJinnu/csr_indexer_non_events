@@ -162,6 +162,10 @@
                     <artifactId>kafka-clients</artifactId>
                     <groupId>org.apache.kafka</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>spring-data-mongodb</artifactId>
+                    <groupId>org.springframework.data</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>

@@ -20,4 +20,5 @@ public class CampaignEventModel {
   private Date promotionEndTime;
   private String tagLabel;
   private boolean exclusive;
+  private int activateSession;
 }

@@ -21,4 +21,6 @@ public class CampaignPublishEvent {
   private List<ProductSkuEventModel> skuList;
   private String tagLabel;
   private boolean exclusive;
+  private boolean retainData;
+  private String campaignType;
 }

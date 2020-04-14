@@ -45,70 +45,69 @@ public class PristineEventsSteps {
     configHelper.findAndUpdateConfig("product.level.id", PRODUCT_LEVEL0ID);
     configHelper.findAndUpdateConfig("service.product.level.id", PRODUCT_LEVEL0ID);
 
-    if (pristine.equals("handphone")) {
+    switch (pristine) {
+      case "handphone": {
 
-      searchServiceData.setProductIdforPristineHandphone(searchServiceProperties.get(
-          "productIdforPristineHandphone"));
-      searchServiceData.setHandphoneProductItemId(searchServiceProperties.get(
-          "handphoneProductItemId"));
-      searchServiceData.setHandphoneBlibliCategoryHierarchy(Collections.singletonList(
-          searchServiceProperties.get("handphoneBlibliCategoryHierarchy")));
-      searchServiceData.setHandphonePristineID(searchServiceProperties.get("handphonePristineID"));
-      searchServiceData.setItemCount(searchServiceProperties.get("itemCount"));
+        searchServiceData.setProductIdforPristineHandphone(searchServiceProperties.get(
+            "productIdforPristineHandphone"));
+        searchServiceData.setHandphoneProductItemId(searchServiceProperties.get(
+            "handphoneProductItemId"));
+        searchServiceData.setHandphoneBlibliCategoryHierarchy(Collections.singletonList(
+            searchServiceProperties.get("handphoneBlibliCategoryHierarchy")));
+        searchServiceData.setHandphonePristineID(searchServiceProperties.get("handphonePristineID"));
+        searchServiceData.setItemCount(searchServiceProperties.get("itemCount"));
 
-      ResponseApi responseApi;
-      responseApi = searchServiceController.prepareRequestForIndexing("productCodes",
-          searchServiceData.getHandphonePristineID());
-      searchServiceData.setSearchServiceResponse(responseApi);
-      responseApi = searchServiceData.getSearchServiceResponse();
-      assertThat("Status Code Not 200", responseApi.getResponse().getStatusCode(), equalTo(200));
-      try {
-        Thread.sleep(20000);
-        solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      } catch (Exception e) {
-        e.printStackTrace();
+        ResponseApi responseApi = searchServiceController.prepareRequestForIndexing("productCodes",
+            searchServiceData.getHandphonePristineID());
+        searchServiceData.setSearchServiceResponse(responseApi);
+        responseApi = searchServiceData.getSearchServiceResponse();
+        assertThat("Status Code Not 200", responseApi.getResponse().getStatusCode(), equalTo(200));
+        try {
+          Thread.sleep(20000);
+          solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+
+
+        break;
       }
+      case "camera": {
 
+        searchServiceData.setProductIdforPristineCamera(searchServiceProperties.get(
+            "productIdforPristineCamera"));
+        searchServiceData.setCameraBlibliCategoryHierarchy(Collections.singletonList(
+            searchServiceProperties.get("cameraBlibliCategoryHierarchy")));
+        searchServiceData.setCameraProductItemId(searchServiceProperties.get("cameraProductItemId"));
+        searchServiceData.setCameraPristineID(searchServiceProperties.get("cameraPristineID"));
+        searchServiceData.setItemCount(searchServiceProperties.get("itemCount"));
 
-    } else if (pristine.equals("camera")) {
+        ResponseApi responseApi = searchServiceController.prepareRequestForIndexing("productCodes",
+            searchServiceData.getCameraPristineID());
+        searchServiceData.setSearchServiceResponse(responseApi);
+        responseApi = searchServiceData.getSearchServiceResponse();
+        assertThat("Status Code Not 200", responseApi.getResponse().getStatusCode(), equalTo(200));
+        try {
+          Thread.sleep(20000);
+          solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
 
-      searchServiceData.setProductIdforPristineCamera(searchServiceProperties.get(
-          "productIdforPristineCamera"));
-      searchServiceData.setCameraBlibliCategoryHierarchy(Collections.singletonList(
-          searchServiceProperties.get("cameraBlibliCategoryHierarchy")));
-      searchServiceData.setCameraProductItemId(searchServiceProperties.get("cameraProductItemId"));
-      searchServiceData.setCameraPristineID(searchServiceProperties.get("cameraPristineID"));
-      searchServiceData.setItemCount(searchServiceProperties.get("itemCount"));
-
-      ResponseApi responseApi;
-      responseApi = searchServiceController.prepareRequestForIndexing("productCodes",
-          searchServiceData.getCameraPristineID());
-      searchServiceData.setSearchServiceResponse(responseApi);
-      responseApi = searchServiceData.getSearchServiceResponse();
-      assertThat("Status Code Not 200", responseApi.getResponse().getStatusCode(), equalTo(200));
-      try {
-        Thread.sleep(20000);
-        solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      } catch (Exception e) {
-        e.printStackTrace();
+        break;
       }
+      case "computer":
 
-    } else if (pristine.equals("computer")) {
-
-      searchServiceData.setProductIdforPristine(searchServiceProperties.get("productIdforPristine"));
-      searchServiceData.setItemCount(searchServiceProperties.get("itemCount"));
-      searchServiceData.setBlibliCategoryHierarchy(Collections.singletonList(searchServiceProperties
-          .get("blibliCategoryHierarchy")));
-      searchServiceData.setProductItemId(searchServiceProperties.get("productItemId"));
-      searchServiceData.setPristineID(searchServiceProperties.get("pristineID"));
+        searchServiceData.setProductIdforPristine(searchServiceProperties.get("productIdforPristine"));
+        searchServiceData.setItemCount(searchServiceProperties.get("itemCount"));
+        searchServiceData.setBlibliCategoryHierarchy(Collections.singletonList(
+            searchServiceProperties.get("blibliCategoryHierarchy")));
+        searchServiceData.setProductItemId(searchServiceProperties.get("productItemId"));
+        searchServiceData.setPristineID(searchServiceProperties.get("pristineID"));
+        break;
     }
 
-    ResponseApi responseApi;
-    responseApi = searchServiceController.prepareRequestForIndexing("productCodes",
+    ResponseApi responseApi = searchServiceController.prepareRequestForIndexing("productCodes",
         searchServiceData.getPristineID());
     searchServiceData.setSearchServiceResponse(responseApi);
     responseApi = searchServiceData.getSearchServiceResponse();
@@ -116,8 +115,6 @@ public class PristineEventsSteps {
     try {
       Thread.sleep(20000);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -125,126 +122,141 @@ public class PristineEventsSteps {
   }
 
   @When("^\\[search-service] publish the pristine event for '(.*)' by providing '(.*)' '(.*)' '(.*)' values for each category$")
-  public void publishThePristineEvent(
-      String pristine,
+  public void publishThePristineEvent(String pristine,
       String category,
       String PristineAttributesName,
       String PristineAttributesValue) {
 
-    if (pristine.equals("handphone")) {
-      log.debug("-------------------------------HANDPHONE CATEGORY-------------------------------------");
-      String productIdforPristine = searchServiceData.getProductIdforPristineHandphone();
-      String productItemId = searchServiceData.getHandphoneProductItemId();
-      List<String> blibliCategoryHierarchy =
-          searchServiceData.getHandphoneBlibliCategoryHierarchy();
-      String pristineID = searchServiceData.getHandphonePristineID();
-      String itemCount = searchServiceData.getItemCount();
-      kafkaHelper.pristineEvent(productIdforPristine,
-          productItemId,
-          PristineAttributesName,
-          PristineAttributesValue,
-          blibliCategoryHierarchy,
-          category,
-          pristineID,
-          itemCount);
-      try {
-        Thread.sleep(30000);
-        solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+    switch (pristine) {
+      case "handphone": {
+        log.debug(
+            "-------------------------------HANDPHONE CATEGORY-------------------------------------");
+        String productIdforPristine = searchServiceData.getProductIdforPristineHandphone();
+        String productItemId = searchServiceData.getHandphoneProductItemId();
+        List<String> blibliCategoryHierarchy =
+            searchServiceData.getHandphoneBlibliCategoryHierarchy();
+        String pristineID = searchServiceData.getHandphonePristineID();
+        String itemCount = searchServiceData.getItemCount();
+        kafkaHelper.pristineEvent(productIdforPristine,
+            productItemId,
+            PristineAttributesName,
+            PristineAttributesValue,
+            blibliCategoryHierarchy,
+            category,
+            pristineID,
+            itemCount);
+        try {
+          Thread.sleep(30000);
+          solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
 
-    } else if (pristine.equals("camera")) {
-      log.debug("--------------------------- CAMERA CATEGORY ----------------------------------");
-      String productIdforPristine = searchServiceData.getProductIdforPristineCamera();
-      String productItemId = searchServiceData.getCameraProductItemId();
-      List<String> blibliCategoryHierarchy = searchServiceData.getCameraBlibliCategoryHierarchy();
-      String pristineID = searchServiceData.getCameraPristineID();
-      String itemCount = searchServiceData.getItemCount();
-      kafkaHelper.pristineEvent(productIdforPristine,
-          productItemId,
-          PristineAttributesName,
-          PristineAttributesValue,
-          blibliCategoryHierarchy,
-          category,
-          pristineID,
-          itemCount);
-      try {
-        Thread.sleep(30000);
-        solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
-      } catch (Exception e) {
-        e.printStackTrace();
+        break;
       }
-    } else if (pristine.equals("computer")) {
-      log.debug("--------------------------------COMPUTER CATEGORY---------------------------------");
-      String productIdforPristine = searchServiceData.getProductIdforPristine();
-      String productItemId = searchServiceData.getProductItemId();
-      List<String> blibliCategoryHierarchy = searchServiceData.getBlibliCategoryHierarchy();
-      String pristineID = searchServiceData.getPristineID();
-      String itemCount = searchServiceData.getItemCount();
-      kafkaHelper.pristineEvent(productIdforPristine,
-          productItemId,
-          PristineAttributesName,
-          PristineAttributesValue,
-          blibliCategoryHierarchy,
-          category,
-          pristineID,
-          itemCount);
-      try {
-        Thread.sleep(30000);
-        solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
-      } catch (Exception e) {
-        e.printStackTrace();
+      case "camera": {
+        log.debug("--------------------------- CAMERA CATEGORY ----------------------------------");
+        String productIdforPristine = searchServiceData.getProductIdforPristineCamera();
+        String productItemId = searchServiceData.getCameraProductItemId();
+        List<String> blibliCategoryHierarchy = searchServiceData.getCameraBlibliCategoryHierarchy();
+        String pristineID = searchServiceData.getCameraPristineID();
+        String itemCount = searchServiceData.getItemCount();
+        kafkaHelper.pristineEvent(productIdforPristine,
+            productItemId,
+            PristineAttributesName,
+            PristineAttributesValue,
+            blibliCategoryHierarchy,
+            category,
+            pristineID,
+            itemCount);
+        try {
+          Thread.sleep(30000);
+          solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+        break;
+      }
+      case "computer": {
+        log.debug(
+            "--------------------------------COMPUTER CATEGORY---------------------------------");
+        String productIdforPristine = searchServiceData.getProductIdforPristine();
+        String productItemId = searchServiceData.getProductItemId();
+        List<String> blibliCategoryHierarchy = searchServiceData.getBlibliCategoryHierarchy();
+        String pristineID = searchServiceData.getPristineID();
+        String itemCount = searchServiceData.getItemCount();
+        kafkaHelper.pristineEvent(productIdforPristine,
+            productItemId,
+            PristineAttributesName,
+            PristineAttributesValue,
+            blibliCategoryHierarchy,
+            category,
+            pristineID,
+            itemCount);
+        try {
+          Thread.sleep(30000);
+          solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+        break;
       }
     }
 
   }
 
   @Then("^\\[search-service] verify if the '(.*)' is updated for that particular ID with '(.*)' for '(.*)' category in SOLR$")
-  public void verifyIfThePristineAttributesNameIsUpdatedInSOLR(
-      String pristineAttributesName,
+  public void verifyIfThePristineAttributesNameIsUpdatedInSOLR(String pristineAttributesName,
       String pristineAttributesValue,
       String pristine) {
 
-    if(pristine.equals("handphone")){
-      log.debug("------------------HANDPHONE CATEGORY------------------");
-      String pristineFacetInSOLR = null;
-      try {
-        pristineFacetInSOLR = solrHelper.getSolrProd(PRODUCT_LEVEL0ID+":" + searchServiceData.getHandphonePristineID(),
-            SELECT_HANDLER,
-            "PRISTINE_"+pristineAttributesName,
-            1,SOLR_DEFAULT_COLLECTION).get(0).getPristineHandphoneFacet();
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-      assertThat(pristineFacetInSOLR, equalTo(pristineAttributesValue));
-    }
-    else if(pristine.equals("camera")){
-      log.debug("------------------CAMERA CATEGORY------------------");
-      try {
-        String pristineFacetInSOLR =
-            solrHelper.getSolrProd(PRODUCT_LEVEL0ID+":" +searchServiceData.getCameraPristineID(),
-                SELECT_HANDLER,
-                "PRISTINE_"+pristineAttributesName,
-                1,SOLR_DEFAULT_COLLECTION).get(0).getPristineCameraFacet();
-        assertThat(pristineFacetInSOLR, equalTo(pristineAttributesValue));
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
+    switch (pristine) {
+      case "handphone":
+        log.debug("------------------HANDPHONE CATEGORY------------------");
 
-    else if(pristine.equals("computer")){
-      try {
-        log.debug("------------------COMPUTER CATEGORY------------------");
-        String pristineFacetInSOLR =
-            solrHelper.getSolrProd(PRODUCT_LEVEL0ID+":" + searchServiceData.getPristineID(),
-                SELECT_HANDLER,
-                "PRISTINE_"+pristineAttributesName,
-                1,SOLR_DEFAULT_COLLECTION).get(0).getPristineFacet();
-        assertThat(pristineFacetInSOLR, equalTo(pristineAttributesValue));
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+        try {
+          String pristineFacetInSOLR = solrHelper.getSolrProd(
+              PRODUCT_LEVEL0ID + ":" + searchServiceData.getHandphonePristineID(),
+              SELECT_HANDLER,
+              "PRISTINE_" + pristineAttributesName,
+              1,
+              Collections.emptyList(),
+              SOLR_DEFAULT_COLLECTION).get(0).getPristineHandphoneFacet();
+          assertThat(pristineFacetInSOLR, equalTo(pristineAttributesValue));
+          break;
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      case "camera":
+        log.debug("------------------CAMERA CATEGORY------------------");
+        try {
+          String pristineFacetCamera = solrHelper.getSolrProd(
+              PRODUCT_LEVEL0ID + ":" + searchServiceData.getCameraPristineID(),
+              SELECT_HANDLER,
+              "PRISTINE_" + pristineAttributesName,
+              1,
+              Collections.emptyList(),
+              SOLR_DEFAULT_COLLECTION).get(0).getPristineCameraFacet();
+          assertThat(pristineFacetCamera, equalTo(pristineAttributesValue));
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+        break;
+      case "computer":
+        try {
+          log.debug("------------------COMPUTER CATEGORY------------------");
+          String pristineFacetComputer =
+              solrHelper.getSolrProd(PRODUCT_LEVEL0ID + ":" + searchServiceData.getPristineID(),
+                  SELECT_HANDLER,
+                  "PRISTINE_" + pristineAttributesName,
+                  1,
+                  Collections.emptyList(),
+                  SOLR_DEFAULT_COLLECTION).get(0).getPristineFacet();
+          assertThat(pristineFacetComputer, equalTo(pristineAttributesValue));
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+        break;
     }
   }
 }

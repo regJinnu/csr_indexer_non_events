@@ -44,6 +44,7 @@ public interface UrlConstants {
   String DEVICE = "windows";
   String BROWSER = "chrome";
   String BROWSER_VERSION = "79.0";
+  String FLASH_SALE_IMAGE = "https://www.freepngimg.com/thumb/avengers/24403-2-avengers-transparent-background-thumb.png";
 }
 
 

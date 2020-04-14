@@ -100,7 +100,7 @@ public class OxfordEventSteps {
               SELECT_HANDLER,
               "isOfficial",
               1,
-              "cnc:false",
+              Collections.singletonList("cnc:false"),
               SOLR_DEFAULT_COLLECTION).get(0).isOfficial();
 
       if(type.equals("direct"))
@@ -122,7 +122,7 @@ public class OxfordEventSteps {
               SELECT_HANDLER,
               "isOfficial",
               10,
-              "cnc:true",
+              Collections.singletonList("cnc:true"),
               SOLR_DEFAULT_COLLECTION_CNC);
 
       for (SolrResults solrResults : solrResultsList) {
@@ -192,7 +192,7 @@ public class OxfordEventSteps {
               SELECT_HANDLER,
               "brandCatalog,storeCatalog",
               10,
-              "cnc:false",
+              Collections.singletonList("cnc:false"),
               SOLR_DEFAULT_COLLECTION);
 
       for (SolrResults solrResults : solrResultsList) {
@@ -218,7 +218,7 @@ public class OxfordEventSteps {
               SELECT_HANDLER,
               "brandCatalog,storeCatalog",
               10,
-              "cnc:true",
+              Collections.singletonList("cnc:true"),
               SOLR_DEFAULT_COLLECTION_CNC);
 
       for (SolrResults solrResults : solrResultsList) {

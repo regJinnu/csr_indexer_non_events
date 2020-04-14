@@ -29,60 +29,66 @@ public class MongoHelper {
   @Autowired
   SearchServiceProperties searchServiceProperties;
 
-  public MongoCollection<Document> initializeDatabase(String collectionName){
+  public MongoCollection<Document> initializeDatabase(String collectionName) {
     MongoClientURI mongoClientURI = new MongoClientURI(searchServiceProperties.get("mongoURI"));
-    MongoClient mongoClient  = new MongoClient(mongoClientURI);
-    MongoDatabase mongoDatabase=mongoClient.getDatabase("x_search");
+    MongoClient mongoClient = new MongoClient(mongoClientURI);
+    MongoDatabase mongoDatabase = mongoClient.getDatabase("x_search");
     return mongoDatabase.getCollection(collectionName);
   }
 
-  public long countOfRecordsInCollection(String collectionName){
+  public long countOfRecordsInCollection(String collectionName) {
 
     MongoCollection<Document> collection = initializeDatabase(collectionName);
     return collection.count();
   }
 
-  public FindIterable<Document> getMongoDocumentByQuery(String collectionName,String queryField,String value){
+  public FindIterable<Document> getMongoDocumentByQuery(String collectionName,
+      String queryField,
+      String value) {
 
     MongoCollection<Document> collection = initializeDatabase(collectionName);
-    Document query = new Document(queryField,value);
+    Document query = new Document(queryField, value);
     String pattern = ".*" + query.getString(queryField) + ".*";
-    return collection.find(regex(queryField,pattern,"i"));
+    return collection.find(regex(queryField, pattern, "i"));
   }
 
-  public void updateMongo(String collectionName,String queryField,String queryValue,String updateField,String updateValue){
+  public void updateMongo(String collectionName,
+      String queryField,
+      String queryValue,
+      String updateField,
+      String updateValue) {
     MongoCollection<Document> collection = initializeDatabase(collectionName);
-    collection.updateOne(eq(queryField,queryValue),combine(set(updateField,updateValue)));
+    collection.updateOne(eq(queryField, queryValue), combine(set(updateField, updateValue)));
   }
 
-  public void updateAllMongo(String collectionName,String updateField, Date updateValue){
+  public void updateAllMongo(String collectionName, String updateField, Date updateValue) {
     MongoCollection<Document> collection = initializeDatabase(collectionName);
-    collection.updateMany(new BasicDBObject(),combine(set(updateField,updateValue)));
+    collection.updateMany(new BasicDBObject(), combine(set(updateField, updateValue)));
   }
 
-  public void insertInMongo(String collectionName,Document document){
+  public void insertInMongo(String collectionName, Document document) {
     MongoCollection<Document> collection = initializeDatabase(collectionName);
     collection.insertOne(document);
   }
 
-  public void deleteFromMongo(String collectionName,String queryField,String queryValue){
-   MongoCollection<Document> collection = initializeDatabase(collectionName);
-    collection.deleteOne(eq(queryField,queryValue));
+  public void deleteFromMongo(String collectionName, String queryField, String queryValue) {
+    MongoCollection<Document> collection = initializeDatabase(collectionName);
+    collection.deleteOne(eq(queryField, queryValue));
   }
 
-  public void deleteAllFromMongo(String collectionName){
+  public void deleteAllFromMongo(String collectionName) {
     MongoCollection<Document> collection = initializeDatabase(collectionName);
     collection.deleteMany(new Document());
   }
 
 
-  public String getSpecificFieldfromMongoDocument(FindIterable<Document> findIterable,String fieldToExtract){
+  public String getSpecificFieldfromMongoDocument(FindIterable<Document> findIterable,
+      String fieldToExtract) {
 
-    String result="";
+    String result = "";
 
 
-    for (Document document:findIterable
-    ) {
+    for (Document document : findIterable) {
       result = document.toJson();
     }
 

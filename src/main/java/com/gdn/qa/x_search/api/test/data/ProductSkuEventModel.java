@@ -9,10 +9,12 @@ import lombok.Data;
 
 @Data
 @Builder
-
 public class ProductSkuEventModel {
   private String productSku;
   private String itemSku;
   private Double discount;
   private int quota;
+  private int sessionId;
+  private Double blibliDiscount;
+  private int blibliQuota;
 }

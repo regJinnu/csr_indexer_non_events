@@ -16,8 +16,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.EVENT_ID;
+import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.FLASH_SALE_IMAGE;
 
 /**
  * @author kumar on 01/08/18
@@ -942,6 +945,138 @@ public class KafkaHelper {
     try {
       kafkaSender.send("oxford_update_product_event",
           objectMapper.writeValueAsString(oxfordSkuChangeModel));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void publishFlashSaleCampaignEvent(Map<String,String> params) {
+
+    Date date = new Date();
+    DateTime dtStart = new DateTime(date);
+    DateTime dtEnd = dtStart.plusDays(1);
+
+    String[] itemSkuArray = params.get("itemSkus").split(",");
+    String[] sessionIds = params.get("sessionIds").split(",");
+
+    List<ProductSkuEventModel> skuList = IntStream.range(0, itemSkuArray.length)
+        .mapToObj(i -> ProductSkuEventModel.builder()
+            .productSku(params.get("productSku"))
+            .itemSku(itemSkuArray[i])
+            .discount(10.0)
+            .quota(10)
+            .sessionId(Integer.parseInt(sessionIds[i]))
+            .build())
+        .collect(Collectors.toList());
+
+    CampaignPublishEvent campaignPublishEvent = CampaignPublishEvent.builder()
+        .timestamp(System.currentTimeMillis())
+        .campaignName(params.get("campaignName"))
+        .campaignCode(params.get("campaignCode"))
+        .skuList(skuList)
+        .promotionStartTime(dtStart.toDate())
+        .promotionEndTime(dtEnd.toDate())
+        .tagLabel(FLASH_SALE_IMAGE)
+        .exclusive(true)
+        .retainData(true)
+        .campaignType("FLASH_SALE")
+        .build();
+
+    try {
+      kafkaSender.send("com.gdn.x.campaign.published",
+          objectMapper.writeValueAsString(campaignPublishEvent));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void publishFlashSaleLiveEvent(String campaignName, String campaignCode,int session) {
+    Date date = new Date();
+    DateTime dtStart = new DateTime(date);
+    DateTime dtEnd = dtStart.plusDays(1);
+
+    CampaignEventModel campaignEventModel = CampaignEventModel.builder()
+        .campaignCode(campaignCode)
+        .campaignName(campaignName)
+        .promotionEndTime(dtEnd.toDate())
+        .promotionStartTime(dtStart.toDate())
+        .exclusive(true)
+        .tagLabel(FLASH_SALE_IMAGE)
+        .activateSession(session)
+        .build();
+
+    CampaignLiveExclusive campaignLiveExclusive = CampaignLiveExclusive.builder()
+        .timestamp(System.currentTimeMillis())
+        .campaigns(Collections.singletonList(campaignEventModel))
+        .build();
+    try {
+      kafkaSender.send("com.gdn.x.campaign.live",
+          objectMapper.writeValueAsString(campaignLiveExclusive));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void publishFlashSaleRemoveEvent(String campaignCode,
+      String productSku,
+      String itemSkuForRemove,
+      int session) {
+
+    ProductSkuEventModel productSkuEventModel = ProductSkuEventModel.builder()
+        .productSku(productSku)
+        .itemSku(itemSkuForRemove)
+        .discount(10.0)
+        .quota(10)
+        .sessionId(session)
+        .blibliDiscount(10.0)
+        .blibliQuota(10)
+        .build();
+
+    CampaignRemoveEvent campaignRemoveEvent = CampaignRemoveEvent.builder()
+        .timestamp(System.currentTimeMillis())
+        .campaignCode(campaignCode)
+        .skuList(Collections.singletonList(productSkuEventModel))
+        .emptyQuota(false)
+        .build();
+    try {
+      kafkaSender.send("com.gdn.x.campaign.product.removed",
+          objectMapper.writeValueAsString(campaignRemoveEvent));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void publishFlashSaleStopEvent(String campaignCode, int session) {
+
+    CampaignStopEvent campaignStopEvent = CampaignStopEvent.builder()
+        .timestamp(System.currentTimeMillis())
+        .campaignCode(campaignCode)
+        .session(session)
+        .build();
+    try {
+      kafkaSender.send("com.gdn.x.campaign.stopped",
+          objectMapper.writeValueAsString(campaignStopEvent));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void publishFlashSaleEndEvent(String campaignCode, int session) {
+
+    CampaignSession campaignSession = CampaignSession.builder()
+        .campaignCode(campaignCode)
+        .session(session)
+        .build();
+
+    CampaignEndEvent campaignEndEvent = CampaignEndEvent.builder()
+        .campaignCodeList(Collections.singletonList(campaignCode))
+        .campaignSessionList(Collections.singletonList(campaignSession))
+        .markForDelete(false)
+        .build();
+
+    try {
+      kafkaSender.send("com.gdn.x.campaign.ended",
+          objectMapper.writeValueAsString(campaignEndEvent));
     } catch (JsonProcessingException e) {
       e.printStackTrace();
     }

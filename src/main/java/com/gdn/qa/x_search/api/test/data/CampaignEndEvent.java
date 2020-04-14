@@ -14,5 +14,6 @@ import java.util.List;
 @Builder
 public class CampaignEndEvent {
   private List<String> campaignCodeList;
+  private List<CampaignSession> campaignSessionList;
   boolean markForDelete;
 }

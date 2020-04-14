@@ -5,6 +5,7 @@ import com.gdn.qa.automation.core.restassured.ResponseApi;
 import com.gdn.qa.x_search.api.test.CucumberStepsDefinition;
 import com.gdn.qa.x_search.api.test.api.services.SearchServiceController;
 import com.gdn.qa.x_search.api.test.data.SearchServiceData;
+import com.gdn.qa.x_search.api.test.models.SolrResults;
 import com.gdn.qa.x_search.api.test.properties.SearchServiceProperties;
 import com.gdn.qa.x_search.api.test.utils.ConfigHelper;
 import com.gdn.qa.x_search.api.test.utils.KafkaHelper;
@@ -19,6 +20,7 @@ import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -73,50 +75,41 @@ public class BusinessPartnerEventSteps {
       assertThat("Updating SOLR fields for test failed", status, equalTo(0));
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
 
-      int statusInO2O = solrHelper.updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "id",
-          1,
-          "closedStore",
-          SOLR_DEFAULT_COLLECTION_O2O);
+      int statusInO2O =
+          solrHelper.updateSolrDataForAutomation(searchServiceData.getQueryForReindex(),
+              SELECT_HANDLER,
+              "id",
+              1,
+              "closedStore",
+              SOLR_DEFAULT_COLLECTION_O2O);
       assertThat("Updating SOLR fields for test failed", statusInO2O, equalTo(0));
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION_O2O);
 
-      int isDelayShipping = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      SolrResults solrResults = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
-          "isDelayShipping",
+          "isDelayShipping,startDateStoreClosed,endDateStoreClosed,isDelayShipping,startDateStoreClosed,endDateStoreClosed",
           1,
-          SOLR_DEFAULT_COLLECTION).get(0).getIsDelayShipping();
+          Collections.emptyList(),
+          SOLR_DEFAULT_COLLECTION).get(0);
 
-      long startDateStoreClosed = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      SolrResults solrResultsO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
-          "startDateStoreClosed",
+          "isDelayShipping,startDateStoreClosed,endDateStoreClosed",
           1,
-          SOLR_DEFAULT_COLLECTION).get(0).getStartDateStoreClosed();
+          Collections.emptyList(),
+          SOLR_DEFAULT_COLLECTION_O2O).get(0);
 
-      long endDateStoreClosed = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "endDateStoreClosed",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getEndDateStoreClosed();
+      int isDelayShipping = solrResults.getIsDelayShipping();
 
-      int isDelayShippingInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "isDelayShipping",
-          1,
-          SOLR_DEFAULT_COLLECTION_O2O).get(0).getIsDelayShipping();
+      long startDateStoreClosed = solrResults.getStartDateStoreClosed();
 
-      long startDateStoreClosedInO2O  = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "startDateStoreClosed",
-          1,
-          SOLR_DEFAULT_COLLECTION_O2O).get(0).getStartDateStoreClosed();
+      long endDateStoreClosed = solrResults.getEndDateStoreClosed();
 
-      long endDateStoreClosedInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "endDateStoreClosed",
-          1,
-          SOLR_DEFAULT_COLLECTION_O2O).get(0).getEndDateStoreClosed();
+      int isDelayShippingInO2O = solrResultsO2O.getIsDelayShipping();
+
+      long startDateStoreClosedInO2O = solrResultsO2O.getStartDateStoreClosed();
+
+      long endDateStoreClosedInO2O = solrResultsO2O.getEndDateStoreClosed();
 
       log.warn("------isDelayShipping--{}---startDateStoreClosed--{}---endDateStoreClosed--{}",
           isDelayShipping,
@@ -126,7 +119,8 @@ public class BusinessPartnerEventSteps {
       assertThat("startDateStoreClosed not set", startDateStoreClosed, equalTo(1111111111L));
       assertThat("endDateStoreClosed not set", endDateStoreClosed, equalTo(22222222L));
 
-      log.warn("------isDelayShippingInO2O --{}---startDateStoreClosedInO2O --{}---endDateStoreClosedInO2O --{}",
+      log.warn(
+          "------isDelayShippingInO2O --{}---startDateStoreClosedInO2O --{}---endDateStoreClosedInO2O --{}",
           isDelayShippingInO2O,
           startDateStoreClosedInO2O,
           endDateStoreClosedInO2O);
@@ -156,29 +150,28 @@ public class BusinessPartnerEventSteps {
   @Then("^\\[search-service] store closed information is updated in SOLR$")
   public void checkStoreClosedInfoIsUpdated() {
     try {
-      long startDateStoreClosed = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "startDateStoreClosed",
-          1,
-          SOLR_DEFAULT_COLLECTION).get(0).getStartDateStoreClosed();
 
-      long endDateStoreClosed = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      SolrResults solrResults = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
-          "endDateStoreClosed",
+          "isDelayShipping,startDateStoreClosed,endDateStoreClosed,isDelayShipping,startDateStoreClosed,endDateStoreClosed",
           1,
-          SOLR_DEFAULT_COLLECTION).get(0).getEndDateStoreClosed();
+          Collections.emptyList(),
+          SOLR_DEFAULT_COLLECTION).get(0);
 
-      long startDateStoreClosedInO2O  = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
+      SolrResults solrResultsO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
-          "startDateStoreClosed",
+          "isDelayShipping,startDateStoreClosed,endDateStoreClosed",
           1,
-          SOLR_DEFAULT_COLLECTION_O2O).get(0).getStartDateStoreClosed();
+          Collections.emptyList(),
+          SOLR_DEFAULT_COLLECTION_O2O).get(0);
 
-      long endDateStoreClosedInO2O = solrHelper.getSolrProd(searchServiceData.getQueryForReindex(),
-          SELECT_HANDLER,
-          "endDateStoreClosed",
-          1,
-          SOLR_DEFAULT_COLLECTION_O2O).get(0).getEndDateStoreClosed();
+      long startDateStoreClosed = solrResults.getStartDateStoreClosed();
+
+      long endDateStoreClosed = solrResults.getEndDateStoreClosed();
+
+      long startDateStoreClosedInO2O = solrResultsO2O.getStartDateStoreClosed();
+
+      long endDateStoreClosedInO2O = solrResultsO2O.getEndDateStoreClosed();
 
 
       log.warn("---startDateStoreClosed--{}---endDateStoreClosed--{}",
@@ -206,6 +199,7 @@ public class BusinessPartnerEventSteps {
           SELECT_HANDLER,
           "isDelayShipping",
           1,
+          Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION).get(0).getIsDelayShipping();
 
       log.warn("------isDelayShipping--{}---", isDelayShippingActual);
@@ -225,7 +219,8 @@ public class BusinessPartnerEventSteps {
     try {
       assertThat(solrHelper.getSolrProdCount("id:AAA-60015-00008-00001-PP-3001012",
           SELECT_HANDLER,
-          SOLR_DEFAULT_COLLECTION_CNC), equalTo(1L));
+          SOLR_DEFAULT_COLLECTION_CNC,
+          Collections.emptyList()), equalTo(1L));
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -250,7 +245,8 @@ public class BusinessPartnerEventSteps {
     try {
       assertThat(solrHelper.getSolrProdCount("id:AAA-60015-00008-00001-PP-3001012",
           SELECT_HANDLER,
-          SOLR_DEFAULT_COLLECTION_CNC), equalTo(0L));
+          SOLR_DEFAULT_COLLECTION_CNC,
+          Collections.emptyList()), equalTo(0L));
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -264,6 +260,7 @@ public class BusinessPartnerEventSteps {
           SELECT_HANDLER,
           "storeClose",
           1,
+          Collections.emptyList(),
           SOLR_DEFAULT_COLLECTION).get(0).isStoreClose();
 
       assertThat("Store Close is not set", storeClose, equalTo(true));
@@ -308,9 +305,10 @@ public class BusinessPartnerEventSteps {
     try {
       Thread.sleep(60000);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
-      long count = solrHelper.getSolrProdCountWithFq(searchServiceData.getQueryForReindex(),
+      long count = solrHelper.getSolrProdCount(searchServiceData.getQueryForReindex(),
           SELECT_HANDLER,
-          "published:[0 TO *] AND storeClose:*",SOLR_DEFAULT_COLLECTION);
+          SOLR_DEFAULT_COLLECTION,
+          Collections.singletonList("published:[0 TO *] AND storeClose:*"));
 
       assertThat("storeClose field not removed after reindex", count, equalTo(0L));
 
@@ -346,10 +344,11 @@ public class BusinessPartnerEventSteps {
 
     try {
 
-      long count = solrHelper.getSolrProdCountWithFq(
+      long count = solrHelper.getSolrProdCount(
           "id:" + searchServiceProperties.get("businessPartnerCode") + "*",
           SELECT_HANDLER,
-          "published:[0 TO *] AND storeClose:*",SOLR_DEFAULT_COLLECTION);
+          SOLR_DEFAULT_COLLECTION,
+          Collections.singletonList("published:[0 TO *] AND storeClose:*"));
 
       assertThat("storeClose field not removed after reindex", count, equalTo(0L));
 
@@ -367,8 +366,6 @@ public class BusinessPartnerEventSteps {
     try {
       Thread.sleep(10000);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
     } catch (Exception e) {
       e.printStackTrace();
     }

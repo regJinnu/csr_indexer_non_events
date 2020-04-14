@@ -251,7 +251,7 @@ public class FacebookSteps {
 
       boolean isSynchronised =
           solrHelper.getSolrProd(searchServiceData.getQueryForProductCode(), SELECT_HANDLER,
-              "isSynchronised", 1,SOLR_DEFAULT_COLLECTION).get(0).isSynchronised();
+              "isSynchronised", 1,Collections.emptyList(),SOLR_DEFAULT_COLLECTION).get(0).isSynchronised();
 
       assertThat("Product is not synchronised",isSynchronised,equalTo(true));
 
@@ -278,7 +278,7 @@ public class FacebookSteps {
 
       boolean isSynchronised =
           solrHelper.getSolrProd(searchServiceData.getQueryForUnsyncProduct(), SELECT_HANDLER,
-              "isSynchronised", 1,SOLR_DEFAULT_COLLECTION).get(0).isSynchronised();
+              "isSynchronised", 1,Collections.emptyList(),SOLR_DEFAULT_COLLECTION).get(0).isSynchronised();
 
       assertThat("Product is not unsync",isSynchronised,equalTo(false));
 

@@ -15,11 +15,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Collections;
+
 import static com.gdn.qa.x_search.api.test.Constants.UrlConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.not;
 
 /**
  * @author kumar on 19/03/20
@@ -101,11 +102,13 @@ public class MerchantVoucherSteps {
               SELECT_HANDLER,
               "merchantVoucherCount",
               1,
-              "cnc:false",
+              Collections.singletonList("cnc:false"),
               SOLR_DEFAULT_COLLECTION).get(0).getMerchantVoucherCount();
 
       if (type.equals("direct"))
-        assertThat("voucher count not updated", voucherCount, equalTo(searchServiceData.getVoucherCount()));
+        assertThat("voucher count not updated",
+            voucherCount,
+            equalTo(searchServiceData.getVoucherCount()));
       else
         assertThat("voucher count not updated", voucherCount, equalTo(0));
     } catch (Exception e) {
@@ -121,7 +124,7 @@ public class MerchantVoucherSteps {
               SELECT_HANDLER,
               "merchantVoucherCount",
               2,
-              "cnc:true",
+              Collections.singletonList("cnc:true"),
               SOLR_DEFAULT_COLLECTION_CNC).get(0).getMerchantVoucherCount();
 
       assertThat("voucher count not updated", voucherCount, equalTo(100));
@@ -137,7 +140,7 @@ public class MerchantVoucherSteps {
     assertThat("Count is zero", indexing_list_new, greaterThan(0L));
   }
 
-   void commitSOLR(){
+  void commitSOLR() {
     try {
       Thread.sleep(10000);
       solrHelper.solrCommit(SOLR_DEFAULT_COLLECTION);
